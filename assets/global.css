@@ -623,12 +623,27 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .nav-logo {
+  display: flex;
+  align-items: center;
   font-family: var(--font-serif);
   font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   color: var(--burgundy);
   transition: color var(--transition-fast);
+  text-decoration: none;
+}
+
+.nav-logo img {
+  display: block;
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Invert logo on dark nav so it shows on dark backgrounds */
+.site-nav.nav-dark .nav-logo img {
+  filter: brightness(0) invert(1);
 }
 
 .site-nav.nav-dark .nav-logo { color: var(--cream); }
