@@ -9,81 +9,88 @@
   {%- assign drop_bg_url = 'featured-drop-bg.jpg' | asset_url -%}
 {%- endif -%}
 
+{%- assign drop_product = all_products[section.settings.drop_product] -%}
+
 <section class="section featured-drop bg-dark featured-drop--bg" id="featured-drop"
   style="background-image: url('{{ drop_bg_url }}');">
+
   <div class="featured-drop__overlay"></div>
-  <div class="container" style="position:relative;z-index:1;">
-    <div class="section-header reveal">
+
+  <div class="container featured-drop__inner">
+
+    <!-- LEFT: intentionally empty so the background product photo is unobstructed -->
+    <div class="featured-drop__spacer" aria-hidden="true"></div>
+
+    <!-- RIGHT: all PDP text content -->
+    <div class="featured-drop__content reveal">
+
+      <!-- Section header (eyebrow / title / divider / subheading) -->
       <span class="section-eyebrow" style="color:var(--gold-light);">
         {{ section.settings.eyebrow | default: "This Month's Drop" }}
       </span>
-      <h2 class="heading-xl text-cream" style="max-width:600px;margin:0 auto;">
+      <h2 class="heading-xl text-cream" style="margin:0.5rem 0 0.75rem;">
         {{ section.settings.heading | default: 'The Velvet Hour' }}
       </h2>
-      <div class="section-divider" style="background:var(--gold);"></div>
-      <p class="body-lg" style="color:rgba(245,239,230,0.65);max-width:500px;margin:0 auto;">
+      <div class="section-divider" style="background:var(--gold);margin:0 0 1.25rem;"></div>
+      <p class="body-lg" style="color:rgba(245,239,230,0.65);margin-bottom:2rem;">
         {{ section.settings.subheading | default: 'An evening ritual for two. Dark chocolate, warm amber candlelight and a game that turns conversation into connection.' }}
       </p>
-    </div>
 
-    {%- assign drop_product = all_products[section.settings.drop_product] -%}
-
-    <div class="drop-featured-grid drop-featured-grid--solo">
-      <div class="drop-featured-content reveal">
-        <div class="drop-meta-row">
-          <span class="badge badge-burgundy">{{ section.settings.drop_badge | default: 'Drop 08 — Jan 2025' }}</span>
-          <span class="badge badge-gold">{{ section.settings.limit_badge | default: 'Limited 200 Kits' }}</span>
-        </div>
-
-        <h3 class="drop-title text-cream">{{ section.settings.drop_tagline | default: 'A ritual for modern romance.' }}</h3>
-        <p class="drop-desc">{{ section.settings.drop_desc | default: 'The Velvet Hour is built around the science of sensory intimacy — dark, rich flavour, warm amber light, and conversation prompts that feel like foreplay for your relationship.' }}</p>
-
-        {%- if section.settings.drop_includes != blank -%}
-        <div class="drop-includes">
-          <h4 class="label" style="color:var(--gold);margin-bottom:1rem;">What's Inside</h4>
-          <ul class="drop-includes-list">
-            {%- assign includes = section.settings.drop_includes | split: '|' -%}
-            {%- for item in includes -%}
-              <li>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
-                {{ item | strip }}
-              </li>
-            {%- endfor -%}
-          </ul>
-        </div>
-        {%- endif -%}
-
-        <div class="drop-cta-row">
-          <div class="drop-price-block">
-            {%- if drop_product != blank -%}
-              <p class="drop-price text-cream">{{ drop_product.price | money }}</p>
-              {%- if drop_product.metafields.custom.subscription_price -%}
-                <p style="font-size:0.8rem;color:rgba(245,239,230,0.45);">or {{ drop_product.metafields.custom.subscription_price }}/mo with Drop subscription</p>
-              {%- endif -%}
-            {%- else -%}
-              <p class="drop-price text-cream">{{ section.settings.drop_price | default: '£68' }}</p>
-            {%- endif -%}
-          </div>
-          <a href="{{ drop_product.url | default: '/collections/monthly-drops' }}" class="btn btn-gold btn-lg">
-            {{ section.settings.cta_text | default: 'Shop This Drop' }}
-          </a>
-        </div>
-
-        {%- if section.settings.urgency_text != blank -%}
-        <div class="drop-urgency">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)" stroke="none">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-          </svg>
-          <span style="font-size:0.8125rem;color:rgba(245,239,230,0.65);">
-            {{ section.settings.urgency_text }}
-          </span>
-        </div>
-        {%- endif -%}
+      <!-- Drop badges -->
+      <div class="drop-meta-row">
+        <span class="badge badge-burgundy">{{ section.settings.drop_badge | default: 'Drop 08 — Jan 2025' }}</span>
+        <span class="badge badge-gold">{{ section.settings.limit_badge | default: 'Limited 200 Kits' }}</span>
       </div>
-    </div>
-  </div>
+
+      <h3 class="drop-title text-cream">{{ section.settings.drop_tagline | default: 'A ritual for modern romance.' }}</h3>
+      <p class="drop-desc">{{ section.settings.drop_desc | default: 'The Velvet Hour is built around the science of sensory intimacy — dark, rich flavour, warm amber light, and conversation prompts that feel like foreplay for your relationship.' }}</p>
+
+      {%- if section.settings.drop_includes != blank -%}
+      <div class="drop-includes">
+        <h4 class="label" style="color:var(--gold);margin-bottom:1rem;">What's Inside</h4>
+        <ul class="drop-includes-list">
+          {%- assign includes = section.settings.drop_includes | split: '|' -%}
+          {%- for item in includes -%}
+            <li>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5">
+                <path d="M20 6L9 17l-5-5"/>
+              </svg>
+              {{ item | strip }}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+      {%- endif -%}
+
+      <div class="drop-cta-row">
+        <div class="drop-price-block">
+          {%- if drop_product != blank -%}
+            <p class="drop-price text-cream">{{ drop_product.price | money }}</p>
+            {%- if drop_product.metafields.custom.subscription_price -%}
+              <p style="font-size:0.8rem;color:rgba(245,239,230,0.45);">or {{ drop_product.metafields.custom.subscription_price }}/mo with Drop subscription</p>
+            {%- endif -%}
+          {%- else -%}
+            <p class="drop-price text-cream">{{ section.settings.drop_price | default: '£68' }}</p>
+          {%- endif -%}
+        </div>
+        <a href="{{ drop_product.url | default: '/collections/monthly-drops' }}" class="btn btn-gold btn-lg">
+          {{ section.settings.cta_text | default: 'Shop This Drop' }}
+        </a>
+      </div>
+
+      {%- if section.settings.urgency_text != blank -%}
+      <div class="drop-urgency">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)" stroke="none">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+        </svg>
+        <span style="font-size:0.8125rem;color:rgba(245,239,230,0.65);">
+          {{ section.settings.urgency_text }}
+        </span>
+      </div>
+      {%- endif -%}
+
+    </div><!-- /.featured-drop__content -->
+  </div><!-- /.container -->
 </section>
 
 {% schema %}
