@@ -1,0 +1,236 @@
+{% comment %}
+  PLAYMATE LABS — PAGE SETUP TOOL
+  ================================
+  Access this page at: /pages/setup
+  (Create a page in Shopify Admin with handle: setup, template: setup)
+  
+  This tool creates all required pages for the Playmate Labs theme.
+  It uses Shopify's built-in Liquid + redirects to create pages individually.
+{% endcomment %}
+
+<style>
+  body { background: #1A0A06; color: #F5EFE6; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+  .setup-wrapper { max-width: 800px; margin: 0 auto; padding: 4rem 2rem; }
+  .setup-logo { font-size: 1.2rem; letter-spacing: 0.15em; text-transform: uppercase; color: #C9A96E; margin-bottom: 3rem; }
+  h1 { font-size: 2.5rem; font-weight: 300; margin-bottom: 1rem; }
+  .subtitle { color: #9B8E85; margin-bottom: 3rem; font-size: 1.1rem; }
+  .page-grid { display: grid; gap: 1rem; }
+  .page-item {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,169,110,0.2);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .page-item.exists { border-color: rgba(100,200,100,0.3); background: rgba(100,200,100,0.05); }
+  .page-info h3 { margin: 0 0 0.25rem; font-size: 1rem; font-weight: 500; }
+  .page-info .handle { font-size: 0.8rem; color: #C9A96E; font-family: monospace; }
+  .page-info .template { font-size: 0.75rem; color: #9B8E85; }
+  .btn-create {
+    background: #C9A96E;
+    color: #1A0A06;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-create:hover { background: #DFC08A; }
+  .btn-exists { background: rgba(100,200,100,0.2); color: #6DC87A; border: 1px solid rgba(100,200,100,0.3); padding: 0.6rem 1.25rem; border-radius: 6px; font-size: 0.85rem; white-space: nowrap; }
+  .section-header { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: #9B8E85; padding: 0.5rem 0; margin-top: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem; }
+  .instructions {
+    background: rgba(201,169,110,0.08);
+    border: 1px solid rgba(201,169,110,0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .instructions h2 { color: #C9A96E; font-size: 1rem; margin: 0 0 0.75rem; }
+  .instructions ol { margin: 0; padding-left: 1.5rem; line-height: 2; }
+  .instructions li { color: #BEB5AD; }
+  .instructions code { background: rgba(255,255,255,0.1); padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.85em; color: #C9A96E; }
+  .admin-link { color: #C9A96E; text-decoration: none; }
+  .admin-link:hover { text-decoration: underline; }
+  .note { font-size: 0.8rem; color: #9B8E85; margin-top: 0.5rem; font-style: italic; }
+</style>
+
+<div class="setup-wrapper">
+  <div class="setup-logo">Playmate Labs</div>
+  <h1>Page Setup Tool</h1>
+  <p class="subtitle">Create all required pages for the Playmate Labs theme. Click each link to open the Shopify admin page creator with the correct settings pre-filled.</p>
+
+  <div class="instructions">
+    <h2>📋 How to use this tool</h2>
+    <ol>
+      <li>Click <strong>"Create in Admin"</strong> for each page below</li>
+      <li>In the Shopify admin that opens, the page title will be pre-filled</li>
+      <li>Set the <strong>Template</strong> dropdown to the value shown (e.g., <code>page.experience</code>)</li>
+      <li>Click <strong>Save</strong></li>
+      <li>The page will be live and linkable from your navigation!</li>
+    </ol>
+    <p class="note">💡 After creating pages, go to <a class="admin-link" href="/admin/menus" target="_blank">Online Store → Navigation</a> to add them to your menus.</p>
+  </div>
+
+  <div class="section-header">Core Experience Pages</div>
+  <div class="page-grid">
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>5-Day Experience</h3>
+        <div class="handle">/pages/5-day-experience</div>
+        <div class="template">Template: <strong>page.experience</strong> or <strong>page.5-day-experience</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=5-Day+Experience&page[handle]=5-day-experience&page[template_suffix]=experience" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Monthly Drops</h3>
+        <div class="handle">/pages/drops</div>
+        <div class="template">Template: <strong>page.drops</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Monthly+Drops&page[handle]=drops&page[template_suffix]=drops" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Events</h3>
+        <div class="handle">/pages/events</div>
+        <div class="template">Template: <strong>page.events</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Events&page[handle]=events&page[template_suffix]=events" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Community</h3>
+        <div class="handle">/pages/community</div>
+        <div class="template">Template: <strong>page.community</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Community&page[handle]=community&page[template_suffix]=community" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Journal / Blog</h3>
+        <div class="handle">/pages/journal</div>
+        <div class="template">Template: <strong>page.journal</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Journal&page[handle]=journal&page[template_suffix]=journal" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Shop</h3>
+        <div class="handle">/pages/shop</div>
+        <div class="template">Template: <strong>page.shop</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Shop&page[handle]=shop&page[template_suffix]=shop" target="_blank">Create in Admin →</a>
+    </div>
+
+  </div>
+
+  <div class="section-header">Brand Pages</div>
+  <div class="page-grid">
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>About</h3>
+        <div class="handle">/pages/about</div>
+        <div class="template">Template: <strong>page.about</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=About&page[handle]=about&page[template_suffix]=about" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Contact</h3>
+        <div class="handle">/pages/contact</div>
+        <div class="template">Template: <strong>page.contact</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Contact&page[handle]=contact&page[template_suffix]=contact" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>FAQ</h3>
+        <div class="handle">/pages/faq</div>
+        <div class="template">Template: <strong>page.faq</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=FAQ&page[handle]=faq&page[template_suffix]=faq" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Stockists</h3>
+        <div class="handle">/pages/stockists</div>
+        <div class="template">Template: <strong>page.stockists</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Stockists&page[handle]=stockists&page[template_suffix]=stockists" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Gifts</h3>
+        <div class="handle">/pages/gifts</div>
+        <div class="template">Template: <strong>page.gifts</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Gifts&page[handle]=gifts&page[template_suffix]=gifts" target="_blank">Create in Admin →</a>
+    </div>
+
+  </div>
+
+  <div class="section-header">Legal &amp; Policy Pages</div>
+  <div class="page-grid">
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Privacy Policy</h3>
+        <div class="handle">/pages/privacy-policy</div>
+        <div class="template">Template: <strong>page.privacy</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Privacy+Policy&page[handle]=privacy-policy&page[template_suffix]=privacy" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Terms &amp; Conditions</h3>
+        <div class="handle">/pages/terms</div>
+        <div class="template">Template: <strong>page.terms</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Terms+%26+Conditions&page[handle]=terms&page[template_suffix]=terms" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Event Detail (Template)</h3>
+        <div class="handle">/pages/event-detail</div>
+        <div class="template">Template: <strong>page.event-detail</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Event+Detail&page[handle]=event-detail&page[template_suffix]=event-detail" target="_blank">Create in Admin →</a>
+    </div>
+
+    <div class="page-item">
+      <div class="page-info">
+        <h3>Monthly Drops (alt handle)</h3>
+        <div class="handle">/pages/monthly-drops</div>
+        <div class="template">Template: <strong>page.monthly-drops</strong></div>
+      </div>
+      <a class="btn-create" href="https://admin.shopify.com/store/playmatelabs/pages/new?page[title]=Monthly+Drops+Programme&page[handle]=monthly-drops&page[template_suffix]=monthly-drops" target="_blank">Create in Admin →</a>
+    </div>
+
+  </div>
+
+  <div style="margin-top: 3rem; padding: 1.5rem; background: rgba(201,169,110,0.05); border: 1px solid rgba(201,169,110,0.15); border-radius: 12px;">
+    <p style="margin:0 0 0.5rem; color: #C9A96E; font-weight: 600;">🔗 After creating pages — connect them to Navigation</p>
+    <p style="margin:0; color: #9B8E85; font-size: 0.9rem;">Go to <a class="admin-link" href="https://admin.shopify.com/store/playmatelabs/menus" target="_blank">Shopify Admin → Online Store → Navigation</a> and add your new pages to the Main Menu and Footer menus. Then go to <a class="admin-link" href="https://admin.shopify.com/store/playmatelabs/themes/{{ theme.id }}/editor" target="_blank">Theme Editor</a> to add them to custom sidebar links and button components.</p>
+  </div>
+
+</div>
