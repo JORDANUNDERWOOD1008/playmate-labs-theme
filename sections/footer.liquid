@@ -58,7 +58,7 @@
 
     </div>
 
-    {%- comment -%} Newsletter in footer {%- endcomment -%}
+    {%- comment -%} Newsletter in footer — Klaviyo-powered {%- endcomment -%}
     {%- if section.settings.show_footer_email -%}
     <div class="footer-newsletter">
       <div class="footer-newsletter-inner">
@@ -70,25 +70,54 @@
             {{ section.settings.footer_newsletter_sub | default: 'Early access to drops, events and rituals.' }}
           </p>
         </div>
-        {%- form 'customer', id: 'footer-newsletter-form' -%}
-          <input type="hidden" name="contact[tags]" value="newsletter,footer-signup">
-          <div class="footer-email-row">
+        <div id="footer-newsletter-wrap">
+          <div class="footer-email-row" id="footer-newsletter-fields">
             <input type="email"
-                   name="contact[email]"
+                   id="footer-newsletter-email"
                    placeholder="Your email address"
                    class="form-input"
                    required
                    autocomplete="email">
-            <button type="submit" class="btn btn-gold btn-sm">
+            <button type="button" class="btn btn-gold btn-sm" id="footer-newsletter-btn">
               {{ section.settings.footer_newsletter_btn | default: 'Subscribe' }}
             </button>
           </div>
-          {%- if form.posted_successfully? -%}
-            <p style="font-size:0.8125rem;color:var(--gold);margin-top:0.75rem;">✓ You're in! Check your inbox.</p>
-          {%- endif -%}
-        {%- endform -%}
+          <p id="footer-newsletter-success" style="display:none;font-size:0.8125rem;color:var(--gold);margin-top:0.75rem;">✓ You're in! Check your inbox.</p>
+        </div>
       </div>
     </div>
+    <script>
+    (function(){
+      var KLAVIYO_PUBLIC_KEY = {{ settings.klaviyo_public_api_key | default: '' | json }};
+      var KLAVIYO_FOOTER_LIST = {{ settings.klaviyo_footer_list_id | default: '' | json }}
+                              || {{ settings.klaviyo_popup_list_id | default: '' | json }};
+      document.getElementById('footer-newsletter-btn')?.addEventListener('click', function(){
+        var emailEl = document.getElementById('footer-newsletter-email');
+        var email = emailEl ? emailEl.value.trim() : '';
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { emailEl?.focus(); return; }
+        this.disabled = true;
+        if (KLAVIYO_PUBLIC_KEY && KLAVIYO_FOOTER_LIST) {
+          fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + KLAVIYO_PUBLIC_KEY, {
+            method:'POST',
+            headers:{'Content-Type':'application/json','revision':'2023-10-15'},
+            body: JSON.stringify({data:{type:'subscription',attributes:{list_id:KLAVIYO_FOOTER_LIST,email:email,custom_source:'Footer — Playmate Labs',properties:{source:'footer_newsletter'}}}})
+          }).then(function(r){ if(r.ok||r.status===202){footerSuccess();}else{footerShopify(email);} }).catch(function(){footerShopify(email);});
+        } else { footerShopify(email); }
+      });
+      function footerSuccess(){
+        var f=document.getElementById('footer-newsletter-fields');
+        var s=document.getElementById('footer-newsletter-success');
+        if(f)f.style.display='none';
+        if(s)s.style.display='block';
+      }
+      function footerShopify(email){
+        var f=document.createElement('form');
+        f.method='POST';f.action='/contact';f.style.display='none';
+        f.innerHTML='<input name="form_type" value="customer"><input name="contact[email]" value="'+String(email).replace(/"/g,'&quot;')+'"><input name="contact[tags]" value="newsletter,footer-signup">';
+        document.body.appendChild(f);f.submit();
+      }
+    })();
+    </script>
     {%- endif -%}
 
     <div class="footer-bottom">

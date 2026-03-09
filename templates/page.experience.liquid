@@ -30,28 +30,24 @@
       </h1>
       <p class="exp-hero-sub">{{ settings.exp_hero_subtext | default: 'A free 5-day digital date night experience designed for modern couples. Flirty games, sensory rituals and playful prompts — one chapter per day, delivered straight to your inbox.' }}</p>
 
-      {%- comment -%} Signup form {%- endcomment -%}
+      {%- comment -%} Klaviyo Signup Form — Hero {%- endcomment -%}
       <div class="exp-hero-form" id="signup-form">
-        {%- form 'customer' -%}
-          <input type="hidden" name="contact[tags]" value="newsletter,5-day-experience,free-experience">
-          {%- if form.posted_successfully? -%}
-            <div class="exp-success-msg">
-              <span style="font-size:1.5rem;">🌹</span>
-              <div>
-                <strong style="font-family:var(--font-serif);font-size:1.125rem;display:block;margin-bottom:0.25rem;">{{ settings.exp_success_heading | default: 'You\'re in!' }}</strong>
-                {{ settings.exp_success_subtext | default: 'Day 1: Curiosity arrives tomorrow morning. Check your inbox.' }}
-              </div>
-            </div>
-          {%- else -%}
-            <div class="exp-form-row">
-              <input type="email" name="contact[email]" placeholder="{{ settings.exp_email_placeholder | default: 'Your email address' }}" class="exp-email-input" required aria-label="Email address">
-              <button type="submit" class="btn btn-gold exp-submit-btn">
-                {{ settings.exp_cta_text | default: 'Unlock Free Experience' }}
-              </button>
-            </div>
-            <p class="exp-form-footnote">{{ settings.exp_form_footnote | default: 'No spam. Unsubscribe anytime. Your details are never shared.' }}</p>
-          {%- endif -%}
-        {%- endform -%}
+        <div id="exp-form-fields-1">
+          <div class="exp-form-row">
+            <input type="email" id="exp-email-1" placeholder="{{ settings.exp_email_placeholder | default: 'Your email address' }}" class="exp-email-input" required aria-label="Email address">
+            <button type="button" class="btn btn-gold exp-submit-btn" onclick="expKlaviyoSubmit(1)">
+              {{ settings.exp_cta_text | default: 'Unlock Free Experience' }}
+            </button>
+          </div>
+          <p class="exp-form-footnote">{{ settings.exp_form_footnote | default: 'No spam. Unsubscribe anytime. Your details are never shared.' }}</p>
+        </div>
+        <div id="exp-form-success-1" style="display:none;" class="exp-success-msg">
+          <span style="font-size:1.5rem;">🌹</span>
+          <div>
+            <strong style="font-family:var(--font-serif);font-size:1.125rem;display:block;margin-bottom:0.25rem;">{{ settings.exp_success_heading | default: "You're in!" }}</strong>
+            {{ settings.exp_success_subtext | default: 'Day 1: Curiosity arrives tomorrow morning. Check your inbox.' }}
+          </div>
+        </div>
       </div>
 
       {%- comment -%} Social proof strip {%- endcomment -%}
@@ -152,21 +148,17 @@
     </div>
 
     <div class="exp-hero-form" style="margin-top:2rem;" id="signup-form-2">
-      {%- form 'customer' -%}
-        <input type="hidden" name="contact[tags]" value="newsletter,5-day-experience">
-        {%- if form.posted_successfully? -%}
-          <div class="exp-success-msg">
-            <span style="font-size:1.5rem;">🌹</span>
-            <p style="color:var(--cream);">{{ settings.exp_success_subtext | default: 'Day 1: Curiosity arrives tomorrow morning.' }}</p>
-          </div>
-        {%- else -%}
-          <div class="exp-form-row">
-            <input type="email" name="contact[email]" placeholder="{{ settings.exp_email_placeholder | default: 'Your email address' }}" class="exp-email-input" required>
-            <button type="submit" class="btn btn-gold exp-submit-btn">{{ settings.exp_cta_text | default: 'Unlock Free Access' }}</button>
-          </div>
-          <p class="exp-form-footnote">{{ settings.exp_form_footnote | default: 'No spam. Unsubscribe anytime.' }}</p>
-        {%- endif -%}
-      {%- endform -%}
+      <div id="exp-form-fields-2">
+        <div class="exp-form-row">
+          <input type="email" id="exp-email-2" placeholder="{{ settings.exp_email_placeholder | default: 'Your email address' }}" class="exp-email-input" required>
+          <button type="button" class="btn btn-gold exp-submit-btn" onclick="expKlaviyoSubmit(2)">{{ settings.exp_cta_text | default: 'Unlock Free Access' }}</button>
+        </div>
+        <p class="exp-form-footnote">{{ settings.exp_form_footnote | default: 'No spam. Unsubscribe anytime.' }}</p>
+      </div>
+      <div id="exp-form-success-2" style="display:none;" class="exp-success-msg">
+        <span style="font-size:1.5rem;">🌹</span>
+        <p style="color:var(--cream);">{{ settings.exp_success_subtext | default: 'Day 1: Curiosity arrives tomorrow morning.' }}</p>
+      </div>
     </div>
   </div>
 </section>
@@ -189,6 +181,84 @@
     </div>
   </div>
 </section>
+
+<!-- ===== KLAVIYO EXPERIENCE FORM JS ===== -->
+<script>
+(function() {
+  var KLAVIYO_LIST_ID = {{ settings.klaviyo_experience_list_id | default: '' | json }};
+  var KLAVIYO_PUBLIC_KEY = {{ settings.klaviyo_public_api_key | default: '' | json }};
+
+  window.expKlaviyoSubmit = function(formNum) {
+    var emailEl = document.getElementById('exp-email-' + formNum);
+    if (!emailEl) return;
+    var email = emailEl.value.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailEl.focus();
+      return;
+    }
+    if (KLAVIYO_LIST_ID && KLAVIYO_PUBLIC_KEY) {
+      var payload = {
+        data: {
+          type: 'subscription',
+          attributes: {
+            list_id: KLAVIYO_LIST_ID,
+            email: email,
+            custom_source: '5-Day Experience — Playmate Labs',
+            properties: { source: '5_day_experience_page', form_number: formNum }
+          }
+        }
+      };
+      fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + KLAVIYO_PUBLIC_KEY, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'revision': '2023-10-15' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(res) {
+        if (res.ok || res.status === 202) { expShowSuccess(formNum); }
+        else { expShopifyFallback(email); }
+      })
+      .catch(function() { expShopifyFallback(email); });
+    } else {
+      expShopifyFallback(email);
+    }
+  };
+
+  function expShowSuccess(formNum) {
+    var fields = document.getElementById('exp-form-fields-' + formNum);
+    var success = document.getElementById('exp-form-success-' + formNum);
+    if (fields) fields.style.display = 'none';
+    if (success) success.style.display = 'flex';
+    // Also show the other form's success if both submitted the same session
+    try { sessionStorage.setItem('pl_exp_signed_up', '1'); } catch(e) {}
+  }
+
+  function expShopifyFallback(email) {
+    var f = document.createElement('form');
+    f.method = 'POST';
+    f.action = '/contact';
+    f.style.display = 'none';
+    f.innerHTML = '<input name="form_type" value="customer">'
+      + '<input name="contact[email]" value="' + String(email).replace(/"/g,'&quot;') + '">'
+      + '<input name="contact[tags]" value="newsletter,5-day-experience,free-experience">';
+    document.body.appendChild(f);
+    f.submit();
+  }
+
+  // Pre-fill if already signed up
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      if (sessionStorage.getItem('pl_exp_signed_up')) {
+        [1,2].forEach(function(n) {
+          var f = document.getElementById('exp-form-fields-' + n);
+          var s = document.getElementById('exp-form-success-' + n);
+          if (f) f.style.display = 'none';
+          if (s) s.style.display = 'flex';
+        });
+      }
+    } catch(e) {}
+  });
+})();
+</script>
 
 <!-- ===== FENCE-SITTER CTA ===== -->
 <section class="section" style="background:{{ settings.exp_fence_bg | default: 'var(--cream-off)' }};text-align:center;">

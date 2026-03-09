@@ -195,6 +195,15 @@
             <li><button class="account-nav-btn" data-tab="drops" onclick="switchTab('drops',this)"><i class="fas fa-layer-group"></i> Saved Drops</button></li>
             <li><button class="account-nav-btn" data-tab="addresses" onclick="switchTab('addresses',this)"><i class="fas fa-map-marker-alt"></i> Addresses</button></li>
             <li><button class="account-nav-btn" data-tab="profile" onclick="switchTab('profile',this)"><i class="fas fa-user"></i> Profile</button></li>
+            <li style="border-top:1px solid var(--border-light);margin-top:0.5rem;padding-top:0.5rem;">
+              <a href="/pages/drops" class="account-nav-btn" style="display:flex;align-items:center;gap:0.625rem;text-decoration:none;"><i class="fas fa-fire"></i> Monthly Drops</a>
+            </li>
+            <li>
+              <a href="/pages/events" class="account-nav-btn" style="display:flex;align-items:center;gap:0.625rem;text-decoration:none;"><i class="fas fa-calendar"></i> Events</a>
+            </li>
+            <li>
+              <a href="/pages/community" class="account-nav-btn" style="display:flex;align-items:center;gap:0.625rem;text-decoration:none;"><i class="fas fa-users"></i> Community</a>
+            </li>
           </ul>
         </nav>
       </aside>
@@ -415,14 +424,20 @@
     var tab = document.getElementById('tab-' + tabId);
     if (tab) tab.classList.add('active');
     if (btn) btn.classList.add('active');
+    // Update URL hash without reload for bookmarkable tabs
+    if (history.replaceState) {
+      history.replaceState(null, '', '#' + tabId);
+    }
   }
 
-  // Auto-switch to tab from URL hash
+  // Auto-switch to tab from URL hash OR ?tab= query param
   (function() {
-    var hash = window.location.hash.replace('#', '');
-    if (hash) {
-      var btn = document.querySelector('[data-tab="' + hash + '"]');
-      if (btn) switchTab(hash, btn);
-    }
+    // Priority: ?tab= query param, then #hash
+    var params = new URLSearchParams(window.location.search);
+    var tabFromQuery = params.get('tab');
+    var tabFromHash  = window.location.hash.replace('#', '');
+    var targetTab    = tabFromQuery || tabFromHash || 'overview';
+    var btn = document.querySelector('[data-tab="' + targetTab + '"]');
+    if (btn) switchTab(targetTab, btn);
   })();
 </script>

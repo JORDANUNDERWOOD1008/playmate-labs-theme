@@ -51,6 +51,41 @@
   {{ 'components.css' | asset_url | stylesheet_tag }}
   {{ 'theme-extra.css' | asset_url | stylesheet_tag }}
 
+  {%- comment -%} Header overlap fix — neutralise Shopify's section wrapper {%- endcomment -%}
+  <style>
+    /*
+     * FIX: Shopify wraps {% section 'header' %} in:
+     *   <div id="shopify-section-header" class="shopify-section site-header">
+     * The old navigation.css defined .site-header { position:fixed }
+     * which created a DOUBLE fixed wrapper around our .site-nav.
+     * Solution: the wrapper is reset to static; only .site-nav itself is fixed.
+     */
+    #shopify-section-header,
+    .shopify-section.site-header,
+    .playmate-header-section {
+      position: static !important;
+      height: auto !important;
+      z-index: auto !important;
+    }
+
+    /* Ensure our actual nav element is the only fixed layer */
+    #main-nav.site-nav {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: var(--nav-height);
+    }
+
+    /* Announcement bar renders above the fixed nav in the DOM
+       but visually the nav sits on top — keep announcement accessible */
+    #shopify-section-announcement-bar {
+      position: relative;
+      z-index: 1001;
+    }
+  </style>
+
   {%- comment -%} Page-specific stylesheets {%- endcomment -%}
   {%- case template.name -%}
     {%- when 'index' -%}
@@ -105,11 +140,11 @@
     {{ 'accessibility.skip_to_text' | t }}
   </a>
 
-  {%- comment -%} Announcement Bar {%- endcomment -%}
-  {% render 'announcement-bar' %}
-
-  {%- comment -%} Header / Nav {%- endcomment -%}
+  {%- comment -%} Header / Nav (fixed — sits above content) {%- endcomment -%}
   {% section 'header' %}
+
+  {%- comment -%} Announcement Bar rendered inside normal flow so nav overlay is clean {%- endcomment -%}
+  {% render 'announcement-bar' %}
 
   {%- comment -%} Cart Drawer {%- endcomment -%}
   {% render 'cart-drawer' %}

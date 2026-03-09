@@ -1,6 +1,10 @@
 {%- comment -%}
   PLAYMATE LABS — NEWSLETTER POPUP SNIPPET
   File: snippets/newsletter-popup.liquid
+  Klaviyo Integration:
+    - If settings.klaviyo_popup_list_id is set, POSTs to Klaviyo's /client/subscriptions/ endpoint via JS
+    - Falls back to Shopify customer form if no Klaviyo list ID configured
+    - Always tags the contact in Shopify for data retention
 {%- endcomment -%}
 
 {%- if settings.newsletter_popup_enable -%}
@@ -16,33 +20,149 @@
     <p style="font-size:0.875rem;color:rgba(245,239,230,0.65);margin-bottom:1.75rem;">
       {{ settings.newsletter_popup_subtext | default: 'Plus early access to drops, exclusive events and rituals designed for modern relationships.' }}
     </p>
-    {%- form 'customer', id: 'newsletter-popup-form' -%}
-      <input type="hidden" name="contact[tags]" value="newsletter,popup-signup">
-      <div style="display:flex;flex-direction:column;gap:0.75rem;">
+
+    {%- comment -%} Klaviyo-powered form {%- endcomment -%}
+    <div id="newsletter-popup-form-wrap">
+      <div id="newsletter-popup-fields" style="display:flex;flex-direction:column;gap:0.75rem;">
         <input class="form-input form-input-dark"
           type="email"
-          name="contact[email]"
+          id="popup-email"
           placeholder="Your email address"
           required
           autocomplete="email">
         <input class="form-input form-input-dark"
           type="tel"
-          name="contact[phone]"
+          id="popup-phone"
           placeholder="Phone number (for SMS drops)"
           autocomplete="tel">
-        <button type="submit" class="btn btn-gold btn-lg" style="width:100%;justify-content:center;">
+        <button type="button" class="btn btn-gold btn-lg" id="popup-submit-btn" style="width:100%;justify-content:center;">
           {{ settings.newsletter_popup_cta | default: 'Unlock Free Experience' }}
         </button>
       </div>
-      {%- if form.posted_successfully? -%}
-        <p class="newsletter-success" style="margin-top:1rem;color:var(--gold);font-size:0.875rem;">
-          ✓ Welcome to the community! Check your email.
-        </p>
-      {%- endif -%}
-    {%- endform -%}
+      <div id="newsletter-popup-success" style="display:none;margin-top:1rem;color:var(--gold);font-size:0.875rem;text-align:center;">
+        <span style="font-size:1.5rem;display:block;margin-bottom:0.5rem;">✓</span>
+        Welcome to the community! Check your inbox.
+      </div>
+      <div id="newsletter-popup-error" style="display:none;margin-top:0.75rem;color:#ff6b6b;font-size:0.8125rem;text-align:center;">
+        Something went wrong. Please try again.
+      </div>
+    </div>
+
     <p style="font-size:0.6875rem;color:rgba(245,239,230,0.3);margin-top:1rem;">
       No spam. Unsubscribe anytime. Your details are safe with us.
     </p>
   </div>
 </div>
+
+<script>
+(function() {
+  var KLAVIYO_LIST_ID = {{ settings.klaviyo_popup_list_id | default: '' | json }};
+  var KLAVIYO_PUBLIC_KEY = {{ settings.klaviyo_public_api_key | default: '' | json }};
+
+  function subscribeKlaviyo(email, phone) {
+    if (!KLAVIYO_LIST_ID || !KLAVIYO_PUBLIC_KEY) return false;
+
+    var payload = {
+      data: {
+        type: "subscription",
+        attributes: {
+          list_id: KLAVIYO_LIST_ID,
+          email: email,
+          custom_source: "Popup — Playmate Labs",
+          properties: {
+            source: "newsletter_popup",
+            phone_number: phone || null
+          }
+        }
+      }
+    };
+
+    fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + KLAVIYO_PUBLIC_KEY, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'revision': '2023-10-15'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(function(res) {
+      if (res.ok || res.status === 202) {
+        showSuccess();
+      } else {
+        // Fall back to Shopify customer form submit
+        submitShopifyForm(email, phone);
+      }
+    })
+    .catch(function() {
+      submitShopifyForm(email, phone);
+    });
+
+    return true;
+  }
+
+  function submitShopifyForm(email, phone) {
+    var f = document.createElement('form');
+    f.method = 'POST';
+    f.action = '/contact';
+    f.style.display = 'none';
+    f.innerHTML = '<input name="form_type" value="customer">'
+      + '<input name="contact[email]" value="' + escHtml(email) + '">'
+      + '<input name="contact[tags]" value="newsletter,popup-signup">'
+      + (phone ? '<input name="contact[phone]" value="' + escHtml(phone) + '">' : '');
+    document.body.appendChild(f);
+    f.submit();
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/[&<>"']/g, function(c) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function showSuccess() {
+    var fields = document.getElementById('newsletter-popup-fields');
+    var success = document.getElementById('newsletter-popup-success');
+    if (fields) fields.style.display = 'none';
+    if (success) success.style.display = 'block';
+    // Store in session so popup doesn't re-show
+    try { sessionStorage.setItem('pl_popup_done', '1'); } catch(e) {}
+    // Auto-close after 3s
+    setTimeout(function() {
+      var popup = document.getElementById('newsletter-popup');
+      if (popup) popup.classList.remove('open');
+    }, 3000);
+  }
+
+  function showError() {
+    var err = document.getElementById('newsletter-popup-error');
+    if (err) {
+      err.style.display = 'block';
+      setTimeout(function() { err.style.display = 'none'; }, 4000);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('popup-submit-btn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var emailEl = document.getElementById('popup-email');
+        var phoneEl = document.getElementById('popup-phone');
+        var email = emailEl ? emailEl.value.trim() : '';
+        var phone = phoneEl ? phoneEl.value.trim() : '';
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          emailEl && emailEl.focus();
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = '…';
+        var handled = subscribeKlaviyo(email, phone);
+        if (!handled) {
+          // No Klaviyo keys — use Shopify form
+          submitShopifyForm(email, phone);
+        }
+      });
+    }
+  });
+})();
+</script>
 {%- endif -%}

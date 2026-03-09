@@ -1,0 +1,119 @@
+{% comment %}
+  PLAYMATE LABS — DOWNLOAD PAGE
+  File: templates/page.download.liquid
+  Used for: /pages/download
+  Purpose: Internal page for team / admin — theme file download reference
+{% endcomment %}
+
+<style>
+  .download-page {
+    min-height: 80vh;
+    background: var(--espresso);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(var(--nav-height) + 3rem) 1rem 4rem;
+  }
+  .download-card {
+    background: #2C1810;
+    border: 1px solid rgba(201,169,110,0.25);
+    border-radius: var(--radius-xl);
+    padding: 3rem 2.5rem;
+    max-width: 680px;
+    width: 100%;
+    text-align: center;
+  }
+  .download-logo {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    letter-spacing: 0.02em;
+  }
+  .download-logo span { color: var(--cream); }
+  .download-card h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    color: var(--cream);
+    margin-bottom: 1rem;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+  .download-card p { color: rgba(245,239,230,0.65); line-height: 1.7; margin-bottom: 1rem; font-size: 0.9375rem; }
+  .file-count-badge {
+    display: inline-block;
+    background: rgba(201,169,110,0.15);
+    border: 1px solid rgba(201,169,110,0.3);
+    color: var(--gold);
+    border-radius: var(--radius-full);
+    padding: 0.375rem 1rem;
+    font-size: 0.8125rem;
+    margin-bottom: 2rem;
+  }
+  .download-file-list {
+    text-align: left;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    font-size: 0.8125rem;
+    color: rgba(245,239,230,0.55);
+    line-height: 1.8;
+    font-family: 'Courier New', monospace;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+  .download-file-list .folder { color: var(--gold); font-weight: 600; margin-top: 0.5rem; }
+</style>
+
+<div class="download-page">
+  <div class="download-card">
+    <div class="download-logo">Playmate <span>Labs</span></div>
+    <h1>{{ page.title | default: 'Theme Files Reference' }}</h1>
+    <p>{{ page.content | default: 'This is an internal reference page for the Playmate Labs Shopify theme structure.' }}</p>
+    <div class="file-count-badge">{{ settings.download_file_count | default: '30+ files' }}</div>
+
+    <div class="download-file-list">
+      <div class="folder">layout/</div>
+      theme.liquid<br>
+      <div class="folder">config/</div>
+      settings_schema.json<br>
+      settings_data.json<br>
+      <div class="folder">locales/</div>
+      en.default.json<br>
+      <div class="folder">sections/</div>
+      header.liquid · footer.liquid · home-hero.liquid<br>
+      home-featured-drop.liquid · home-product-grid.liquid<br>
+      email-capture.liquid · value-strip.liquid · how-it-works.liquid<br>
+      social-proof.liquid · experience-cta.liquid · events-preview.liquid<br>
+      journal-preview.liquid · featured-drop.liquid · final-cta.liquid<br>
+      shop-highlights.liquid<br>
+      <div class="folder">snippets/</div>
+      announcement-bar.liquid · cart-drawer.liquid · newsletter-popup.liquid<br>
+      product-card.liquid · meta-tags.liquid · highlight-text.liquid<br>
+      page-assignments.liquid<br>
+      <div class="folder">templates/</div>
+      index.liquid · product.liquid · collection.liquid · search.liquid<br>
+      blog.liquid · article.liquid · cart.liquid · 404.liquid<br>
+      page.drops.liquid · page.experience.liquid · page.events.liquid<br>
+      page.community.liquid · page.about.liquid · page.journal.liquid<br>
+      page.faq.liquid · page.contact.liquid · page.gifts.liquid<br>
+      page.stockists.liquid · page.privacy.liquid · page.terms.liquid<br>
+      page.shop.liquid · page.event-detail.liquid · page.monthly-drops.liquid<br>
+      page.5-day-experience.liquid · page.download.liquid<br>
+      customers/account.liquid · customers/login.liquid · customers/register.liquid<br>
+      <div class="folder">assets/</div>
+      global.css · components.css · theme-extra.css · navigation.css<br>
+      home.css · shop.css · product.css · journal.css · experience.css<br>
+      drops.css · events.css · account.css · faq.css · contact.css<br>
+      search.css · event-detail.css<br>
+      main.js · cart-api.js · home.js · shop.js · product.js · journal.js
+    </div>
+
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
+      <a href="{{ routes.root_url }}" class="btn btn-gold">Back to Store</a>
+      <a href="/admin/themes" class="btn btn-secondary" target="_blank" rel="noopener">Shopify Theme Editor</a>
+    </div>
+  </div>
+</div>

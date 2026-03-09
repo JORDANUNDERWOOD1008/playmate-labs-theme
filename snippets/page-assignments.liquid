@@ -1,0 +1,78 @@
+{% comment %}
+  PLAYMATE LABS — PAGE ASSIGNMENT GUIDE
+  File: snippets/page-assignments.liquid
+
+  ============================================================
+  HOW TO ASSIGN TEMPLATES TO PAGES IN SHOPIFY ADMIN
+  ============================================================
+
+  Every URL below needs a matching Page created in Shopify Admin
+  → Online Store → Pages → Add page.
+
+  Then set the TEMPLATE SUFFIX on that page to match.
+
+  URL Handle          │ Template to Assign              │ Notes
+  ────────────────────┼─────────────────────────────────┼──────────────────────────────
+  /pages/drops        │ page.drops                      │ Monthly Drops hub
+  /pages/monthly-drops│ page.monthly-drops              │ Alias — same content
+  /pages/experience   │ page.experience                 │ 5-Day Sensory Experience
+  /pages/5-day-experience│ page.5-day-experience        │ Alias — same content
+  /pages/events       │ page.events                     │ Events listing
+  /pages/event-detail │ page.event-detail               │ Single event (add ?id= param)
+  /pages/community    │ page.community                  │ Membership & community hub
+  /pages/about        │ page.about                      │ About Playmate Labs
+  /pages/journal      │ page.journal                    │ Journal / Explore landing
+  /pages/shop         │ page.shop                       │ Custom shop landing
+  /pages/faq          │ page.faq                        │ FAQ / Help
+  /pages/contact      │ page.contact                    │ Contact form
+  /pages/gifts        │ page.gifts                      │ Gift guide
+  /pages/stockists    │ page.stockists                  │ Find in store
+  /pages/privacy-policy│ page.privacy                  │ Privacy policy
+  /pages/terms        │ page.terms                      │ Terms & Conditions
+  /pages/download     │ page.download                   │ Internal theme download ref
+
+  COLLECTION PAGES (no page needed — use Collections):
+  /collections/all                                       │ All products
+  /collections/monthly-drops                            │ Monthly drop kits
+  /collections/consumables                              │ Consumables category
+  /collections/date-night-kits                          │ Date night kits
+
+  CUSTOMER PAGES (handled by Shopify automatically):
+  /account                → templates/customers/account.liquid
+  /account/login          → templates/customers/login.liquid
+  /account/register       → templates/customers/register.liquid
+  /account/orders/[id]    → templates/customers/order.liquid (Shopify default)
+  /account/addresses      → templates/customers/addresses.liquid (Shopify default)
+
+  BLOG / JOURNAL (uses Shopify blog system):
+  /blogs/journal          → templates/blog.liquid
+  /blogs/journal/[article]→ templates/article.liquid
+
+  ============================================================
+  SIDEBAR / INTERNAL LINK REFERENCE
+  ============================================================
+
+  Account Dashboard sidebar links:
+  - Overview    → /account (customers/account.liquid tab=overview)
+  - Rewards     → /account?tab=rewards
+  - Orders      → /account?tab=orders
+  - Events      → /account?tab=events
+  - Drops       → /account?tab=drops
+  - Profile     → /account?tab=profile
+
+  Community page sidebar links:
+  - Community   → /pages/community
+  - Membership  → /pages/community#tiers
+  - Rewards     → /pages/community#rewards
+  - Join        → /pages/community#community-join
+
+  Navigation links (set in Shopify Admin → Navigation → Main Menu):
+  - Shop         → /collections/all
+  - Monthly Drops→ /pages/drops
+  - 5-Day Experience→ /pages/experience
+  - Events       → /pages/events
+  - Journal      → /blogs/journal
+  - About        → /pages/about
+  - Community    → /pages/community
+
+{% endcomment %}

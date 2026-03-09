@@ -275,7 +275,12 @@
       { "type": "text", "id": "newsletter_popup_heading", "label": "Popup heading", "default": "Get 5 date nights, free." },
       { "type": "textarea", "id": "newsletter_popup_body", "label": "Popup body copy", "default": "Join 14,000+ couples and unlock our free 5-day sensory experience — daily emails, ritual guides and curated playlists delivered to your inbox." },
       { "type": "text", "id": "newsletter_popup_btn_text", "label": "CTA button text", "default": "Unlock Free Experience" },
-      { "type": "text", "id": "newsletter_popup_disclaimer", "label": "Below-form disclaimer text", "default": "No credit card. No spam. Unsubscribe anytime." }
+      { "type": "text", "id": "newsletter_popup_disclaimer", "label": "Below-form disclaimer text", "default": "No credit card. No spam. Unsubscribe anytime." },
+      { "type": "header", "content": "🔗 Klaviyo Integration" },
+      { "type": "text", "id": "klaviyo_public_api_key", "label": "Klaviyo Public API Key (Site ID)", "info": "Find this in Klaviyo → Account → Settings → API Keys. Starts with a 6-character public key e.g. 'AbCd12'." },
+      { "type": "text", "id": "klaviyo_popup_list_id", "label": "Klaviyo List ID — Popup signups", "info": "The List ID from Klaviyo → Lists & Segments → [your list] → Settings. e.g. 'XyZ123'. Leave blank to use Shopify contact form fallback." },
+      { "type": "text", "id": "klaviyo_experience_list_id", "label": "Klaviyo List ID — 5-Day Experience signups", "info": "Separate list for the free experience signups so you can send the 5-day email sequence. Leave blank to share the same list as the popup." },
+      { "type": "text", "id": "klaviyo_footer_list_id", "label": "Klaviyo List ID — Footer newsletter", "info": "Optional separate list for footer email signups." }
     ]
   },
 
