@@ -1,0 +1,40 @@
+{% comment %}
+  PLAYMATE LABS — Inline Keyword Colour Snippet
+  File: snippets/highlight-text.liquid
+  
+  Usage: {% render 'highlight-text', text: 'We are rewriting date night', highlight: 'date night', color: settings.highlight_word_color %}
+  
+  This snippet splits a text string into parts, applying a highlight colour
+  to any occurrence of the 'highlight' keyword(s). Supports multiple keywords
+  separated by | pipe character.
+  
+  Params:
+    text        — full sentence/heading text
+    highlight   — word or phrase to colour (or pipe-separated list: "word1|word2")
+    color       — CSS colour value (hex, rgb, var()) — defaults to --gold
+    weight      — font-weight for highlighted word (optional, defaults to inherit)
+    style       — font-style for highlighted word (optional, e.g. italic)
+    class       — extra CSS class for highlighted span
+{% endcomment %}
+
+{%- assign highlight_color = color | default: 'var(--color-gold, #C9A96E)' -%}
+{%- assign highlight_weight = weight | default: 'inherit' -%}
+{%- assign highlight_style  = style  | default: 'inherit' -%}
+{%- assign highlight_class  = class  | default: '' -%}
+{%- assign output_text      = text   | default: '' -%}
+
+{%- if highlight != blank and text != blank -%}
+  {%- assign keywords = highlight | split: '|' -%}
+  {%- assign processed = text -%}
+  {%- for kw in keywords -%}
+    {%- assign kw_clean = kw | strip -%}
+    {%- if kw_clean != blank -%}
+      {%- assign span_open  = '<span class="highlight-word ' | append: highlight_class | append: '" style="color:' | append: highlight_color | append: ';font-weight:' | append: highlight_weight | append: ';font-style:' | append: highlight_style | append: ';">' -%}
+      {%- assign span_close = '</span>' -%}
+      {%- assign processed  = processed | replace: kw_clean, span_open | append: kw_clean | append: span_close -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {{ processed }}
+{%- else -%}
+  {{ text }}
+{%- endif -%}

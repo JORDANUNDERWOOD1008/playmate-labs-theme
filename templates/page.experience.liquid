@@ -1,66 +1,102 @@
 {% comment %}
-  PLAYMATE LABS — 5-DAY VIRTUAL SENSORY EXPERIENCE PAGE
+  PLAYMATE LABS — 5-DAY SENSORY EXPERIENCE PAGE  v3
   File: templates/page.experience.liquid
-  Assign to page handle: 5-day-experience
+  Used for: /pages/5-day-experience  or  /pages/experience
+  Mirrors: https://njpvfxya.gensparkspace.com/experience.html
 {% endcomment %}
 
 {{ 'experience.css' | asset_url | stylesheet_tag }}
 
-{%- comment -%} HERO {%- endcomment -%}
-<section class="experience-hero">
-  <div class="experience-hero-bg">
-    <div class="experience-hero-gradient"></div>
-  </div>
-  <div class="container experience-hero-content animate-fadeInUp">
-    <span class="badge badge-gold" style="margin-bottom:1.5rem;">Free for a limited time</span>
-    <h1 style="font-family:var(--font-display);font-size:clamp(2.75rem,6vw,5.5rem);font-weight:300;line-height:1.0;letter-spacing:-0.04em;color:var(--cream);margin-bottom:1.5rem;">
-      The 5-Day<br><em style="color:var(--gold-light);">Sensory Experience</em>
-    </h1>
-    <p style="font-size:1.0625rem;color:rgba(245,239,230,0.65);max-width:560px;margin:0 auto 2.5rem;">
-      A free 5-day digital ritual for couples. Each morning, an experience arrives in your inbox — a sensory challenge, a conversation prompt, a small act of intimacy designed around modern relationship science.
-    </p>
-    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
-      <a href="#experience-signup" class="btn btn-gold btn-xl">Start Free Today</a>
-      <a href="#how-it-works" class="btn btn-ghost btn-xl">How It Works</a>
-    </div>
-    <div style="display:flex;gap:2rem;justify-content:center;margin-top:2.5rem;flex-wrap:wrap;">
-      <div style="text-align:center;">
-        <p style="font-family:var(--font-serif);font-size:1.75rem;color:var(--cream);">5</p>
-        <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;">Days</p>
+<style>
+  :root {
+    {% if settings.exp_accent_color != blank %}--exp-accent: {{ settings.exp_accent_color }};{% endif %}
+    {% if settings.exp_hero_bg != blank %}--exp-hero-bg: {{ settings.exp_hero_bg }};{% endif %}
+  }
+</style>
+
+<!-- ===== HERO ===== -->
+<section class="exp-hero">
+  <div class="exp-hero-bg" {% if settings.exp_hero_image %}style="background-image:url('{{ settings.exp_hero_image | img_url: '1800x' }}');"{% endif %}>
+    <div class="exp-hero-overlay"></div>
+    <div class="container exp-hero-inner">
+      <div class="exp-hero-badges">
+        <span class="exp-badge">{{ settings.exp_badge_free | default: '100% Free' }}</span>
+        <span class="exp-badge">{{ settings.exp_badge_card | default: 'No credit card required' }}</span>
       </div>
-      <div style="text-align:center;">
-        <p style="font-family:var(--font-serif);font-size:1.75rem;color:var(--cream);">100%</p>
-        <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;">Free</p>
+      <h1 class="exp-hero-heading">
+        {{ settings.exp_hero_line1 | default: 'Five days to make' }}<br>
+        <em style="color:{{ settings.exp_accent_color | default: 'var(--gold)' }};">{{ settings.exp_hero_italic | default: 'date night' }}</em>
+        {{ settings.exp_hero_line2 | default: 'feel new.' }}
+      </h1>
+      <p class="exp-hero-sub">{{ settings.exp_hero_subtext | default: 'A free 5-day digital date night experience designed for modern couples. Flirty games, sensory rituals and playful prompts — one chapter per day, delivered straight to your inbox.' }}</p>
+
+      {%- comment -%} Signup form {%- endcomment -%}
+      <div class="exp-hero-form" id="signup-form">
+        {%- form 'customer' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter,5-day-experience,free-experience">
+          {%- if form.posted_successfully? -%}
+            <div class="exp-success-msg">
+              <span style="font-size:1.5rem;">🌹</span>
+              <div>
+                <strong style="font-family:var(--font-serif);font-size:1.125rem;display:block;margin-bottom:0.25rem;">{{ settings.exp_success_heading | default: 'You\'re in!' }}</strong>
+                {{ settings.exp_success_subtext | default: 'Day 1: Curiosity arrives tomorrow morning. Check your inbox.' }}
+              </div>
+            </div>
+          {%- else -%}
+            <div class="exp-form-row">
+              <input type="email" name="contact[email]" placeholder="{{ settings.exp_email_placeholder | default: 'Your email address' }}" class="exp-email-input" required aria-label="Email address">
+              <button type="submit" class="btn btn-gold exp-submit-btn">
+                {{ settings.exp_cta_text | default: 'Unlock Free Experience' }}
+              </button>
+            </div>
+            <p class="exp-form-footnote">{{ settings.exp_form_footnote | default: 'No spam. Unsubscribe anytime. Your details are never shared.' }}</p>
+          {%- endif -%}
+        {%- endform -%}
       </div>
-      <div style="text-align:center;">
-        <p style="font-family:var(--font-serif);font-size:1.75rem;color:var(--cream);">4.9★</p>
-        <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;">2,400 couples</p>
+
+      {%- comment -%} Social proof strip {%- endcomment -%}
+      <div class="exp-social-proof">
+        <span class="star-rating" style="font-size:0.875rem;">★★★★★</span>
+        <span style="font-size:0.875rem;color:rgba(245,239,230,0.75);">{{ settings.exp_social_proof | default: '14,000+ couples have already started.' }}</span>
+        <span class="exp-trending-badge">🔥 {{ settings.exp_trending_label | default: 'Trending' }}</span>
       </div>
     </div>
   </div>
 </section>
 
-{%- comment -%} HOW IT WORKS {%- endcomment -%}
-<section class="section" id="how-it-works" style="padding:6rem 0;">
+<!-- ===== 5 DAYS BREAKDOWN ===== -->
+<section class="section exp-days">
   <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow">The Process</span>
-      <h2 class="heading-xl">Five days. Five experiences.<br>One couple.</h2>
-      <div class="section-divider"></div>
-      <p>No app downloads. No subscriptions required. Just show up for each other — your inbox does the rest.</p>
+    <div class="section-header" style="text-align:center;margin-bottom:3rem;">
+      <span class="section-eyebrow" style="color:{{ settings.exp_accent_color | default: 'var(--gold)' }};">{{ settings.exp_days_eyebrow | default: 'What Happens Each Day' }}</span>
+      <h2 style="font-family:var(--font-serif);font-size:2.25rem;color:{{ settings.exp_heading_color | default: 'var(--espresso)' }};">{{ settings.exp_days_heading | default: 'Five chapters. Each one unforgettable.' }}</h2>
     </div>
-    <div class="experience-days-grid">
-      {%- assign days = "Day 1: The Sense Audit|Day 2: The Ritual Meal|Day 3: The Written Word|Day 4: The Blindfold Hour|Day 5: The Memory Map" | split: '|' -%}
-      {%- assign day_descs = "A guided exercise to rediscover how you each experience pleasure. Taste, sound, scent, touch — each sense explored separately and then together.|Cook a meal designed around one shared flavour memory. We give you the framework. You bring the ingredients and the conversation.|Write letters to each other — not to send immediately. We give you the prompts. The rest is yours.|One partner leads, one follows. A structured sensory experience that builds trust and presence.|Create a shared map of your favourite moments together. Where they happened. What you felt. What you want to recreate." | split: '|' -%}
-      {%- assign day_icons = "👁|🍽|📝|🖤|🗺" | split: '|' -%}
-      {%- for day in days -%}
-        {%- assign day_parts = day | split: ': ' -%}
-        <div class="experience-day-card reveal" data-delay="{{ forloop.index0 }}">
-          <div class="experience-day-num">{{ forloop.index }}</div>
-          <div class="experience-day-icon">{{ day_icons[forloop.index0] }}</div>
-          <div>
-            <h3 class="experience-day-title">{{ day_parts[1] }}</h3>
-            <p class="experience-day-desc">{{ day_descs[forloop.index0] }}</p>
+
+    <div class="exp-days-list">
+      {%- assign day_names = 'Curiosity,Play,Sensory,Adventure,Invitation' | split: ',' -%}
+      {%- assign day_icons = '🌹,🎮,✨,🌙,🏆' | split: ',' -%}
+      {%- assign day_default_descs = 'Rediscover each other through 10 questions you\'ve never asked. The ones you\'re slightly nervous to answer. The ones that make conversation feel like foreplay.,A competitive sensory challenge — who knows the other better? Scored live with forfeits and rewards designed to make you both laugh flirt and reveal small truths.,A guided 20-minute ritual using things already in your home. Touch taste scent and sound — experienced differently when done together with intention. This is the one people screenshot.,A secret location date night prompt — designed to surprise the person you\'re with. Instructions sealed until you\'ve both committed. Then opened together at a mystery moment.,Your personal welcome into the Playmate world. A reflection ritual a curated recommendation and an exclusive offer to take the experience further with our first Drop kit.' | split: ',' -%}
+      {%- assign day_challenges = '"What\'s a version of yourself your partner has never seen?","Name your partner\'s three favourite physical sensations. Go.","Close your eyes. Eat one thing slowly. Describe what you taste without using flavour words.","Plan something for tomorrow. One rule: they can\'t know what it is until you\'ve arrived.","Write one sentence about tonight. Read it aloud."' | split: '","' -%}
+      {%- assign day_times = '20–30 minutes,25–40 minutes,20–25 minutes,30–45 minutes,30 minutes' | split: ',' -%}
+
+      {%- for i in (1..5) -%}
+        {%- assign day_name_key = 'exp_day_' | append: i | append: '_name' -%}
+        {%- assign day_desc_key = 'exp_day_' | append: i | append: '_desc' -%}
+        {%- assign day_challenge_key = 'exp_day_' | append: i | append: '_challenge' -%}
+        {%- assign day_time_key = 'exp_day_' | append: i | append: '_time' -%}
+        {%- assign day_icon_key = 'exp_day_' | append: i | append: '_icon' -%}
+
+        <div class="exp-day-card">
+          <div class="exp-day-number">Day {{ i }}</div>
+          <div class="exp-day-icon">{{ settings[day_icon_key] | default: day_icons[forloop.index0] }}</div>
+          <div class="exp-day-body">
+            <h3 class="exp-day-title" style="color:{{ settings.exp_accent_color | default: 'var(--gold)' }};">{{ settings[day_name_key] | default: day_names[forloop.index0] }}</h3>
+            <p class="exp-day-desc">{{ settings[day_desc_key] | default: day_default_descs[forloop.index0] }}</p>
+            <div class="exp-day-challenge">
+              <span class="exp-challenge-label">Today's Challenge</span>
+              <blockquote class="exp-challenge-quote">{{ settings[day_challenge_key] | default: day_challenges[forloop.index0] }}</blockquote>
+            </div>
+            <span class="exp-day-time"><i class="fas fa-clock" style="color:var(--gold);margin-right:0.375rem;"></i>{{ settings[day_time_key] | default: day_times[forloop.index0] }}</span>
           </div>
         </div>
       {%- endfor -%}
@@ -68,80 +104,101 @@
   </div>
 </section>
 
-{%- comment -%} TESTIMONIALS {%- endcomment -%}
-<section class="section bg-dark" style="padding:5rem 0;">
+<!-- ===== WHO IT'S FOR ===== -->
+<section class="section exp-who" style="background:{{ settings.exp_who_bg | default: 'var(--cream-off)' }};">
   <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow" style="color:var(--gold);">Real Couples</span>
-      <h2 class="heading-xl text-cream">What they said after Day 5.</h2>
+    <div class="section-header" style="text-align:center;margin-bottom:2.5rem;">
+      <span class="section-eyebrow" style="color:{{ settings.exp_accent_color | default: 'var(--gold)' }};">{{ settings.exp_who_eyebrow | default: 'Is This For Me?' }}</span>
+      <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ settings.exp_heading_color | default: 'var(--espresso)' }};">{{ settings.exp_who_heading | default: 'Built for every kind of couple.' }}</h2>
     </div>
-    <div class="testimonials-grid">
-      {%- assign testimonials = "We hadn't had a proper date night in 7 months. By Day 3 we were laughing at things we'd forgotten we even did together. — Priya & Tom, London|The Blindfold Hour was uncomfortable at first and then it was the most intimate thing we'd done in years. — Marcus & Leila, Manchester|I thought it would be cheesy. It wasn't. It was the most intentional 5 days we've had since we first started dating. — Chiara & Jules, Bristol" | split: '|' -%}
-      {%- for quote in testimonials -%}
-        {%- assign quote_parts = quote | split: ' — ' -%}
-        <div class="testimonial-card reveal" data-delay="{{ forloop.index0 }}">
-          <div class="star-rating" style="margin-bottom:0.75rem;">★★★★★</div>
-          <p class="testimonial-text">"{{ quote_parts[0] }}"</p>
-          <p class="testimonial-author">— {{ quote_parts[1] }}</p>
-        </div>
-      {%- endfor -%}
+    <div class="exp-who-grid">
+      <div class="exp-who-card">
+        <div class="exp-who-icon">👫</div>
+        <h3 style="color:{{ settings.exp_who_title_color | default: 'var(--espresso)' }};">{{ settings.exp_who_1_title | default: 'Established Couples' }}</h3>
+        <p>{{ settings.exp_who_1_desc | default: 'You\'ve been together a while and want to bring back that feeling of discovery. The 5-day experience creates new conversation, new play, new rituals.' }}</p>
+      </div>
+      <div class="exp-who-card">
+        <div class="exp-who-icon">💫</div>
+        <h3 style="color:{{ settings.exp_who_title_color | default: 'var(--espresso)' }};">{{ settings.exp_who_2_title | default: 'Newly Dating' }}</h3>
+        <p>{{ settings.exp_who_2_desc | default: 'You\'ve just started and want to accelerate depth and intimacy in a way that feels natural, playful and a bit electric. This was built for you.' }}</p>
+      </div>
+      <div class="exp-who-card">
+        <div class="exp-who-icon">🎁</div>
+        <h3 style="color:{{ settings.exp_who_title_color | default: 'var(--espresso)' }};">{{ settings.exp_who_3_title | default: 'Sending as a Gift' }}</h3>
+        <p>{{ settings.exp_who_3_desc | default: 'Buy the experience for someone else. We\'ll send them the daily prompts with a gift message from you. Thoughtful, personal and surprisingly impactful.' }}</p>
+      </div>
     </div>
   </div>
 </section>
 
-{%- comment -%} SIGN UP FORM {%- endcomment -%}
-<section class="section" id="experience-signup" style="padding:6rem 0;">
-  <div class="container">
-    <div style="max-width:560px;margin:0 auto;" class="reveal">
-      <div style="text-align:center;margin-bottom:2.5rem;">
-        <span class="section-eyebrow" style="color:var(--gold);">Free Access</span>
-        <h2 style="font-family:var(--font-serif);font-size:clamp(2rem,4vw,3rem);margin:1rem 0 1rem;">
-          Start your free 5-day experience today.
-        </h2>
-        <p style="color:var(--text-muted);max-width:440px;margin:0 auto;">
-          Day 1 arrives in your inbox within minutes. All you need is each other.
-        </p>
-      </div>
-      {%- form 'customer', id: 'experience-signup-form' -%}
-        <input type="hidden" name="contact[tags]" value="newsletter,experience-signup,5-day-experience">
-        <div style="display:flex;flex-direction:column;gap:0.875rem;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.875rem;">
-            <input type="text" name="contact[first_name]" placeholder="Your first name" class="form-input" required>
-            <input type="text" name="contact[last_name]" placeholder="Partner's first name" class="form-input" required>
-          </div>
-          <input type="email" name="contact[email]" placeholder="Your email address" class="form-input" required autocomplete="email">
-          <input type="tel" name="contact[phone]" placeholder="Phone number (optional daily SMS reminders)" class="form-input" autocomplete="tel">
-          <button type="submit" class="btn btn-gold btn-xl" style="width:100%;justify-content:center;">
-            Start the Free Experience
-          </button>
-        </div>
-        <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.75rem;text-align:center;">
-          Free. No card required. Unsubscribe anytime. Your data is safe.
-        </p>
+<!-- ===== FULL SIGNUP SECTION ===== -->
+<section class="section exp-signup-full" style="background:linear-gradient(135deg,{{ settings.exp_cta_bg_from | default: 'var(--espresso)' }} 0%,{{ settings.exp_cta_bg_to | default: '#3D1A2E' }} 100%);">
+  <div class="container" style="max-width:640px;text-align:center;">
+    <span class="section-eyebrow" style="color:{{ settings.exp_accent_color | default: 'var(--gold)' }};">{{ settings.exp_signup_eyebrow | default: 'Free. Start Tomorrow.' }}</span>
+    <h2 style="font-family:var(--font-serif);font-size:2.25rem;color:{{ settings.exp_cta_heading_color | default: 'var(--cream)' }};margin:0.75rem 0 0.5rem;">
+      {{ settings.exp_signup_heading_1 | default: 'Unlock the 5-Day' }}<br>
+      <em style="color:{{ settings.exp_accent_color | default: 'var(--gold)' }};">{{ settings.exp_signup_heading_italic | default: 'Sensory Experience' }}</em>
+    </h2>
+
+    <div class="exp-what-you-get">
+      <h4 style="color:rgba(245,239,230,0.6);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.875rem;">{{ settings.exp_what_label | default: 'What You Get' }}</h4>
+      <ul class="exp-get-list">
+        {%- assign get_items = settings.exp_what_you_get | default: '5 daily emails — delivered each morning,Interactive games challenges and rituals,PDF ritual guides for each day,Mobile-optimised experience,Spotify playlist curated for each day,Day 5: exclusive welcome offer into Playmate' -%}
+        {%- assign get_list = get_items | split: ',' -%}
+        {%- for item in get_list -%}
+          <li><i class="fas fa-check" style="color:var(--gold);margin-right:0.5rem;"></i>{{ item | strip }}</li>
+        {%- endfor -%}
+      </ul>
+    </div>
+
+    <div class="exp-hero-form" style="margin-top:2rem;" id="signup-form-2">
+      {%- form 'customer' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter,5-day-experience">
         {%- if form.posted_successfully? -%}
-          <div class="form-success" style="margin-top:1.25rem;text-align:center;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-            Day 1 is on its way to your inbox. See you on the other side. ✨
+          <div class="exp-success-msg">
+            <span style="font-size:1.5rem;">🌹</span>
+            <p style="color:var(--cream);">{{ settings.exp_success_subtext | default: 'Day 1: Curiosity arrives tomorrow morning.' }}</p>
           </div>
+        {%- else -%}
+          <div class="exp-form-row">
+            <input type="email" name="contact[email]" placeholder="{{ settings.exp_email_placeholder | default: 'Your email address' }}" class="exp-email-input" required>
+            <button type="submit" class="btn btn-gold exp-submit-btn">{{ settings.exp_cta_text | default: 'Unlock Free Access' }}</button>
+          </div>
+          <p class="exp-form-footnote">{{ settings.exp_form_footnote | default: 'No spam. Unsubscribe anytime.' }}</p>
         {%- endif -%}
       {%- endform -%}
     </div>
   </div>
 </section>
 
-{%- comment -%} UPSELL SECTION {%- endcomment -%}
-<section class="section bg-dark" style="padding:5rem 0;">
+<!-- ===== TESTIMONIALS ===== -->
+<section class="section">
   <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow" style="color:var(--gold);">Enhance the Experience</span>
-      <h2 class="heading-xl text-cream">Make it physical.</h2>
-      <div class="section-divider" style="background:var(--gold);"></div>
-      <p style="color:rgba(245,239,230,0.65);">Pair your 5-day experience with products designed around each day's ritual.</p>
-    </div>
-    <div class="product-grid product-grid-3">
-      {%- for product in collections['ritual-add-ons'].products limit: 3 -%}
-        {% render 'product-card', product: product %}
+    <div class="testimonials-grid">
+      {%- assign exp_default_quotes = 'Day 3 — the sensory ritual — completely changed the energy between us. We both cried a little. I then bought the full kit immediately after.,The questions on Day 1 led to a 4-hour conversation we\'d never had in 3 years of dating. I cannot explain how good this felt. For free.,The writing is exceptional. The prompts are intelligent without being clinical. This feels like it was written by someone who actually understands relationships.' | split: ',' -%}
+      {%- assign exp_default_authors = 'Emma & Sam · London,Marcus & Jo · Together 3 years,Rachel T. · Manchester' | split: ',' -%}
+      {%- for i in (1..3) -%}
+        {%- assign t_key = 'exp_testimonial_' | append: i | append: '_text' -%}
+        {%- assign a_key = 'exp_testimonial_' | append: i | append: '_author' -%}
+        <div class="testimonial-card">
+          <div class="star-rating" style="font-size:1rem;margin-bottom:0.75rem;">★★★★★</div>
+          <p class="testimonial-text">"{{ settings[t_key] | default: exp_default_quotes[forloop.index0] }}"</p>
+          <p class="testimonial-author">— {{ settings[a_key] | default: exp_default_authors[forloop.index0] }}</p>
+        </div>
       {%- endfor -%}
     </div>
+  </div>
+</section>
+
+<!-- ===== FENCE-SITTER CTA ===== -->
+<section class="section" style="background:{{ settings.exp_fence_bg | default: 'var(--cream-off)' }};text-align:center;">
+  <div class="container" style="max-width:560px;">
+    <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ settings.exp_fence_heading_color | default: 'var(--espresso)' }};margin-bottom:1rem;">
+      {{ settings.exp_fence_heading_1 | default: 'It\'s free. It\'s 20 minutes.' }}<br>
+      <span style="color:{{ settings.exp_accent_color | default: 'var(--gold)' }};">{{ settings.exp_fence_heading_accent | default: 'And it might change everything.' }}</span>
+    </h2>
+    <p style="color:var(--text-muted);margin-bottom:2rem;">{{ settings.exp_fence_sub | default: 'Thousands of couples have called it the best date night investment they\'ve made. It costs nothing to try.' }}</p>
+    <a href="#signup-form" class="btn btn-primary">{{ settings.exp_fence_cta | default: 'Unlock Free Experience' }}</a>
+    <p style="font-size:0.8125rem;color:var(--text-muted);margin-top:1rem;">{{ settings.exp_fence_footnote | default: 'No credit card. No commitment. Just 5 days.' }}</p>
   </div>
 </section>

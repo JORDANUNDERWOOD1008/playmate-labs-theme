@@ -1,217 +1,239 @@
 {% comment %}
-  PLAYMATE LABS — EVENTS PAGE TEMPLATE
+  PLAYMATE LABS — EVENTS PAGE  v3
   File: templates/page.events.liquid
-  Assign to page handle: events
+  Used for: /pages/events
+  Mirrors: https://njpvfxya.gensparkspace.com/events.html
 {% endcomment %}
 
 {{ 'events.css' | asset_url | stylesheet_tag }}
 
-{%- comment -%} EVENTS HERO {%- endcomment -%}
-<section class="events-hero">
-  <div class="events-hero-bg">
-    <div class="events-hero-gradient"></div>
-  </div>
-  <div class="container events-hero-content animate-fadeInUp">
-    <span class="section-eyebrow" style="color:var(--gold);">IRL Experiences</span>
-    <h1 style="font-family:var(--font-display);font-size:clamp(2.75rem,5.5vw,5rem);font-weight:300;line-height:1.05;color:var(--cream);margin:1rem 0 1.5rem;">
-      Experiences worth<br><em style="color:var(--gold-light);">dressing up for.</em>
-    </h1>
-    <p style="font-size:1rem;color:rgba(245,239,230,0.65);max-width:500px;margin-bottom:2.5rem;">
-      Sensory date nights, intimate pop-ups and couples mixers across the UK. Beautifully produced. Always limited.
-    </p>
-    <a href="#events-grid" class="btn btn-gold btn-xl">Browse Events</a>
-  </div>
-</section>
+<style>
+  :root {
+    {% if settings.events_accent_color != blank %}--events-accent: {{ settings.events_accent_color }};{% endif %}
+    {% if settings.events_hero_bg != blank %}--events-hero-bg: {{ settings.events_hero_bg }};{% endif %}
+    {% if settings.events_card_bg != blank %}--events-card-bg: {{ settings.events_card_bg }};{% endif %}
+  }
+</style>
 
-{%- comment -%} FILTER BAR {%- endcomment -%}
-<section class="events-filters" style="padding:2rem 0;border-bottom:1px solid var(--border-color);">
-  <div class="container">
-    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
-      <button class="filter-btn active" data-filter="all">All Events</button>
-      <button class="filter-btn" data-filter="date-night">Date Nights</button>
-      <button class="filter-btn" data-filter="pop-up">Pop-Ups</button>
-      <button class="filter-btn" data-filter="mixer">Mixers</button>
-      <button class="filter-btn" data-filter="workshop">Workshops</button>
-      <div style="margin-left:auto;display:flex;gap:0.5rem;">
-        <button class="filter-btn" data-city="all">All Cities</button>
-        <button class="filter-btn" data-city="london">London</button>
-        <button class="filter-btn" data-city="manchester">Manchester</button>
+<!-- ===== HERO ===== -->
+<section class="events-hero">
+  <div class="events-hero-bg" {% if settings.events_hero_image %}style="background-image:url('{{ settings.events_hero_image | img_url: '1800x' }}');"{% endif %}>
+    <div class="events-hero-overlay"></div>
+    <div class="container events-hero-inner">
+      <span class="section-eyebrow" style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings.events_eyebrow | default: 'IRL Experiences' }}</span>
+      <h1 class="events-hero-heading">
+        {{ settings.events_hero_line1 | default: 'Experiences worth' }}<br>
+        <em style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings.events_hero_italic | default: 'dressing up for.' }}</em>
+      </h1>
+      <p class="events-hero-sub">{{ settings.events_hero_sub | default: 'Sensory date nights, couples mixers and immersive pop-up experiences. Designed for modern relationships. Happening near you.' }}</p>
+
+      <div class="events-hero-stats">
+        <div class="events-stat">
+          <span class="events-stat-num" style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings.events_stat_1_num | default: '22+' }}</span>
+          <span class="events-stat-label">{{ settings.events_stat_1_label | default: 'Events in 2024' }}</span>
+        </div>
+        <div class="events-stat-div"></div>
+        <div class="events-stat">
+          <span class="events-stat-num" style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings.events_stat_2_num | default: '2,400+' }}</span>
+          <span class="events-stat-label">{{ settings.events_stat_2_label | default: 'Attendees' }}</span>
+        </div>
+        <div class="events-stat-div"></div>
+        <div class="events-stat">
+          <span class="events-stat-num" style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings.events_stat_3_num | default: '4' }}</span>
+          <span class="events-stat-label">{{ settings.events_stat_3_label | default: 'UK Cities' }}</span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-{%- comment -%} EVENTS GRID — Shopify metaobjects or page metafields {%- endcomment -%}
-<section class="section" id="events-grid" style="padding:4rem 0 6rem;">
+<!-- ===== FILTER BAR ===== -->
+<section class="events-filter-bar">
   <div class="container">
-
-    {%- comment -%}
-      Events are managed as Shopify Metaobjects (type: "event").
-      Each event metaobject has fields:
-        - name (text)
-        - date (date)
-        - time (text)
-        - city (text)
-        - venue (text)
-        - type (text: date-night/pop-up/mixer/workshop)
-        - short_desc (text)
-        - price (text)
-        - capacity (number)
-        - sold_out (boolean)
-        - image (file/image)
-        - slug (text — used as URL anchor)
-    {%- endcomment -%}
-
-    {%- assign events_metaobjects = shop.metaobjects.event.values -%}
-
-    {%- if events_metaobjects != blank and events_metaobjects.size > 0 -%}
-      <div class="events-grid" id="events-grid-inner">
-        {%- for event in events_metaobjects -%}
-          <article class="event-card"
-                   data-filter="{{ event.type.value | handleize }}"
-                   data-city="{{ event.city.value | handleize }}">
-            <div class="event-card-img">
-              {%- if event.image.value -%}
-                <img src="{{ event.image.value | image_url: width: 800 }}"
-                     alt="{{ event.name.value | escape }}"
-                     width="800" height="500"
-                     loading="lazy"
-                     style="width:100%;height:100%;object-fit:cover;">
-              {%- else -%}
-                <div class="img-placeholder" style="height:100%;font-size:4rem;">✨</div>
-              {%- endif -%}
-              {%- if event.sold_out.value -%}
-                <div class="event-sold-out-badge">Sold Out</div>
-              {%- else -%}
-                <div class="event-availability-badge">Booking Open</div>
-              {%- endif -%}
-            </div>
-            <div class="event-card-body">
-              <div class="event-card-meta">
-                <span class="badge badge-burgundy">{{ event.type.value | capitalize }}</span>
-                <span class="event-city">📍 {{ event.city.value }}</span>
-              </div>
-              <h3 class="event-card-title">{{ event.name.value }}</h3>
-              <div class="event-card-date">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                {{ event.date.value | date: "%A, %d %B %Y" }} · {{ event.time.value }}
-              </div>
-              <p class="event-card-desc">{{ event.short_desc.value | truncate: 120 }}</p>
-              <div class="event-card-footer">
-                <span class="event-price">{{ event.price.value }}</span>
-                <a href="/pages/event-{{ event.slug.value }}" class="btn btn-primary btn-sm">
-                  {%- if event.sold_out.value -%}Join Waitlist{%- else -%}Book Now{%- endif -%}
-                </a>
-              </div>
-            </div>
-          </article>
-        {%- endfor -%}
+    <div class="events-filter-inner">
+      <div class="events-filter-group">
+        <span class="events-filter-label">{{ settings.events_filter_city_label | default: 'Filter by city:' }}</span>
+        <div class="events-filter-chips" id="city-filters">
+          <button class="filter-btn active" data-filter="all">All Cities</button>
+          <button class="filter-btn" data-filter="london">London</button>
+          <button class="filter-btn" data-filter="manchester">Manchester</button>
+          <button class="filter-btn" data-filter="birmingham">Birmingham</button>
+          <button class="filter-btn" data-filter="leeds">Leeds</button>
+          <button class="filter-btn" data-filter="edinburgh">Edinburgh</button>
+        </div>
       </div>
-    {%- else -%}
-      {%- comment -%} Placeholder when no metaobjects exist yet {%- endcomment -%}
-      <div class="events-grid" id="events-grid-inner">
-        {%- assign placeholder_events = "The Velvet Hour — A Sensory Dinner for Two|The Curiosity Lab — A Couples Mixer|The Ritual Workshop — At Home Intimacy|The After Hours — Late-Night Pop-Up" | split: '|' -%}
-        {%- assign event_icons = "🍷|🎭|🕯️|🌙" | split: '|' -%}
-        {%- assign event_cities = "London|Manchester|London|Manchester" | split: '|' -%}
-        {%- assign event_types = "Date Night|Mixer|Workshop|Pop-Up" | split: '|' -%}
-        {%- assign event_prices = "£65 per couple|£35 per person|£45 per couple|£55 per couple" | split: '|' -%}
-
-        {%- for event in placeholder_events -%}
-          <article class="event-card">
-            <div class="event-card-img">
-              <div class="img-placeholder" style="height:100%;font-size:4rem;">{{ event_icons[forloop.index0] }}</div>
-              <div class="event-availability-badge">Booking Open</div>
-            </div>
-            <div class="event-card-body">
-              <div class="event-card-meta">
-                <span class="badge badge-burgundy">{{ event_types[forloop.index0] }}</span>
-                <span class="event-city">📍 {{ event_cities[forloop.index0] }}</span>
-              </div>
-              <h3 class="event-card-title">{{ event }}</h3>
-              <div class="event-card-date">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                February 14, 2025 · 7:00pm
-              </div>
-              <p class="event-card-desc">An intimate, beautifully curated evening experience for modern couples.</p>
-              <div class="event-card-footer">
-                <span class="event-price">{{ event_prices[forloop.index0] }}</span>
-                <a href="#event-rsvp" class="btn btn-primary btn-sm">Book Now</a>
-              </div>
-            </div>
-          </article>
-        {%- endfor -%}
+      <div class="events-filter-group">
+        <span class="events-filter-label">{{ settings.events_filter_type_label | default: 'Type:' }}</span>
+        <div class="events-filter-chips" id="type-filters">
+          <button class="filter-btn active" data-filter-type="all">All</button>
+          <button class="filter-btn" data-filter-type="sensory-date-night">Sensory Date Night</button>
+          <button class="filter-btn" data-filter-type="couples-mixer">Couples Mixer</button>
+          <button class="filter-btn" data-filter-type="pop-up">Pop-Up</button>
+        </div>
       </div>
-    {%- endif -%}
-
+    </div>
   </div>
 </section>
 
-{%- comment -%} EVENT RSVP / EMAIL CAPTURE {%- endcomment -%}
-<section class="section bg-dark" id="event-rsvp" style="padding:5rem 0;">
+<!-- ===== EVENTS GRID ===== -->
+<section class="section events-main" id="events-grid">
   <div class="container">
-    <div style="max-width:540px;margin:0 auto;text-align:center;" class="reveal">
-      <span class="section-eyebrow" style="color:var(--gold);">Never Miss an Event</span>
-      <h2 style="font-family:var(--font-serif);font-size:clamp(2rem,3.5vw,2.75rem);color:var(--cream);margin:1rem 0 1rem;">
-        Get first access to every event.
-      </h2>
-      <p style="color:rgba(245,239,230,0.6);margin-bottom:2rem;">
-        Our events sell out fast. Join the events list for pre-sale access, city announcements and exclusive members-only nights.
-      </p>
-      {%- form 'customer', id: 'events-signup-form' -%}
-        <input type="hidden" name="contact[tags]" value="newsletter,events-list">
-        <div style="display:flex;flex-direction:column;gap:0.75rem;max-width:400px;margin:0 auto;">
-          <input type="email" name="contact[email]" placeholder="Email address" class="form-input form-input-dark" required autocomplete="email">
-          <select name="contact[note]" class="form-input form-input-dark" aria-label="Your city">
-            <option value="">Nearest city</option>
-            <option value="London">London</option>
-            <option value="Manchester">Manchester</option>
-            <option value="Birmingham">Birmingham</option>
-            <option value="Bristol">Bristol</option>
-            <option value="Edinburgh">Edinburgh</option>
-            <option value="Other">Other</option>
-          </select>
-          <button type="submit" class="btn btn-gold btn-lg" style="width:100%;justify-content:center;">
-            Get First Access
-          </button>
+
+    {%- comment -%} Schema-driven events — up to 8 {%- endcomment -%}
+    {%- assign event_defaults_icon = '🌙,🥂,🎭,🎵,🌿,✨,🍷,🌸' | split: ',' -%}
+    {%- assign event_defaults_date = '14 Feb,22 Feb,8 Mar,15 Mar,29 Mar,5 Apr,19 Apr,3 May' | split: ',' -%}
+    {%- assign event_defaults_city = 'London,Manchester,London,Birmingham,London,Leeds,Edinburgh,London' | split: ',' -%}
+    {%- assign event_defaults_city_filter = 'london,manchester,london,birmingham,london,leeds,edinburgh,london' | split: ',' -%}
+    {%- assign event_defaults_type = 'Sensory Date Night,Couples Mixer,Pop-Up Experience,Sensory Date Night,Botanical Mixer,Sensory Date Night,Couples Mixer,Sensory Date Night' | split: ',' -%}
+    {%- assign event_defaults_type_filter = 'sensory-date-night,couples-mixer,pop-up,sensory-date-night,couples-mixer,sensory-date-night,couples-mixer,sensory-date-night' | split: ',' -%}
+    {%- assign event_defaults_title = "Valentine's: The Velvet Hour Live,Playmate Pairs — MCR,The Playmate Lab — Popup,Sound & Sense — Midnight Edition,Rooted — Botanical Mixer,First Blush — Spring Edition,Playmate Pairs — Edinburgh,The Sensory Garden — Summer" | split: ',' -%}
+    {%- assign event_defaults_desc = 'An intimate candlelit evening — chocolate connection game and guided rituals. Limited to 40 couples.,Meet other like-minded couples over cocktails sensory games and the Playmate ritual guide.,Our flagship pop-up — explore the full Playmate universe sample products and discover your ritual.,A sensory date night built around music and touch — live ambient performance guided rituals and the Midnight Hours kit.,A spring mixer in a London greenhouse — botanical cocktails the Rooted kit launch and a live plant styling experience.,Our most romantic event format returns — rose & lychee chocolate tasting live performance and connection game tournament.,Northern edition of our most popular social format. Cocktails games and the ritual guide.,An outdoor summer sensory experience — botanical cocktails garden rituals and the new summer drop reveal.' | split: ',' -%}
+    {%- assign event_defaults_price = 'From £75 per couple,From £40 per person,Free — £20,From £75 per couple,From £40 per person,From £75 per couple,From £40 per person,From £65 per couple' | split: ',' -%}
+    {%- assign event_defaults_spots = '8 left,,12 left,15 left,,10 left,Last few,20 left' | split: ',' -%}
+
+    <div class="events-grid" id="events-grid-inner">
+      {%- for i in (1..8) -%}
+        {%- assign e_icon = 'events_event_' | append: i | append: '_icon' -%}
+        {%- assign e_date = 'events_event_' | append: i | append: '_date' -%}
+        {%- assign e_city = 'events_event_' | append: i | append: '_city' -%}
+        {%- assign e_type = 'events_event_' | append: i | append: '_type' -%}
+        {%- assign e_title = 'events_event_' | append: i | append: '_title' -%}
+        {%- assign e_desc = 'events_event_' | append: i | append: '_desc' -%}
+        {%- assign e_price = 'events_event_' | append: i | append: '_price' -%}
+        {%- assign e_url = 'events_event_' | append: i | append: '_url' -%}
+        {%- assign e_spots = 'events_event_' | append: i | append: '_spots' -%}
+        {%- assign e_enable = 'events_event_' | append: i | append: '_enable' -%}
+
+        {%- unless settings[e_enable] == false -%}
+          {%- assign city_val = settings[e_city] | default: event_defaults_city[forloop.index0] -%}
+          {%- assign type_val = settings[e_type] | default: event_defaults_type_filter[forloop.index0] -%}
+          {%- assign spots_val = settings[e_spots] | default: event_defaults_spots[forloop.index0] -%}
+
+          <div class="event-card" data-city="{{ city_val | downcase | replace: ' ', '-' }}" data-type="{{ type_val | downcase | replace: ' ', '-' }}">
+            <div class="event-card-header" style="background:{{ settings.events_card_bg | default: 'linear-gradient(135deg,var(--espresso),#3D1A2E)' }};">
+              <div class="event-card-top">
+                <span class="event-icon">{{ settings[e_icon] | default: event_defaults_icon[forloop.index0] }}</span>
+                {%- assign spots = settings[e_spots] | default: event_defaults_spots[forloop.index0] -%}
+                {%- if spots != blank -%}
+                  <span class="event-spots-badge">{{ spots }}</span>
+                {%- endif -%}
+              </div>
+              <div class="event-date-badge">
+                <span class="event-date-text">{{ settings[e_date] | default: event_defaults_date[forloop.index0] }}</span>
+              </div>
+            </div>
+            <div class="event-card-body">
+              <div class="event-meta">
+                <span class="event-city-tag">{{ settings[e_city] | default: event_defaults_city[forloop.index0] }}</span>
+                <span class="event-type-tag">{{ settings[e_type] | default: event_defaults_type[forloop.index0] }}</span>
+              </div>
+              <h3 class="event-card-title">{{ settings[e_title] | default: event_defaults_title[forloop.index0] }}</h3>
+              <p class="event-card-desc">{{ settings[e_desc] | default: event_defaults_desc[forloop.index0] }}</p>
+              <div class="event-card-footer">
+                <span class="event-price" style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings[e_price] | default: event_defaults_price[forloop.index0] }}</span>
+                {%- if settings[e_url] != blank -%}
+                  <a href="{{ settings[e_url] }}" class="btn btn-primary btn-sm">Book Now</a>
+                {%- else -%}
+                  <a href="{{ pages['event-detail'].url | default: '/pages/event-detail' }}" class="btn btn-primary btn-sm">{{ settings.events_book_cta | default: 'Book Now' }}</a>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} No city CTA {%- endcomment -%}
+    <div class="events-no-city" style="background:{{ settings.events_no_city_bg | default: 'var(--cream-off)' }};border-radius:12px;padding:2.5rem;text-align:center;margin-top:3rem;">
+      <div style="font-size:1.5rem;margin-bottom:0.75rem;">📍</div>
+      <h3 style="font-family:var(--font-serif);margin-bottom:0.5rem;color:{{ settings.events_no_city_heading_color | default: 'var(--espresso)' }};">{{ settings.events_no_city_heading | default: 'Don\'t see your city?' }}</h3>
+      <p style="color:var(--text-muted);margin-bottom:1.25rem;">{{ settings.events_no_city_desc | default: 'We\'re expanding. Register your interest and be first to know when we come to your city.' }}</p>
+      {%- form 'customer' -%}
+        <input type="hidden" name="contact[tags]" value="events,city-interest">
+        <div style="display:flex;gap:0.75rem;max-width:400px;margin:0 auto;flex-wrap:wrap;justify-content:center;">
+          <input type="email" name="contact[email]" placeholder="Your email" class="form-input" style="flex:1;min-width:200px;" required>
+          <button type="submit" class="btn btn-primary btn-sm">{{ settings.events_no_city_cta | default: 'Register Interest' }}</button>
         </div>
-        {%- if form.posted_successfully? -%}
-          <p style="color:var(--gold);font-size:0.875rem;margin-top:1rem;">
-            ✓ You're on the list! We'll be in touch before tickets go live.
-          </p>
-        {%- endif -%}
       {%- endform -%}
     </div>
+
+  </div>
+</section>
+
+<!-- ===== EVENT FORMAT GUIDE ===== -->
+<section class="section events-formats" style="background:{{ settings.events_formats_bg | default: 'var(--espresso)' }};">
+  <div class="container">
+    <div class="section-header" style="text-align:center;margin-bottom:2.5rem;">
+      <span class="section-eyebrow" style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings.events_formats_eyebrow | default: 'Our Event Formats' }}</span>
+      <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ settings.events_formats_heading_color | default: 'var(--cream)' }};">{{ settings.events_formats_heading | default: 'Three ways to experience Playmate Labs.' }}</h2>
+    </div>
+    <div class="events-format-grid">
+
+      <div class="events-format-card">
+        <div class="events-format-icon">🌙</div>
+        <h3 style="color:{{ settings.events_format_title_color | default: 'var(--cream)' }};">{{ settings.events_format_1_title | default: 'Sensory Date Nights' }}</h3>
+        <p style="color:{{ settings.events_format_desc_color | default: 'rgba(245,239,230,0.7)' }};">{{ settings.events_format_1_desc | default: 'Intimate evenings for couples — guided chocolate tastings, ambient environments, ritual play and connection games. Limited to 30–50 couples. Smart casual to formal dress.' }}</p>
+        <span class="events-format-price" style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings.events_format_1_price | default: 'From £75 per couple' }}</span>
+      </div>
+
+      <div class="events-format-card">
+        <div class="events-format-icon">🥂</div>
+        <h3 style="color:{{ settings.events_format_title_color | default: 'var(--cream)' }};">{{ settings.events_format_2_title | default: 'Couples Mixers' }}</h3>
+        <p style="color:{{ settings.events_format_desc_color | default: 'rgba(245,239,230,0.7)' }};">{{ settings.events_format_2_desc | default: 'Social nights for couples and people dating — cocktails, games, conversation starters and the chance to meet other like-minded people. Slightly less structured. Equally excellent.' }}</p>
+        <span class="events-format-price" style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings.events_format_2_price | default: 'From £40 per person' }}</span>
+      </div>
+
+      <div class="events-format-card">
+        <div class="events-format-icon">🎭</div>
+        <h3 style="color:{{ settings.events_format_title_color | default: 'var(--cream)' }};">{{ settings.events_format_3_title | default: 'Pop-Up Experiences' }}</h3>
+        <p style="color:{{ settings.events_format_desc_color | default: 'rgba(245,239,230,0.7)' }};">{{ settings.events_format_3_desc | default: 'Immersive activations and brand pop-ups — sample products, discover your ritual style, meet the Playmate team and get early access to upcoming drops.' }}</p>
+        <span class="events-format-price" style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings.events_format_3_price | default: 'Free — £20' }}</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== NEWSLETTER CTA ===== -->
+<section class="section" style="background:{{ settings.events_newsletter_bg | default: 'var(--cream-off)' }};text-align:center;">
+  <div class="container" style="max-width:560px;">
+    <span class="section-eyebrow" style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings.events_newsletter_eyebrow | default: 'Never Miss an Event' }}</span>
+    <h2 style="font-family:var(--font-serif);font-size:1.875rem;color:{{ settings.events_newsletter_heading_color | default: 'var(--espresso)' }};margin:0.75rem 0 1rem;">
+      {{ settings.events_newsletter_heading_1 | default: 'Get early access to every' }}<br>
+      <span style="color:{{ settings.events_accent_color | default: 'var(--gold)' }};">{{ settings.events_newsletter_heading_accent | default: 'Playmate experience.' }}</span>
+    </h2>
+    <p style="color:var(--text-muted);margin-bottom:1.5rem;">{{ settings.events_newsletter_sub | default: 'Events typically sell out within 48 hours of opening. Join the list to be notified before they go public.' }}</p>
+    {%- form 'customer' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter,events">
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;">
+        <input type="email" name="contact[email]" placeholder="{{ settings.events_newsletter_placeholder | default: 'Your email address' }}" class="form-input" style="max-width:280px;flex:1;" required>
+        <button type="submit" class="btn btn-primary">{{ settings.events_newsletter_cta | default: 'Join Event List' }}</button>
+      </div>
+    {%- endform -%}
   </div>
 </section>
 
 <script>
-  // Events filter
-  document.querySelectorAll('[data-filter]').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const filter = this.dataset.filter;
-      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      document.querySelectorAll('.event-card').forEach(card => {
-        if (filter === 'all' || card.dataset.filter === filter) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+// City filter
+document.querySelectorAll('#city-filters .filter-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('#city-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    this.classList.add('active');
+    var city = this.dataset.filter;
+    document.querySelectorAll('.event-card').forEach(function(card) {
+      card.style.display = (city === 'all' || card.dataset.city === city) ? '' : 'none';
     });
   });
-  document.querySelectorAll('[data-city]').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const city = this.dataset.city;
-      document.querySelectorAll('[data-city]').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      document.querySelectorAll('.event-card').forEach(card => {
-        if (city === 'all' || card.dataset.city === city) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+});
+// Type filter
+document.querySelectorAll('#type-filters .filter-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('#type-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    this.classList.add('active');
+    var type = this.dataset.filterType;
+    document.querySelectorAll('.event-card').forEach(function(card) {
+      card.style.display = (type === 'all' || card.dataset.type === type) ? '' : 'none';
     });
   });
+});
 </script>

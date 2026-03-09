@@ -1,105 +1,194 @@
 {% comment %}
-  PLAYMATE LABS — ABOUT PAGE
+  PLAYMATE LABS — ABOUT PAGE  v3
   File: templates/page.about.liquid
-  Assign to page handle: about
+  Used for: /pages/about
+  Mirrors: https://njpvfxya.gensparkspace.com/about.html
 {% endcomment %}
 
-{%- comment -%} BRAND HERO {%- endcomment -%}
-<section style="min-height:70vh;display:flex;align-items:center;padding:calc(var(--nav-height)+4rem) 0 5rem;background:var(--espresso);position:relative;overflow:hidden;">
-  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,rgba(107,30,58,0.5) 0%,transparent 55%);"></div>
-  <div class="container" style="position:relative;z-index:1;">
-    <div style="max-width:720px;" class="animate-fadeInUp">
-      <span class="section-eyebrow" style="color:var(--gold);">Our Story</span>
-      <h1 style="font-family:var(--font-display);font-size:clamp(3rem,6vw,5.5rem);font-weight:300;color:var(--cream);line-height:1.0;margin:1rem 0 1.5rem;">
-        We believe every couple deserves<br><em style="color:var(--gold-light);">a ritual.</em>
+{{ 'global.css' | asset_url | stylesheet_tag }}
+
+<style>
+  :root {
+    {% if settings.about_accent_color != blank %}--about-accent: {{ settings.about_accent_color }};{% endif %}
+    {% if settings.about_hero_bg_from != blank %}--about-hero-from: {{ settings.about_hero_bg_from }};{% endif %}
+  }
+</style>
+
+<!-- ===== HERO ===== -->
+<section class="about-hero" style="background:linear-gradient(160deg,{{ settings.about_hero_bg_from | default: '#1A0A06' }} 0%,{{ settings.about_hero_bg_to | default: '#3D1A2E' }} 100%);padding:6rem 0 5rem;">
+  <div class="container">
+    <div class="about-hero-inner" style="max-width:700px;">
+      <span class="section-eyebrow" style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_eyebrow | default: 'Our Story' }}</span>
+      <h1 style="font-family:var(--font-serif);font-size:clamp(2rem,5vw,3.25rem);color:{{ settings.about_hero_heading_color | default: 'var(--cream)' }};margin:0.75rem 0 1.5rem;line-height:1.2;">
+        {{ settings.about_hero_heading_1 | default: 'We\'re rewriting' }}<br>
+        {{ settings.about_hero_heading_2 | default: 'how couples do' }}<br>
+        <em style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_hero_heading_italic | default: 'date night.' }}</em>
       </h1>
-      <p style="font-size:1.0625rem;color:rgba(245,239,230,0.65);line-height:1.7;">
-        Playmate Labs was founded by couples who kept saying the same thing: "We need a proper date night." Not dinner at the same restaurant. Not another Netflix evening. Something that required intention. Something worth dressing up for.
-      </p>
+      <p style="font-size:1.0625rem;color:rgba(245,239,230,0.8);line-height:1.7;max-width:580px;">{{ settings.about_hero_sub | default: 'Playmate Labs is the cultural platform for modern relationships — built on sensory products, monthly drops, immersive events and digital rituals.' }}</p>
     </div>
   </div>
 </section>
 
-{%- comment -%} MISSION SECTION {%- endcomment -%}
-<section class="section" style="padding:6rem 0;">
+<!-- ===== THE PROBLEM ===== -->
+<section class="section about-problem">
   <div class="container">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;max-width:1100px;margin:0 auto;" class="responsive-grid">
-      <div class="reveal-left">
-        <div class="img-placeholder" style="height:520px;border-radius:20px;"><span style="font-size:5rem;">🌹</span></div>
-      </div>
-      <div class="reveal-right">
-        <span class="section-eyebrow" style="color:var(--burgundy);">Why We Exist</span>
-        <h2 style="font-family:var(--font-serif);font-size:clamp(1.75rem,3vw,2.5rem);margin:1rem 0 1.5rem;line-height:1.2;">
-          The average couple spends 4 minutes of quality time together daily. We think that's a problem.
-        </h2>
-        <p style="color:var(--text-muted);margin-bottom:1.25rem;line-height:1.7;">
-          Modern life pulls couples apart — not dramatically, but quietly. Different screens, different schedules, a creeping familiarity that replaces curiosity with routine.
-        </p>
-        <p style="color:var(--text-muted);line-height:1.7;">
-          Playmate Labs was built to interrupt that pattern. We design sensory experiences, products and digital rituals that help couples be genuinely present with each other — not just physically in the same room, but mentally, playfully, sensorially together.
+    <div class="about-problem-grid">
+      <div class="about-problem-text">
+        <span class="section-eyebrow" style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_problem_eyebrow | default: 'The Problem' }}</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ settings.about_heading_color | default: 'var(--espresso)' }};margin:0.75rem 0 1.25rem;">{{ settings.about_problem_heading | default: 'Modern relationships lose novelty. We fix that.' }}</h2>
+        <p style="color:var(--text-body);line-height:1.75;margin-bottom:1rem;">{{ settings.about_problem_para_1 | default: 'Research consistently shows that novel shared experiences are the single strongest predictor of long-term relationship satisfaction. But modern life makes novelty hard. We fall into habits. We run out of ideas. Date night becomes dinner and the same TV show.' }}</p>
+        <p style="color:var(--text-body);line-height:1.75;">
+          {{ settings.about_problem_para_2_prefix | default: 'We built Playmate Labs to solve this. Not with therapy or advice — but with' }}
+          <strong style="color:{{ settings.about_accent_color | default: 'var(--burgundy)' }};">{{ settings.about_problem_para_2_bold | default: 'beautiful products, curated experiences and a world worth exploring together.' }}</strong>
         </p>
       </div>
-    </div>
-  </div>
-</section>
-
-{%- comment -%} BRAND VALUES {%- endcomment -%}
-<section class="section bg-dark" style="padding:5rem 0;">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow" style="color:var(--gold);">What We Stand For</span>
-      <h2 class="heading-xl text-cream">The principles behind everything we make.</h2>
-    </div>
-    {%- assign values = "Intentional Design|Sensory Truth|Inclusive Intimacy|Zero Compromise" | split: '|' -%}
-    {%- assign value_descs = "Every product starts with a question: does this make the experience better? If we can't answer yes clearly, we don't make it.|We design around how humans actually experience pleasure — through smell, taste, touch, sound, sight. Not marketing claims. Actual sensory science.|Modern relationships come in all shapes. Our products and experiences are designed for every couple who values novelty and connection.|We don't cut corners on ingredients, design, packaging or experience. Premium isn't a price point — it's a standard." | split: '|' -%}
-    {%- assign value_icons = "✦|🌿|♡|💎" | split: '|' -%}
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2rem;max-width:1000px;margin:0 auto;">
-      {%- for value in values -%}
-        <div class="reveal" data-delay="{{ forloop.index0 }}" style="padding:2rem;border:1px solid rgba(201,169,110,0.2);border-radius:16px;">
-          <div style="font-size:2rem;margin-bottom:1rem;">{{ value_icons[forloop.index0] }}</div>
-          <h3 style="font-family:var(--font-serif);font-size:1.25rem;color:var(--cream);margin-bottom:0.75rem;">{{ value }}</h3>
-          <p style="font-size:0.875rem;color:rgba(245,239,230,0.6);line-height:1.7;">{{ value_descs[forloop.index0] }}</p>
-        </div>
-      {%- endfor -%}
-    </div>
-  </div>
-</section>
-
-{%- comment -%} TEAM {%- endcomment -%}
-<section class="section" style="padding:6rem 0;">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow">The Team</span>
-      <h2 class="heading-xl">Built by people who believe<br>in this.</h2>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2.5rem;max-width:900px;margin:0 auto;">
-      {%- assign team = "Founder & Creative Director|Co-Founder & Product Lead|Head of Experience Design" | split: '|' -%}
-      {%- assign team_icons = "👩|👨|🧑" | split: '|' -%}
-      {%- for role in team -%}
-        <div class="team-card reveal" data-delay="{{ forloop.index0 }}" style="text-align:center;">
-          <div class="img-placeholder" style="width:160px;height:160px;border-radius:50%;margin:0 auto 1.5rem;">
-            <span style="font-size:3rem;position:relative;z-index:1;">{{ team_icons[forloop.index0] }}</span>
+      <div class="about-stats-column">
+        {%- assign default_stat_nums = '67%,94%,3×' | split: ',' -%}
+        {%- assign default_stat_descs = 'of couples report that date nights become predictable within the first 2 years.,of couples who introduced novel sensory rituals reported higher relationship satisfaction after 30 days.,Couples who regularly do structured play are 3x more likely to report relationship satisfaction.' | split: ',' -%}
+        {%- for i in (1..3) -%}
+          {%- assign s_num = 'about_stat_' | append: i | append: '_num' -%}
+          {%- assign s_desc = 'about_stat_' | append: i | append: '_desc' -%}
+          <div class="about-stat-item">
+            <span class="about-stat-num" style="color:{{ settings.about_accent_color | default: 'var(--burgundy)' }};">{{ settings[s_num] | default: default_stat_nums[forloop.index0] }}</span>
+            <p class="about-stat-desc">{{ settings[s_desc] | default: default_stat_descs[forloop.index0] }}</p>
           </div>
-          <p style="font-size:0.8125rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">{{ role }}</p>
-          <p style="font-size:0.875rem;color:var(--text-muted);">Coming soon as we grow.</p>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MISSION ===== -->
+<section class="section about-mission" style="background:{{ settings.about_mission_bg | default: 'var(--espresso)' }};text-align:center;padding:5rem 0;">
+  <div class="container" style="max-width:680px;">
+    <span class="section-eyebrow" style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_mission_eyebrow | default: 'Our Mission' }}</span>
+    <blockquote style="font-family:var(--font-serif);font-size:clamp(1.5rem,4vw,2.25rem);color:{{ settings.about_mission_quote_color | default: 'var(--cream)' }};line-height:1.4;margin:1.5rem 0;font-style:italic;">
+      "{{ settings.about_mission_quote | default: 'To make novelty the default in modern relationships — not the exception.' }}"
+    </blockquote>
+    <p style="color:rgba(245,239,230,0.7);font-size:1rem;line-height:1.75;max-width:580px;margin:0 auto;">{{ settings.about_mission_desc | default: 'We do this through products you can taste and smell and feel. Through drops that arrive like a monthly cultural release. Through events worth dressing up for. And through digital rituals that make intimacy feel playful again.' }}</p>
+  </div>
+</section>
+
+<!-- ===== FOUR PILLARS ===== -->
+<section class="section about-pillars">
+  <div class="container">
+    <div class="section-header" style="text-align:center;margin-bottom:2.5rem;">
+      <span class="section-eyebrow" style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_pillars_eyebrow | default: 'What We Do' }}</span>
+      <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ settings.about_heading_color | default: 'var(--espresso)' }};">{{ settings.about_pillars_heading | default: 'The Playmate Labs universe.' }}</h2>
+    </div>
+    <div class="about-pillars-grid">
+      {%- assign default_pillar_icons = '🍫,📦,✨,🎮' | split: ',' -%}
+      {%- assign default_pillar_titles = 'Sensory Products,Monthly Drops,Immersive Events,Digital Play' | split: ',' -%}
+      {%- assign default_pillar_descs = 'Consumables ritual kits and beautiful objects designed to create shared sensory experiences.,Limited themed date night kits released like a cultural product. 200 kits. A new theme every month.,IRL experiences — sensory date nights couples mixers and pop-ups across the UK and beyond.,The 5-day experience digital rituals companion app access and a growing world of playful digital intimacy tools.' | split: ',' -%}
+      {%- for i in (1..4) -%}
+        {%- assign p_icon = 'about_pillar_' | append: i | append: '_icon' -%}
+        {%- assign p_title = 'about_pillar_' | append: i | append: '_title' -%}
+        {%- assign p_desc = 'about_pillar_' | append: i | append: '_desc' -%}
+        <div class="about-pillar-card">
+          <div class="about-pillar-icon">{{ settings[p_icon] | default: default_pillar_icons[forloop.index0] }}</div>
+          <h3 style="font-family:var(--font-serif);font-size:1.25rem;color:{{ settings.about_pillar_title_color | default: 'var(--espresso)' }};margin-bottom:0.625rem;">{{ settings[p_title] | default: default_pillar_titles[forloop.index0] }}</h3>
+          <p style="font-size:0.9rem;color:var(--text-muted);line-height:1.65;">{{ settings[p_desc] | default: default_pillar_descs[forloop.index0] }}</p>
         </div>
       {%- endfor -%}
     </div>
   </div>
 </section>
 
-{%- comment -%} CTA SECTION {%- endcomment -%}
-<section class="section bg-dark" style="padding:5rem 0;">
-  <div class="container" style="text-align:center;max-width:600px;margin:0 auto;">
-    <h2 style="font-family:var(--font-serif);font-size:clamp(2rem,4vw,3rem);color:var(--cream);margin-bottom:1rem;">
-      Come play with us.
-    </h2>
-    <p style="color:rgba(245,239,230,0.6);margin-bottom:2.5rem;font-size:1rem;">
-      Start with the free 5-day experience. It costs nothing and might change everything.
-    </p>
-    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-      <a href="{{ pages['5-day-experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-gold btn-xl">Start Free Experience</a>
-      <a href="{{ routes.all_products_collection_url }}" class="btn btn-ghost btn-xl">Shop Products</a>
+<!-- ===== FOUNDERS NOTE ===== -->
+<section class="section about-founders" style="background:{{ settings.about_founders_bg | default: 'var(--cream-off)' }};">
+  <div class="container">
+    <div class="about-founders-grid">
+      <div class="about-founders-image">
+        {%- if settings.about_founder_image != blank -%}
+          <img src="{{ settings.about_founder_image | img_url: '500x600', crop: 'center' }}" alt="{{ settings.about_founder_name | default: 'Founders' }}" style="width:100%;border-radius:12px;">
+        {%- else -%}
+          <div class="about-founder-placeholder" style="background:linear-gradient(135deg,var(--espresso),#3D1A2E);border-radius:12px;aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;color:var(--cream);">
+              <div style="font-size:4rem;margin-bottom:1rem;">👤</div>
+              <p style="font-family:var(--font-serif);font-size:1.125rem;">{{ settings.about_founder_name | default: 'Playmate Labs' }}</p>
+              <p style="font-size:0.8125rem;color:rgba(245,239,230,0.6);">{{ settings.about_founder_location | default: 'London' }}</p>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+      <div class="about-founders-text">
+        <span class="section-eyebrow" style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_founders_eyebrow | default: 'The Founders' }}</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ settings.about_heading_color | default: 'var(--espresso)' }};margin:0.75rem 0 1.5rem;">{{ settings.about_founders_heading | default: 'A Note From Us' }}</h2>
+        <div class="about-founders-body" style="font-size:1rem;line-height:1.8;color:{{ settings.about_body_text_color | default: 'var(--text-body)' }};">
+          {%- if page.content != blank -%}
+            {{ page.content }}
+          {%- else -%}
+            <p>{{ settings.about_founders_para_1 | default: 'Playmate Labs started as a conversation between two people who loved each other and had run out of interesting things to do about it. We\'d done the restaurants, the weekends away. We kept returning to the same routines.' }}</p>
+            <p>{{ settings.about_founders_para_2 | default: 'We started experimenting — with sensory rituals, with structured play, with small ceremonies built around taste and touch. The evenings we remember most weren\'t the expensive ones. They were the ones where something unusual happened.' }}</p>
+            <p>{{ settings.about_founders_para_3 | default: 'So we built a brand around that instinct. Products with ritual built in. Drops that arrive like a cultural moment. Events that feel like nothing else. A community of people who believe that relationships are worth the effort of doing them well.' }}</p>
+            <p><strong style="color:{{ settings.about_accent_color | default: 'var(--burgundy)' }};">{{ settings.about_founders_sign_off | default: 'Welcome to Playmate Labs. Let\'s see what you two can create.' }}</strong></p>
+          {%- endif -%}
+        </div>
+        {%- if settings.about_founder_name != blank -%}
+          <div class="about-founder-sig" style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border-color);">
+            <strong style="font-family:var(--font-serif);font-size:1.125rem;display:block;color:{{ settings.about_heading_color | default: 'var(--espresso)' }};">{{ settings.about_founder_name }}</strong>
+            <span style="font-size:0.875rem;color:var(--text-muted);">{{ settings.about_founder_title | default: 'Founder & Creative Director, Playmate Labs' }}</span>
+          </div>
+        {%- endif -%}
+      </div>
     </div>
   </div>
 </section>
+
+<!-- ===== BRAND VALUES ===== -->
+{%- if settings.about_show_values -%}
+<section class="section about-values">
+  <div class="container">
+    <div class="section-header" style="text-align:center;margin-bottom:2.5rem;">
+      <span class="section-eyebrow" style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_values_eyebrow | default: 'What We Stand For' }}</span>
+      <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ settings.about_heading_color | default: 'var(--espresso)' }};">{{ settings.about_values_heading | default: 'Our Values' }}</h2>
+    </div>
+    <div class="about-values-grid">
+      {%- assign default_val_titles = 'Intentional,Sensory,Sustainable,Honest' | split: ',' -%}
+      {%- assign default_val_descs = 'Every product is designed with a specific ritual in mind — not just aesthetically pleasing but experientially purposeful.,We work with all five senses to create moments that are truly felt not just experienced.,Eco packaging ethically sourced ingredients carbon-neutral shipping.,No greenwashing no empty claims. Everything we make works because we test it ourselves first.' | split: ',' -%}
+      {%- for i in (1..4) -%}
+        {%- assign v_title = 'about_value_' | append: i | append: '_title' -%}
+        {%- assign v_desc = 'about_value_' | append: i | append: '_desc' -%}
+        <div class="about-value-card">
+          <div class="about-value-number" style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">0{{ i }}</div>
+          <h3 style="font-family:var(--font-serif);font-size:1.25rem;color:{{ settings.about_pillar_title_color | default: 'var(--espresso)' }};margin:0.5rem 0 0.625rem;">{{ settings[v_title] | default: default_val_titles[forloop.index0] }}</h3>
+          <p style="font-size:0.9rem;color:var(--text-muted);line-height:1.65;">{{ settings[v_desc] | default: default_val_descs[forloop.index0] }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+<!-- ===== START CTA ===== -->
+<section class="section" style="background:{{ settings.about_cta_bg | default: 'var(--espresso)' }};text-align:center;">
+  <div class="container" style="max-width:480px;">
+    <h2 style="font-family:var(--font-serif);font-size:1.875rem;color:{{ settings.about_cta_heading_color | default: 'var(--cream)' }};margin-bottom:1rem;">{{ settings.about_cta_heading | default: 'Start here.' }}</h2>
+    <p style="color:rgba(245,239,230,0.7);margin-bottom:2rem;">{{ settings.about_cta_sub | default: 'Free 5-day experience. Or shop the latest drop. Either way, you\'re in the right place.' }}</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+      <a href="{{ pages['experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-gold">{{ settings.about_cta_primary | default: 'Try Free Experience' }}</a>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn-ghost">{{ settings.about_cta_secondary | default: 'Shop the Latest Drop' }}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+.about-problem-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start; }
+.about-stat-item { background:var(--white); border:1px solid var(--border-color); border-radius:12px; padding:1.5rem; margin-bottom:1rem; }
+.about-stat-num { display:block; font-family:var(--font-serif); font-size:2.5rem; margin-bottom:0.375rem; }
+.about-stat-desc { font-size:0.875rem; color:var(--text-muted); margin:0; line-height:1.55; }
+.about-pillars-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; }
+.about-pillar-card { text-align:center; padding:2rem 1rem; border:1px solid var(--border-color); border-radius:12px; }
+.about-pillar-icon { font-size:2.5rem; margin-bottom:1rem; }
+.about-founders-grid { display:grid; grid-template-columns:380px 1fr; gap:4rem; align-items:start; }
+.about-values-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; }
+.about-value-card { padding:1.75rem; border:1px solid var(--border-color); border-radius:12px; }
+.about-value-number { font-family:var(--font-serif); font-size:3rem; opacity:0.2; line-height:1; margin-bottom:0.5rem; }
+@media(max-width:900px) {
+  .about-problem-grid, .about-founders-grid { grid-template-columns:1fr; gap:2rem; }
+  .about-pillars-grid, .about-values-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:600px) {
+  .about-pillars-grid, .about-values-grid { grid-template-columns:1fr; }
+}
+</style>
