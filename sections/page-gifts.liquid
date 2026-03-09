@@ -71,7 +71,7 @@
         <span style="font-family:var(--font-serif);font-size:1.125rem;">Not sure what to get?</span>
         <span style="color:var(--text-muted);font-size:0.9375rem;margin-left:0.75rem;">Answer 3 quick questions and we'll suggest the perfect gift.</span>
       </div>
-      <a href="{{ pages['experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-primary btn-sm">Take the Gift Quiz →</a>
+      <a href="{{ section.settings.url_experience | default: '/pages/5-day-experience' }}" class="btn btn-primary btn-sm">Take the Gift Quiz →</a>
     </div>
   </div>
 </section>
@@ -84,37 +84,37 @@
       <h2 style="font-family:var(--font-serif);font-size:2rem;">Shop by Recipient &amp; Occasion</h2>
     </div>
     <div class="gift-category-grid">
-      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=anniversary" class="gift-category-card">
+      <a href="/collections/gifts?sort_by=title&filter.p.tag=anniversary" class="gift-category-card">
         <div class="gift-category-icon">💍</div>
         <h3>Anniversary</h3>
         <p>Mark the milestone with something truly memorable.</p>
         <span class="gift-cat-arrow">→</span>
       </a>
-      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=valentines" class="gift-category-card">
+      <a href="/collections/gifts?sort_by=title&filter.p.tag=valentines" class="gift-category-card">
         <div class="gift-category-icon">🌹</div>
         <h3>Valentine's Day</h3>
         <p>Beyond the clichés — sensory gifts that create real moments.</p>
         <span class="gift-cat-arrow">→</span>
       </a>
-      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=birthday" class="gift-category-card">
+      <a href="/collections/gifts?sort_by=title&filter.p.tag=birthday" class="gift-category-card">
         <div class="gift-category-icon">🎂</div>
         <h3>Birthday</h3>
         <p>A gift for two that's better than one.</p>
         <span class="gift-cat-arrow">→</span>
       </a>
-      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=just-because" class="gift-category-card">
+      <a href="/collections/gifts?sort_by=title&filter.p.tag=just-because" class="gift-category-card">
         <div class="gift-category-icon">✨</div>
         <h3>Just Because</h3>
         <p>The best gifts don't need a reason.</p>
         <span class="gift-cat-arrow">→</span>
       </a>
-      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=new-couples" class="gift-category-card">
+      <a href="/collections/gifts?sort_by=title&filter.p.tag=new-couples" class="gift-category-card">
         <div class="gift-category-icon">💌</div>
         <h3>New Couples</h3>
         <p>Set the tone from the very beginning.</p>
         <span class="gift-cat-arrow">→</span>
       </a>
-      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=long-distance" class="gift-category-card">
+      <a href="/collections/gifts?sort_by=title&filter.p.tag=long-distance" class="gift-category-card">
         <div class="gift-category-icon">✈️</div>
         <h3>Long Distance</h3>
         <p>Stay connected across the miles.</p>
@@ -132,7 +132,7 @@
         <span class="section-eyebrow">Ready to Give</span>
         <h2 style="font-family:var(--font-serif);font-size:2rem;">Gift Sets &amp; Bundles</h2>
       </div>
-      <a href="{{ collections['gifts'].url | default: '/collections/gifts' }}" class="btn btn-ghost btn-sm">View All →</a>
+      <a href="{{ section.settings.url_gifts_collection | default: '/collections/gifts' }}" class="btn btn-ghost btn-sm">View All →</a>
     </div>
     <div class="shop-products-grid">
       {%- for product in collections['gifts'].products limit: 6 -%}
@@ -162,8 +162,8 @@
         <h2 style="font-family:var(--font-serif);font-size:2.25rem;color:var(--cream);margin:0.75rem 0 1rem;">Build a Bespoke<br>Gift Box</h2>
         <p style="color:rgba(245,239,230,0.75);max-width:420px;margin-bottom:1.75rem;">Choose your own combination of consumables, add a personalised message card, and we'll box it beautifully. Pick any 3 items and save 15%.</p>
         <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-          <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="btn btn-gold">Start Building</a>
-          <a href="{{ pages['contact'].url | default: '/pages/contact' }}" class="btn btn-ghost">Corporate Orders</a>
+          <a href="{{ section.settings.url_consumables | default: '/collections/consumables' }}" class="btn btn-gold">Start Building</a>
+          <a href="{{ section.settings.url_contact | default: '/pages/contact' }}" class="btn btn-ghost">Corporate Orders</a>
         </div>
       </div>
       <div class="bundle-full-visual">
@@ -298,7 +298,12 @@
       "id": "gifts_accent_color",
       "label": "Accent colour",
       "default": "#C9A84C"
-    }
+    },
+
+    {"type": "header", "content": "🔗 Button URLs (editable in customiser)"},
+    {"type": "url", "id": "url_gifts_collection", "label": "Shop Gifts"},
+    {"type": "url", "id": "url_consumables", "label": "Consumables"},
+    {"type": "url", "id": "url_contact", "label": "Contact Page"}
   ]
 }
 {% endschema %}

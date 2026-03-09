@@ -142,7 +142,7 @@
       <span class="section-eyebrow" style="color:var(--gold);">Wholesale Enquiries</span>
       <h2 style="font-family:var(--font-serif);font-size:1.875rem;color:var(--cream);margin:0.75rem 0 1rem;">Interested in stocking Playmate Labs?</h2>
       <p style="color:rgba(245,239,230,0.7);max-width:480px;margin:0 auto 2rem;">We partner with boutiques, wellness studios, hotels and lifestyle retailers who share our values. Minimum orders from £250.</p>
-      <a href="{{ pages['contact'].url | default: '/pages/contact' }}?subject=wholesale" class="btn btn-gold">Get in Touch</a>
+      <a href="{{ section.settings.url_contact | default: '/pages/contact' }}?subject=wholesale" class="btn btn-gold">Get in Touch</a>
     </div>
 
   </div>
@@ -231,7 +231,10 @@ function filterStockists() {
       "id": "stockists_hero_subtext",
       "label": "Hero subtext",
       "default": "Find Playmate Labs products in selected retailers across the UK."
-    }
+    },
+
+    {"type": "header", "content": "🔗 Button URLs (editable in customiser)"},
+    {"type": "url", "id": "url_stockists", "label": "Stockists Page"}
   ]
 }
 {% endschema %}

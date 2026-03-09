@@ -57,7 +57,7 @@
     {%- comment -%} Nav Actions {%- endcomment -%}
     <div class="nav-actions">
       {%- if section.settings.show_experience_cta -%}
-        <a href="{{ pages['5-day-experience'].url | default: '/pages/5-day-experience' }}"
+        <a href="{{ section.settings.url_experience | default: '/pages/5-day-experience' }}"
            class="nav-cta"
            data-show-on-scroll>
           Unlock Free Experience
@@ -125,12 +125,12 @@
     {%- endfor -%}
   </ul>
   <div class="mobile-menu-footer">
-    <a href="{{ pages['5-day-experience'].url | default: '/pages/5-day-experience' }}"
+    <a href="{{ section.settings.url_experience | default: '/pages/5-day-experience' }}"
        class="btn btn-primary"
        style="width:100%;justify-content:center;margin-bottom:0.75rem;">
       Unlock Free 5-Day Experience
     </a>
-    <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}"
+    <a href="{{ section.settings.url_monthly_drops | default: '/collections/monthly-drops' }}"
        class="btn btn-ghost"
        style="width:100%;justify-content:center;">
       Shop the Latest Drop
@@ -208,7 +208,11 @@
       "id": "show_experience_cta",
       "label": "Show 'Unlock Free Experience' CTA in nav",
       "default": true
-    }
+    },
+
+    {"type": "header", "content": "🔗 Button URLs (editable in customiser)"},
+    {"type": "url", "id": "url_experience", "label": "Experience Page (Nav CTA)"},
+    {"type": "url", "id": "url_monthly_drops", "label": "Monthly Drops (Mobile Menu)"}
   ]
 }
 {% endschema %}

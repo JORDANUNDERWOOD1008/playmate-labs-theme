@@ -174,7 +174,7 @@
               {{ section.settings.drops_cta_text | default: 'Get This Drop' }} — £{{ section.settings.drops_current_product.price | money_without_currency }}
             </a>
           {%- else -%}
-            <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="btn btn-gold" style="font-size:1.0625rem;padding:1rem 2rem;">
+            <a href="{{ section.settings.url_monthly_drops | default: '/collections/monthly-drops' }}" class="btn btn-gold" style="font-size:1.0625rem;padding:1rem 2rem;">
               {{ section.settings.drops_cta_text | default: 'Get This Drop' }} — £{{ section.settings.drops_current_price | default: '68' }}
             </a>
           {%- endif -%}
@@ -522,7 +522,11 @@
       "id": "drops_hero_bg_to",
       "label": "Hero gradient end",
       "default": "#2D1020"
-    }
+    },
+
+    {"type": "header", "content": "🔗 Button URLs (editable in customiser)"},
+    {"type": "url", "id": "url_experience", "label": "Experience Page"},
+    {"type": "url", "id": "url_monthly_drops", "label": "Shop Drops"}
   ]
 }
 {% endschema %}

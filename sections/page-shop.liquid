@@ -48,7 +48,7 @@
 <section class="shop-featured-banner">
   <div class="container">
     <div class="shop-banner-grid">
-      <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="shop-banner-card shop-banner-primary">
+      <a href="{{ section.settings.url_monthly_drops | default: '/collections/monthly-drops' }}" class="shop-banner-card shop-banner-primary">
         <div class="shop-banner-bg bg-dark">
           <div class="shop-banner-inner">
             <span class="badge badge-gold" style="margin-bottom:0.75rem;">Latest Drop</span>
@@ -59,7 +59,7 @@
           <div class="shop-banner-emoji">🍷</div>
         </div>
       </a>
-      <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="shop-banner-card shop-banner-secondary">
+      <a href="{{ section.settings.url_consumables | default: '/collections/consumables' }}" class="shop-banner-card shop-banner-secondary">
         <div class="shop-banner-bg bg-warm">
           <div class="shop-banner-inner">
             <span class="badge badge-burgundy" style="margin-bottom:0.75rem;">Popular</span>
@@ -70,7 +70,7 @@
           <div class="shop-banner-emoji">🍫</div>
         </div>
       </a>
-      <a href="{{ collections['date-night-kits'].url | default: '/collections/date-night-kits' }}" class="shop-banner-card shop-banner-tertiary">
+      <a href="{{ section.settings.url_date_night_kits | default: '/collections/date-night-kits' }}" class="shop-banner-card shop-banner-tertiary">
         <div class="shop-banner-bg bg-deep">
           <div class="shop-banner-inner">
             <span class="badge badge-cream" style="margin-bottom:0.75rem;">New In</span>
@@ -92,22 +92,22 @@
       <a href="{{ collections['all'].url }}" class="category-pill category-pill-active">
         <i class="fas fa-th-large"></i> All Products
       </a>
-      <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="category-pill">
+      <a href="{{ section.settings.url_consumables | default: '/collections/consumables' }}" class="category-pill">
         <span>🍫</span> Consumables
       </a>
-      <a href="{{ collections['date-night-kits'].url | default: '/collections/date-night-kits' }}" class="category-pill">
+      <a href="{{ section.settings.url_date_night_kits | default: '/collections/date-night-kits' }}" class="category-pill">
         <span>🌹</span> Date Night Kits
       </a>
-      <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="category-pill">
+      <a href="{{ section.settings.url_monthly_drops | default: '/collections/monthly-drops' }}" class="category-pill">
         <span>✦</span> Monthly Drops
       </a>
-      <a href="{{ collections['games'].url | default: '/collections/games' }}" class="category-pill">
+      <a href="{{ section.settings.url_games | default: '/collections/games' }}" class="category-pill">
         <span>🃏</span> Games
       </a>
-      <a href="{{ collections['ritual-add-ons'].url | default: '/collections/ritual-add-ons' }}" class="category-pill">
+      <a href="{{ section.settings.url_ritual_add_ons | default: '/collections/ritual-add-ons' }}" class="category-pill">
         <span>🕯️</span> Ritual Add-Ons
       </a>
-      <a href="{{ collections['gifts'].url | default: '/collections/gifts' }}" class="category-pill">
+      <a href="{{ section.settings.url_gifts_collection | default: '/collections/gifts' }}" class="category-pill">
         <span>🎁</span> Gift Sets
       </a>
     </div>
@@ -125,7 +125,7 @@
       <a href="{{ collections['all'].url }}" class="btn btn-ghost btn-sm">View All →</a>
     </div>
     <div class="shop-products-grid">
-      {%- assign bestsellers = collections['bestsellers'] | default: collections['all'] -%}
+      {%- assign bestsellers = collections['all'] -%}
       {%- for product in bestsellers.products limit: 4 -%}
         {% render 'product-card', product: product, show_badge: true, show_quick_add: true %}
       {%- else -%}
@@ -156,7 +156,7 @@
         <h2 style="font-family:var(--font-serif);font-size:2rem;">Sensory Consumables</h2>
         <p style="color:var(--text-muted);max-width:420px;margin-top:0.5rem;">Artisan chocolates, aphrodisiac blends and ritual teas crafted for couples.</p>
       </div>
-      <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="btn btn-primary btn-sm">Shop Consumables →</a>
+      <a href="{{ section.settings.url_consumables | default: '/collections/consumables' }}" class="btn btn-primary btn-sm">Shop Consumables →</a>
     </div>
     <div class="shop-products-grid">
       {%- for product in collections['consumables'].products limit: 4 -%}
@@ -180,8 +180,8 @@
         <h2 style="font-family:var(--font-serif);font-size:2.25rem;color:var(--cream);margin:0.75rem 0 1rem;">Build Your Own<br>Ritual Kit</h2>
         <p style="color:rgba(245,239,230,0.75);max-width:400px;margin-bottom:1.75rem;">Pick any 3 consumables and the discount applies automatically at checkout. Mix chocolates, teas, blends &amp; ritual oils.</p>
         <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-          <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="btn btn-gold">Start Building</a>
-          <a href="{{ pages['experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-ghost">Try Free Experience</a>
+          <a href="{{ section.settings.url_consumables | default: '/collections/consumables' }}" class="btn btn-gold">Start Building</a>
+          <a href="{{ section.settings.url_experience | default: '/pages/5-day-experience' }}" class="btn btn-ghost">Try Free Experience</a>
         </div>
       </div>
       <div class="bundle-full-visual">
@@ -206,7 +206,7 @@
         <h2 style="font-family:var(--font-serif);font-size:2rem;">Date Night Kits</h2>
         <p style="color:var(--text-muted);max-width:420px;margin-top:0.5rem;">Everything you need for one perfect evening — curated, paired and ready to unwrap.</p>
       </div>
-      <a href="{{ collections['date-night-kits'].url | default: '/collections/date-night-kits' }}" class="btn btn-ghost btn-sm">See All Kits →</a>
+      <a href="{{ section.settings.url_date_night_kits | default: '/collections/date-night-kits' }}" class="btn btn-ghost btn-sm">See All Kits →</a>
     </div>
     <div class="shop-products-grid">
       {%- for product in collections['date-night-kits'].products limit: 4 -%}
@@ -231,8 +231,8 @@
         <p style="color:rgba(245,239,230,0.7);max-width:420px;">Each month we release a single curated kit — limited to 200 pairs. Join the list for early access, 24 hours before public release.</p>
       </div>
       <div class="shop-drop-cta-btns">
-        <a href="{{ pages['monthly-drops'].url | default: '/pages/monthly-drops' }}" class="btn btn-gold">Join Drop List</a>
-        <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="btn btn-ghost">See Past Drops</a>
+        <a href="{{ section.settings.url_monthly_drops_page | default: '/pages/monthly-drops' }}" class="btn btn-gold">Join Drop List</a>
+        <a href="{{ section.settings.url_monthly_drops | default: '/collections/monthly-drops' }}" class="btn btn-ghost">See Past Drops</a>
       </div>
     </div>
   </div>
@@ -247,7 +247,7 @@
         <h2 style="font-family:var(--font-serif);font-size:2rem;">Games &amp; Connection Cards</h2>
         <p style="color:var(--text-muted);max-width:420px;margin-top:0.5rem;">Designed to deepen intimacy, spark play and ignite real curiosity.</p>
       </div>
-      <a href="{{ collections['games'].url | default: '/collections/games' }}" class="btn btn-ghost btn-sm">Browse Games →</a>
+      <a href="{{ section.settings.url_games | default: '/collections/games' }}" class="btn btn-ghost btn-sm">Browse Games →</a>
     </div>
     <div class="shop-products-grid">
       {%- for product in collections['games'].products limit: 3 -%}
@@ -298,7 +298,7 @@
         <h2 style="font-family:var(--font-serif);font-size:2rem;">Gift Sets</h2>
         <p style="color:var(--text-muted);max-width:420px;margin-top:0.5rem;">Thoughtfully curated for anniversaries, birthdays and "just because" moments.</p>
       </div>
-      <a href="{{ collections['gifts'].url | default: '/collections/gifts' }}" class="btn btn-primary btn-sm">Shop Gifts →</a>
+      <a href="{{ section.settings.url_gifts_collection | default: '/collections/gifts' }}" class="btn btn-primary btn-sm">Shop Gifts →</a>
     </div>
     <div class="shop-products-grid">
       {%- for product in collections['gifts'].products limit: 4 -%}
@@ -364,7 +364,17 @@
       "id": "shop_accent_color",
       "label": "Accent colour",
       "default": "#C9A84C"
-    }
+    },
+
+    {"type": "header", "content": "🔗 Button URLs (editable in customiser)"},
+    {"type": "url", "id": "url_monthly_drops", "label": "Monthly Drops Collection"},
+    {"type": "url", "id": "url_consumables", "label": "Consumables Collection"},
+    {"type": "url", "id": "url_date_night_kits", "label": "Date Night Kits Collection"},
+    {"type": "url", "id": "url_games", "label": "Games Collection"},
+    {"type": "url", "id": "url_ritual_add_ons", "label": "Ritual Add-Ons Collection"},
+    {"type": "url", "id": "url_gifts_collection", "label": "Gifts Collection"},
+    {"type": "url", "id": "url_experience", "label": "Experience Page"},
+    {"type": "url", "id": "url_monthly_drops_page", "label": "Monthly Drops Page"}
   ]
 }
 {% endschema %}

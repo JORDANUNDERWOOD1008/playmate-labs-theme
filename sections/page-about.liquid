@@ -172,7 +172,7 @@
     <h2 style="font-family:var(--font-serif);font-size:1.875rem;color:{{ section.settings.about_cta_heading_color | default: 'var(--cream)' }};margin-bottom:1rem;">{{ section.settings.about_cta_heading | default: 'Start here.' }}</h2>
     <p style="color:rgba(245,239,230,0.7);margin-bottom:2rem;">{{ section.settings.about_cta_sub | default: "Free 5-day experience. Or shop the latest drop. Either way, you're in the right place." }}</p>
     <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-      <a href="{{ pages['experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-gold">{{ section.settings.about_cta_primary | default: 'Try Free Experience' }}</a>
+      <a href="{{ section.settings.url_experience | default: '/pages/5-day-experience' }}" class="btn btn-gold">{{ section.settings.about_cta_primary | default: 'Try Free Experience' }}</a>
       <a href="{{ routes.all_products_collection_url }}" class="btn btn-ghost">{{ section.settings.about_cta_secondary | default: 'Shop the Latest Drop' }}</a>
     </div>
   </div>
@@ -380,7 +380,11 @@
       "id": "about_show_values",
       "label": "Show brand values section",
       "default": true
-    }
+    },
+
+    {"type": "header", "content": "🔗 Button URLs (editable in customiser)"},
+    {"type": "url", "id": "url_experience", "label": "Experience CTA"},
+    {"type": "url", "id": "url_monthly_drops", "label": "Shop Drops"}
   ]
 }
 {% endschema %}
