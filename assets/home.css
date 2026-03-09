@@ -1073,3 +1073,49 @@
     display: none;
   }
 }
+
+/* ============================================
+   TESTIMONIALS — MOBILE CAROUSEL
+   Desktop: unchanged 3-col grid
+   Mobile only (≤768px): snap-scroll carousel
+   ============================================ */
+@media (max-width: 768px) {
+  .social-proof .testimonials-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1rem;
+    align-items: stretch;
+    /* Bleed to screen edges */
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    padding-bottom: 1rem;
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+    /* Hide scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .social-proof .testimonials-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Each card: 82vw — slightly wider than product/step cards
+     so the longer review text is comfortably readable */
+  .social-proof .testimonials-grid .testimonial-card {
+    flex: 0 0 82vw;
+    width: 82vw;
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  /* Last card breathing room */
+  .social-proof .testimonials-grid .testimonial-card:last-child {
+    margin-right: 1.25rem;
+  }
+}
