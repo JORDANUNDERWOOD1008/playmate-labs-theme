@@ -825,36 +825,49 @@
      Row 1 (.featured-drop__top)    — eyebrow / heading / subheading
      Row 2 (.featured-drop__window) — empty gap, candle shows through
      Row 3 (.featured-drop__content)— badges / desc / CTA
+     Image is 291×1024px (3.52:1 tall). Section height is set to exactly
+     match 100vw × 3.52 so the image fills with ZERO cropping.
   ──────────────────────────────────────────────────────────────── */
+
+  /* Section itself: force exact image height = 100vw × 3.52 */
+  .featured-drop--bg {
+    background-image: var(--fd-bg-mobile);
+    background-size: 100% 100%;   /* stretch to fill exact section dimensions */
+    background-position: center center;
+    /* height is controlled by __inner below — no overflow */
+  }
+
   .featured-drop__inner {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto 1fr auto;  /* top / elastic window / bottom */
     align-items: start;
-    min-height: unset;
+    /* Give the grid an explicit height = full image height so row 2 can stretch */
+    height: calc(100vw * 3.52);
+    min-height: 500px;   /* safety floor on very small screens */
     padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 1.5rem);
     padding-bottom: 3rem;
+    box-sizing: border-box;
     gap: 0;
   }
 
-  /* Row 1: mobile heading — show it */
+  /* Row 1: mobile heading — top of section */
   .featured-drop__top {
     display: block;
     text-align: center;
-    padding-bottom: 2.5rem;
+    padding-bottom: 0;
   }
 
-  /* Row 2: candle window — spacious gap so the product breathes */
+  /* Row 2: elastic window — the 1fr grid row fills all remaining space,
+     the candle naturally sits in the centre of this zone */
   .featured-drop__window {
     display: block;
-    height: 70vw;
-    min-height: 280px;
-    max-height: 460px;
+    /* height is controlled by the 1fr grid row — no fixed value needed */
   }
 
-  /* Row 3: badges + desc + CTA */
+  /* Row 3: badges + desc + CTA — anchored to the bottom */
   .featured-drop__content {
     padding-left: 0;
-    padding-top: 2.5rem;
+    padding-top: 0;
   }
 
   /* Desktop heading block — hide on mobile (shown in __top instead) */
@@ -862,23 +875,16 @@
     display: none;
   }
 
-  /* Portrait image: full viewport width, only top/bottom cropped equally */
-  .featured-drop--bg {
-    background-image: var(--fd-bg-mobile);
-    background-size: 100% auto;
-    background-position: center center;
-  }
-
   /* Overlay: dark top (behind heading) + dark bottom (behind CTA),
-     nearly clear in the middle so the candle is fully visible */
+     nearly clear in the middle (30%–65% of section) where candle sits */
   .featured-drop__overlay {
     background: linear-gradient(
       to bottom,
       rgba(15, 5, 10, 0.82) 0%,
-      rgba(15, 5, 10, 0.55) 18%,
-      rgba(15, 5, 10, 0.05) 30%,
-      rgba(15, 5, 10, 0.05) 64%,
-      rgba(15, 5, 10, 0.60) 78%,
+      rgba(15, 5, 10, 0.50) 14%,
+      rgba(15, 5, 10, 0.04) 25%,
+      rgba(15, 5, 10, 0.04) 68%,
+      rgba(15, 5, 10, 0.55) 80%,
       rgba(15, 5, 10, 0.88) 100%
     );
   }
