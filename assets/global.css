@@ -586,34 +586,49 @@ h1, h2, h3, h4, h5, h6 {
 /* ============================================
    NAVIGATION
    ============================================ */
-.site-nav,
-.site-nav.scrolled,
-.site-nav.nav-dark,
+.site-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: var(--nav-height);
+  transition: background var(--transition-mid), box-shadow var(--transition-mid);
+}
+
+.site-nav.scrolled {
+  background: rgba(250, 247, 242, 0.97);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 1px 0 var(--border-light), var(--shadow-sm);
+}
+
+.site-nav.nav-dark {
+  /* Transparent over dark hero */
+}
+
 .site-nav.nav-dark.scrolled {
-  background: transparent;
-  backdrop-filter: none;
-  box-shadow: none;
+  background: rgba(26, 16, 10, 0.97);
 }
 
-.site-nav .nav-logo,
-.site-nav.scrolled .nav-logo {
+.nav-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   color: var(--cream);
+  transition: color var(--transition-fast);
 }
 
-.site-nav .nav-link,
-.site-nav.scrolled .nav-link {
-  color: rgba(245,239,230,0.85);
-}
-
-.site-nav .nav-icon-btn,
-.site-nav.scrolled .nav-icon-btn {
-  color: rgba(245,239,230,0.85);
-}
-
-.site-nav .nav-toggle span,
-.site-nav.scrolled .nav-toggle span {
-  background: var(--cream);
-}
+.site-nav.scrolled .nav-logo { color: var(--burgundy); }
+.site-nav.nav-dark.scrolled .nav-logo { color: var(--cream); }
 
 .nav-logo span {
   font-weight: 300;
