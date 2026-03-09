@@ -1,0 +1,304 @@
+{% assign gifts_hero_img = section.settings.gifts_hero_image %}
+{% comment %}
+  PLAYMATE LABS — GIFTS PAGE
+  File: templates/page.gifts.liquid
+  Used for: /pages/gifts
+{% endcomment %}
+
+{{ 'shop.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'shop.js' | asset_url }}" defer></script>
+
+{%- assign _gifts_feature_img = section.settings.gifts_feature_image -%}
+{%- assign _gifts_card_1_img = section.settings.gifts_card_1_image -%}
+{%- assign _gifts_card_2_img = section.settings.gifts_card_2_image -%}
+{%- assign _gifts_card_3_img = section.settings.gifts_card_3_image -%}
+
+
+<!-- HERO -->
+<section class="shop-hero" style="{%- if gifts_hero_img -%}background-image:url('{{ gifts_hero_img  }}');background-size:cover;background-position:center;{%- else -%}background:linear-gradient(135deg,var(--espresso) 0%,#3D1A2E 100%);{%- endif -%}">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="{{ routes.root_url }}" style="color:rgba(245,239,230,0.6);">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <span style="color:var(--cream);">Gifts</span>
+    </div>
+    <div class="shop-hero-content">
+      <span class="section-eyebrow" style="color:var(--gold);">Give the Unexpected</span>
+      <h1 class="heading-xl" style="color:var(--cream);">Gifts Worth<br>Remembering.</h1>
+      <p class="body-lg" style="color:rgba(245,239,230,0.75);max-width:500px;margin-top:1rem;">Curated gift sets for anniversaries, birthdays and "just because" moments. All beautifully packaged, ready to give.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- FEATURED GIFT SETS (from Theme Editor uploads) -->
+{%- if _gifts_feature_img != blank or _gifts_card_1_img != blank or _gifts_card_2_img != blank or _gifts_card_3_img != blank -%}
+<section class="section" style="padding-top:3rem;padding-bottom:0;">
+  <div class="container">
+    {%- if _gifts_feature_img != blank -%}
+      <div style="border-radius:16px;overflow:hidden;margin-bottom:2rem;aspect-ratio:16/5;">
+        {{ _gifts_feature_img | image_url: width: 1600 | image_tag: loading: 'lazy', alt: 'Featured gift', style: 'width:100%;height:100%;object-fit:cover;border-radius:16px;' }}
+      </div>
+    {%- endif -%}
+    {%- if _gifts_card_1_img != blank or _gifts_card_2_img != blank or _gifts_card_3_img != blank -%}
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:2rem;">
+        {%- if _gifts_card_1_img != blank -%}
+          <div style="border-radius:12px;overflow:hidden;aspect-ratio:4/3;">
+            {{ _gifts_card_1_img | image_url: width: 700 | image_tag: loading: 'lazy', alt: 'Gift 1', style: 'width:100%;height:100%;object-fit:cover;' }}
+          </div>
+        {%- endif -%}
+        {%- if _gifts_card_2_img != blank -%}
+          <div style="border-radius:12px;overflow:hidden;aspect-ratio:4/3;">
+            {{ _gifts_card_2_img | image_url: width: 700 | image_tag: loading: 'lazy', alt: 'Gift 2', style: 'width:100%;height:100%;object-fit:cover;' }}
+          </div>
+        {%- endif -%}
+        {%- if _gifts_card_3_img != blank -%}
+          <div style="border-radius:12px;overflow:hidden;aspect-ratio:4/3;">
+            {{ _gifts_card_3_img | image_url: width: 700 | image_tag: loading: 'lazy', alt: 'Gift 3', style: 'width:100%;height:100%;object-fit:cover;' }}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
+<!-- GIFT FINDER QUIZ STRIP -->
+<section class="gift-finder-strip">
+  <div class="container">
+    <div class="gift-finder-inner">
+      <div class="gift-finder-text">
+        <i class="fas fa-magic" style="color:var(--gold);margin-right:0.75rem;font-size:1.25rem;"></i>
+        <span style="font-family:var(--font-serif);font-size:1.125rem;">Not sure what to get?</span>
+        <span style="color:var(--text-muted);font-size:0.9375rem;margin-left:0.75rem;">Answer 3 quick questions and we'll suggest the perfect gift.</span>
+      </div>
+      <a href="{{ pages['experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-primary btn-sm">Take the Gift Quiz →</a>
+    </div>
+  </div>
+</section>
+
+<!-- GIFT CATEGORY CARDS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header" style="text-align:center;margin-bottom:2.5rem;">
+      <span class="section-eyebrow">Find the Right Gift</span>
+      <h2 style="font-family:var(--font-serif);font-size:2rem;">Shop by Recipient &amp; Occasion</h2>
+    </div>
+    <div class="gift-category-grid">
+      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=anniversary" class="gift-category-card">
+        <div class="gift-category-icon">💍</div>
+        <h3>Anniversary</h3>
+        <p>Mark the milestone with something truly memorable.</p>
+        <span class="gift-cat-arrow">→</span>
+      </a>
+      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=valentines" class="gift-category-card">
+        <div class="gift-category-icon">🌹</div>
+        <h3>Valentine's Day</h3>
+        <p>Beyond the clichés — sensory gifts that create real moments.</p>
+        <span class="gift-cat-arrow">→</span>
+      </a>
+      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=birthday" class="gift-category-card">
+        <div class="gift-category-icon">🎂</div>
+        <h3>Birthday</h3>
+        <p>A gift for two that's better than one.</p>
+        <span class="gift-cat-arrow">→</span>
+      </a>
+      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=just-because" class="gift-category-card">
+        <div class="gift-category-icon">✨</div>
+        <h3>Just Because</h3>
+        <p>The best gifts don't need a reason.</p>
+        <span class="gift-cat-arrow">→</span>
+      </a>
+      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=new-couples" class="gift-category-card">
+        <div class="gift-category-icon">💌</div>
+        <h3>New Couples</h3>
+        <p>Set the tone from the very beginning.</p>
+        <span class="gift-cat-arrow">→</span>
+      </a>
+      <a href="{{ collections['all'].url | default: '/collections/all' }}?filter=long-distance" class="gift-category-card">
+        <div class="gift-category-icon">✈️</div>
+        <h3>Long Distance</h3>
+        <p>Stay connected across the miles.</p>
+        <span class="gift-cat-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- GIFT SETS PRODUCT GRID -->
+<section class="section bg-warm-subtle">
+  <div class="container">
+    <div class="section-header section-header-between" style="margin-bottom:2rem;">
+      <div>
+        <span class="section-eyebrow">Ready to Give</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;">Gift Sets &amp; Bundles</h2>
+      </div>
+      <a href="{{ collections['gifts'].url | default: '/collections/gifts' }}" class="btn btn-ghost btn-sm">View All →</a>
+    </div>
+    <div class="shop-products-grid">
+      {%- for product in collections['gifts'].products limit: 6 -%}
+        {% render 'product-card', product: product, show_badge: true, show_quick_add: true %}
+      {%- else -%}
+        {%- for product in collections['all'].products limit: 6 -%}
+          {% render 'product-card', product: product, show_badge: true, show_quick_add: true %}
+        {%- else -%}
+          <div class="empty-collection-inline" style="grid-column:1/-1;text-align:center;padding:3rem 0;">
+            <div style="font-size:3rem;margin-bottom:1rem;">🎁</div>
+            <h3 style="font-family:var(--font-serif);">Gift sets coming soon</h3>
+            <p style="color:var(--text-muted);margin-bottom:1.5rem;">We're curating something beautiful.</p>
+            <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary">Browse All Products</a>
+          </div>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<!-- BUILD YOUR OWN GIFT -->
+<section class="shop-bundle-cta-full">
+  <div class="container">
+    <div class="shop-bundle-full-inner">
+      <div class="bundle-full-text">
+        <span class="section-eyebrow" style="color:var(--gold);">Personalised Gifts</span>
+        <h2 style="font-family:var(--font-serif);font-size:2.25rem;color:var(--cream);margin:0.75rem 0 1rem;">Build a Bespoke<br>Gift Box</h2>
+        <p style="color:rgba(245,239,230,0.75);max-width:420px;margin-bottom:1.75rem;">Choose your own combination of consumables, add a personalised message card, and we'll box it beautifully. Pick any 3 items and save 15%.</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="btn btn-gold">Start Building</a>
+          <a href="{{ pages['contact'].url | default: '/pages/contact' }}" class="btn btn-ghost">Corporate Orders</a>
+        </div>
+      </div>
+      <div class="bundle-full-visual">
+        <div class="bundle-visual-grid">
+          <div class="bundle-item">🍫</div>
+          <div class="bundle-item">🌹</div>
+          <div class="bundle-item">🕯️</div>
+          <div class="bundle-item bundle-item-plus">+</div>
+          <div class="bundle-item bundle-item-save">Free Card</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GIFT WRAPPING + MESSAGING OPTIONS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header" style="text-align:center;margin-bottom:2.5rem;">
+      <span class="section-eyebrow">Every Detail Matters</span>
+      <h2 style="font-family:var(--font-serif);font-size:2rem;">Gifting Made Perfect</h2>
+    </div>
+    <div class="gift-services-grid">
+      <div class="gift-service-card">
+        <div class="gift-service-icon">🎁</div>
+        <h3>Beautiful Packaging</h3>
+        <p>Every order arrives in our signature matte-black box with gold foil detailing. No extra cost.</p>
+      </div>
+      <div class="gift-service-card">
+        <div class="gift-service-icon">💌</div>
+        <h3>Personal Message Cards</h3>
+        <p>Add a handwritten-style message at checkout — up to 200 characters. Printed on 350gsm card.</p>
+      </div>
+      <div class="gift-service-card">
+        <div class="gift-service-icon">📦</div>
+        <h3>Direct to Recipient</h3>
+        <p>Send directly to the recipient. We'll omit the invoice and include your message card only.</p>
+      </div>
+      <div class="gift-service-card">
+        <div class="gift-service-icon">🌱</div>
+        <h3>Eco Packaging</h3>
+        <p>All packaging is recyclable or compostable. We never use plastic bubble wrap or synthetic fills.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.gift-finder-strip { background:var(--cream-off); border-bottom:1px solid var(--border-color); padding:1.25rem 0; }
+.gift-finder-inner { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+.gift-finder-text { display:flex; align-items:center; flex-wrap:wrap; gap:0.5rem; }
+.gift-category-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+.gift-category-card { background:var(--white); border:1px solid var(--border-color); border-radius:12px; padding:2rem 1.5rem; text-decoration:none; color:inherit; transition:all 0.2s; display:flex; flex-direction:column; position:relative; }
+.gift-category-card:hover { border-color:var(--burgundy); transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+.gift-category-icon { font-size:2.5rem; margin-bottom:1rem; }
+.gift-category-card h3 { font-family:var(--font-serif); font-size:1.25rem; margin-bottom:0.5rem; }
+.gift-category-card p { font-size:0.875rem; color:var(--text-muted); flex:1; }
+.gift-cat-arrow { margin-top:1rem; color:var(--burgundy); font-weight:600; font-size:1.125rem; }
+.gift-services-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; }
+.gift-service-card { text-align:center; padding:2rem 1.25rem; }
+.gift-service-icon { font-size:2.5rem; margin-bottom:1rem; }
+.gift-service-card h3 { font-family:var(--font-serif); font-size:1.125rem; margin-bottom:0.75rem; }
+.gift-service-card p { font-size:0.875rem; color:var(--text-muted); line-height:1.6; }
+@media(max-width:900px) { .gift-category-grid { grid-template-columns:repeat(2,1fr); } .gift-services-grid { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:600px) { .gift-category-grid, .gift-services-grid { grid-template-columns:1fr; } }
+</style>
+
+{% schema %}
+{
+  "name": "Gifts Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "gifts_hero_image",
+      "label": "Hero background image",
+      "info": "Full-width gifts hero. Recommended: 1800×900px."
+    },
+    {
+      "type": "image_picker",
+      "id": "gifts_feature_image",
+      "label": "Gift showcase image",
+      "info": "Main product/lifestyle image. Recommended: 900×700px."
+    },
+    {
+      "type": "image_picker",
+      "id": "gifts_card_1_image",
+      "label": "Gift card 1 image",
+      "info": "Gift option card. Recommended: 600×500px."
+    },
+    {
+      "type": "image_picker",
+      "id": "gifts_card_2_image",
+      "label": "Gift card 2 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "gifts_card_3_image",
+      "label": "Gift card 3 image"
+    },
+    {
+      "type": "header",
+      "content": "📝 Hero Text"
+    },
+    {
+      "type": "text",
+      "id": "gifts_hero_eyebrow",
+      "label": "Hero eyebrow",
+      "default": "Gift Ideas"
+    },
+    {
+      "type": "text",
+      "id": "gifts_hero_heading",
+      "label": "Hero heading",
+      "default": "Gifts that actually mean something."
+    },
+    {
+      "type": "textarea",
+      "id": "gifts_hero_subtext",
+      "label": "Hero subtext",
+      "default": "For couples, anniversaries, Valentine's Day and anyone who loves well."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colours"
+    },
+    {
+      "type": "color",
+      "id": "gifts_accent_color",
+      "label": "Accent colour",
+      "default": "#C9A84C"
+    }
+  ]
+}
+{% endschema %}

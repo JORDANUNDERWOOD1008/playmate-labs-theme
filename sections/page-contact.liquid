@@ -1,0 +1,207 @@
+{% comment %} PLAYMATE LABS — Contact Page {% endcomment %}
+{{ 'contact.css' | asset_url | stylesheet_tag }}
+
+{% assign contact_hero_img = section.settings.contact_hero_image %}
+<section class="contact-hero" {% if contact_hero_img %}style="background-image:url('{{ contact_hero_img  }}')"{% endif %}>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Contact</span>
+    </div>
+    <span class="section-eyebrow">{{ section.settings.contact_eyebrow | default: 'Get in touch' }}</span>
+    <h1 class="contact-hero-title">{{ section.settings.contact_heading | default: "We'd love to hear from you" }}</h1>
+    <p class="contact-hero-subtitle">{{ section.settings.contact_subtext | default: 'Questions about an order, an upcoming event, or just want to say hello? We respond within 24 hours.' }}</p>
+  </div>
+</section>
+
+<section class="contact-main section">
+  <div class="container">
+    <div class="contact-layout">
+
+      <!-- Contact Form -->
+      <div class="contact-form-col">
+        {%- form 'contact', id: 'contact-page-form' -%}
+          {%- if form.posted_successfully? -%}
+            <div class="contact-success">
+              <span class="contact-success-icon">✅</span>
+              <h3>{{ section.settings.contact_success_heading | default: "Message received!" }}</h3>
+              <p>{{ section.settings.contact_success_text | default: "We'll get back to you within 24 hours." }}</p>
+            </div>
+          {%- else -%}
+            {%- if form.errors -%}
+              <div class="contact-errors">
+                {{ form.errors | default_errors }}
+              </div>
+            {%- endif -%}
+
+            <div class="contact-form-grid-2">
+              <div class="form-group">
+                <label class="form-label" for="contact-first-name">First Name</label>
+                <input type="text" id="contact-first-name" name="contact[first_name]" class="form-input" placeholder="First name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="contact-last-name">Last Name</label>
+                <input type="text" id="contact-last-name" name="contact[last_name]" class="form-input" placeholder="Last name">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-email">Email <span class="form-required">*</span></label>
+              <input type="email" id="contact-email" name="contact[email]" class="form-input" placeholder="your@email.com" value="{{ form.email }}" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-subject">Subject</label>
+              <select id="contact-subject" name="contact[subject]" class="form-input">
+                <option value="">Select a topic…</option>
+                <option value="order">Order or Shipping</option>
+                <option value="product">Product Question</option>
+                <option value="event">Event Enquiry</option>
+                <option value="returns">Returns &amp; Refunds</option>
+                <option value="press">Press &amp; Partnerships</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            {%- if section.settings.contact_show_order_number -%}
+            <div class="form-group">
+              <label class="form-label" for="contact-order">Order Number (optional)</label>
+              <input type="text" id="contact-order" name="contact[order_number]" class="form-input" placeholder="#1234">
+            </div>
+            {%- endif -%}
+            <div class="form-group">
+              <label class="form-label" for="contact-message">Message <span class="form-required">*</span></label>
+              <textarea id="contact-message" name="contact[body]" class="form-input" placeholder="{{ section.settings.contact_message_placeholder | default: 'How can we help you?' }}" rows="6" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">
+              {{ section.settings.contact_submit_text | default: 'Send Message' }}
+            </button>
+            <p class="contact-privacy-note">{{ section.settings.contact_privacy_note | default: 'We respect your privacy and will never share your details.' }}</p>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+
+      <!-- Contact Info Sidebar -->
+      <aside class="contact-info-col">
+
+        <!-- Response time -->
+        <div class="contact-info-card contact-info-card--highlight">
+          <div class="contact-info-icon">⚡</div>
+          <div>
+            <h4>{{ section.settings.contact_response_heading | default: 'Quick Response' }}</h4>
+            <p>{{ section.settings.contact_response_text | default: 'We typically respond within 24 hours, Monday to Friday.' }}</p>
+          </div>
+        </div>
+
+        <!-- Email -->
+        {%- if section.settings.contact_email != blank -%}
+        <div class="contact-info-card">
+          <div class="contact-info-icon"><i class="fas fa-envelope"></i></div>
+          <div>
+            <h4>{{ section.settings.contact_email_label | default: 'Email Us' }}</h4>
+            <a href="mailto:{{ section.settings.contact_email }}" class="contact-info-link">{{ section.settings.contact_email }}</a>
+          </div>
+        </div>
+        {%- endif -%}
+
+        <!-- Social -->
+        <div class="contact-info-card">
+          <div class="contact-info-icon"><i class="fas fa-comments"></i></div>
+          <div>
+            <h4>{{ section.settings.contact_social_heading | default: 'Chat with us' }}</h4>
+            <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:0.75rem;">{{ section.settings.contact_social_text | default: 'Reach us directly on social media.' }}</p>
+            <div class="contact-social-links">
+              {%- if section.settings.social_instagram_link != blank -%}
+                <a href="{{ section.settings.social_instagram_link }}" target="_blank" rel="noopener" class="contact-social-link">
+                  <i class="fab fa-instagram"></i> Instagram
+                </a>
+              {%- endif -%}
+              {%- if section.settings.social_tiktok_link != blank -%}
+                <a href="{{ section.settings.social_tiktok_link }}" target="_blank" rel="noopener" class="contact-social-link">
+                  <i class="fab fa-tiktok"></i> TikTok
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ Link -->
+        <div class="contact-info-card">
+          <div class="contact-info-icon">❓</div>
+          <div>
+            <h4>{{ section.settings.contact_faq_heading | default: 'Check our FAQ' }}</h4>
+            <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:0.75rem;">{{ section.settings.contact_faq_text | default: 'Find quick answers to common questions.' }}</p>
+            <a href="{{ routes.root_url }}pages/faq" class="btn btn-secondary btn-sm">View FAQ</a>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "contact_hero_image",
+      "label": "Hero background image",
+      "info": "Full-width contact page hero. Recommended: 1800×700px."
+    },
+    {
+      "type": "header",
+      "content": "📝 Hero Text"
+    },
+    {
+      "type": "text",
+      "id": "contact_hero_eyebrow",
+      "label": "Hero eyebrow",
+      "default": "Get In Touch"
+    },
+    {
+      "type": "text",
+      "id": "contact_hero_heading",
+      "label": "Hero heading",
+      "default": "We'd love to hear from you."
+    },
+    {
+      "type": "textarea",
+      "id": "contact_hero_subtext",
+      "label": "Hero subtext",
+      "default": "Questions, stockist enquiries, collaborations or just to say hello."
+    },
+    {
+      "type": "header",
+      "content": "📋 Form Labels"
+    },
+    {
+      "type": "text",
+      "id": "contact_message_placeholder",
+      "label": "Message box placeholder text",
+      "default": "How can we help you?"
+    },
+    {
+      "type": "text",
+      "id": "contact_submit_text",
+      "label": "Submit button text",
+      "default": "Send Message"
+    },
+    {
+      "type": "text",
+      "id": "contact_success_heading",
+      "label": "Success heading",
+      "default": "Message received!"
+    },
+    {
+      "type": "textarea",
+      "id": "contact_success_text",
+      "label": "Success message",
+      "default": "We'll get back to you within 1–2 business days."
+    }
+  ]
+}
+{% endschema %}

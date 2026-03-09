@@ -1,0 +1,528 @@
+{% comment %}
+  PLAYMATE LABS — MONTHLY DROPS PAGE  v3
+  File: templates/page.drops.liquid
+  Used for: /pages/monthly-drops
+  Mirrors: https://njpvfxya.gensparkspace.com/drops.html
+{% endcomment %}
+
+{{ 'drops.css' | asset_url | stylesheet_tag }}
+
+{{ 'global.css' | asset_url | stylesheet_tag }}
+{{ 'components.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%} Schema-driven colour overrides — mapped to new v4 settings IDs {%- endcomment -%}
+<style>
+  :root {
+    --drops-hero-from:    {{ section.settings.drops_hero_bg_from    | default: '#1A0A06' }};
+    --drops-hero-to:      {{ section.settings.drops_hero_bg_to      | default: '#2D1020' }};
+    --drops-hero-h:       {{ section.settings.drops_hero_heading_color | default: 'var(--cream)' }};
+    --drops-hero-italic:  {{ section.settings.drops_hero_italic_color  | default: 'var(--gold)' }};
+    --drops-hero-sub:     {{ section.settings.drops_hero_subtext_color | default: 'rgba(245,239,230,0.65)' }};
+    --drops-cd-bg:        {{ section.settings.drops_countdown_bg     | default: 'rgba(255,255,255,0.08)' }};
+    --drops-cd-num:       {{ section.settings.drops_countdown_number_color | default: 'var(--cream)' }};
+    --drops-cd-lbl:       {{ section.settings.drops_countdown_label_color  | default: 'rgba(245,239,230,0.5)' }};
+    --drops-bar-fill:     {{ section.settings.drops_sold_bar_fill    | default: 'var(--gold)' }};
+    --drops-bar-track:    {{ section.settings.drops_sold_bar_track   | default: 'rgba(255,255,255,0.12)' }};
+    --drops-incl-bg:      {{ section.settings.drops_includes_card_bg | default: 'rgba(255,255,255,0.06)' }};
+    --drops-incl-bd:      {{ section.settings.drops_includes_card_border | default: 'rgba(255,255,255,0.1)' }};
+    --drops-incl-icon:    {{ section.settings.drops_includes_icon_color | default: 'var(--gold)' }};
+    --drops-incl-name:    {{ section.settings.drops_includes_name_color | default: 'var(--cream)' }};
+    --drops-sub-bg:       {{ section.settings.drops_sub_bg           | default: 'var(--ivory)' }};
+    --drops-sub-card:     {{ section.settings.drops_sub_card_bg      | default: '#FFFFFF' }};
+    --drops-sub-border:   {{ section.settings.drops_sub_card_border  | default: 'var(--gold)' }};
+    --drops-sub-price:    {{ section.settings.drops_sub_price_color  | default: 'var(--burgundy)' }};
+    --drops-past-bg:      {{ section.settings.drops_past_bg          | default: '#FFFFFF' }};
+    --drops-past-card:    {{ section.settings.drops_past_card_bg     | default: 'var(--ivory)' }};
+    --drops-sold-bg:      {{ section.settings.drops_past_sold_badge_bg   | default: 'rgba(0,0,0,0.5)' }};
+    --drops-sold-tx:      {{ section.settings.drops_past_sold_badge_text | default: '#FFFFFF' }};
+    /* Legacy aliases kept for drops.css compatibility */
+    --drops-accent:       {{ section.settings.drops_hero_italic_color | default: 'var(--gold)' }};
+    --drops-text:         {{ section.settings.drops_hero_heading_color | default: 'var(--cream)' }};
+  }
+</style>
+
+<!-- ===== ANNOUNCEMENT STRIP ===== -->
+{%- if section.settings.drops_announcement_text != blank -%}
+<div class="drops-announcement" style="background:{{ section.settings.drops_announcement_bg | default: 'var(--espresso)' }};color:{{ section.settings.drops_announcement_text_color | default: 'var(--gold)' }};">
+  {{ section.settings.drops_announcement_text }}
+  {%- if section.settings.drops_announcement_link != blank -%}
+    &nbsp;<a href="{{ section.settings.drops_announcement_link }}" style="color:var(--cream);text-decoration:underline;">{{ section.settings.drops_announcement_cta | default: 'Grab Yours →' }}</a>
+  {%- endif -%}
+</div>
+{%- endif -%}
+
+<!-- ===== HERO ===== -->
+<section class="drops-hero">
+  {%- assign _drops_hero_img = section.settings.drops_hero_image -%}
+  <div class="drops-hero-bg" {% if _drops_hero_img %}style="background-image:url('{{ _drops_hero_img  }}');"{% endif %}>
+    <div class="drops-hero-overlay"></div>
+    <div class="container drops-hero-inner">
+      <span class="drops-eyebrow">{{ section.settings.drops_eyebrow | default: 'A monthly cultural release' }}</span>
+      <h1 class="drops-hero-heading">
+        {{ section.settings.drops_hero_heading_line1 | default: 'Limited monthly drops' }}<br>
+        <em>{{ section.settings.drops_hero_heading_italic | default: 'for modern relationships.' }}</em>
+      </h1>
+      <p class="drops-hero-sub">{{ section.settings.drops_hero_subtext | default: 'Every month we design a new themed date night kit — limited, beautiful and built around a ritual concept for two. Available for 30 days or until sold out.' }}</p>
+
+      {%- comment -%} Drop preview icons {%- endcomment -%}
+      <div class="drops-icon-strip">
+        <div class="drops-icon-item drops-icon-active">🍷</div>
+        <div class="drops-icon-item">🍫</div>
+        <div class="drops-icon-item">🕯️</div>
+        <div class="drops-icon-item">🃏</div>
+        <div class="drops-icon-item">📖</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CURRENT DROP ===== -->
+<section class="section drops-current" id="current-drop">
+  <div class="container">
+
+    {%- comment -%} Drop number / label {%- endcomment -%}
+    <div class="drop-label-row">
+      <span class="drop-number-badge">{{ section.settings.drops_current_number | default: 'Drop 08 — January 2025' }}</span>
+      <span class="drop-status-badge badge-active">{{ section.settings.drops_current_status | default: 'Active Now' }}</span>
+    </div>
+
+    <div class="drops-current-grid">
+
+      {%- comment -%} LEFT: visual / product {%- endcomment -%}
+      <div class="drops-current-visual">
+        {%- if section.settings.drops_current_image != blank -%}
+          {%- assign _drops_current_img = section.settings.drops_current_image -%}
+          {%- if _drops_current_img -%}
+            <img src="{{ _drops_current_img  }}" alt="{{ section.settings.drops_current_name | default: 'Current Drop' }}" class="drops-current-img" loading="lazy">
+          {%- else -%}
+            <div class="drops-current-img-placeholder">
+              <span style="font-size:4rem;">🌙</span>
+            </div>
+          {%- endif -%}
+        {%- else -%}
+            <span class="drops-icon-hero">{{ section.settings.drops_current_icon | default: '🍷' }}</span>
+            <span class="drops-current-name-overlay">{{ section.settings.drops_current_name | default: 'The Velvet Hour' }}</span>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Countdown {%- endcomment -%}
+        {%- if section.settings.drops_show_countdown -%}
+          <div class="drops-countdown-card" id="drop-countdown">
+            <p class="drops-countdown-label">{{ section.settings.drops_countdown_label | default: 'Drop Closes In' }}</p>
+            <div class="drops-countdown-timer">
+              <div class="countdown-unit"><span class="countdown-num" id="cd-days">--</span><span class="countdown-label">Days</span></div>
+              <div class="countdown-sep">:</div>
+              <div class="countdown-unit"><span class="countdown-num" id="cd-hours">--</span><span class="countdown-label">Hours</span></div>
+              <div class="countdown-sep">:</div>
+              <div class="countdown-unit"><span class="countdown-num" id="cd-mins">--</span><span class="countdown-label">Mins</span></div>
+              <div class="countdown-sep">:</div>
+              <div class="countdown-unit"><span class="countdown-num" id="cd-secs">--</span><span class="countdown-label">Secs</span></div>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} RIGHT: info {%- endcomment -%}
+      <div class="drops-current-info">
+        <span class="section-eyebrow" style="color:{{ section.settings.drops_accent_color | default: 'var(--gold)' }};">{{ section.settings.drops_current_theme_label | default: "This Month's Theme:" }} <em>{{ section.settings.drops_current_theme | default: 'Sensory Intimacy' }}</em></span>
+        <h2 class="drops-current-title">{{ section.settings.drops_current_name | default: 'The Velvet Hour' }}</h2>
+        <p class="drops-current-desc">{{ section.settings.drops_current_description | default: 'An evening ritual for two. Built around the science of sensory intimacy — dark, rich flavour, warm amber light, and conversation prompts that feel like foreplay for your relationship.' }}</p>
+
+        {%- comment -%} Best For tags {%- endcomment -%}
+        <div class="drops-best-for">
+          <span class="drops-meta-label">Best For</span>
+          <div class="drops-tags">
+            {%- assign best_for = section.settings.drops_best_for | default: 'Established couples,Anniversaries,Valentine&#39;s Day,Gift ideas,At-home date nights' -%}
+            {%- assign best_for_items = best_for | split: ',' -%}
+            {%- for item in best_for_items -%}
+              <span class="drops-tag">{{ item | strip }}</span>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        {%- comment -%} What's Inside {%- endcomment -%}
+        <div class="drops-whats-inside">
+          <span class="drops-meta-label">What's Inside</span>
+          <ul class="drops-contents-list">
+            {%- assign contents = section.settings.drops_contents | default: 'Madagascan Dark Chocolate (120g),Amber Vetiver Candle (150ml),The Connection Game (52 cards),Velvet Hour Ritual Guide,Digital Companion Access,Luxury Gift Packaging' -%}
+            {%- assign content_items = contents | split: ',' -%}
+            {%- for item in content_items -%}
+              <li><i class="fas fa-check" style="color:var(--gold);margin-right:0.5rem;"></i>{{ item | strip }}</li>
+            {%- endfor -%}
+          </ul>
+        </div>
+
+        {%- comment -%} Stock bar {%- endcomment -%}
+        {%- assign remaining = section.settings.drops_remaining_count | default: 47 -%}
+        {%- assign total = section.settings.drops_total_count | default: 200 -%}
+        {%- assign pct_sold = remaining | times: 100 | divided_by: total -%}
+        <div class="drops-stock-section">
+          <div class="drops-stock-row">
+            <span class="drops-stock-label">Kits remaining</span>
+            <span class="drops-stock-count"><strong>{{ remaining }}</strong> of {{ total }}</span>
+          </div>
+          <div class="drops-stock-bar">
+            <div class="drops-stock-fill" style="width:{{ pct_sold }}%;"></div>
+          </div>
+          <p class="drops-stock-sub">{{ 100 | minus: pct_sold }}% sold. {{ section.settings.drops_stock_sub | default: 'Drop closes January 31st.' }}</p>
+        </div>
+
+        {%- comment -%} CTA {%- endcomment -%}
+        <div class="drops-cta-row">
+          {%- if section.settings.drops_current_product != blank -%}
+            <a href="{{ section.settings.drops_current_product.url }}" class="btn btn-gold" style="font-size:1.0625rem;padding:1rem 2rem;">
+              {{ section.settings.drops_cta_text | default: 'Get This Drop' }} — £{{ section.settings.drops_current_product.price | money_without_currency }}
+            </a>
+          {%- else -%}
+            <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="btn btn-gold" style="font-size:1.0625rem;padding:1rem 2rem;">
+              {{ section.settings.drops_cta_text | default: 'Get This Drop' }} — £{{ section.settings.drops_current_price | default: '68' }}
+            </a>
+          {%- endif -%}
+          <p class="drops-sub-cta">or join the <a href="#subscribe" style="color:var(--gold);">drop subscription</a> for £{{ section.settings.drops_sub_price | default: '58' }}/mo</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SUBSCRIPTION ===== -->
+<section class="section drops-subscribe" id="subscribe">
+  <div class="container">
+    <div class="drops-subscribe-grid">
+
+      <div class="drops-subscribe-info">
+        <span class="section-eyebrow" style="color:{{ section.settings.drops_accent_color | default: 'var(--gold)' }};">Never Miss a Drop</span>
+        <h2 class="drops-section-heading">
+          {{ section.settings.drops_sub_heading_1 | default: 'The Monthly Drop' }}<br>
+          <em style="color:{{ section.settings.drops_sub_italic_color | default: 'var(--gold)' }};">{{ section.settings.drops_sub_heading_italic | default: 'Subscription' }}</em>
+        </h2>
+        <p class="drops-subscribe-sub">{{ section.settings.drops_sub_description | default: 'A new themed date night kit curated and delivered to your door every month. Cancel anytime. No drama.' }}</p>
+
+        <ul class="drops-sub-perks">
+          {%- assign perks = section.settings.drops_sub_perks | default: 'Save 15% vs. buying individual drops (£58 vs £68),Priority access — first to get each new drop,Members-only early reveals and sneak peeks,Exclusive subscriber-only bonus items monthly,2x Playmate points on all drop purchases,Flexible — pause skip or cancel anytime' -%}
+          {%- assign perk_items = perks | split: ',' -%}
+          {%- for perk in perk_items -%}
+            <li><i class="fas fa-check-circle" style="color:var(--gold);margin-right:0.625rem;"></i>{{ perk | strip }}</li>
+          {%- endfor -%}
+        </ul>
+
+        <p class="drops-sub-footnote">{{ section.settings.drops_sub_footnote | default: 'Cancel anytime. No lock-in. Full refunds within 7 days.' }}</p>
+
+        <a href="{{ section.settings.drops_sub_url | default: '/collections/monthly-drops' }}" class="btn btn-gold" style="margin-top:1.5rem;">
+          {{ section.settings.drops_sub_cta | default: 'Subscribe for £58/mo' }}
+        </a>
+      </div>
+
+      <div class="drops-subscribe-pillars">
+        <div class="drops-pillar">
+          <div class="drops-pillar-icon">📅</div>
+          <h3>{{ section.settings.drops_pillar_1_title | default: 'Monthly Theme' }}</h3>
+          <p>{{ section.settings.drops_pillar_1_desc | default: 'Each drop is built around a concept — a sensory theme, an emotion or a cultural moment. Not just a product bundle.' }}</p>
+        </div>
+        <div class="drops-pillar">
+          <div class="drops-pillar-icon">🎯</div>
+          <h3>{{ section.settings.drops_pillar_2_title | default: 'Limited by Design' }}</h3>
+          <p>{{ section.settings.drops_pillar_2_desc | default: '200 kits max per drop. When they&#39;re gone, they&#39;re gone. The scarcity makes the ritual feel intentional.' }}</p>
+        </div>
+        <div class="drops-pillar">
+          <div class="drops-pillar-icon">✨</div>
+          <h3>{{ section.settings.drops_pillar_3_title | default: 'Curated & Tested' }}</h3>
+          <p>{{ section.settings.drops_pillar_3_desc | default: 'Every ingredient, product and ritual element is tested in real couples&#39; date nights before going to production.' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PAST DROPS ARCHIVE ===== -->
+{%- if section.settings.drops_show_archive -%}
+<section class="section drops-archive">
+  <div class="container">
+    <div class="section-header" style="text-align:center;margin-bottom:2.5rem;">
+      <span class="section-eyebrow" style="color:{{ section.settings.drops_accent_color | default: 'var(--gold)' }};">{{ section.settings.drops_archive_eyebrow | default: 'The Vault' }}</span>
+      <h2 class="drops-section-heading">{{ section.settings.drops_archive_heading | default: 'Previous Drops' }}</h2>
+    </div>
+    <div class="drops-archive-grid">
+
+      {%- for i in (1..6) -%}
+        {%- assign drop_icon = 'drops_archive_' | append: i | append: '_icon' -%}
+        {%- assign drop_name = 'drops_archive_' | append: i | append: '_name' -%}
+        {%- assign drop_desc = 'drops_archive_' | append: i | append: '_desc' -%}
+        {%- assign drop_label = 'drops_archive_' | append: i | append: '_label' -%}
+        {%- assign drop_rating = 'drops_archive_' | append: i | append: '_rating' -%}
+        {%- assign drop_img_key = 'drops_archive_' | append: i | append: '_image' -%}
+        {%- assign drop_img = section.settings[drop_img_key] -%}
+
+        {%- assign default_icons = '🌙,🌊,🌿,🌹,🌸,🍋' | split: ',' -%}
+        {%- assign default_names = 'Midnight Hours,Still Waters,Rooted,First Blush,Cherry Blossom,Citrus Awakening' | split: ',' -%}
+        {%- assign default_descs = 'Spiced mulled chocolate black soy candle and an intimacy card game for cold nights.,Japanese-inspired tea ceremony ocean soundscape and a slow-down card game.,Botanical hot cacao cedarwood & vetiver candle nature-inspired prompts.,Rose & lychee white chocolate blush candle and connection prompts for new love.,Spring sakura ritual matcha ceremony and cherry blossom scented candle.,Bright citrus energy ritual zesty notes and playful daytime connection cards.' | split: ',' -%}
+        {%- assign default_labels = 'Drop 07 — December 2024,Drop 06 — November 2024,Drop 05 — October 2024,Drop 04 — September 2024,Drop 03 — August 2024,Drop 02 — July 2024' | split: ',' -%}
+        {%- assign default_ratings = '189,201,178,214,196,167' | split: ',' -%}
+
+        {%- assign icon_val = section.settings[drop_icon] | default: default_icons[forloop.index0] -%}
+        {%- assign name_val = section.settings[drop_name] | default: default_names[forloop.index0] -%}
+        {%- assign desc_val = section.settings[drop_desc] | default: default_descs[forloop.index0] -%}
+        {%- assign label_val = section.settings[drop_label] | default: default_labels[forloop.index0] -%}
+        {%- assign rating_val = section.settings[drop_rating] | default: default_ratings[forloop.index0] -%}
+
+        <div class="drop-archive-card">
+          <div class="drop-archive-visual" {% if drop_img != blank %}style="background-image:url('{{ drop_img | image_url: width: 400 }}');background-size:cover;background-position:center;"{% endif %}>
+            {%- if drop_img == blank -%}<span class="drop-archive-icon">{{ icon_val }}</span>{%- endif -%}
+            <span class="drop-sold-out-badge">Sold Out</span>
+          </div>
+          <div class="drop-archive-body">
+            <span class="drop-archive-label">{{ label_val }}</span>
+            <h3 class="drop-archive-name">{{ name_val }}</h3>
+            <p class="drop-archive-desc">{{ desc_val }}</p>
+            <div class="star-rating">★★★★★ <span class="rating-text">({{ rating_val }})</span></div>
+          </div>
+        </div>
+      {%- endfor -%}
+
+    </div>
+
+    <div style="text-align:center;margin-top:3rem;">
+      <p style="color:var(--text-muted);margin-bottom:1.25rem;">Want to make sure you never miss a drop?</p>
+      <a href="#subscribe" class="btn btn-primary">Join the Drop Subscription</a>
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+<!-- ===== NEXT DROP TEASER ===== -->
+<section class="section drops-next-teaser">
+  <div class="container">
+    <div class="drops-teaser-card">
+      <span class="section-eyebrow" style="color:var(--text-muted);">{{ section.settings.drops_next_coming_label | default: 'Coming February 2025' }}</span>
+      <h2 class="drops-section-heading" style="color:var(--cream);">
+        {{ section.settings.drops_next_label | default: 'Drop 09 —' }} <em style="color:{{ section.settings.drops_accent_color | default: 'var(--gold)' }};">{{ section.settings.drops_next_teaser | default: 'Something New' }}</em>
+      </h2>
+      <p style="color:rgba(245,239,230,0.7);max-width:460px;margin:0 auto 2rem;">{{ section.settings.drops_next_desc | default: 'The theme is under wraps until January 31st. Subscribers find out 48 hours early.' }}</p>
+      <a href="#subscribe" class="btn btn-gold">{{ section.settings.drops_next_cta | default: 'Join Early Access' }}</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="section drops-testimonials">
+  <div class="container">
+    <div class="testimonials-grid">
+      {%- for i in (1..3) -%}
+        {%- assign t_text = 'drops_testimonial_' | append: i | append: '_text' -%}
+        {%- assign t_author = 'drops_testimonial_' | append: i | append: '_author' -%}
+        {%- assign t_sub = 'drops_testimonial_' | append: i | append: '_sub' -%}
+        {%- assign default_texts = 'The midnight hours drop was genuinely the best thing we have done as a couple this year. Better than any restaurant honestly.,I subscribed after receiving one as a gift. That was 4 months ago. I now buy two — one for us and one for my sister&#39;s couple.,We do the drop the first Friday of every month. It&#39;s our ritual now. The quality is exceptional.' | split: ',' -%}
+        {%- assign default_authors = 'Emily & Tom,Priya M.,Chris & Dan' | split: ',' -%}
+        {%- assign default_subs = 'Drop Subscriber · 2 months,Drop Subscriber · 4 months,Drop Subscriber · 7 months' | split: ',' -%}
+        <div class="testimonial-card" style="background:var(--white);border-radius:12px;padding:1.75rem;">
+          <div class="star-rating" style="font-size:1rem;margin-bottom:0.75rem;">★★★★★</div>
+          <p class="testimonial-text">"{{ section.settings[t_text] | default: default_texts[forloop.index0] }}"</p>
+          <p class="testimonial-author" style="font-weight:600;">— {{ section.settings[t_author] | default: default_authors[forloop.index0] }}</p>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem;">{{ section.settings[t_sub] | default: default_subs[forloop.index0] }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<script>
+// Countdown timer
+(function() {
+  var endStr = '{{ section.settings.drops_countdown_end }}';
+  if (!endStr) return;
+  var end = new Date(endStr);
+  function update() {
+    var now = new Date();
+    var diff = end - now;
+    if (diff <= 0) { document.getElementById('drop-countdown') && (document.getElementById('drop-countdown').style.display='none'); return; }
+    var d = Math.floor(diff/86400000);
+    var h = Math.floor((diff%86400000)/3600000);
+    var m = Math.floor((diff%3600000)/60000);
+    var s = Math.floor((diff%60000)/1000);
+    function pad(n){ return String(n).padStart(2,'0'); }
+    var cd = document.getElementById('cd-days');
+    var ch = document.getElementById('cd-hours');
+    var cm = document.getElementById('cd-mins');
+    var cs = document.getElementById('cd-secs');
+    if(cd) cd.textContent = pad(d);
+    if(ch) ch.textContent = pad(h);
+    if(cm) cm.textContent = pad(m);
+    if(cs) cs.textContent = pad(s);
+  }
+  update();
+  setInterval(update, 1000);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Drops Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "drops_hero_image",
+      "label": "Hero background image",
+      "info": "Full-width drops hero banner. Recommended: 1800×900px."
+    },
+    {
+      "type": "image_picker",
+      "id": "drops_current_image",
+      "label": "Current drop product image",
+      "info": "The main product photo for this month's drop. Recommended: 700×700px."
+    },
+    {
+      "type": "image_picker",
+      "id": "drops_archive_1_image",
+      "label": "Archive drop 1 image",
+      "info": "Drop archive card image. Recommended: 600×600px."
+    },
+    {
+      "type": "image_picker",
+      "id": "drops_archive_2_image",
+      "label": "Archive drop 2 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "drops_archive_3_image",
+      "label": "Archive drop 3 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "drops_archive_4_image",
+      "label": "Archive drop 4 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "drops_archive_5_image",
+      "label": "Archive drop 5 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "drops_archive_6_image",
+      "label": "Archive drop 6 image"
+    },
+    {
+      "type": "header",
+      "content": "📦 Current Drop Details"
+    },
+    {
+      "type": "text",
+      "id": "drops_current_name",
+      "label": "Drop name",
+      "default": "The Velvet Hour"
+    },
+    {
+      "type": "textarea",
+      "id": "drops_current_description",
+      "label": "Drop description",
+      "default": "An evening ritual for two. Built around the science of sensory intimacy."
+    },
+    {
+      "type": "text",
+      "id": "drops_current_price",
+      "label": "Drop price",
+      "default": "£85"
+    },
+    {
+      "type": "text",
+      "id": "drops_current_theme_label",
+      "label": "Theme label",
+      "default": "This Month's Theme:"
+    },
+    {
+      "type": "text",
+      "id": "drops_current_theme",
+      "label": "Theme name",
+      "default": "Sensory Intimacy"
+    },
+    {
+      "type": "text",
+      "id": "drops_best_for",
+      "label": "Best For tags (comma-separated)",
+      "default": "Established couples,Anniversaries,Valentine&#39;s Day,Gift ideas,At-home date nights"
+    },
+    {
+      "type": "text",
+      "id": "drops_contents",
+      "label": "What's inside (comma-separated)",
+      "default": "Madagascan Dark Chocolate (120g),Amber Vetiver Candle (150ml),The Connection Game (52 cards),Velvet Hour Ritual Guide,Luxury Gift Packaging"
+    },
+    {
+      "type": "text",
+      "id": "drops_cta_text",
+      "label": "Buy CTA text",
+      "default": "Get This Drop"
+    },
+    {
+      "type": "url",
+      "id": "drops_cta_url",
+      "label": "Buy CTA link"
+    },
+    {
+      "type": "header",
+      "content": "📝 Hero Text"
+    },
+    {
+      "type": "text",
+      "id": "drops_hero_eyebrow",
+      "label": "Hero eyebrow",
+      "default": "Monthly Drops"
+    },
+    {
+      "type": "text",
+      "id": "drops_hero_heading",
+      "label": "Hero heading line 1",
+      "default": "A new ritual"
+    },
+    {
+      "type": "text",
+      "id": "drops_hero_heading_italic",
+      "label": "Hero heading italic line",
+      "default": "every month."
+    },
+    {
+      "type": "textarea",
+      "id": "drops_hero_subtext",
+      "label": "Hero subtext",
+      "default": "Curated sensory experiences delivered to your door. Limited quantities. Subscribers first."
+    },
+    {
+      "type": "header",
+      "content": "⏱️ Countdown Timer"
+    },
+    {
+      "type": "text",
+      "id": "drops_countdown_end",
+      "label": "Countdown end date/time",
+      "info": "Format: 2025-02-01T00:00:00. Leave blank to hide counter."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colours"
+    },
+    {
+      "type": "color",
+      "id": "drops_accent_color",
+      "label": "Accent colour",
+      "default": "#C9A84C"
+    },
+    {
+      "type": "color",
+      "id": "drops_hero_bg_from",
+      "label": "Hero gradient start",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "color",
+      "id": "drops_hero_bg_to",
+      "label": "Hero gradient end",
+      "default": "#2D1020"
+    }
+  ]
+}
+{% endschema %}

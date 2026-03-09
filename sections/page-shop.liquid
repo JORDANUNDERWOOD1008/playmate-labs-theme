@@ -1,0 +1,369 @@
+{%- assign _shop_promo_img = section.settings.shop_promo_image -%}
+{% comment %}
+  PLAYMATE LABS — SHOP LANDING PAGE
+  File: templates/page.shop.liquid
+  Used for: /pages/shop  (assign this template to a Page named "Shop")
+  Features: Hero, curated category banners, curated product highlights,
+            featured drop countdown, bundle builder CTA, testimonials.
+{% endcomment %}
+
+{{ 'shop.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'shop.js' | asset_url }}" defer></script>
+
+<!-- ===== SHOP PAGE HERO ===== -->
+{% assign shop_hero_img = section.settings.shop_hero_image %}
+<section class="shop-hero" {% if shop_hero_img %}style="background-image:url('{{ shop_hero_img  }}')"{% endif %}>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Shop</span>
+    </div>
+    <div class="shop-hero-content">
+      <span class="section-eyebrow">The Full Collection</span>
+      <h1 class="heading-xl">Playful rituals, sensory products<br>and experiences worth dressing up for.</h1>
+      <p class="body-lg shop-hero-desc">Thoughtfully crafted for modern couples — from edible rituals to immersive date night kits.</p>
+    </div>
+    <div class="shop-hero-stats">
+      <div class="shop-stat">
+        <span class="shop-stat-num">12+</span>
+        <span class="shop-stat-label">Products</span>
+      </div>
+      <div class="shop-stat-divider"></div>
+      <div class="shop-stat">
+        <span class="shop-stat-num">4.9★</span>
+        <span class="shop-stat-label">Average Rating</span>
+      </div>
+      <div class="shop-stat-divider"></div>
+      <div class="shop-stat">
+        <span class="shop-stat-num">Free</span>
+        <span class="shop-stat-label">Shipping over £{{ section.settings.cart_free_shipping_threshold | default: '60' }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CATEGORY NAVIGATION BANNERS ===== -->
+<section class="shop-featured-banner">
+  <div class="container">
+    <div class="shop-banner-grid">
+      <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="shop-banner-card shop-banner-primary">
+        <div class="shop-banner-bg bg-dark">
+          <div class="shop-banner-inner">
+            <span class="badge badge-gold" style="margin-bottom:0.75rem;">Latest Drop</span>
+            <h2 class="shop-banner-title" style="color:var(--cream);">The Velvet Hour</h2>
+            <p class="shop-banner-sub">Limited drop — 47 kits remaining</p>
+            <span class="btn btn-gold btn-sm">Shop Now — £68</span>
+          </div>
+          <div class="shop-banner-emoji">🍷</div>
+        </div>
+      </a>
+      <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="shop-banner-card shop-banner-secondary">
+        <div class="shop-banner-bg bg-warm">
+          <div class="shop-banner-inner">
+            <span class="badge badge-burgundy" style="margin-bottom:0.75rem;">Popular</span>
+            <h2 class="shop-banner-title" style="color:var(--espresso);">Sensory Consumables</h2>
+            <p class="shop-banner-sub" style="color:var(--text-muted);">Edible rituals from £18</p>
+            <span class="btn btn-primary btn-sm">Explore</span>
+          </div>
+          <div class="shop-banner-emoji">🍫</div>
+        </div>
+      </a>
+      <a href="{{ collections['date-night-kits'].url | default: '/collections/date-night-kits' }}" class="shop-banner-card shop-banner-tertiary">
+        <div class="shop-banner-bg bg-deep">
+          <div class="shop-banner-inner">
+            <span class="badge badge-cream" style="margin-bottom:0.75rem;">New In</span>
+            <h2 class="shop-banner-title" style="color:var(--cream);">Date Night Kits</h2>
+            <p class="shop-banner-sub">Full evenings from £58</p>
+            <span class="btn btn-ghost btn-sm">Shop Kits</span>
+          </div>
+          <div class="shop-banner-emoji">🌹</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CATEGORY STRIP ===== -->
+<section class="shop-category-strip">
+  <div class="container">
+    <div class="category-strip-grid">
+      <a href="{{ collections['all'].url }}" class="category-pill category-pill-active">
+        <i class="fas fa-th-large"></i> All Products
+      </a>
+      <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="category-pill">
+        <span>🍫</span> Consumables
+      </a>
+      <a href="{{ collections['date-night-kits'].url | default: '/collections/date-night-kits' }}" class="category-pill">
+        <span>🌹</span> Date Night Kits
+      </a>
+      <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="category-pill">
+        <span>✦</span> Monthly Drops
+      </a>
+      <a href="{{ collections['games'].url | default: '/collections/games' }}" class="category-pill">
+        <span>🃏</span> Games
+      </a>
+      <a href="{{ collections['ritual-add-ons'].url | default: '/collections/ritual-add-ons' }}" class="category-pill">
+        <span>🕯️</span> Ritual Add-Ons
+      </a>
+      <a href="{{ collections['gifts'].url | default: '/collections/gifts' }}" class="category-pill">
+        <span>🎁</span> Gift Sets
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BESTSELLERS ===== -->
+<section class="section">
+  <div class="container">
+    <div class="section-header section-header-between">
+      <div>
+        <span class="section-eyebrow">Fan Favourites</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;">Bestsellers</h2>
+      </div>
+      <a href="{{ collections['all'].url }}" class="btn btn-ghost btn-sm">View All →</a>
+    </div>
+    <div class="shop-products-grid">
+      {%- assign bestsellers = collections['bestsellers'] | default: collections['all'] -%}
+      {%- for product in bestsellers.products limit: 4 -%}
+        {% render 'product-card', product: product, show_badge: true, show_quick_add: true %}
+      {%- else -%}
+        {%- comment -%} Placeholder cards when no products {%- endcomment -%}
+        {%- for i in (1..4) -%}
+          <div class="product-card product-card-placeholder">
+            <div class="product-card-img-wrap">
+              <div class="img-placeholder"></div>
+            </div>
+            <div class="product-card-body">
+              <div class="placeholder-line" style="width:60%;height:0.75rem;background:var(--border-color);border-radius:4px;margin-bottom:0.5rem;"></div>
+              <div class="placeholder-line" style="width:80%;height:1rem;background:var(--border-color);border-radius:4px;margin-bottom:0.5rem;"></div>
+              <div class="placeholder-line" style="width:40%;height:0.875rem;background:var(--border-color);border-radius:4px;"></div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<!-- ===== SENSORY CONSUMABLES SPOTLIGHT ===== -->
+<section class="section shop-spotlight bg-warm-subtle">
+  <div class="container">
+    <div class="section-header section-header-between">
+      <div>
+        <span class="section-eyebrow">Edible Rituals</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;">Sensory Consumables</h2>
+        <p style="color:var(--text-muted);max-width:420px;margin-top:0.5rem;">Artisan chocolates, aphrodisiac blends and ritual teas crafted for couples.</p>
+      </div>
+      <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="btn btn-primary btn-sm">Shop Consumables →</a>
+    </div>
+    <div class="shop-products-grid">
+      {%- for product in collections['consumables'].products limit: 4 -%}
+        {% render 'product-card', product: product, show_badge: true, show_quick_add: true %}
+      {%- else -%}
+        <div class="empty-collection-inline">
+          <p style="color:var(--text-muted);">Consumables collection coming soon.</p>
+          <a href="{{ collections['all'].url }}" class="btn btn-ghost btn-sm" style="margin-top:1rem;">Browse All</a>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<!-- ===== BUNDLE BUILDER CTA ===== -->
+<section class="shop-bundle-cta-full">
+  <div class="container">
+    <div class="shop-bundle-full-inner">
+      <div class="bundle-full-text">
+        <span class="section-eyebrow" style="color:var(--gold);">Bundle &amp; Save 15%</span>
+        <h2 style="font-family:var(--font-serif);font-size:2.25rem;color:var(--cream);margin:0.75rem 0 1rem;">Build Your Own<br>Ritual Kit</h2>
+        <p style="color:rgba(245,239,230,0.75);max-width:400px;margin-bottom:1.75rem;">Pick any 3 consumables and the discount applies automatically at checkout. Mix chocolates, teas, blends &amp; ritual oils.</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="btn btn-gold">Start Building</a>
+          <a href="{{ pages['experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-ghost">Try Free Experience</a>
+        </div>
+      </div>
+      <div class="bundle-full-visual">
+        <div class="bundle-visual-grid">
+          <div class="bundle-item">🍫</div>
+          <div class="bundle-item">🍯</div>
+          <div class="bundle-item">🫖</div>
+          <div class="bundle-item bundle-item-plus">+</div>
+          <div class="bundle-item bundle-item-save">15% OFF</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DATE NIGHT KITS ===== -->
+<section class="section">
+  <div class="container">
+    <div class="section-header section-header-between">
+      <div>
+        <span class="section-eyebrow">Full Experiences</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;">Date Night Kits</h2>
+        <p style="color:var(--text-muted);max-width:420px;margin-top:0.5rem;">Everything you need for one perfect evening — curated, paired and ready to unwrap.</p>
+      </div>
+      <a href="{{ collections['date-night-kits'].url | default: '/collections/date-night-kits' }}" class="btn btn-ghost btn-sm">See All Kits →</a>
+    </div>
+    <div class="shop-products-grid">
+      {%- for product in collections['date-night-kits'].products limit: 4 -%}
+        {% render 'product-card', product: product, show_badge: true, show_quick_add: true %}
+      {%- else -%}
+        <div class="empty-collection-inline">
+          <p style="color:var(--text-muted);">Date night kits coming soon.</p>
+          <a href="{{ collections['all'].url }}" class="btn btn-ghost btn-sm" style="margin-top:1rem;">Browse All</a>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<!-- ===== LATEST MONTHLY DROP ===== -->
+<section class="shop-drop-cta">
+  <div class="container">
+    <div class="shop-drop-inner">
+      <div class="shop-drop-text">
+        <span class="section-eyebrow" style="color:var(--gold);">Monthly Drops</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--cream);margin:0.5rem 0 1rem;">Never miss a limited release</h2>
+        <p style="color:rgba(245,239,230,0.7);max-width:420px;">Each month we release a single curated kit — limited to 200 pairs. Join the list for early access, 24 hours before public release.</p>
+      </div>
+      <div class="shop-drop-cta-btns">
+        <a href="{{ pages['monthly-drops'].url | default: '/pages/monthly-drops' }}" class="btn btn-gold">Join Drop List</a>
+        <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="btn btn-ghost">See Past Drops</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GAMES & CARDS ===== -->
+<section class="section">
+  <div class="container">
+    <div class="section-header section-header-between">
+      <div>
+        <span class="section-eyebrow">Play Together</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;">Games &amp; Connection Cards</h2>
+        <p style="color:var(--text-muted);max-width:420px;margin-top:0.5rem;">Designed to deepen intimacy, spark play and ignite real curiosity.</p>
+      </div>
+      <a href="{{ collections['games'].url | default: '/collections/games' }}" class="btn btn-ghost btn-sm">Browse Games →</a>
+    </div>
+    <div class="shop-products-grid">
+      {%- for product in collections['games'].products limit: 3 -%}
+        {% render 'product-card', product: product, show_badge: true, show_quick_add: true %}
+      {%- else -%}
+        <div class="empty-collection-inline">
+          <p style="color:var(--text-muted);">Games coming soon.</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<!-- ===== SOCIAL PROOF STRIP ===== -->
+<section class="section shop-testimonials">
+  <div class="container">
+    <div class="section-header" style="text-align:center;margin-bottom:2.5rem;">
+      <span class="section-eyebrow">Real Couples</span>
+      <h2 style="font-family:var(--font-serif);font-size:2rem;">What our community says</h2>
+    </div>
+    <div class="testimonials-grid">
+      {%- assign testimonials = '' | split: '' -%}
+      <div class="testimonial-card">
+        <div class="star-rating" style="font-size:1rem;margin-bottom:0.75rem;">★★★★★</div>
+        <p class="testimonial-text">"The Velvet Hour kit completely transformed our date nights. We've done it three times already — it never gets old."</p>
+        <p class="testimonial-author">— Sophie &amp; James, London</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="star-rating" style="font-size:1rem;margin-bottom:0.75rem;">★★★★★</div>
+        <p class="testimonial-text">"The dark sensory chocolate is absolutely divine. The ritual element makes it feel so intentional. Truly unlike anything else."</p>
+        <p class="testimonial-author">— Charlotte, Manchester</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="star-rating" style="font-size:1rem;margin-bottom:0.75rem;">★★★★★</div>
+        <p class="testimonial-text">"We subscribe to the monthly drops and it gives us something to look forward to every single month. Worth every penny."</p>
+        <p class="testimonial-author">— Emma &amp; Daniel, Edinburgh</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GIFT SETS ===== -->
+<section class="section bg-warm-subtle">
+  <div class="container">
+    <div class="section-header section-header-between">
+      <div>
+        <span class="section-eyebrow">Give the Unexpected</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;">Gift Sets</h2>
+        <p style="color:var(--text-muted);max-width:420px;margin-top:0.5rem;">Thoughtfully curated for anniversaries, birthdays and "just because" moments.</p>
+      </div>
+      <a href="{{ collections['gifts'].url | default: '/collections/gifts' }}" class="btn btn-primary btn-sm">Shop Gifts →</a>
+    </div>
+    <div class="shop-products-grid">
+      {%- for product in collections['gifts'].products limit: 4 -%}
+        {% render 'product-card', product: product, show_badge: true, show_quick_add: true %}
+      {%- else -%}
+        <div class="empty-collection-inline">
+          <p style="color:var(--text-muted);">Gift sets coming soon.</p>
+          <a href="{{ collections['all'].url }}" class="btn btn-ghost btn-sm" style="margin-top:1rem;">Browse All</a>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shop Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "shop_hero_image",
+      "label": "Shop hero banner image",
+      "info": "Full-width shop banner. Recommended: 1800×700px."
+    },
+    {
+      "type": "image_picker",
+      "id": "shop_promo_image",
+      "label": "Promotional banner image",
+      "info": "Mid-page promo/feature image. Recommended: 1200×500px."
+    },
+    {
+      "type": "header",
+      "content": "📝 Hero Text"
+    },
+    {
+      "type": "text",
+      "id": "shop_hero_eyebrow",
+      "label": "Hero eyebrow",
+      "default": "The Shop"
+    },
+    {
+      "type": "text",
+      "id": "shop_hero_heading",
+      "label": "Hero heading",
+      "default": "Rituals worth collecting."
+    },
+    {
+      "type": "textarea",
+      "id": "shop_hero_subtext",
+      "label": "Hero subtext",
+      "default": "Drop kits, gifts and sensory tools — all designed to make time together more intentional."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colours"
+    },
+    {
+      "type": "color",
+      "id": "shop_accent_color",
+      "label": "Accent colour",
+      "default": "#C9A84C"
+    }
+  ]
+}
+{% endschema %}

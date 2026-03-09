@@ -1,0 +1,472 @@
+
+{%- assign _ev_gallery_1 = section.settings.event_detail_gallery_1 -%}
+{%- assign _ev_gallery_2 = section.settings.event_detail_gallery_2 -%}
+{%- assign _ev_gallery_3 = section.settings.event_detail_gallery_3 -%}
+{%- assign _ev_gallery_4 = section.settings.event_detail_gallery_4 -%}
+{%- assign _ev_venue_img = section.settings.event_venue_image -%}
+{% assign event_hero_img = section.settings.event_detail_hero_image %}
+{% comment %} PLAYMATE LABS — Event Detail Page Template {% endcomment %}
+{{ 'event-detail.css' | asset_url | stylesheet_tag }}
+{{ 'event-detail.js' | asset_url | script_tag }}
+
+{%- comment -%} Expects page handle format: event-[slug] e.g. event-velvet-hour-live {%- endcomment -%}
+
+{%- assign event_data = page.metafields.event -%}
+
+<!-- EVENT HERO -->
+<section class="event-detail-hero">
+  <div class="event-detail-hero-bg">
+    {%- if page.metafields.event.image != blank -%}
+      {%- assign _event_bg = event_hero_img -%}
+      {%- if _event_bg -%}
+        <img src="{{ _event_bg  }}" alt="{{ section.settings.event_detail_name | default: page.title }}" loading="eager" class="event-detail-hero-img-bg">
+      {%- elsif page.metafields.event.image -%}
+        <img src="{{ page.metafields.event.image | image_url: width: 1600 }}" alt="{{ page.title }}" loading="eager" class="event-detail-hero-img-bg">
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+  <div class="event-detail-hero-overlay"></div>
+
+  <div class="container event-detail-hero-inner">
+    <div class="breadcrumb breadcrumb-light">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="{{ routes.root_url }}pages/events">Events</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>{{ page.title }}</span>
+    </div>
+
+    <div class="event-detail-hero-grid">
+      <!-- Left: Event Info -->
+      <div class="event-detail-info animate-fadeInUp">
+        <div class="event-detail-badges">
+          {%- if page.metafields.event.type != blank -%}
+            <span class="badge badge-burgundy">{{ page.metafields.event.type.value }}</span>
+          {%- else -%}
+            <span class="badge badge-burgundy">{{ section.settings.event_detail_default_type | default: 'Sensory Date Night' }}</span>
+          {%- endif -%}
+          {%- if page.metafields.event.sold_out == true -%}
+            <span class="badge badge-dark">Sold Out</span>
+          {%- else -%}
+            <span class="badge badge-gold">{{ section.settings.event_detail_availability_badge | default: 'Selling Fast' }}</span>
+          {%- endif -%}
+        </div>
+
+        <h1 class="event-detail-title">{{ page.title }}</h1>
+
+        <div class="event-detail-meta-row">
+          {%- if page.metafields.event.date != blank -%}
+            <span class="event-meta-item">
+              <i class="far fa-calendar" style="color:var(--gold);"></i>
+              {{ page.metafields.event.date.value | date: '%A %d %B %Y' }}
+            </span>
+          {%- else -%}
+            <span class="event-meta-item">
+              <i class="far fa-calendar" style="color:var(--gold);"></i>
+              {{ section.settings.event_detail_date | default: 'Date TBC' }}
+            </span>
+          {%- endif -%}
+          {%- if page.metafields.event.time != blank -%}
+            <span class="event-meta-item">
+              <i class="far fa-clock" style="color:var(--gold);"></i>
+              {{ page.metafields.event.time.value }}
+            </span>
+          {%- endif -%}
+          {%- if page.metafields.event.city != blank -%}
+            <span class="event-meta-item">
+              <i class="fas fa-map-marker-alt" style="color:var(--gold);"></i>
+              {{ page.metafields.event.city.value }}
+            </span>
+          {%- endif -%}
+        </div>
+
+        <p class="event-detail-desc">{{ page.content | strip_html | truncate: 300 }}</p>
+
+        <div class="event-detail-cta-row">
+          <div class="event-detail-price">
+            {%- if page.metafields.event.price != blank -%}
+              <span class="event-price-amount">{{ page.metafields.event.price.value }}</span>
+            {%- else -%}
+              <span class="event-price-amount">{{ section.settings.event_detail_price | default: '£85' }}</span>
+            {%- endif -%}
+            <span class="event-price-label">/couple</span>
+          </div>
+          {%- if page.metafields.event.sold_out == true -%}
+            <a href="#waitlist-form" class="btn btn-secondary btn-xl">Join the Waitlist</a>
+          {%- else -%}
+            <a href="#rsvp-form" class="btn btn-gold btn-xl">
+              RSVP Now
+              {%- if page.metafields.event.capacity != blank -%}
+                — Only {{ page.metafields.event.capacity.value }} left
+              {%- endif -%}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <!-- Right: Event Card -->
+      <div class="event-detail-card animate-fadeIn animate-delay-2">
+        <h3 class="event-card-heading">Event Details</h3>
+        <div class="event-card-details">
+          <div class="event-card-detail-row">
+            <i class="far fa-calendar" style="color:var(--gold);"></i>
+            <div>
+              <strong>Date &amp; Time</strong>
+              <p>
+                {%- if page.metafields.event.date != blank -%}
+                  {{ page.metafields.event.date.value | date: '%A %d %B %Y' }}<br>
+                {%- else -%}
+                  {{ section.settings.event_detail_date | default: 'Date to be confirmed' }}<br>
+                {%- endif -%}
+                {%- if page.metafields.event.time != blank -%}
+                  Doors open · {{ page.metafields.event.time.value }}
+                {%- endif -%}
+              </p>
+            </div>
+          </div>
+          <div class="event-card-detail-row">
+            <i class="fas fa-map-marker-alt" style="color:var(--gold);"></i>
+            <div>
+              <strong>Venue</strong>
+              <p>
+                {%- if page.metafields.event.venue != blank -%}
+                  {{ page.metafields.event.venue.value }}<br>
+                {%- endif -%}
+                {%- if page.metafields.event.city != blank -%}
+                  {{ page.metafields.event.city.value }}<br>
+                {%- endif -%}
+                <span style="color:var(--gold);font-size:0.8125rem;">Exact address sent after booking</span>
+              </p>
+            </div>
+          </div>
+          <div class="event-card-detail-row">
+            <i class="fas fa-users" style="color:var(--gold);"></i>
+            <div>
+              <strong>Capacity</strong>
+              <p>{{ section.settings.event_detail_capacity_text | default: 'Limited intimate event for couples' }}</p>
+            </div>
+          </div>
+          <div class="event-card-detail-row">
+            <i class="fas fa-tag" style="color:var(--gold);"></i>
+            <div>
+              <strong>Price</strong>
+              <p>
+                {%- if page.metafields.event.price != blank -%}
+                  {{ page.metafields.event.price.value }} per couple
+                {%- else -%}
+                  {{ section.settings.event_detail_price | default: '£85' }} per couple
+                {%- endif -%}
+                {%- if section.settings.event_detail_price_includes != blank -%}
+                  <br><span style="font-size:0.8125rem;color:rgba(245,239,230,0.5);">{{ section.settings.event_detail_price_includes }}</span>
+                {%- endif -%}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENT DESCRIPTION / FULL CONTENT -->
+<section class="event-detail-body section">
+  <div class="container">
+    <div class="event-detail-body-grid">
+
+      <!-- Full Content -->
+      <div class="event-detail-content">
+        {%- if page.content != blank -%}
+          <div class="event-detail-rich-text rte">{{ page.content }}</div>
+        {%- else -%}
+          <h2>{{ section.settings.event_detail_about_heading | default: 'About This Event' }}</h2>
+          <p>{{ section.settings.event_detail_about_text | default: 'An intimate sensory evening designed for modern couples. Details below.' }}</p>
+        {%- endif -%}
+
+        <!-- What to Expect -->
+        {%- if section.settings.event_detail_show_itinerary -%}
+        <div class="event-itinerary">
+          <h3>{{ section.settings.event_itinerary_heading | default: 'The Evening Itinerary' }}</h3>
+          <div class="event-itinerary-list">
+            {%- for i in (1..5) -%}
+              {%- assign time_key = 'event_itinerary_time_' | append: i -%}
+              {%- assign item_key = 'event_itinerary_item_' | append: i -%}
+              {%- if settings[item_key] != blank -%}
+                <div class="event-itinerary-item">
+                  <span class="event-itinerary-time">{{ settings[time_key] }}</span>
+                  <span class="event-itinerary-desc">{{ settings[item_key] }}</span>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+        {%- endif -%}
+      </div>
+
+      <!-- RSVP / Booking Sidebar -->
+      <aside class="event-detail-sidebar">
+
+        {%- if page.metafields.event.sold_out == true -%}
+        <!-- WAITLIST FORM -->
+        <div class="event-form-card" id="waitlist-form">
+          <h3>Join the Waitlist</h3>
+          <p>This event is sold out — join the waitlist to be first to know about the next one.</p>
+          {%- form 'customer', id: 'event-waitlist-form' -%}
+            <input type="hidden" name="contact[tags]" value="event-waitlist,{{ page.handle }}">
+            <div class="form-group">
+              <label class="form-label">Your Name</label>
+              <input type="text" name="contact[first_name]" placeholder="First name" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" name="contact[email]" placeholder="your@email.com" class="form-input" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">{{ section.settings.event_waitlist_cta | default: 'Join Waitlist' }}</button>
+          {%- endform -%}
+        </div>
+
+        {%- else -%}
+        <!-- RSVP / BOOKING FORM -->
+        <div class="event-form-card" id="rsvp-form">
+          <h3>{{ section.settings.event_rsvp_heading | default: 'Reserve Your Spot' }}</h3>
+          <p class="event-form-subtext">{{ section.settings.event_rsvp_subtext | default: 'Secure your place for this intimate event. Spaces are limited.' }}</p>
+
+          {%- form 'customer', id: 'event-rsvp-form' -%}
+            {%- if form.posted_successfully? -%}
+              <div class="event-form-success">
+                <span style="font-size:2rem;">🎉</span>
+                <h4>{{ section.settings.event_rsvp_success_heading | default: "You're on the list!" }}</h4>
+                <p>{{ section.settings.event_rsvp_success_text | default: "We'll be in touch with confirmation and venue details." }}</p>
+              </div>
+            {%- else -%}
+              <input type="hidden" name="contact[tags]" value="event-rsvp,{{ page.handle }}">
+              <div class="event-form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">First Name</label>
+                  <input type="text" name="contact[first_name]" placeholder="First name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Partner's Name</label>
+                  <input type="text" name="contact[last_name]" placeholder="Partner's name" class="form-input">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" name="contact[email]" placeholder="your@email.com" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone (optional)</label>
+                <input type="tel" name="contact[phone]" placeholder="+44 7700 000000" class="form-input">
+              </div>
+              {%- if section.settings.event_rsvp_show_dietary -%}
+              <div class="form-group">
+                <label class="form-label">Dietary Requirements</label>
+                <textarea name="contact[body]" placeholder="Let us know of any dietary requirements..." class="form-input" rows="2"></textarea>
+              </div>
+              {%- endif -%}
+              <button type="submit" class="btn btn-gold btn-lg" style="width:100%;justify-content:center;margin-top:0.5rem;">{{ section.settings.event_rsvp_cta | default: 'Reserve My Spot' }}</button>
+              <p class="event-form-disclaimer">{{ section.settings.event_rsvp_disclaimer | default: 'No payment required now. We will contact you with payment details.' }}</p>
+            {%- endif -%}
+          {%- endform -%}
+        </div>
+        {%- endif -%}
+
+        <!-- Trust Signals -->
+        <div class="event-trust-list">
+          {%- assign trust_items = '🔒 Secure & confidential,📧 Instant confirmation,🔄 Full refund up to 48hrs before,💎 Intimate couples event' | split: ',' -%}
+          {%- for trust in trust_items -%}
+            <div class="event-trust-item">{{ trust }}</div>
+          {%- endfor -%}
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+{%- if section.settings.event_detail_show_testimonials -%}
+<section class="event-testimonials section bg-ivory">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow" style="color:var(--gold);">{{ section.settings.event_testimonials_eyebrow | default: 'From past events' }}</span>
+      <h2>{{ section.settings.event_testimonials_heading | default: 'What couples say' }}</h2>
+    </div>
+    <div class="event-testimonials-grid">
+      {%- for i in (1..3) -%}
+        {%- assign quote_key = 'event_testimonial_quote_' | append: i -%}
+        {%- assign author_key = 'event_testimonial_author_' | append: i -%}
+        {%- if settings[quote_key] != blank -%}
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"{{ settings[quote_key] }}"</p>
+            <p class="testimonial-author">— {{ settings[author_key] }}</p>
+          </div>
+        {%- else -%}
+          {%- assign default_quotes = '"Honestly one of the best nights we&#39;ve had together. The atmosphere was perfect." — Sarah & Tom,A date night that actually made us feel like strangers again (in the best way). — James & Claire,"The guided tasting was incredible. We had no idea chocolate could be that sensory." — Alex & Jordan' | split: ',' -%}
+          {%- if default_quotes[forloop.index0] != blank -%}
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">{{ default_quotes[forloop.index0] }}</p>
+          </div>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+<!-- MORE EVENTS CTA -->
+<section class="event-more-cta">
+  <div class="container">
+    <div class="event-more-cta-inner">
+      <h2>{{ section.settings.event_more_heading | default: 'More events coming soon' }}</h2>
+      <p>{{ section.settings.event_more_subtext | default: 'We host intimate sensory evenings, couples mixers and pop-ups across the UK.' }}</p>
+      <div class="event-more-actions">
+        <a href="{{ routes.root_url }}pages/events" class="btn btn-primary">All Events</a>
+        <a href="{{ routes.root_url }}pages/5-day-experience" class="btn btn-secondary">Free 5-Day Experience</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Event Detail Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "event_detail_hero_image",
+      "label": "Event hero image",
+      "info": "Full-width event banner. Recommended: 1800×900px."
+    },
+    {
+      "type": "image_picker",
+      "id": "event_detail_gallery_1",
+      "label": "Gallery image 1",
+      "info": "Event gallery photo. Recommended: 800×600px."
+    },
+    {
+      "type": "image_picker",
+      "id": "event_detail_gallery_2",
+      "label": "Gallery image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "event_detail_gallery_3",
+      "label": "Gallery image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "event_detail_gallery_4",
+      "label": "Gallery image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "event_venue_image",
+      "label": "Venue image",
+      "info": "Photo of the event venue. Recommended: 900×600px."
+    },
+    {
+      "type": "header",
+      "content": "📅 Event Details"
+    },
+    {
+      "type": "text",
+      "id": "event_detail_name",
+      "label": "Event name",
+      "default": "Sensory Date Night"
+    },
+    {
+      "type": "text",
+      "id": "event_detail_date",
+      "label": "Event date",
+      "default": "Date TBC"
+    },
+    {
+      "type": "text",
+      "id": "event_detail_time",
+      "label": "Event time",
+      "default": "7:00pm – 10:00pm"
+    },
+    {
+      "type": "text",
+      "id": "event_detail_location",
+      "label": "Event location",
+      "default": "London"
+    },
+    {
+      "type": "text",
+      "id": "event_detail_venue",
+      "label": "Venue name",
+      "default": "Venue TBC"
+    },
+    {
+      "type": "text",
+      "id": "event_detail_price",
+      "label": "Ticket price",
+      "default": "£85"
+    },
+    {
+      "type": "text",
+      "id": "event_detail_capacity",
+      "label": "Capacity",
+      "default": "12 couples"
+    },
+    {
+      "type": "text",
+      "id": "event_detail_availability_badge",
+      "label": "Availability badge",
+      "default": "Selling Fast"
+    },
+    {
+      "type": "text",
+      "id": "event_detail_default_type",
+      "label": "Event type badge",
+      "default": "Sensory Date Night"
+    },
+    {
+      "type": "textarea",
+      "id": "event_detail_description",
+      "label": "Event description",
+      "default": "An intimate evening designed for two — guided sensory rituals, carefully curated flavours and connection exercises."
+    },
+    {
+      "type": "header",
+      "content": "📋 RSVP Form"
+    },
+    {
+      "type": "text",
+      "id": "event_rsvp_cta",
+      "label": "RSVP button text",
+      "default": "Reserve Your Place"
+    },
+    {
+      "type": "text",
+      "id": "event_rsvp_success_heading",
+      "label": "RSVP success heading",
+      "default": "You're on the list!"
+    },
+    {
+      "type": "textarea",
+      "id": "event_rsvp_success_text",
+      "label": "RSVP success message",
+      "default": "We'll be in touch with confirmation and venue details."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colours"
+    },
+    {
+      "type": "color",
+      "id": "event_detail_accent_color",
+      "label": "Accent colour",
+      "default": "#C9A84C"
+    }
+  ]
+}
+{% endschema %}

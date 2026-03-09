@@ -1,0 +1,435 @@
+{% assign journal_hero_img = section.settings.journal_hero_image %}
+{% comment %}
+  PLAYMATE LABS — JOURNAL PAGE v4
+  File: templates/page.journal.liquid
+  Full reference build: journal.html
+  Schema-driven colours. Category filter with JS. Article cards grid.
+{% endcomment %}
+
+{{ 'global.css' | asset_url | stylesheet_tag }}
+{{ 'components.css' | asset_url | stylesheet_tag }}
+
+<style>
+  :root {
+    --journal-hero-bg:    {{ section.settings.journal_hero_bg     | default: 'var(--ivory)' }};
+    --journal-hero-h:     {{ section.settings.journal_hero_heading_color | default: 'var(--espresso)' }};
+    --journal-hero-eye:   {{ section.settings.journal_hero_eyebrow_color | default: 'var(--burgundy)' }};
+    --journal-hero-sub:   {{ section.settings.journal_hero_subtext_color | default: 'var(--text-muted)' }};
+    --journal-italic:     {{ section.settings.journal_hero_italic_color  | default: 'var(--burgundy)' }};
+    --journal-filter-a-bg:   {{ section.settings.journal_filter_active_bg   | default: 'var(--burgundy)' }};
+    --journal-filter-a-tx:   {{ section.settings.journal_filter_active_text | default: 'var(--cream)' }};
+    --journal-filter-bg:     {{ section.settings.journal_filter_bg          | default: '#FFFFFF' }};
+    --journal-filter-tx:     {{ section.settings.journal_filter_text        | default: 'var(--text-muted)' }};
+    --journal-filter-border: {{ section.settings.journal_filter_border      | default: 'var(--border-light)' }};
+    --journal-card-bg:       {{ section.settings.journal_card_bg            | default: '#FFFFFF' }};
+    --journal-cat-color:     {{ section.settings.journal_card_category_color | default: 'var(--gold)' }};
+    --journal-card-title:    {{ section.settings.journal_card_title_color   | default: 'var(--espresso)' }};
+    --journal-card-excerpt:  {{ section.settings.journal_card_excerpt_color | default: 'var(--text-muted)' }};
+    --journal-card-meta:     {{ section.settings.journal_card_meta_color    | default: 'var(--text-light)' }};
+    --journal-feat-bg:       {{ section.settings.journal_featured_bg        | default: '#FFFFFF' }};
+    --journal-feat-eye:      {{ section.settings.journal_featured_eyebrow_color | default: 'var(--burgundy)' }};
+    --journal-news-bg:       {{ section.settings.journal_newsletter_bg      | default: 'var(--espresso)' }};
+    --journal-news-h:        {{ section.settings.journal_newsletter_heading_color | default: 'var(--cream)' }};
+    --journal-news-tx:       {{ section.settings.journal_newsletter_text_color   | default: 'rgba(245,239,230,0.55)' }};
+    --journal-news-btn-bg:   {{ section.settings.journal_newsletter_btn_bg  | default: 'var(--gold)' }};
+    --journal-news-btn-tx:   {{ section.settings.journal_newsletter_btn_text | default: 'var(--espresso)' }};
+  }
+
+  /* ── Hero ── */
+  .journal-hero {
+    padding: calc(var(--nav-height) + 3rem) 0 3rem;
+    background: var(--journal-hero-bg);
+    border-bottom: 1px solid var(--border-light);
+  }
+  .journal-hero h1 { font-family: var(--font-serif); font-size: clamp(2.5rem,5vw,4.5rem); color: var(--journal-hero-h); max-width: 600px; margin: 0.75rem 0 1rem; }
+  .journal-hero p { color: var(--journal-hero-sub); max-width: 520px; line-height: 1.7; }
+  .journal-eyebrow { text-transform: uppercase; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.15em; color: var(--journal-hero-eye); }
+
+  /* ── Filter pills ── */
+  .journal-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border-light); }
+  .journal-filter-btn { padding: 0.5rem 1.125rem; border-radius: 100px; font-size: 0.8125rem; font-weight: 500; cursor: pointer; border: 1px solid var(--journal-filter-border); background: var(--journal-filter-bg); color: var(--journal-filter-tx); transition: all 0.2s; }
+  .journal-filter-btn.active, .journal-filter-btn:hover { background: var(--journal-filter-a-bg); color: var(--journal-filter-a-tx); border-color: var(--journal-filter-a-bg); }
+
+  /* ── Featured article ── */
+  .journal-featured-section { background: var(--journal-feat-bg); }
+  .journal-feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); align-items: center; }
+  .journal-feature-img { background: linear-gradient(135deg, #1A0A06, #3D1A2E); border-radius: var(--radius-xl); aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 5rem; }
+  .journal-feature-eyebrow { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--journal-feat-eye); margin-bottom: 0.75rem; }
+  .journal-feature-title { font-family: var(--font-serif); font-size: clamp(1.75rem,3vw,2.5rem); margin-bottom: 1rem; line-height: 1.2; color: {{ section.settings.journal_featured_title_color | default: 'var(--espresso)' }}; }
+
+  /* ── Article cards ── */
+  .journal-articles-section { background: var(--ivory); }
+  .journal-articles-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+  .journal-card { background: var(--journal-card-bg); border-radius: var(--radius-xl); overflow: hidden; transition: all var(--transition-mid); text-decoration: none; display: block; }
+  .journal-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .journal-card.hidden { display: none; }
+  .journal-card-img { height: 220px; overflow: hidden; position: relative; }
+  .journal-card-img .img-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, var(--espresso), #3D1A2E); display: flex; align-items: center; justify-content: center; }
+  .journal-card-body { padding: 1.5rem; }
+  .journal-card-category { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--journal-cat-color); margin-bottom: 0.625rem; }
+  .journal-card-title { font-family: var(--font-serif); font-size: 1.125rem; line-height: 1.3; margin-bottom: 0.75rem; color: var(--journal-card-title); }
+  .journal-card-excerpt { font-size: 0.8125rem; color: var(--journal-card-excerpt); line-height: 1.6; margin-bottom: 1rem; }
+  .journal-card-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--journal-card-meta); }
+  .journal-card-meta span + span::before { content: '·'; margin-right: 0.5rem; }
+
+  /* ── Newsletter ── */
+  .journal-newsletter { background: var(--journal-news-bg); }
+
+  /* ── Responsive ── */
+  @media (max-width: 1024px) { .journal-articles-grid { grid-template-columns: repeat(2,1fr) !important; } .journal-feature-grid { grid-template-columns: 1fr !important; } }
+  @media (max-width: 600px) { .journal-articles-grid { grid-template-columns: 1fr !important; } }
+</style>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="journal-hero" {%- if journal_hero_img -%}style="background-image:url('{{ journal_hero_img  }}');background-size:cover;background-position:center;"{%- endif -%}>
+  <div class="container">
+    <div class="breadcrumb"><a href="{{ routes.root_url }}">Home</a><span class="breadcrumb-sep">›</span><span>Journal</span></div>
+    <div style="margin-top:1.5rem;">
+      <span class="journal-eyebrow">The Playmate Journal</span>
+      <h1>Culture, rituals &amp;<br>relationship experiments.</h1>
+      <p>Editorial content for modern couples — date ideas, sensory rituals, event recaps and the cultural conversation around modern relationships.</p>
+    </div>
+    <!-- Category filter pills -->
+    <div class="journal-filters">
+      <button class="journal-filter-btn active" data-filter="all">All</button>
+      <button class="journal-filter-btn" data-filter="relationship">Relationship Culture</button>
+      <button class="journal-filter-btn" data-filter="rituals">Sensory Rituals</button>
+      <button class="journal-filter-btn" data-filter="date-ideas">Date Ideas</button>
+      <button class="journal-filter-btn" data-filter="events">Event Recaps</button>
+      <button class="journal-filter-btn" data-filter="experiments">Experiments</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FEATURED ARTICLE ══════════ -->
+<section class="section-sm journal-featured-section">
+  <div class="container">
+    <div class="journal-feature-grid reveal">
+      <div>
+        <div class="journal-feature-img">
+          {%- if section.settings.journal_featured_image != blank -%}
+            {{ section.settings.journal_featured_image | image_url: width: 800 | image_tag: loading: 'lazy', alt: 'Featured article' }}
+          {%- else -%}
+            <span>💭</span>
+          {%- endif -%}
+        </div>
+      </div>
+      <div>
+        <p class="journal-feature-eyebrow">Featured · Relationship Experiments</p>
+        <h2 class="journal-feature-title">We Did 30 Date Nights in 30 Days. Here's What Happened.</h2>
+        <p style="color:var(--text-muted);line-height:1.7;margin-bottom:1.5rem;">One couple. One calendar month. 30 structured, novel date nights — ranging from sensory rituals at home to IRL experiences across London. This is what we learned about novelty, intimacy and ourselves.</p>
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;font-size:0.8125rem;color:var(--text-muted);">
+          <span>By Playmate Labs</span><span>·</span><span>Jan 12, 2025</span><span>·</span><span>8 min read</span>
+        </div>
+        <a href="#" class="btn btn-primary btn-sm">Read the Full Story</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ ARTICLES GRID ══════════ -->
+<section class="section journal-articles-section">
+  <div class="container">
+
+    {%- if blog != blank and blog.articles.size > 0 -%}
+      <!-- Dynamic blog articles -->
+      <div class="journal-articles-grid" id="journal-grid">
+        {%- for article in blog.articles -%}
+          <a href="{{ article.url }}" class="journal-card reveal" data-category="{{ article.tags | join: ' ' | downcase }}" data-delay="{{ forloop.index0 | modulo: 3 }}">
+            <div class="journal-card-img">
+              {%- if article.image -%}
+                {{ article.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: article.title }}
+              {%- else -%}
+                <div class="img-placeholder"><span style="font-size:2.5rem;">📖</span></div>
+              {%- endif -%}
+            </div>
+            <div class="journal-card-body">
+              <p class="journal-card-category">{{ article.tags | first | default: 'Journal' }}</p>
+              <h3 class="journal-card-title">{{ article.title }}</h3>
+              <p class="journal-card-excerpt">{{ article.excerpt_or_content | strip_html | truncate: 110 }}</p>
+              <div class="journal-card-meta">
+                <span>{{ article.published_at | date: '%b %e, %Y' }}</span>
+                <span>{{ article.content | strip_html | split: ' ' | size | divided_by: 200 | plus: 1 }} min read</span>
+              </div>
+            </div>
+          </a>
+        {%- endfor -%}
+      </div>
+      <!-- Pagination -->
+      {%- if paginate.pages > 1 -%}
+        <div style="display:flex;justify-content:center;gap:0.5rem;margin-top:var(--space-xl);">
+          {{ paginate | default_pagination }}
+        </div>
+      {%- endif -%}
+
+    {%- else -%}
+      <!-- Static fallback articles from reference site -->
+      <div class="journal-articles-grid" id="journal-grid">
+
+        <a href="#" class="journal-card reveal" data-category="rituals" data-delay="0">
+          <div class="journal-card-img">
+            {%- if section.settings.journal_card_1_image != blank -%}
+              {{ section.settings.journal_card_1_image | image_url: width: 600 | image_tag: loading: "lazy", alt: "", style: "width:100%;height:220px;object-fit:cover;" }}
+            {%- else -%}
+              <div class="img-placeholder"><span style="font-size:2.5rem;position:relative;z-index:1;">🧪</span></div></div>
+            {%- endif -%}
+          </div>
+          <div class="journal-card-body">
+            <p class="journal-card-category">Sensory Rituals</p>
+            <h3 class="journal-card-title">5 Sensory Rituals Every Couple Should Try Before the Year Ends</h3>
+            <p class="journal-card-excerpt">Rituals don't need to be elaborate. These five take under 30 minutes each and work with things you already own.</p>
+            <div class="journal-card-meta"><span>Jan 8, 2025</span><span>5 min read</span></div>
+          </div>
+        </a>
+
+        <a href="#" class="journal-card reveal" data-category="date-ideas" data-delay="1">
+          <div class="journal-card-img">
+            {%- if section.settings.journal_card_2_image != blank -%}
+              {{ section.settings.journal_card_2_image | image_url: width: 600 | image_tag: loading: "lazy", alt: "", style: "width:100%;height:220px;object-fit:cover;" }}
+            {%- else -%}
+              <div class="img-placeholder" style="background:linear-gradient(135deg,#2C1810,#6B1E3A);"><span style="font-size:2.5rem;position:relative;z-index:1;">🌃</span></div></div>
+            {%- endif -%}
+          </div>
+          <div class="journal-card-body">
+            <p class="journal-card-category">Date Ideas</p>
+            <h3 class="journal-card-title">The Art of a Perfect Date Night at Home (That Isn't Just Netflix)</h3>
+            <p class="journal-card-excerpt">Environmental design, flavour sequencing and conversation structure — how to turn your flat into the best date venue you'll ever visit.</p>
+            <div class="journal-card-meta"><span>Jan 5, 2025</span><span>4 min read</span></div>
+          </div>
+        </a>
+
+        <a href="#" class="journal-card reveal" data-category="events" data-delay="2">
+          <div class="journal-card-img">
+            {%- if section.settings.journal_card_3_image != blank -%}
+              {{ section.settings.journal_card_3_image | image_url: width: 600 | image_tag: loading: "lazy", alt: "", style: "width:100%;height:220px;object-fit:cover;" }}
+            {%- else -%}
+              <div class="img-placeholder" style="background:linear-gradient(135deg,#3D1A2E,#8B2E4F);"><span style="font-size:2.5rem;position:relative;z-index:1;">🎭</span></div></div>
+            {%- endif -%}
+          </div>
+          <div class="journal-card-body">
+            <p class="journal-card-category">Event Recap</p>
+            <h3 class="journal-card-title">Inside Our First Couples Mixer: 60 People, One Night, No Scripts</h3>
+            <p class="journal-card-excerpt">What actually happened at Playmate Pairs London — the moments we didn't plan, the connections we watched form.</p>
+            <div class="journal-card-meta"><span>Dec 18, 2024</span><span>6 min read</span></div>
+          </div>
+        </a>
+
+        <a href="#" class="journal-card reveal" data-category="relationship" data-delay="0">
+          <div class="journal-card-img">
+            {%- if section.settings.journal_card_4_image != blank -%}
+              {{ section.settings.journal_card_4_image | image_url: width: 600 | image_tag: loading: "lazy", alt: "", style: "width:100%;height:220px;object-fit:cover;" }}
+            {%- else -%}
+              <div class="img-placeholder" style="background:linear-gradient(135deg,#0A1A2C,#1E3A6B);"><span style="font-size:2.5rem;position:relative;z-index:1;">🧠</span></div></div>
+            {%- endif -%}
+          </div>
+          <div class="journal-card-body">
+            <p class="journal-card-category">Relationship Culture</p>
+            <h3 class="journal-card-title">The Neuroscience of Novelty: Why New Experiences Strengthen Relationships</h3>
+            <p class="journal-card-excerpt">Not theory. Not pop-science. Here's what the actual research says about dopamine, bonding and why trying something new with your partner works.</p>
+            <div class="journal-card-meta"><span>Dec 10, 2024</span><span>7 min read</span></div>
+          </div>
+        </a>
+
+        <a href="#" class="journal-card reveal" data-category="experiments" data-delay="1">
+          <div class="journal-card-img">
+            {%- if section.settings.journal_card_5_image != blank -%}
+              {{ section.settings.journal_card_5_image | image_url: width: 600 | image_tag: loading: "lazy", alt: "", style: "width:100%;height:220px;object-fit:cover;" }}
+            {%- else -%}
+              <div class="img-placeholder" style="background:linear-gradient(135deg,#1A2C0A,#3A6B1E);"><span style="font-size:2.5rem;position:relative;z-index:1;">🌿</span></div></div>
+            {%- endif -%}
+          </div>
+          <div class="journal-card-body">
+            <p class="journal-card-category">Experiments</p>
+            <h3 class="journal-card-title">We Tried the "No Phones for One Evening" Experiment. Here's the Data.</h3>
+            <p class="journal-card-excerpt">Two couples, one rule, 90 minutes and a structured ritual guide. What actually changed when we removed the devices.</p>
+            <div class="journal-card-meta"><span>Dec 2, 2024</span><span>5 min read</span></div>
+          </div>
+        </a>
+
+        <a href="#" class="journal-card reveal" data-category="rituals date-ideas" data-delay="2">
+          <div class="journal-card-img">
+            {%- if section.settings.journal_card_6_image != blank -%}
+              {{ section.settings.journal_card_6_image | image_url: width: 600 | image_tag: loading: "lazy", alt: "", style: "width:100%;height:220px;object-fit:cover;" }}
+            {%- else -%}
+              <div class="img-placeholder" style="background:linear-gradient(135deg,#2C0A1A,#6B1E3A);"><span style="font-size:2.5rem;position:relative;z-index:1;">🍫</span></div></div>
+            {%- endif -%}
+          </div>
+          <div class="journal-card-body">
+            <p class="journal-card-category">Sensory Rituals</p>
+            <h3 class="journal-card-title">The Chocolate Ritual: How to Turn a £20 Bar Into a 90-Minute Experience</h3>
+            <p class="journal-card-excerpt">A step-by-step guide to the chocolate ritual from The Velvet Hour. Works with any high-quality dark chocolate — no kit required.</p>
+            <div class="journal-card-meta"><span>Nov 28, 2024</span><span>4 min read</span></div>
+          </div>
+        </a>
+
+      </div>
+    {%- endif -%}
+
+    <!-- Load More -->
+    <div class="text-center reveal" style="margin-top:var(--space-xl);">
+      <button class="btn btn-secondary btn-lg" id="journal-load-more">Load More Articles</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ NEWSLETTER ══════════ -->
+<section class="section journal-newsletter" style="background:var(--journal-news-bg);">
+  <div class="container container-xs text-center">
+    <div class="reveal">
+      <span class="section-eyebrow" style="color:{{ section.settings.journal_newsletter_btn_bg | default: 'var(--gold)' }};">The Journal</span>
+      <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--journal-news-h);margin:0.75rem 0 1rem;">Get the best articles<br>delivered weekly.</h2>
+      <p style="color:var(--journal-news-tx);margin-bottom:2rem;font-size:0.9375rem;">Relationship culture, sensory rituals and date ideas — every Saturday morning.</p>
+      {% form 'customer' %}
+        <div style="display:flex;gap:0.75rem;max-width:440px;margin:0 auto;flex-wrap:wrap;">
+          <input class="form-input form-input-dark" type="email" name="customer[email]" placeholder="Your email address" required style="flex:1;min-width:200px;">
+          <button type="submit" class="btn" style="background:var(--journal-news-btn-bg);color:var(--journal-news-btn-tx);">Subscribe</button>
+        </div>
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Journal category filter
+  document.querySelectorAll('.journal-filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var filter = this.dataset.filter;
+      document.querySelectorAll('.journal-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      document.querySelectorAll('.journal-card').forEach(function(card) {
+        if (filter === 'all') { card.classList.remove('hidden'); return; }
+        var cats = card.dataset.category || '';
+        card.classList.toggle('hidden', !cats.includes(filter));
+      });
+    });
+  });
+
+  // Load more (for static fallback — hides/shows)
+  var loadMoreBtn = document.getElementById('journal-load-more');
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', function() {
+      this.textContent = 'More articles coming soon — subscribe to be notified!';
+      this.disabled = true;
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Journal Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "journal_hero_image",
+      "label": "Hero background image",
+      "info": "Full-width journal hero. Recommended: 1800×700px."
+    },
+    {
+      "type": "image_picker",
+      "id": "journal_featured_image",
+      "label": "Featured article image",
+      "info": "Large featured post image. Recommended: 1200×700px."
+    },
+    {
+      "type": "image_picker",
+      "id": "journal_card_1_image",
+      "label": "Journal card 1 image",
+      "info": "Grid card image. Recommended: 700×500px."
+    },
+    {
+      "type": "image_picker",
+      "id": "journal_card_2_image",
+      "label": "Journal card 2 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "journal_card_3_image",
+      "label": "Journal card 3 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "journal_card_4_image",
+      "label": "Journal card 4 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "journal_card_5_image",
+      "label": "Journal card 5 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "journal_card_6_image",
+      "label": "Journal card 6 image"
+    },
+    {
+      "type": "header",
+      "content": "📝 Hero Text"
+    },
+    {
+      "type": "text",
+      "id": "journal_hero_eyebrow",
+      "label": "Hero eyebrow",
+      "default": "The Journal"
+    },
+    {
+      "type": "text",
+      "id": "journal_hero_heading",
+      "label": "Hero heading",
+      "default": "Ideas, rituals and research"
+    },
+    {
+      "type": "text",
+      "id": "journal_hero_heading_italic",
+      "label": "Hero italic heading",
+      "default": "for modern relationships."
+    },
+    {
+      "type": "header",
+      "content": "✨ Featured Article"
+    },
+    {
+      "type": "text",
+      "id": "journal_featured_tag",
+      "label": "Featured article tag",
+      "default": "Featured"
+    },
+    {
+      "type": "text",
+      "id": "journal_featured_title",
+      "label": "Featured article title",
+      "default": "The Science of Sensory Intimacy"
+    },
+    {
+      "type": "textarea",
+      "id": "journal_featured_excerpt",
+      "label": "Featured article excerpt",
+      "default": "Why touch, taste and scent are the most underused tools in modern relationships."
+    },
+    {
+      "type": "text",
+      "id": "journal_featured_read_time",
+      "label": "Read time",
+      "default": "8 min read"
+    },
+    {
+      "type": "url",
+      "id": "journal_featured_url",
+      "label": "Featured article URL"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colours"
+    },
+    {
+      "type": "color",
+      "id": "journal_accent_color",
+      "label": "Accent colour",
+      "default": "#C9A84C"
+    }
+  ]
+}
+{% endschema %}

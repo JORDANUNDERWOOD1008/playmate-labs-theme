@@ -1,0 +1,363 @@
+{% assign mdrop_hero_img = section.settings.mdrop_hero_image %}
+
+{%- assign _mdrop_main_img = section.settings.mdrop_main_image -%}
+{%- assign _mdrop_item_1_img = section.settings.mdrop_item_1_image -%}
+{%- assign _mdrop_item_2_img = section.settings.mdrop_item_2_image -%}
+{%- assign _mdrop_item_3_img = section.settings.mdrop_item_3_image -%}
+{%- assign _mdrop_past_1_img = section.settings.mdrop_past_1_image -%}
+{%- assign _mdrop_past_2_img = section.settings.mdrop_past_2_image -%}
+{%- assign _mdrop_past_3_img = section.settings.mdrop_past_3_image -%}
+<style>body { padding-top: var(--nav-height); }</style>
+
+<!-- MONTHLY DROPS HERO -->
+<section class="drops-hero section-lg">
+  <div class="drops-hero-bg" {%- if mdrop_hero_img -%}style="background-image:url('{{ mdrop_hero_img  }}');background-size:cover;background-position:center;"{%- endif -%}>
+    <div class="drops-hero-gradient"></div>
+  </div>
+  <div class="container">
+    <div class="drops-hero-inner">
+      <div class="drops-hero-content">
+        <span class="section-eyebrow" style="color:var(--gold);">Monthly Ritual Releases</span>
+        <h1 class="display-lg text-cream">
+          A new ritual.<br>Every month.
+        </h1>
+        <div class="section-divider" style="background:var(--gold);margin:1.5rem 0;"></div>
+        <p class="body-lg" style="color:rgba(245,239,230,0.7);max-width:480px;">
+          Each drop is a limited-edition date night experience — themed, curated and delivered to your door. Never repeated. Always surprising.
+        </p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem;">
+          <a href="#current-drop" class="btn btn-gold btn-lg">Shop Current Drop</a>
+          <a href="#subscribe" class="btn btn-ghost btn-lg">Subscribe from £58/mo</a>
+        </div>
+      </div>
+      <div class="drops-hero-visual">
+        <div class="drop-hero-card">
+          {%- if _mdrop_main_img != blank -%}
+            {{ _mdrop_main_img | image_url: width: 800 | image_tag: loading: "lazy", alt: "", style: "width:100%;height:100%;object-fit:cover;border-radius:8px;" }}
+          {%- else -%}
+          <div class="img-placeholder" style="height:320px;border-radius:16px;flex-direction:column;gap:1.5rem;">
+            <span style="font-size:5rem;position:relative;z-index:1;animation:float 4s ease-in-out infinite;">🍷</span>
+            <p style="font-family:var(--font-serif);font-size:1.25rem;color:rgba(245,239,230,0.5);position:relative;z-index:1;">The Velvet Hour</p>
+          </div>
+          {%- endif -%}
+          <div style="padding:1rem;display:flex;justify-content:space-between;align-items:center;">
+            <span class="badge badge-gold">Drop 08 — Jan 2025</span>
+            <span style="font-family:var(--font-display);font-size:1.75rem;color:var(--cream);">£68</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COUNTDOWN + URGENCY -->
+<div style="background:var(--burgundy);padding:1.5rem 0;">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <div>
+      <p class="label" style="color:rgba(245,239,230,0.6);margin-bottom:0.25rem;">Drop 08 closes in</p>
+      <div id="drop-countdown" style="display:flex;gap:1rem;align-items:center;"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+      <p style="font-size:0.875rem;color:rgba(245,239,230,0.8);">🔥 <strong>47 of 200 kits remaining</strong></p>
+      <a href="#current-drop" class="btn btn-gold btn-sm">Get Yours Now</a>
+    </div>
+  </div>
+</div>
+
+<!-- CURRENT DROP SPOTLIGHT -->
+<section class="section featured-drop bg-dark" id="current-drop">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow" style="color:var(--gold-light);">Drop 08 — January 2025</span>
+      <h2 class="heading-xl text-cream">The Velvet Hour</h2>
+      <div class="section-divider" style="background:var(--gold);"></div>
+    </div>
+    <div class="drop-featured-grid">
+      <div class="drop-featured-visual reveal-left">
+        {%- if _mdrop_item_1_img != blank -%}
+          {{ _mdrop_item_1_img | image_url: width: 800 | image_tag: loading: "lazy", alt: "", style: "width:100%;height:100%;object-fit:cover;border-radius:8px;" }}
+        {%- else -%}
+        <div class="drop-main-image img-placeholder">
+          <div class="drop-img-scene">
+            <div style="font-size:5rem;text-align:center;position:relative;z-index:1;">🍷</div>
+        {%- endif -%}
+            <p style="color:rgba(245,239,230,0.4);font-family:var(--font-serif);font-size:1.25rem;position:relative;z-index:1;">The Velvet Hour</p>
+          </div>
+        </div>
+        <div class="drop-mini-images">
+          {%- if _mdrop_item_2_img != blank -%}
+            {{ _mdrop_item_2_img | image_url: width: 800 | image_tag: loading: "lazy", alt: "", style: "width:100%;height:100%;object-fit:cover;border-radius:8px;" }}
+          {%- else -%}
+          <div class="img-placeholder" style="aspect-ratio:1;border-radius:12px;"><span style="font-size:2rem;">🍫</span></div>
+          <div class="img-placeholder" style="aspect-ratio:1;border-radius:12px;"><span style="font-size:2rem;">🕯️</span></div>
+          {%- endif -%}
+          {%- if _mdrop_item_3_img != blank -%}
+            {{ _mdrop_item_3_img | image_url: width: 800 | image_tag: loading: "lazy", alt: "", style: "width:100%;height:100%;object-fit:cover;border-radius:8px;" }}
+          {%- else -%}
+          <div class="img-placeholder" style="aspect-ratio:1;border-radius:12px;"><span style="font-size:2rem;">🃏</span></div>
+        </div>
+          {%- endif -%}
+      </div>
+      <div class="drop-featured-content reveal-right">
+        <div class="drop-meta-row">
+          <span class="badge badge-burgundy">Drop 08 — Jan 2025</span>
+          <span class="badge badge-gold">Limited 200 Kits</span>
+        </div>
+        <h3 class="drop-title text-cream">A ritual for modern romance.</h3>
+        <p class="drop-desc">The Velvet Hour is built around the science of sensory intimacy — dark, rich flavour, warm amber light, and conversation prompts that feel like foreplay for your relationship.</p>
+        <div class="drop-includes">
+          <h4 class="label" style="color:var(--gold);margin-bottom:1rem;">What's Inside</h4>
+          <ul class="drop-includes-list">
+            <li><i class="fas fa-check"></i> 72% Madagascan Dark Chocolate Ritual Bar (120g)</li>
+            <li><i class="fas fa-check"></i> Amber Vetiver Hand-poured Candle (150ml)</li>
+            <li><i class="fas fa-check"></i> The Connection Game — 52 card deck</li>
+            <li><i class="fas fa-check"></i> Velvet Hour Ritual Guide</li>
+            <li><i class="fas fa-check"></i> Digital companion experience access</li>
+            <li><i class="fas fa-check"></i> Luxury gift packaging</li>
+          </ul>
+        </div>
+        <div class="drop-cta-row">
+          <div>
+            <p class="drop-price text-cream">£68</p>
+            <p style="font-size:0.8rem;color:rgba(245,239,230,0.45);">or £58/mo with Drop subscription</p>
+          </div>
+          <a href="/collections/monthly-drops" class="btn btn-gold btn-lg">Shop This Drop</a>
+        </div>
+        <div class="drop-urgency">
+          <i class="fas fa-fire" style="color:var(--gold);"></i>
+          <span style="font-size:0.8125rem;color:rgba(245,239,230,0.65);">
+            <strong style="color:var(--gold);">47 kits remaining.</strong> Drop closes January 31st.
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUBSCRIBE SECTION -->
+<section class="section" id="subscribe">
+  <div class="container">
+    <div style="max-width:800px;margin:0 auto;text-align:center;">
+      <span class="section-eyebrow">Drop Subscription</span>
+      <h2 class="heading-xl">Never miss a drop.<br>Save every month.</h2>
+      <div class="section-divider"></div>
+      <p style="color:var(--text-muted);max-width:500px;margin:0 auto 3rem;">Subscribe and get every monthly drop delivered automatically at 15% off — plus first access, exclusive drops and bonus digital content.</p>
+
+      <div class="grid-3" style="gap:1.5rem;margin-bottom:3rem;">
+        <div class="membership-tier">
+          <p class="label" style="color:var(--text-muted);margin-bottom:0.75rem;">Drop Explorer</p>
+          <p class="tier-price"><sup>£</sup>48<span>/mo</span></p>
+          <p style="font-size:0.8125rem;color:var(--text-muted);margin:0.5rem 0 1.5rem;">Single consumable drop</p>
+          <ul class="tier-features">
+            <li class="tier-feature"><span class="tier-feature-icon">✓</span> Monthly curated consumable</li>
+            <li class="tier-feature"><span class="tier-feature-icon">✓</span> Digital companion access</li>
+            <li class="tier-feature"><span class="tier-feature-icon">✓</span> Cancel anytime</li>
+          </ul>
+          <a href="/collections/subscriptions" class="btn btn-secondary" style="width:100%;justify-content:center;">Subscribe</a>
+        </div>
+        <div class="membership-tier featured">
+          <p class="label" style="color:var(--text-muted);margin-bottom:0.75rem;">Drop Ritual</p>
+          <p class="tier-price"><sup>£</sup>58<span>/mo</span></p>
+          <p style="font-size:0.8125rem;color:var(--text-muted);margin:0.5rem 0 1.5rem;">Full monthly ritual kit</p>
+          <ul class="tier-features">
+            <li class="tier-feature"><span class="tier-feature-icon">✓</span> Full monthly drop kit</li>
+            <li class="tier-feature"><span class="tier-feature-icon">✓</span> Early access (48 hrs before)</li>
+            <li class="tier-feature"><span class="tier-feature-icon">✓</span> Community membership</li>
+            <li class="tier-feature"><span class="tier-feature-icon">✓</span> 2× Playmate points</li>
+          </ul>
+          <a href="/collections/subscriptions" class="btn btn-primary" style="width:100%;justify-content:center;">Best Value</a>
+        </div>
+        <div class="membership-tier">
+          <p class="label" style="color:var(--text-muted);margin-bottom:0.75rem;">Drop Collective</p>
+          <p class="tier-price"><sup>£</sup>78<span>/mo</span></p>
+          <p style="font-size:0.8125rem;color:var(--text-muted);margin:0.5rem 0 1.5rem;">Full kit + event access</p>
+          <ul class="tier-features">
+            <li class="tier-feature"><span class="tier-feature-icon">✓</span> Everything in Ritual</li>
+            <li class="tier-feature"><span class="tier-feature-icon">✓</span> 1 free event ticket/mo</li>
+            <li class="tier-feature"><span class="tier-feature-icon">✓</span> Exclusive Collective drops</li>
+            <li class="tier-feature"><span class="tier-feature-icon">✓</span> Priority event booking</li>
+          </ul>
+          <a href="/collections/subscriptions" class="btn btn-secondary" style="width:100%;justify-content:center;">Subscribe</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DROP ARCHIVE -->
+<section class="section bg-ivory" id="drop-archive">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">The Archives</span>
+      <h2 class="heading-xl">Past drops — each one<br>a different world.</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="products-grid reveal" style="grid-template-columns:repeat(3,1fr);">
+      {%- assign drop_nums = '07,06,05' | split: ',' -%}
+      {%- assign drop_names = 'The Midnight Garden,The Amber Hour,The Discovery Kit' | split: ',' -%}
+      {%- assign drop_prices = '£64,£62,£58' | split: ',' -%}
+      {%- assign drop_emojis = '🌿,🍂,🔮' | split: ',' -%}
+      {%- for i in (0..2) -%}
+      <div class="product-card">
+        <div class="product-card-img-wrap">
+          {%- if _mdrop_past_1_img != blank -%}
+            {{ _mdrop_past_1_img | image_url: width: 800 | image_tag: loading: "lazy", alt: "", style: "width:100%;height:100%;object-fit:cover;border-radius:8px;" }}
+          {%- else -%}
+          <div class="img-placeholder" style="height:100%;flex-direction:column;gap:0.5rem;">
+            <span style="font-size:3rem;position:relative;z-index:1;">{{ drop_emojis[i] }}</span>
+          </div>
+          {%- endif -%}
+          <div class="product-card-badges">
+            <span class="badge badge-dark">Sold Out</span>
+          </div>
+        </div>
+        <div class="product-card-body">
+          <div class="drop-meta-row" style="margin-bottom:0.5rem;">
+            <span class="badge badge-dark" style="font-size:0.6rem;">Drop {{ drop_nums[i] }}</span>
+          </div>
+          <h3 class="product-card-name">{{ drop_names[i] }}</h3>
+          <p class="product-card-price">{{ drop_prices[i] }}</p>
+        </div>
+      </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST CTA -->
+<section class="section final-cta">
+  <div class="container">
+    <div class="final-cta-inner" style="max-width:560px;margin:0 auto;text-align:center;">
+      <span class="section-eyebrow" style="color:var(--gold-light);">Never Miss a Drop</span>
+      <h2 class="heading-lg text-cream" style="margin:1rem 0;">Get on the drop waitlist.</h2>
+      <p style="color:rgba(245,239,230,0.6);margin-bottom:2rem;">Be first to know when the next drop launches — and get a 48-hour head start.</p>
+      <form data-form="waitlist" style="display:flex;gap:0.75rem;max-width:440px;margin:0 auto;flex-wrap:wrap;">
+        <input type="email" name="email" placeholder="Your email address" class="form-input form-input-dark" style="flex:1;min-width:0;">
+        <button type="submit" class="btn btn-gold">Join Waitlist</button>
+      </form>
+      <div class="form-success" style="display:none;color:var(--cream);padding-top:1rem;"><p>🎉 You're on the list! We'll notify you first.</p></div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof initCountdown === 'function') {
+    initCountdown('2025-01-31T23:59:00', 'drop-countdown');
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "Monthly Drops Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "mdrop_hero_image",
+      "label": "Hero background image",
+      "info": "Full-width page hero. Recommended: 1800×900px."
+    },
+    {
+      "type": "image_picker",
+      "id": "mdrop_main_image",
+      "label": "Main drop showcase image",
+      "info": "Large product reveal image. Recommended: 900×900px."
+    },
+    {
+      "type": "image_picker",
+      "id": "mdrop_item_1_image",
+      "label": "Box item 1 image",
+      "info": "Individual item photo. Recommended: 400×400px square."
+    },
+    {
+      "type": "image_picker",
+      "id": "mdrop_item_2_image",
+      "label": "Box item 2 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mdrop_item_3_image",
+      "label": "Box item 3 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mdrop_past_1_image",
+      "label": "Past drop 1 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mdrop_past_2_image",
+      "label": "Past drop 2 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mdrop_past_3_image",
+      "label": "Past drop 3 image"
+    },
+    {
+      "type": "header",
+      "content": "📝 Hero Text"
+    },
+    {
+      "type": "text",
+      "id": "mdrop_hero_eyebrow",
+      "label": "Hero eyebrow",
+      "default": "Monthly Drops Programme"
+    },
+    {
+      "type": "text",
+      "id": "mdrop_hero_heading",
+      "label": "Hero heading",
+      "default": "A new ritual, every month."
+    },
+    {
+      "type": "textarea",
+      "id": "mdrop_hero_subtext",
+      "label": "Hero subtext",
+      "default": "Curated sensory drop boxes for couples — delivered monthly, limited quantities."
+    },
+    {
+      "type": "header",
+      "content": "💰 Pricing & CTA"
+    },
+    {
+      "type": "text",
+      "id": "mdrop_price",
+      "label": "Price",
+      "default": "£85"
+    },
+    {
+      "type": "text",
+      "id": "mdrop_price_note",
+      "label": "Price note",
+      "default": "per month · cancel anytime"
+    },
+    {
+      "type": "text",
+      "id": "mdrop_cta_text",
+      "label": "Subscribe CTA text",
+      "default": "Subscribe Now"
+    },
+    {
+      "type": "url",
+      "id": "mdrop_cta_url",
+      "label": "Subscribe CTA link"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colours"
+    },
+    {
+      "type": "color",
+      "id": "mdrop_accent_color",
+      "label": "Accent colour",
+      "default": "#C9A84C"
+    }
+  ]
+}
+{% endschema %}

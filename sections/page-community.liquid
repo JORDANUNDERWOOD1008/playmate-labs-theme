@@ -1,0 +1,503 @@
+{%- assign _comm_member_1_img = section.settings.community_member_1_image -%}
+{%- assign _comm_member_2_img = section.settings.community_member_2_image -%}
+{%- assign _comm_member_3_img = section.settings.community_member_3_image -%}
+{%- assign _comm_member_4_img = section.settings.community_member_4_image -%}
+{%- assign _comm_member_5_img = section.settings.community_member_5_image -%}
+{%- assign _comm_member_6_img = section.settings.community_member_6_image -%}
+{% assign community_hero_img = section.settings.community_hero_image %}
+{% comment %}
+  PLAYMATE LABS — COMMUNITY PAGE v4
+  File: templates/page.community.liquid
+  Full reference build: community.html
+  Schema-driven colours throughout. Inline keyword highlight support.
+{% endcomment %}
+
+{{ 'global.css' | asset_url | stylesheet_tag }}
+{{ 'components.css' | asset_url | stylesheet_tag }}
+
+<style>
+  /* ── CSS variable overrides from schema ── */
+  :root {
+    --community-hero-from:   {{ section.settings.community_hero_bg_from | default: '#1A0A06' }};
+    --community-hero-to:     {{ section.settings.community_hero_bg_to   | default: '#2D1020' }};
+    --community-hero-h:      {{ section.settings.community_hero_heading_color | default: 'var(--cream)' }};
+    --community-hero-italic: {{ section.settings.community_hero_italic_color  | default: 'var(--gold)' }};
+    --community-hero-eye:    {{ section.settings.community_hero_eyebrow_color | default: 'var(--gold)' }};
+    --community-hero-sub:    {{ section.settings.community_hero_subtext_color | default: 'rgba(245,239,230,0.65)' }};
+    --community-tier-bg:     {{ section.settings.community_tier_bg       | default: 'var(--ivory)' }};
+    --community-tier1-acc:   {{ section.settings.community_tier1_accent  | default: 'var(--text-muted)' }};
+    --community-tier2-acc:   {{ section.settings.community_tier2_accent  | default: 'var(--burgundy)' }};
+    --community-tier3-bg:    {{ section.settings.community_tier3_bg      | default: 'var(--espresso)' }};
+    --community-tier3-acc:   {{ section.settings.community_tier3_accent  | default: 'var(--gold)' }};
+    --community-tier3-txt:   {{ section.settings.community_tier3_text    | default: 'var(--cream)' }};
+    --community-check:       {{ section.settings.community_check_color   | default: 'var(--gold)' }};
+    --community-perks-bg:    {{ section.settings.community_perks_bg      | default: '#FFFFFF' }};
+    --community-perk-bg:     {{ section.settings.community_perk_card_bg  | default: '#FFFFFF' }};
+    --community-perk-border: {{ section.settings.community_perk_card_border | default: 'var(--border-light)' }};
+    --community-rewards-bg:  {{ section.settings.community_rewards_bg    | default: 'var(--espresso)' }};
+    --community-rewards-pt:  {{ section.settings.community_rewards_point_color | default: 'var(--gold)' }};
+    --community-form-bg:     {{ section.settings.community_form_bg       | default: 'var(--espresso)' }};
+    --community-form-btn-bg: {{ section.settings.community_form_btn_bg   | default: 'var(--gold)' }};
+    --community-form-btn-tx: {{ section.settings.community_form_btn_text | default: 'var(--espresso)' }};
+  }
+
+  /* ── Community Hero ── */
+  .comm-hero {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    padding: calc(var(--nav-height) + 4rem) 0 5rem;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--community-hero-from) 0%, var(--community-hero-to) 100%);
+  }
+  .comm-hero__overlay {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(107,30,58,0.55) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 30%, rgba(201,169,110,0.1) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .comm-hero__content { position: relative; z-index: 1; max-width: 680px; }
+  .comm-hero__eyebrow { color: var(--community-hero-eye) !important; }
+  .comm-hero__h1 { font-family: var(--font-serif); font-size: clamp(2.75rem,5.5vw,5rem); font-weight: 300; line-height: 1.05; letter-spacing: -0.03em; color: var(--community-hero-h); margin: 1rem 0 1.5rem; }
+  .comm-hero__h1 em { color: var(--community-hero-italic); font-style: italic; }
+  .comm-hero__sub { font-size: 1.0625rem; color: var(--community-hero-sub); line-height: 1.65; max-width: 540px; margin-bottom: 2.5rem; }
+
+  /* ── Perks grid ── */
+  .comm-perks { background: var(--community-perks-bg); }
+  .comm-perks-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+  .comm-perk-card { padding: 2rem; background: var(--community-perk-bg); border-radius: var(--radius-xl); border: 1px solid var(--community-perk-border); transition: all var(--transition-mid); }
+  .comm-perk-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+  .comm-perk-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .comm-perk-title { font-family: var(--font-serif); font-size: 1.25rem; margin-bottom: 0.625rem; color: {{ section.settings.community_perk_title_color | default: 'var(--espresso)' }}; }
+  .comm-perk-text { font-size: 0.875rem; color: {{ section.settings.community_perk_text_color | default: 'var(--text-muted)' }}; line-height: 1.65; }
+
+  /* ── Tiers ── */
+  .comm-tiers { background: var(--community-tier-bg); }
+  .comm-tiers-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; align-items: start; }
+  .comm-tier-card { background: {{ section.settings.community_tier_card_bg | default: '#FFFFFF' }}; border: 1px solid {{ section.settings.community_tier_card_border | default: 'var(--border-light)' }}; border-radius: var(--radius-xl); padding: 2rem; position: relative; overflow: hidden; }
+  .comm-tier-card.featured { border-top: 3px solid var(--community-tier2-acc); box-shadow: var(--shadow-lg); }
+  .comm-tier-card.inner-circle { background: var(--community-tier3-bg); border-color: var(--community-tier3-acc); }
+  .comm-tier-label { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .comm-tier-name { font-family: var(--font-serif); font-size: 1.75rem; margin-bottom: 0.5rem; }
+  .comm-tier-price { font-family: var(--font-display); font-size: 2.5rem; font-weight: 300; line-height: 1; margin-bottom: 0.5rem; }
+  .comm-tier-price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); margin-left: 0.25rem; }
+  .comm-tier-features { display: flex; flex-direction: column; gap: 0.625rem; margin: 1.5rem 0; padding: 1.25rem 0; border-top: 1px solid {{ section.settings.community_tier_card_border | default: 'var(--border-light)' }}; border-bottom: 1px solid {{ section.settings.community_tier_card_border | default: 'var(--border-light)' }}; }
+  .comm-tier-feature { display: flex; align-items: center; gap: 0.75rem; font-size: 0.875rem; }
+  .comm-tier-feature.locked { opacity: 0.4; }
+  .comm-tier-feature .check { color: var(--community-check); }
+  .comm-tier-feature .cross { color: {{ section.settings.community_cross_color | default: 'var(--text-light)' }}; }
+
+  /* ── Rewards ── */
+  .comm-rewards { background: var(--community-rewards-bg); }
+  .comm-rewards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); align-items: center; }
+  .comm-rewards-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-light); }
+  .comm-rewards-item .emoji { font-size: 1.5rem; flex-shrink: 0; }
+  .comm-rewards-item strong { font-size: 0.875rem; display: block; margin-bottom: 0.125rem; }
+  .comm-rewards-item p { font-size: 0.8125rem; color: var(--text-muted); margin: 0; }
+  .comm-rewards-dashboard { background: var(--espresso); border-radius: var(--radius-xl); padding: 2rem; color: var(--cream); }
+  .comm-rewards-pts { font-family: var(--font-display); font-size: 3rem; font-weight: 300; color: var(--community-rewards-pt); line-height: 1; }
+  .loyalty-bar { background: rgba(255,255,255,0.12); border-radius: 100px; height: 6px; overflow: hidden; }
+  .loyalty-bar-fill { background: var(--gold); height: 100%; border-radius: 100px; transition: width 0.8s ease; }
+
+  /* ── Join Form ── */
+  .comm-form-section { background: var(--community-form-bg); }
+  .comm-form-grid { display: grid; grid-template-columns: 1fr 520px; gap: var(--space-xl); align-items: center; }
+  .comm-form-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-xl); padding: 2.5rem; backdrop-filter: blur(10px); }
+
+  /* ── Stats strip ── */
+  .comm-stats-strip { background: {{ section.settings.about_stats_bg | default: '#1A0A06' }}; padding: 3rem 0; }
+  .comm-stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; text-align: center; }
+  .comm-stat-num { font-family: var(--font-display); font-size: 3rem; font-weight: 300; color: {{ section.settings.about_stats_number_color | default: 'var(--gold)' }}; line-height: 1; }
+  .comm-stat-label { font-size: 0.875rem; color: {{ section.settings.about_stats_label_color | default: 'rgba(245,239,230,0.5)' }}; margin-top: 0.375rem; }
+
+  /* ── Responsive ── */
+  @media (max-width: 1100px) { .comm-tiers-grid, .comm-rewards-grid, .comm-form-grid { grid-template-columns: 1fr !important; } }
+  @media (max-width: 768px) { .comm-perks-grid { grid-template-columns: 1fr !important; } .comm-stats-grid { grid-template-columns: 1fr !important; } }
+</style>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="comm-hero" {%- if community_hero_img -%}style="background-image:url('{{ community_hero_img  }}');background-size:cover;background-position:center;"{%- endif -%}>
+  <div class="comm-hero__overlay"></div>
+  <div class="container">
+    <div class="comm-hero__content animate-fadeInUp">
+      <span class="section-eyebrow comm-hero__eyebrow">{{ section.settings.community_eyebrow | default: 'A community worth belonging to' }}</span>
+      <h1 class="comm-hero__h1">
+        {{ section.settings.community_hero_heading_1 | default: 'A new culture of' }}<br>
+        <em>{{ section.settings.community_hero_heading_italic | default: 'modern relationships.' }}</em>
+      </h1>
+      <p class="comm-hero__sub">{{ section.settings.community_hero_sub | default: 'Join 14,000+ couples who get early drop access, exclusive event invites, rewards points and a community designed around novelty, connection and play.' }}</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="#community-join" class="btn btn-gold btn-xl">{{ section.settings.community_cta_primary | default: 'Join the Community — Free' }}</a>
+        <a href="#tiers" class="btn btn-ghost btn-xl">{{ section.settings.community_cta_secondary | default: 'See Membership Tiers' }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ STATS STRIP ══════════ -->
+{% if section.settings.community_show_stats %}
+<div class="comm-stats-strip">
+  <div class="container">
+    <div class="comm-stats-grid">
+      <div>
+        <div class="comm-stat-num">{{ section.settings.community_stat_1_number | default: '14,000+' }}</div>
+        <div class="comm-stat-label">{{ section.settings.community_stat_1_label | default: 'Couples in the community' }}</div>
+      </div>
+      <div>
+        <div class="comm-stat-num">{{ section.settings.community_stat_2_number | default: '4.9★' }}</div>
+        <div class="comm-stat-label">{{ section.settings.community_stat_2_label | default: 'Average product rating' }}</div>
+      </div>
+      <div>
+        <div class="comm-stat-num">{{ section.settings.community_stat_3_number | default: '22+' }}</div>
+        <div class="comm-stat-label">{{ section.settings.community_stat_3_label | default: 'IRL events this year' }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- ══════════ PERKS ══════════ -->
+<section class="section comm-perks">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">{{ section.settings.community_perks_eyebrow | default: 'What You Get' }}</span>
+      <h2 class="heading-xl">{{ section.settings.community_perks_heading | default: 'More than a loyalty programme.' }}<br>{{ section.settings.community_perks_heading_2 | default: 'A membership worth having.' }}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="comm-perks-grid reveal">
+      <div class="comm-perk-card">
+        <div class="comm-perk-icon">📦</div>
+        <h3 class="comm-perk-title">Early Drop Access</h3>
+        <p class="comm-perk-text">Members get 48-hour early access to every monthly drop — before it goes public. Given that drops sell out within hours, this is genuinely significant.</p>
+      </div>
+      <div class="comm-perk-card">
+        <div class="comm-perk-icon">✨</div>
+        <h3 class="comm-perk-title">Exclusive Event Invites</h3>
+        <p class="comm-perk-text">Members-only events and intimate experiences that never go on public sale. Smaller, more exclusive and usually better than our public events.</p>
+      </div>
+      <div class="comm-perk-card">
+        <div class="comm-perk-icon">🏆</div>
+        <h3 class="comm-perk-title">Rewards Points</h3>
+        <p class="comm-perk-text">Earn points on every purchase, event ticket and ritual completed. Redeem for discounts, free products, event upgrades and exclusive experiences.</p>
+      </div>
+      <div class="comm-perk-card">
+        <div class="comm-perk-icon">🌹</div>
+        <h3 class="comm-perk-title">Member-Only Drops</h3>
+        <p class="comm-perk-text">Select drops and ritual add-ons are only ever available to community members. Never on public sale. Our most limited, most special releases.</p>
+      </div>
+      <div class="comm-perk-card">
+        <div class="comm-perk-icon">🔒</div>
+        <h3 class="comm-perk-title">Exclusive Content</h3>
+        <p class="comm-perk-text">Members-only ritual guides, relationship experiments, curated playlists and extended journal content — not available to casual visitors.</p>
+      </div>
+      <div class="comm-perk-card">
+        <div class="comm-perk-icon">📱</div>
+        <h3 class="comm-perk-title">App Access (Coming)</h3>
+        <p class="comm-perk-text">The Playmate app is in development. Community members will be first to access it — with purchase history, rituals and points fully synced at launch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MEMBERSHIP TIERS ══════════ -->
+<section class="section comm-tiers" id="tiers">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">{{ section.settings.community_tiers_eyebrow | default: 'Membership Tiers' }}</span>
+      <h2 class="heading-xl">Start free. Go deeper<br>as you explore.</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="comm-tiers-grid reveal">
+
+      <!-- TIER 1: Explorer -->
+      <div class="comm-tier-card" style="border-top:3px solid {{ section.settings.community_tier1_accent | default: 'var(--border-light)' }};">
+        <p class="comm-tier-label" style="color:{{ section.settings.community_tier1_accent | default: 'var(--text-muted)' }};">Free Tier</p>
+        <h3 class="comm-tier-name">Explorer</h3>
+        <div class="comm-tier-price" style="color:{{ section.settings.community_tier1_accent | default: 'var(--espresso)' }};">£0 <span>/forever</span></div>
+        <div class="comm-tier-features">
+          <div class="comm-tier-feature"><i class="fas fa-check check"></i> Free 5-Day Sensory Experience</div>
+          <div class="comm-tier-feature"><i class="fas fa-check check"></i> Email drop notifications</div>
+          <div class="comm-tier-feature"><i class="fas fa-check check"></i> Journal access</div>
+          <div class="comm-tier-feature"><i class="fas fa-check check"></i> Event discovery</div>
+          <div class="comm-tier-feature locked"><i class="fas fa-times cross"></i> Early drop access</div>
+          <div class="comm-tier-feature locked"><i class="fas fa-times cross"></i> Rewards points</div>
+          <div class="comm-tier-feature locked"><i class="fas fa-times cross"></i> Member-only events</div>
+        </div>
+        <a href="#community-join" class="btn btn-secondary" style="width:100%;justify-content:center;">Join Free</a>
+      </div>
+
+      <!-- TIER 2: Member (featured) -->
+      <div class="comm-tier-card featured" style="border-top-color:{{ section.settings.community_tier2_accent | default: 'var(--burgundy)' }};">
+        <span style="position:absolute;top:1rem;right:1rem;background:{{ section.settings.community_tier2_accent | default: 'var(--burgundy)' }};color:var(--cream);font-size:0.625rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0.25rem 0.625rem;border-radius:100px;">Recommended</span>
+        <p class="comm-tier-label" style="color:{{ section.settings.community_tier2_accent | default: 'var(--burgundy)' }};">Recommended</p>
+        <h3 class="comm-tier-name">Member</h3>
+        <div class="comm-tier-price" style="color:{{ section.settings.community_tier2_accent | default: 'var(--burgundy)' }};">£0 <span>with any purchase</span></div>
+        <div class="comm-tier-features">
+          <div class="comm-tier-feature"><i class="fas fa-check check"></i> Everything in Explorer</div>
+          <div class="comm-tier-feature"><i class="fas fa-check check"></i> 48hr early drop access</div>
+          <div class="comm-tier-feature"><i class="fas fa-check check"></i> Playmate Rewards points</div>
+          <div class="comm-tier-feature"><i class="fas fa-check check"></i> Member-only drops & content</div>
+          <div class="comm-tier-feature"><i class="fas fa-check check"></i> Priority event access</div>
+          <div class="comm-tier-feature"><i class="fas fa-check check"></i> Community app (beta)</div>
+          <div class="comm-tier-feature locked"><i class="fas fa-times cross"></i> Exclusive private events</div>
+        </div>
+        <a href="{{ routes.collections_url }}/all" class="btn btn-primary" style="width:100%;justify-content:center;">Become a Member</a>
+        <p style="font-size:0.75rem;text-align:center;color:var(--text-muted);margin-top:0.75rem;">Unlocked by making any purchase</p>
+      </div>
+
+      <!-- TIER 3: Inner Circle -->
+      <div class="comm-tier-card inner-circle">
+        <p class="comm-tier-label" style="color:var(--community-tier3-acc);">Exclusive</p>
+        <h3 class="comm-tier-name" style="color:var(--community-tier3-txt);">Inner Circle</h3>
+        <div class="comm-tier-price" style="color:var(--community-tier3-txt);">£0 <span style="color:rgba(245,239,230,0.45);">by invitation</span></div>
+        <div class="comm-tier-features" style="border-color:rgba(255,255,255,0.08);">
+          <div class="comm-tier-feature" style="color:rgba(245,239,230,0.75);"><i class="fas fa-check" style="color:var(--community-tier3-acc);"></i> Everything in Member</div>
+          <div class="comm-tier-feature" style="color:rgba(245,239,230,0.75);"><i class="fas fa-check" style="color:var(--community-tier3-acc);"></i> Private Inner Circle events</div>
+          <div class="comm-tier-feature" style="color:rgba(245,239,230,0.75);"><i class="fas fa-check" style="color:var(--community-tier3-acc);"></i> 1 free drop per year</div>
+          <div class="comm-tier-feature" style="color:rgba(245,239,230,0.75);"><i class="fas fa-check" style="color:var(--community-tier3-acc);"></i> Founding member status</div>
+          <div class="comm-tier-feature" style="color:rgba(245,239,230,0.75);"><i class="fas fa-check" style="color:var(--community-tier3-acc);"></i> Input on future drops</div>
+          <div class="comm-tier-feature" style="color:rgba(245,239,230,0.75);"><i class="fas fa-check" style="color:var(--community-tier3-acc);"></i> Personal ritual consultation</div>
+          <div class="comm-tier-feature" style="color:rgba(245,239,230,0.75);"><i class="fas fa-check" style="color:var(--community-tier3-acc);"></i> Priority treatment always</div>
+        </div>
+        <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="this.textContent='Request submitted ✓';this.disabled=true;">Request Access</button>
+        <p style="font-size:0.75rem;text-align:center;color:rgba(245,239,230,0.3);margin-top:0.75rem;">By invitation only</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ REWARDS EXPLAINER ══════════ -->
+<section class="section" style="background:{{ section.settings.community_perks_bg | default: 'var(--warm-white)' }};">
+  <div class="container">
+    <div class="comm-rewards-grid">
+      <div class="reveal-left">
+        <span class="section-eyebrow">Playmate Rewards</span>
+        <h2 class="heading-xl">Earn points.<br>Unlock experiences.</h2>
+        <div class="section-divider" style="margin:1.25rem 0;"></div>
+        <p style="font-size:1rem;color:var(--text-muted);line-height:1.7;margin-bottom:var(--space-md);">Every interaction with Playmate Labs earns you Playmate Points — the currency of our community. Spend them on discounts, free products and exclusive experiences.</p>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="comm-rewards-item">
+            <span class="emoji">🛒</span>
+            <div><strong>Every £1 spent</strong><p>= 1 Playmate Point</p></div>
+            <span class="badge badge-burgundy" style="margin-left:auto;">Always on</span>
+          </div>
+          <div class="comm-rewards-item">
+            <span class="emoji">🎟️</span>
+            <div><strong>Attending an event</strong><p>= 200 Points per couple</p></div>
+            <span class="badge badge-gold" style="margin-left:auto;">Bonus</span>
+          </div>
+          <div class="comm-rewards-item">
+            <span class="emoji">📱</span>
+            <div><strong>Completing a ritual</strong><p>= 50 Points per session</p></div>
+            <span class="badge badge-gold" style="margin-left:auto;">Bonus</span>
+          </div>
+          <div class="comm-rewards-item">
+            <span class="emoji">💌</span>
+            <div><strong>Referring a friend</strong><p>= 100 Points per referral</p></div>
+            <span class="badge badge-burgundy" style="margin-left:auto;">Hot</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Points dashboard preview -->
+      <div class="reveal-right">
+        <div class="comm-rewards-dashboard">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+            <div>
+              <p style="font-size:0.6875rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(245,239,230,0.4);margin-bottom:0.25rem;">Your Balance</p>
+              <div class="comm-rewards-pts">—</div>
+            </div>
+            <div style="text-align:right;">
+              <span class="badge badge-gold" style="margin-bottom:0.5rem;display:inline-block;">Member Tier</span>
+              <p style="font-size:0.75rem;color:rgba(245,239,230,0.4);">Join to start earning</p>
+            </div>
+          </div>
+          <div style="margin-bottom:1.5rem;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+              <span style="font-size:0.75rem;color:rgba(245,239,230,0.4);">Progress to Inner Circle</span>
+              <span style="font-size:0.75rem;font-weight:600;color:var(--gold);">— / 1,000 pts</span>
+            </div>
+            <div class="loyalty-bar"><div class="loyalty-bar-fill" style="width:0%;"></div></div>
+          </div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:1.25rem;">
+            <p style="font-size:0.6875rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,239,230,0.35);margin-bottom:0.875rem;">Redeem Points For</p>
+            <div style="display:flex;flex-direction:column;gap:0.625rem;">
+              {% assign redemptions = "10% off next order,100 pts|Free ritual candle,350 pts|Free event ticket,800 pts|Free drop kit,1200 pts" | split: "|" %}
+              {% for item in redemptions %}
+                {% assign parts = item | split: "," %}
+                <div style="display:flex;justify-content:space-between;font-size:0.8125rem;">
+                  <span style="color:rgba(245,239,230,0.65);">{{ parts[0] }}</span>
+                  <span style="color:var(--gold);font-weight:600;">{{ parts[1] }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <a href="{{ routes.account_url }}" class="btn btn-gold" style="width:100%;justify-content:center;margin-top:1.5rem;font-size:0.8125rem;">View Full Rewards Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ JOIN FORM ══════════ -->
+<section class="section comm-form-section" id="community-join" style="background:linear-gradient(135deg,{{ section.settings.community_form_bg | default: 'var(--espresso)' }} 0%,{{ section.settings.community_hero_bg_to | default: '#2D1020' }} 60%,{{ section.settings.community_form_bg | default: 'var(--espresso)' }} 100%);">
+  <div class="container">
+    <div class="comm-form-grid">
+      <div class="reveal-left">
+        <span class="section-eyebrow" style="color:{{ section.settings.community_hero_eye | default: 'var(--gold)' }};">Join Free Today</span>
+        <h2 class="heading-xl text-cream">Become part of<br><em style="font-style:italic;color:{{ section.settings.community_hero_italic_color | default: 'var(--gold-light)' }};">something new.</em></h2>
+        <div class="section-divider" style="background:var(--gold);margin:1.25rem 0;"></div>
+        <p style="color:rgba(245,239,230,0.65);font-size:1rem;line-height:1.7;max-width:440px;">14,000+ people who believe date night should feel better. Events, drops, rituals and rewards — a community built on novelty, intimacy and play.</p>
+      </div>
+      <div class="reveal-right">
+        <div class="comm-form-card">
+          <h3 style="font-family:var(--font-serif);font-size:1.5rem;color:var(--cream);margin-bottom:1.75rem;text-align:center;">Join the Playmate Community</h3>
+          {% form 'customer' %}
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                <input class="form-input form-input-dark" type="text" name="customer[first_name]" placeholder="First name" required>
+                <input class="form-input form-input-dark" type="text" name="customer[last_name]" placeholder="Last name">
+              </div>
+              <input class="form-input form-input-dark" type="email" name="customer[email]" placeholder="Email address" required>
+              <input class="form-input form-input-dark" type="tel" name="customer[phone]" placeholder="Phone (for SMS drops & events)">
+              <select class="form-input form-input-dark form-select" name="customer[note][city]">
+                <option value="">Your city</option>
+                <option>London</option>
+                <option>Manchester</option>
+                <option>Birmingham</option>
+                <option>Leeds</option>
+                <option>Bristol</option>
+                <option>Other</option>
+              </select>
+              <select class="form-input form-input-dark form-select" name="customer[note][status]">
+                <option value="">Relationship status (optional)</option>
+                <option>In a long-term relationship</option>
+                <option>Newly together</option>
+                <option>Dating and exploring</option>
+                <option>Single but curious</option>
+              </select>
+              <div style="display:flex;flex-direction:column;gap:0.5rem;padding:1rem;background:rgba(255,255,255,0.04);border-radius:var(--radius-md);">
+                <p style="font-size:0.6875rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,239,230,0.4);margin-bottom:0.25rem;">I'm interested in</p>
+                <label style="display:flex;gap:0.5rem;font-size:0.875rem;color:rgba(245,239,230,0.7);cursor:pointer;"><input type="checkbox" name="customer[tags]" value="interest-drops" style="accent-color:var(--burgundy);"> Monthly date night drops</label>
+                <label style="display:flex;gap:0.5rem;font-size:0.875rem;color:rgba(245,239,230,0.7);cursor:pointer;"><input type="checkbox" name="customer[tags]" value="interest-events" style="accent-color:var(--burgundy);"> IRL events and experiences</label>
+                <label style="display:flex;gap:0.5rem;font-size:0.875rem;color:rgba(245,239,230,0.7);cursor:pointer;"><input type="checkbox" name="customer[tags]" value="interest-rituals" style="accent-color:var(--burgundy);"> Digital rituals and games</label>
+                <label style="display:flex;gap:0.5rem;font-size:0.875rem;color:rgba(245,239,230,0.7);cursor:pointer;"><input type="checkbox" name="customer[tags]" value="interest-rewards" style="accent-color:var(--burgundy);"> Rewards and perks</label>
+              </div>
+              <input type="hidden" name="customer[password]" value="Playmate2024!">
+              <button type="submit" class="btn btn-xl" style="width:100%;justify-content:center;background:{{ section.settings.community_form_btn_bg | default: 'var(--gold)' }};color:{{ section.settings.community_form_btn_text | default: 'var(--espresso)' }};">
+                <i class="fas fa-users"></i>
+                Join the Community — Free
+              </button>
+            </div>
+          {% endform %}
+          <p style="font-size:0.6875rem;color:rgba(245,239,230,0.25);text-align:center;margin-top:1rem;">Free forever. No credit card. No spam.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ STICKY CTA ══════════ -->
+<div class="sticky-cta-bar" id="sticky-cta" style="display:none;">
+  <a href="#community-join" class="btn btn-primary" style="flex:1;justify-content:center;"><i class="fas fa-users"></i> Join Community Free</a>
+  <a href="{{ routes.account_url }}" class="btn btn-secondary" style="flex:1;justify-content:center;">My Account</a>
+</div>
+
+<script>
+  (function(){
+    var hero = document.querySelector('.comm-hero');
+    var sticky = document.getElementById('sticky-cta');
+    if(!hero||!sticky) return;
+    var obs = new IntersectionObserver(function(e){ sticky.style.display = e[0].isIntersecting ? 'none' : 'flex'; },{threshold:0});
+    obs.observe(hero);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Community Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "community_hero_image",
+      "label": "Hero background image",
+      "info": "Full-width community hero. Recommended: 1800×900px."
+    },
+    {
+      "type": "image_picker",
+      "id": "community_member_1_image",
+      "label": "Community photo 1",
+      "info": "Member or lifestyle photo. Recommended: 600×600px square."
+    },
+    {
+      "type": "image_picker",
+      "id": "community_member_2_image",
+      "label": "Community photo 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "community_member_3_image",
+      "label": "Community photo 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "community_member_4_image",
+      "label": "Community photo 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "community_member_5_image",
+      "label": "Community photo 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "community_member_6_image",
+      "label": "Community photo 6"
+    },
+    {
+      "type": "header",
+      "content": "📝 Hero Text"
+    },
+    {
+      "type": "text",
+      "id": "community_hero_eyebrow",
+      "label": "Hero eyebrow",
+      "default": "The Community"
+    },
+    {
+      "type": "text",
+      "id": "community_hero_heading",
+      "label": "Hero heading",
+      "default": "People who believe in"
+    },
+    {
+      "type": "text",
+      "id": "community_hero_heading_italic",
+      "label": "Hero italic heading",
+      "default": "the relationship."
+    },
+    {
+      "type": "textarea",
+      "id": "community_hero_subtext",
+      "label": "Hero subtext",
+      "default": "A private space for Playmate Labs subscribers — shared rituals, early access and honest conversations."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colours"
+    },
+    {
+      "type": "color",
+      "id": "community_accent_color",
+      "label": "Accent colour",
+      "default": "#C9A84C"
+    }
+  ]
+}
+{% endschema %}

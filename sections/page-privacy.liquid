@@ -1,0 +1,181 @@
+{% comment %}
+  PLAYMATE LABS — PRIVACY POLICY PAGE
+  File: templates/page.privacy.liquid
+  Used for: /pages/privacy-policy
+{% endcomment %}
+
+<section class="page-hero-minimal" style="background:var(--cream-off);padding:4rem 0 2rem;border-bottom:1px solid var(--border-color);">
+  <div class="container">
+    <div class="breadcrumb" style="margin-bottom:1rem;">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Privacy Policy</span>
+    </div>
+    <h1 style="font-family:var(--font-serif);font-size:2.25rem;">Privacy Policy</h1>
+    <p style="color:var(--text-muted);margin-top:0.5rem;">Last updated: {{ 'now' | date: '%d %B %Y' }}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="legal-layout">
+      <!-- Table of Contents -->
+      <aside class="legal-toc">
+        <h4 style="font-size:0.875rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:1rem;color:var(--text-muted);">Contents</h4>
+        <nav class="toc-nav">
+          <a href="#who-we-are" class="toc-link">1. Who We Are</a>
+          <a href="#data-we-collect" class="toc-link">2. Data We Collect</a>
+          <a href="#how-we-use" class="toc-link">3. How We Use It</a>
+          <a href="#sharing" class="toc-link">4. Sharing Data</a>
+          <a href="#cookies" class="toc-link">5. Cookies</a>
+          <a href="#your-rights" class="toc-link">6. Your Rights</a>
+          <a href="#retention" class="toc-link">7. Data Retention</a>
+          <a href="#contact" class="toc-link">8. Contact Us</a>
+        </nav>
+      </aside>
+
+      <!-- Content -->
+      <div class="legal-content">
+        {%- if page.content != blank -%}
+          <div class="rte">{{ page.content }}</div>
+        {%- else -%}
+
+          <div id="who-we-are" class="legal-section">
+            <h2>1. Who We Are</h2>
+            <p>Playmate Labs Ltd ("Playmate Labs", "we", "us", "our") operates the website at playmate-labs.com and all related subdomains. We are the data controller for personal information collected through our website and services.</p>
+            <p>Company registration: [Company Number] · Registered address: [Address] · ICO registration: [ICO Number]</p>
+          </div>
+
+          <div id="data-we-collect" class="legal-section">
+            <h2>2. Data We Collect</h2>
+            <p>We collect the following categories of personal data:</p>
+            <ul>
+              <li><strong>Identity &amp; Contact:</strong> Name, email address, shipping/billing address, phone number (when provided)</li>
+              <li><strong>Transaction:</strong> Order history, products purchased, payment method type (we do not store full card details)</li>
+              <li><strong>Account:</strong> Username, password (hashed), preferences, wish lists</li>
+              <li><strong>Communications:</strong> Customer service messages, email marketing preferences</li>
+              <li><strong>Technical:</strong> IP address, browser type, device identifiers, cookie data, browsing activity on our site</li>
+              <li><strong>Marketing:</strong> Newsletter subscriptions, drop list sign-ups, event RSVPs</li>
+            </ul>
+          </div>
+
+          <div id="how-we-use" class="legal-section">
+            <h2>3. How We Use Your Data</h2>
+            <p>We process your data for the following purposes and legal bases:</p>
+            <table class="legal-table">
+              <thead><tr><th>Purpose</th><th>Legal Basis</th></tr></thead>
+              <tbody>
+                <tr><td>Processing and fulfilling orders</td><td>Contract performance</td></tr>
+                <tr><td>Customer account management</td><td>Contract performance</td></tr>
+                <tr><td>Marketing emails (with consent)</td><td>Consent</td></tr>
+                <tr><td>Drop list notifications</td><td>Consent</td></tr>
+                <tr><td>Fraud prevention</td><td>Legitimate interest</td></tr>
+                <tr><td>Analytics and site improvement</td><td>Legitimate interest</td></tr>
+                <tr><td>Legal compliance</td><td>Legal obligation</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="sharing" class="legal-section">
+            <h2>4. Sharing Your Data</h2>
+            <p>We share data only with trusted partners necessary to operate our service:</p>
+            <ul>
+              <li><strong>Shopify Inc</strong> — e-commerce platform and order management</li>
+              <li><strong>Stripe / PayPal</strong> — payment processing (they do not store your full card details with us)</li>
+              <li><strong>Klaviyo / Mailchimp</strong> — email marketing (only for consented subscribers)</li>
+              <li><strong>Royal Mail / DPD / Evri</strong> — order fulfilment and delivery</li>
+              <li><strong>Google Analytics</strong> — anonymised website analytics</li>
+            </ul>
+            <p>We never sell your personal data to third parties.</p>
+          </div>
+
+          <div id="cookies" class="legal-section">
+            <h2>5. Cookies</h2>
+            <p>We use the following cookie categories:</p>
+            <ul>
+              <li><strong>Essential:</strong> Cart contents, session token, CSRF protection. Cannot be disabled.</li>
+              <li><strong>Analytics:</strong> Google Analytics (anonymised). Opt-out available.</li>
+              <li><strong>Marketing:</strong> Meta Pixel, TikTok Pixel. Requires consent.</li>
+              <li><strong>Preferences:</strong> Currency, language, notification preferences.</li>
+            </ul>
+            <p>You can manage cookies via our cookie banner or your browser section.settings. Blocking cookies may affect site functionality.</p>
+          </div>
+
+          <div id="your-rights" class="legal-section">
+            <h2>6. Your Rights</h2>
+            <p>Under UK GDPR you have the right to:</p>
+            <ul>
+              <li><strong>Access</strong> — request a copy of data we hold about you</li>
+              <li><strong>Rectification</strong> — correct inaccurate or incomplete data</li>
+              <li><strong>Erasure</strong> — request deletion of your data ("right to be forgotten")</li>
+              <li><strong>Restriction</strong> — restrict how we process your data</li>
+              <li><strong>Portability</strong> — receive your data in a machine-readable format</li>
+              <li><strong>Object</strong> — object to processing based on legitimate interest</li>
+              <li><strong>Withdraw consent</strong> — unsubscribe from marketing at any time</li>
+            </ul>
+            <p>To exercise any right, email <a href="mailto:privacy@playmate-labs.com">privacy@playmate-labs.com</a>. We will respond within 30 days. You may also lodge a complaint with the <a href="https://ico.org.uk" target="_blank" rel="noopener">ICO</a>.</p>
+          </div>
+
+          <div id="retention" class="legal-section">
+            <h2>7. Data Retention</h2>
+            <ul>
+              <li>Order data: 7 years (legal requirement)</li>
+              <li>Account data: duration of account + 2 years after last activity</li>
+              <li>Marketing preferences: until consent withdrawn</li>
+              <li>Analytics data: 26 months (Google Analytics default)</li>
+            </ul>
+          </div>
+
+          <div id="contact" class="legal-section">
+            <h2>8. Contact Us</h2>
+            <p>Data Protection queries: <a href="mailto:privacy@playmate-labs.com">privacy@playmate-labs.com</a></p>
+            <p>General enquiries: <a href="mailto:hello@playmate-labs.com">hello@playmate-labs.com</a></p>
+            <p>Postal: Playmate Labs Ltd, [Address], United Kingdom</p>
+          </div>
+
+        {%- endif -%}
+      </div><!-- /.legal-content -->
+    </div><!-- /.legal-layout -->
+  </div>
+</section>
+
+<style>
+.legal-layout { display:grid; grid-template-columns: 200px 1fr; gap:4rem; align-items:start; }
+.legal-toc { position:sticky; top:6rem; }
+.toc-nav { display:flex; flex-direction:column; gap:0.5rem; }
+.toc-link { font-size:0.875rem; color:var(--text-muted); text-decoration:none; padding:0.25rem 0; border-left:2px solid transparent; padding-left:0.75rem; transition:all 0.2s; }
+.toc-link:hover, .toc-link.active { color:var(--burgundy); border-left-color:var(--burgundy); }
+.legal-section { margin-bottom:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid var(--border-color); }
+.legal-section:last-child { border-bottom:none; }
+.legal-section h2 { font-family:var(--font-serif); font-size:1.5rem; margin-bottom:1rem; }
+.legal-section p, .legal-section li { font-size:0.9375rem; line-height:1.7; color:var(--text-body); margin-bottom:0.75rem; }
+.legal-section ul { padding-left:1.5rem; }
+.legal-table { width:100%; border-collapse:collapse; font-size:0.875rem; margin:1rem 0; }
+.legal-table th, .legal-table td { padding:0.75rem 1rem; border:1px solid var(--border-color); text-align:left; }
+.legal-table th { background:var(--cream-off); font-weight:600; }
+@media(max-width:768px) { .legal-layout { grid-template-columns:1fr; } .legal-toc { position:static; } }
+</style>
+
+{% schema %}
+{
+  "name": "Privacy Policy",
+  "settings": [
+    {
+      "type": "header",
+      "content": "📝 Content"
+    },
+    {
+      "type": "text",
+      "id": "privacy_heading",
+      "label": "Page heading",
+      "default": "Privacy Policy"
+    },
+    {
+      "type": "text",
+      "id": "privacy_last_updated",
+      "label": "Last updated date",
+      "default": "1 January 2025"
+    }
+  ]
+}
+{% endschema %}

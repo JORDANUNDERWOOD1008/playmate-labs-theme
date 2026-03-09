@@ -1,0 +1,340 @@
+{% comment %}
+  PLAYMATE LABS — EVENTS PAGE  v3
+  File: templates/page.events.liquid
+  Used for: /pages/events
+  Mirrors: https://njpvfxya.gensparkspace.com/events.html
+{% endcomment %}
+
+{{ 'events.css' | asset_url | stylesheet_tag }}
+
+<style>
+  :root {
+    {% if section.settings.events_accent_color != blank %}--events-accent: {{ section.settings.events_accent_color }};{% endif %}
+    {% if section.settings.events_hero_bg != blank %}--events-hero-bg: {{ section.settings.events_hero_bg }};{% endif %}
+    {% if section.settings.events_card_bg != blank %}--events-card-bg: {{ section.settings.events_card_bg }};{% endif %}
+  }
+</style>
+
+<!-- ===== HERO ===== -->
+<section class="events-hero">
+  {%- assign _events_hero_img = section.settings.events_hero_image -%}
+  <div class="events-hero-bg" {% if _events_hero_img %}style="background-image:url('{{ _events_hero_img  }}');"{% endif %}>
+    <div class="events-hero-overlay"></div>
+    <div class="container events-hero-inner">
+      <span class="section-eyebrow" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_eyebrow | default: 'IRL Experiences' }}</span>
+      <h1 class="events-hero-heading">
+        {{ section.settings.events_hero_line1 | default: 'Experiences worth' }}<br>
+        <em style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_hero_italic | default: 'dressing up for.' }}</em>
+      </h1>
+      <p class="events-hero-sub">{{ section.settings.events_hero_sub | default: 'Sensory date nights, couples mixers and immersive pop-up experiences. Designed for modern relationships. Happening near you.' }}</p>
+
+      <div class="events-hero-stats">
+        <div class="events-stat">
+          <span class="events-stat-num" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_stat_1_num | default: '22+' }}</span>
+          <span class="events-stat-label">{{ section.settings.events_stat_1_label | default: 'Events in 2024' }}</span>
+        </div>
+        <div class="events-stat-div"></div>
+        <div class="events-stat">
+          <span class="events-stat-num" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_stat_2_num | default: '2,400+' }}</span>
+          <span class="events-stat-label">{{ section.settings.events_stat_2_label | default: 'Attendees' }}</span>
+        </div>
+        <div class="events-stat-div"></div>
+        <div class="events-stat">
+          <span class="events-stat-num" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_stat_3_num | default: '4' }}</span>
+          <span class="events-stat-label">{{ section.settings.events_stat_3_label | default: 'UK Cities' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FILTER BAR ===== -->
+<section class="events-filter-bar">
+  <div class="container">
+    <div class="events-filter-inner">
+      <div class="events-filter-group">
+        <span class="events-filter-label">{{ section.settings.events_filter_city_label | default: 'Filter by city:' }}</span>
+        <div class="events-filter-chips" id="city-filters">
+          <button class="filter-btn active" data-filter="all">All Cities</button>
+          <button class="filter-btn" data-filter="london">London</button>
+          <button class="filter-btn" data-filter="manchester">Manchester</button>
+          <button class="filter-btn" data-filter="birmingham">Birmingham</button>
+          <button class="filter-btn" data-filter="leeds">Leeds</button>
+          <button class="filter-btn" data-filter="edinburgh">Edinburgh</button>
+        </div>
+      </div>
+      <div class="events-filter-group">
+        <span class="events-filter-label">{{ section.settings.events_filter_type_label | default: 'Type:' }}</span>
+        <div class="events-filter-chips" id="type-filters">
+          <button class="filter-btn active" data-filter-type="all">All</button>
+          <button class="filter-btn" data-filter-type="sensory-date-night">Sensory Date Night</button>
+          <button class="filter-btn" data-filter-type="couples-mixer">Couples Mixer</button>
+          <button class="filter-btn" data-filter-type="pop-up">Pop-Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EVENTS GRID ===== -->
+<section class="section events-main" id="events-grid">
+  <div class="container">
+
+    {%- comment -%} Schema-driven events — up to 8 {%- endcomment -%}
+    {%- assign event_defaults_icon = '🌙,🥂,🎭,🎵,🌿,✨,🍷,🌸' | split: ',' -%}
+    {%- assign event_defaults_date = '14 Feb,22 Feb,8 Mar,15 Mar,29 Mar,5 Apr,19 Apr,3 May' | split: ',' -%}
+    {%- assign event_defaults_city = 'London,Manchester,London,Birmingham,London,Leeds,Edinburgh,London' | split: ',' -%}
+    {%- assign event_defaults_city_filter = 'london,manchester,london,birmingham,london,leeds,edinburgh,london' | split: ',' -%}
+    {%- assign event_defaults_type = 'Sensory Date Night,Couples Mixer,Pop-Up Experience,Sensory Date Night,Botanical Mixer,Sensory Date Night,Couples Mixer,Sensory Date Night' | split: ',' -%}
+    {%- assign event_defaults_type_filter = 'sensory-date-night,couples-mixer,pop-up,sensory-date-night,couples-mixer,sensory-date-night,couples-mixer,sensory-date-night' | split: ',' -%}
+    {%- assign event_defaults_title = "Valentine's: The Velvet Hour Live,Playmate Pairs — MCR,The Playmate Lab — Popup,Sound & Sense — Midnight Edition,Rooted — Botanical Mixer,First Blush — Spring Edition,Playmate Pairs — Edinburgh,The Sensory Garden — Summer" | split: ',' -%}
+    {%- assign event_defaults_desc = 'An intimate candlelit evening — chocolate connection game and guided rituals. Limited to 40 couples.,Meet other like-minded couples over cocktails sensory games and the Playmate ritual guide.,Our flagship pop-up — explore the full Playmate universe sample products and discover your ritual.,A sensory date night built around music and touch — live ambient performance guided rituals and the Midnight Hours kit.,A spring mixer in a London greenhouse — botanical cocktails the Rooted kit launch and a live plant styling experience.,Our most romantic event format returns — rose & lychee chocolate tasting live performance and connection game tournament.,Northern edition of our most popular social format. Cocktails games and the ritual guide.,An outdoor summer sensory experience — botanical cocktails garden rituals and the new summer drop reveal.' | split: ',' -%}
+    {%- assign event_defaults_price = 'From £75 per couple,From £40 per person,Free — £20,From £75 per couple,From £40 per person,From £75 per couple,From £40 per person,From £65 per couple' | split: ',' -%}
+    {%- assign event_defaults_spots = '8 left,,12 left,15 left,,10 left,Last few,20 left' | split: ',' -%}
+
+    <div class="events-grid" id="events-grid-inner">
+      {%- for i in (1..8) -%}
+        {%- assign e_icon = 'events_event_' | append: i | append: '_icon' -%}
+        {%- assign e_date = 'events_event_' | append: i | append: '_date' -%}
+        {%- assign e_img_key = 'events_event_' | append: i | append: '_image' -%}
+        {%- assign e_img = section.settings[e_img_key] -%}
+        {%- assign e_city = 'events_event_' | append: i | append: '_city' -%}
+        {%- assign e_type = 'events_event_' | append: i | append: '_type' -%}
+        {%- assign e_title = 'events_event_' | append: i | append: '_title' -%}
+        {%- assign e_desc = 'events_event_' | append: i | append: '_desc' -%}
+        {%- assign e_price = 'events_event_' | append: i | append: '_price' -%}
+        {%- assign e_url = 'events_event_' | append: i | append: '_url' -%}
+        {%- assign e_spots = 'events_event_' | append: i | append: '_spots' -%}
+        {%- assign e_enable = 'events_event_' | append: i | append: '_enable' -%}
+
+        {%- unless section.settings[e_enable] == false -%}
+          {%- assign city_val = section.settings[e_city] | default: event_defaults_city[forloop.index0] -%}
+          {%- assign type_val = section.settings[e_type] | default: event_defaults_type_filter[forloop.index0] -%}
+          {%- assign spots_val = section.settings[e_spots] | default: event_defaults_spots[forloop.index0] -%}
+
+          <div class="event-card" data-city="{{ city_val | downcase | replace: ' ', '-' }}" data-type="{{ type_val | downcase | replace: ' ', '-' }}">
+            <div class="event-card-header" style="{% if e_img != blank %}background-image:url('{{ e_img | image_url: width: 800 }}');background-size:cover;background-position:center;{% else %}background:{{ section.settings.events_card_bg | default: 'linear-gradient(135deg,var(--espresso),#3D1A2E)' }};{% endif %}">
+              <div class="event-card-top">
+                <span class="event-icon">{{ section.settings[e_icon] | default: event_defaults_icon[forloop.index0] }}</span>
+                {%- assign spots = section.settings[e_spots] | default: event_defaults_spots[forloop.index0] -%}
+                {%- if spots != blank -%}
+                  <span class="event-spots-badge">{{ spots }}</span>
+                {%- endif -%}
+              </div>
+              <div class="event-date-badge">
+                <span class="event-date-text">{{ section.settings[e_date] | default: event_defaults_date[forloop.index0] }}</span>
+              </div>
+            </div>
+            <div class="event-card-body">
+              <div class="event-meta">
+                <span class="event-city-tag">{{ section.settings[e_city] | default: event_defaults_city[forloop.index0] }}</span>
+                <span class="event-type-tag">{{ section.settings[e_type] | default: event_defaults_type[forloop.index0] }}</span>
+              </div>
+              <h3 class="event-card-title">{{ section.settings[e_title] | default: event_defaults_title[forloop.index0] }}</h3>
+              <p class="event-card-desc">{{ section.settings[e_desc] | default: event_defaults_desc[forloop.index0] }}</p>
+              <div class="event-card-footer">
+                <span class="event-price" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings[e_price] | default: event_defaults_price[forloop.index0] }}</span>
+                {%- if section.settings[e_url] != blank -%}
+                  <a href="{{ section.settings[e_url] }}" class="btn btn-primary btn-sm">Book Now</a>
+                {%- else -%}
+                  <a href="{{ pages['event-detail'].url | default: '/pages/event-detail' }}" class="btn btn-primary btn-sm">{{ section.settings.events_book_cta | default: 'Book Now' }}</a>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} No city CTA {%- endcomment -%}
+    <div class="events-no-city" style="background:{{ section.settings.events_no_city_bg | default: 'var(--cream-off)' }};border-radius:12px;padding:2.5rem;text-align:center;margin-top:3rem;">
+      <div style="font-size:1.5rem;margin-bottom:0.75rem;">📍</div>
+      <h3 style="font-family:var(--font-serif);margin-bottom:0.5rem;color:{{ section.settings.events_no_city_heading_color | default: 'var(--espresso)' }};">{{ section.settings.events_no_city_heading | default: "Don't see your city?" }}</h3>
+      <p style="color:var(--text-muted);margin-bottom:1.25rem;">{{ section.settings.events_no_city_desc | default: "We're expanding. Register your interest and be first to know when we come to your city." }}</p>
+      {%- form 'customer' -%}
+        <input type="hidden" name="contact[tags]" value="events,city-interest">
+        <div style="display:flex;gap:0.75rem;max-width:400px;margin:0 auto;flex-wrap:wrap;justify-content:center;">
+          <input type="email" name="contact[email]" placeholder="Your email" class="form-input" style="flex:1;min-width:200px;" required>
+          <button type="submit" class="btn btn-primary btn-sm">{{ section.settings.events_no_city_cta | default: 'Register Interest' }}</button>
+        </div>
+      {%- endform -%}
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== EVENT FORMAT GUIDE ===== -->
+<section class="section events-formats" style="background:{{ section.settings.events_formats_bg | default: 'var(--espresso)' }};">
+  <div class="container">
+    <div class="section-header" style="text-align:center;margin-bottom:2.5rem;">
+      <span class="section-eyebrow" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_formats_eyebrow | default: 'Our Event Formats' }}</span>
+      <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ section.settings.events_formats_heading_color | default: 'var(--cream)' }};">{{ section.settings.events_formats_heading | default: 'Three ways to experience Playmate Labs.' }}</h2>
+    </div>
+    <div class="events-format-grid">
+
+      <div class="events-format-card">
+        <div class="events-format-icon">🌙</div>
+        <h3 style="color:{{ section.settings.events_format_title_color | default: 'var(--cream)' }};">{{ section.settings.events_format_1_title | default: 'Sensory Date Nights' }}</h3>
+        <p style="color:{{ section.settings.events_format_desc_color | default: 'rgba(245,239,230,0.7)' }};">{{ section.settings.events_format_1_desc | default: 'Intimate evenings for couples — guided chocolate tastings, ambient environments, ritual play and connection games. Limited to 30–50 couples. Smart casual to formal dress.' }}</p>
+        <span class="events-format-price" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_format_1_price | default: 'From £75 per couple' }}</span>
+      </div>
+
+      <div class="events-format-card">
+        <div class="events-format-icon">🥂</div>
+        <h3 style="color:{{ section.settings.events_format_title_color | default: 'var(--cream)' }};">{{ section.settings.events_format_2_title | default: 'Couples Mixers' }}</h3>
+        <p style="color:{{ section.settings.events_format_desc_color | default: 'rgba(245,239,230,0.7)' }};">{{ section.settings.events_format_2_desc | default: 'Social nights for couples and people dating — cocktails, games, conversation starters and the chance to meet other like-minded people. Slightly less structured. Equally excellent.' }}</p>
+        <span class="events-format-price" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_format_2_price | default: 'From £40 per person' }}</span>
+      </div>
+
+      <div class="events-format-card">
+        <div class="events-format-icon">🎭</div>
+        <h3 style="color:{{ section.settings.events_format_title_color | default: 'var(--cream)' }};">{{ section.settings.events_format_3_title | default: 'Pop-Up Experiences' }}</h3>
+        <p style="color:{{ section.settings.events_format_desc_color | default: 'rgba(245,239,230,0.7)' }};">{{ section.settings.events_format_3_desc | default: 'Immersive activations and brand pop-ups — sample products, discover your ritual style, meet the Playmate team and get early access to upcoming drops.' }}</p>
+        <span class="events-format-price" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_format_3_price | default: 'Free — £20' }}</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== NEWSLETTER CTA ===== -->
+<section class="section" style="background:{{ section.settings.events_newsletter_bg | default: 'var(--cream-off)' }};text-align:center;">
+  <div class="container" style="max-width:560px;">
+    <span class="section-eyebrow" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_newsletter_eyebrow | default: 'Never Miss an Event' }}</span>
+    <h2 style="font-family:var(--font-serif);font-size:1.875rem;color:{{ section.settings.events_newsletter_heading_color | default: 'var(--espresso)' }};margin:0.75rem 0 1rem;">
+      {{ section.settings.events_newsletter_heading_1 | default: 'Get early access to every' }}<br>
+      <span style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_newsletter_heading_accent | default: 'Playmate experience.' }}</span>
+    </h2>
+    <p style="color:var(--text-muted);margin-bottom:1.5rem;">{{ section.settings.events_newsletter_sub | default: 'Events typically sell out within 48 hours of opening. Join the list to be notified before they go public.' }}</p>
+    {%- form 'customer' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter,events">
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;">
+        <input type="email" name="contact[email]" placeholder="{{ section.settings.events_newsletter_placeholder | default: 'Your email address' }}" class="form-input" style="max-width:280px;flex:1;" required>
+        <button type="submit" class="btn btn-primary">{{ section.settings.events_newsletter_cta | default: 'Join Event List' }}</button>
+      </div>
+    {%- endform -%}
+  </div>
+</section>
+
+<script>
+// City filter
+document.querySelectorAll('#city-filters .filter-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('#city-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    this.classList.add('active');
+    var city = this.dataset.filter;
+    document.querySelectorAll('.event-card').forEach(function(card) {
+      card.style.display = (city === 'all' || card.dataset.city === city) ? '' : 'none';
+    });
+  });
+});
+// Type filter
+document.querySelectorAll('#type-filters .filter-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('#type-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    this.classList.add('active');
+    var type = this.dataset.filterType;
+    document.querySelectorAll('.event-card').forEach(function(card) {
+      card.style.display = (type === 'all' || card.dataset.type === type) ? '' : 'none';
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Events Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "events_hero_image",
+      "label": "Hero background image",
+      "info": "Full-width events hero banner. Recommended: 1800×900px."
+    },
+    {
+      "type": "image_picker",
+      "id": "events_event_1_image",
+      "label": "Event card 1 image",
+      "info": "Recommended: 800×500px."
+    },
+    {
+      "type": "image_picker",
+      "id": "events_event_2_image",
+      "label": "Event card 2 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "events_event_3_image",
+      "label": "Event card 3 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "events_event_4_image",
+      "label": "Event card 4 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "events_event_5_image",
+      "label": "Event card 5 image"
+    },
+    {
+      "type": "image_picker",
+      "id": "events_event_6_image",
+      "label": "Event card 6 image"
+    },
+    {
+      "type": "header",
+      "content": "📝 Hero Text"
+    },
+    {
+      "type": "text",
+      "id": "events_hero_eyebrow",
+      "label": "Hero eyebrow",
+      "default": "Live Events"
+    },
+    {
+      "type": "text",
+      "id": "events_hero_heading",
+      "label": "Hero heading",
+      "default": "Experiences you can only have"
+    },
+    {
+      "type": "text",
+      "id": "events_hero_heading_italic",
+      "label": "Hero italic heading",
+      "default": "in the room."
+    },
+    {
+      "type": "textarea",
+      "id": "events_hero_subtext",
+      "label": "Hero subtext",
+      "default": "Intimate dinners, sensory tastings, and guided rituals for couples — hosted across the UK."
+    },
+    {
+      "type": "text",
+      "id": "events_hero_cta",
+      "label": "Hero CTA button text",
+      "default": "Browse Events"
+    },
+    {
+      "type": "url",
+      "id": "events_hero_cta_url",
+      "label": "Hero CTA button link"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colours"
+    },
+    {
+      "type": "color",
+      "id": "events_accent_color",
+      "label": "Accent colour",
+      "default": "#C9A84C"
+    }
+  ]
+}
+{% endschema %}
