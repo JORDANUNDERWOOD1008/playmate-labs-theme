@@ -34,13 +34,11 @@
 
   <div class="container featured-drop__inner">
 
-    <!-- LEFT: intentionally empty so the background product photo is unobstructed -->
-    <div class="featured-drop__spacer" aria-hidden="true"></div>
-
-    <!-- RIGHT: all PDP text content -->
-    <div class="featured-drop__content reveal">
-
-      <!-- Section header (eyebrow / title / divider / subheading) -->
+    <!-- ─────────────────────────────────────────────────────────────
+         MOBILE ROW 1 / DESKTOP: hidden (heading is in __content below)
+         Shows eyebrow + heading + divider + subheading above the candle
+    ───────────────────────────────────────────────────────────────── -->
+    <div class="featured-drop__top reveal">
       <span class="section-eyebrow" style="color:var(--gold-light);">
         {{ section.settings.eyebrow | default: "This Month's Drop" }}
       </span>
@@ -48,11 +46,38 @@
         {{ section.settings.heading | default: 'The Velvet Hour' }}
       </h2>
       <div class="section-divider" style="background:var(--gold);margin:0 0 1.25rem;"></div>
-      <p class="body-lg" style="color:rgba(245,239,230,0.65);margin-bottom:2rem;">
+      <p class="body-lg" style="color:rgba(245,239,230,0.65);margin-bottom:0;">
         {{ section.settings.subheading | default: 'An evening ritual for two. Dark chocolate, warm amber candlelight and a game that turns conversation into connection.' }}
       </p>
+    </div>
 
-      <!-- Drop badges -->
+    <!-- ─────────────────────────────────────────────────────────────
+         MOBILE ROW 2: empty window — candle & plinth show through here
+         DESKTOP: hidden
+    ───────────────────────────────────────────────────────────────── -->
+    <div class="featured-drop__window" aria-hidden="true"></div>
+
+    <!-- ─────────────────────────────────────────────────────────────
+         MOBILE ROW 3 / DESKTOP RIGHT COLUMN: all PDP text
+         Desktop also gets the heading here (mobile heading hidden via CSS)
+    ───────────────────────────────────────────────────────────────── -->
+    <div class="featured-drop__content reveal">
+
+      <!-- Heading block: visible on desktop, hidden on mobile (shown in __top) -->
+      <div class="featured-drop__heading-desktop">
+        <span class="section-eyebrow" style="color:var(--gold-light);">
+          {{ section.settings.eyebrow | default: "This Month's Drop" }}
+        </span>
+        <h2 class="heading-xl text-cream" style="margin:0.5rem 0 0.75rem;">
+          {{ section.settings.heading | default: 'The Velvet Hour' }}
+        </h2>
+        <div class="section-divider" style="background:var(--gold);margin:0 0 1.25rem;"></div>
+        <p class="body-lg" style="color:rgba(245,239,230,0.65);margin-bottom:2rem;">
+          {{ section.settings.subheading | default: 'An evening ritual for two. Dark chocolate, warm amber candlelight and a game that turns conversation into connection.' }}
+        </p>
+      </div>
+
+      <!-- Badges + PDP info: visible on both -->
       <div class="drop-meta-row">
         <span class="badge badge-burgundy">{{ section.settings.drop_badge | default: 'Drop 08 — Jan 2025' }}</span>
         <span class="badge badge-gold">{{ section.settings.limit_badge | default: 'Limited 200 Kits' }}</span>
@@ -127,7 +152,7 @@
       "type": "image_picker",
       "id": "drop_bg_image_mobile",
       "label": "Mobile background image",
-      "info": "Portrait/square photo centred on the product. Recommended: 900×1100px or taller."
+      "info": "Portrait photo centred on the product. Recommended: 900×1400px or taller."
     },
     {
       "type": "header",

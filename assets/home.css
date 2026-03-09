@@ -387,7 +387,9 @@
   position: relative;
   z-index: 1;
   display: grid;
+  /* desktop: col1 = spacer (image shows), col2 = all text */
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
   align-items: center;
   min-height: 600px;
   padding-top: var(--space-xl);
@@ -395,16 +397,26 @@
   gap: 0;
 }
 
-/* Left half — purely empty, lets the product photo show */
-.featured-drop__spacer {
-  /* intentionally blank */
+/* Desktop: __top (mobile heading row) is hidden */
+.featured-drop__top {
+  display: none;
 }
 
-/* Right half — all PDP text */
+/* Desktop: window row hidden — mobile only */
+.featured-drop__window {
+  display: none;
+}
+
+/* Desktop right col: all text including heading block */
 .featured-drop__content {
   padding-left: var(--space-xl);
 }
+
+/* Desktop: heading block inside __content is visible */
+.featured-drop__heading-desktop {
+  display: block;
 }
+
 
 .drop-main-image {
   height: 420px;
@@ -809,40 +821,65 @@
     max-width: 100%;
   }
 
-  /* On tablet/mobile: stack to single column, spacer collapses */
+  /* ── MOBILE: three-row stacked layout ──────────────────────────────
+     Row 1 (.featured-drop__top)    — eyebrow / heading / subheading
+     Row 2 (.featured-drop__window) — empty gap, candle shows through
+     Row 3 (.featured-drop__content)— badges / desc / CTA
+  ──────────────────────────────────────────────────────────────── */
   .featured-drop__inner {
     grid-template-columns: 1fr;
-    /* Tall enough so portrait bg has room — product in centre, copy above + below */
-    min-height: 85vh;
+    grid-template-rows: auto auto auto;
+    align-items: start;
+    min-height: unset;
     padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 1.5rem);
     padding-bottom: 3rem;
-    /* Push content to the bottom half so product centre stays clear */
-    align-items: end;
+    gap: 0;
   }
 
-  .featured-drop__spacer {
+  /* Row 1: mobile heading — show it */
+  .featured-drop__top {
+    display: block;
+    text-align: center;
+    padding-bottom: 2.5rem;
+  }
+
+  /* Row 2: candle window — spacious gap so the product breathes */
+  .featured-drop__window {
+    display: block;
+    height: 70vw;
+    min-height: 280px;
+    max-height: 460px;
+  }
+
+  /* Row 3: badges + desc + CTA */
+  .featured-drop__content {
+    padding-left: 0;
+    padding-top: 2.5rem;
+  }
+
+  /* Desktop heading block — hide on mobile (shown in __top instead) */
+  .featured-drop__heading-desktop {
     display: none;
   }
 
-  .featured-drop__content {
-    padding-left: 0;
-  }
-
-  /* On mobile: swap to portrait image — full width, only top/bottom crop */
+  /* Portrait image: full viewport width, only top/bottom cropped equally */
   .featured-drop--bg {
     background-image: var(--fd-bg-mobile);
-    background-size: 100% auto;   /* locks to viewport width, no side crop */
-    background-position: center center; /* vertical crop is equal top & bottom */
+    background-size: 100% auto;
+    background-position: center center;
   }
 
+  /* Overlay: dark top (behind heading) + dark bottom (behind CTA),
+     nearly clear in the middle so the candle is fully visible */
   .featured-drop__overlay {
-    /* Lighter at top (above product), heavier at bottom (behind copy) */
     background: linear-gradient(
       to bottom,
-      rgba(15, 5, 10, 0.30) 0%,
-      rgba(15, 5, 10, 0.20) 35%,
-      rgba(15, 5, 10, 0.55) 65%,
-      rgba(15, 5, 10, 0.82) 100%
+      rgba(15, 5, 10, 0.82) 0%,
+      rgba(15, 5, 10, 0.55) 18%,
+      rgba(15, 5, 10, 0.05) 30%,
+      rgba(15, 5, 10, 0.05) 64%,
+      rgba(15, 5, 10, 0.60) 78%,
+      rgba(15, 5, 10, 0.88) 100%
     );
   }
 
