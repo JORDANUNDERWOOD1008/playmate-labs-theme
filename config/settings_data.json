@@ -10,24 +10,24 @@
 {
   "current": {
     "favicon": "shopify://shop_images/PLAYMATE-WHITE.png",
+    "color_burgundy": "#6B1E3A",
+    "color_gold": "#C9A96E",
+    "color_cream": "#F5EFE6",
+    "color_espresso": "#1A0A06",
     "announcement_bar_enable": true,
     "announcement_bar_text": "✦ New Drop: The Velvet Hour — Limited to 200 kits.",
     "announcement_bar_link_text": "Shop Now",
     "announcement_bar_link": "/collections/monthly-drops",
     "cart_cross_sell_enable": true,
     "newsletter_popup_enable": true,
+    "newsletter_popup_delay": 8,
     "newsletter_popup_heading": "Unlock Your Free 5-Day Sensory Experience",
     "newsletter_popup_subtext": "Plus early access to drops, exclusive events and rituals designed for modern relationships.",
     "newsletter_popup_cta": "Unlock Free Experience",
-    "newsletter_popup_delay": 8,
     "social_instagram_link": "",
     "social_tiktok_link": "",
     "social_pinterest_link": "",
     "social_spotify_link": "",
-    "color_burgundy": "#6B1E3A",
-    "color_gold": "#C9A96E",
-    "color_cream": "#F5EFE6",
-    "color_espresso": "#1A0A06",
     "type_header_font": "playfair_display_n4",
     "type_body_font": "inter_n4",
     "products_per_row": "4",
@@ -42,7 +42,9 @@
           "dark_style": true,
           "menu": "main-menu",
           "mobile_menu": "main-menu",
-          "show_experience_cta": true
+          "show_experience_cta": true,
+          "url_experience": "",
+          "url_monthly_drops": ""
         }
       },
       "home-hero": {
@@ -55,7 +57,7 @@
           "cta_primary_text": "Start the 5-Day Experience",
           "cta_primary_url": "",
           "cta_secondary_text": "Shop the Latest Drop",
-          "cta_secondary_url": "shopify://collections/frontpage",
+          "cta_secondary_url": "shopify://products/massage-candle",
           "trust_rating": "4.9 / 5 — 2,400+ couples",
           "trust_shipping": "Free shipping over £60",
           "hero_product": "massage-candle",
@@ -134,6 +136,23 @@
           "cta_text": "Unlock Free Experience",
           "disclaimer": "No spam. Unsubscribe anytime.",
           "success_message": "You're in! Check your inbox for your free experience."
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "footer_tagline": "Rewriting how couples do date night. Novel sensory products, monthly drops, immersive events and digital rituals for modern relationships.",
+          "footer_heading_1": "Shop",
+          "footer_menu_1": "",
+          "footer_heading_2": "Explore",
+          "footer_menu_2": "",
+          "footer_heading_3": "Help",
+          "footer_menu_3": "",
+          "show_footer_email": true,
+          "footer_newsletter_heading": "Stay in the loop",
+          "footer_newsletter_sub": "Early access to drops, events and rituals.",
+          "footer_newsletter_btn": "Subscribe",
+          "footer_bottom_menu": ""
         }
       }
     },
