@@ -340,11 +340,14 @@
 .featured-drop__overlay {
   position: absolute;
   inset: 0;
+  /* Transparent on the left so the product photo shows clearly;
+     dark scrim on the right so all text stays legible */
   background: linear-gradient(
     to right,
-    rgba(15, 5, 10, 0.82) 0%,
-    rgba(15, 5, 10, 0.65) 45%,
-    rgba(15, 5, 10, 0.25) 100%
+    rgba(15, 5, 10, 0.10) 0%,
+    rgba(15, 5, 10, 0.15) 40%,
+    rgba(15, 5, 10, 0.78) 55%,
+    rgba(15, 5, 10, 0.90) 100%
   );
   pointer-events: none;
   z-index: 0;
@@ -376,6 +379,30 @@
   max-width: 640px;
   margin-left: 0;
   margin-right: auto;
+}
+
+/* Two-column full-width inner layout for bg-image drop section */
+.featured-drop__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  min-height: 600px;
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  gap: 0;
+}
+
+/* Left half — purely empty, lets the product photo show */
+.featured-drop__spacer {
+  /* intentionally blank */
+}
+
+/* Right half — all PDP text */
+.featured-drop__content {
+  padding-left: var(--space-xl);
+}
 }
 
 .drop-main-image {
@@ -779,6 +806,27 @@
 
   .drop-featured-grid--solo {
     max-width: 100%;
+  }
+
+  /* On tablet/mobile: stack to single column, spacer collapses */
+  .featured-drop__inner {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 2rem);
+    padding-bottom: var(--space-xl);
+  }
+
+  .featured-drop__spacer {
+    display: none;
+  }
+
+  .featured-drop__content {
+    padding-left: 0;
+  }
+
+  /* On mobile, darken the whole background evenly for legibility */
+  .featured-drop__overlay {
+    background: rgba(15, 5, 10, 0.70);
   }
 
   .experience-inner {
