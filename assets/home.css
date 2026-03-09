@@ -858,7 +858,7 @@
     /* Force text block to occupy the full dark upper zone of the image.
        Image is 3.6× tall; product starts ~30% down = ~108vw from top.
        Nav+bar ≈ 110px. So min-height pushes heading well above the box. */
-    min-height: calc(100vw * 1.05);
+    min-height: calc(100vw * 1.55);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
