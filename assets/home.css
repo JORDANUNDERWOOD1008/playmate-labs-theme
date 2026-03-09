@@ -387,7 +387,7 @@
   position: relative;
   z-index: 1;
   display: grid;
-  /* desktop: col1 = spacer (image shows), col2 = all text */
+  /* desktop: col1 = left (image shows through), col2 = all text */
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
   align-items: center;
@@ -397,18 +397,21 @@
   gap: 0;
 }
 
-/* Desktop: __top (mobile heading row) is hidden */
+/* Desktop: __top hidden but explicitly pinned to col1 so it doesn't shift __content */
 .featured-drop__top {
   display: none;
+  grid-column: 1;
 }
 
-/* Desktop: window row hidden — mobile only */
+/* Desktop: window hidden, pinned to col1 */
 .featured-drop__window {
   display: none;
+  grid-column: 1;
 }
 
-/* Desktop right col: all text including heading block */
+/* Desktop right col: all text — explicitly placed in column 2 */
 .featured-drop__content {
+  grid-column: 2;
   padding-left: var(--space-xl);
 }
 
