@@ -28,3 +28,15 @@
 .faq-cta-banner p { color:rgba(245,239,230,.65);margin-bottom:2rem; }
 .faq-cta-actions { display:flex;gap:1rem;justify-content:center;flex-wrap:wrap; }
 @media(max-width:1024px){ .faq-layout { grid-template-columns:1fr; } .faq-sidebar { position:static; } }
+
+/* When hero image is uploaded — ensure text is readable */
+.faq-hero[style*="background-image"] {
+  color: var(--cream);
+  border-bottom: none;
+}
+.faq-hero[style*="background-image"] .breadcrumb a,
+.faq-hero[style*="background-image"] .breadcrumb span,
+.faq-hero[style*="background-image"] .breadcrumb-sep { color: rgba(245,239,230,0.65); }
+.faq-hero[style*="background-image"] .section-eyebrow { color: var(--gold-light); }
+.faq-hero[style*="background-image"] .faq-hero-title { color: var(--cream); }
+.faq-hero[style*="background-image"] .faq-hero-subtitle { color: rgba(245,239,230,0.75); }

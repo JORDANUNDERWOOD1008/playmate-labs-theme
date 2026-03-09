@@ -68,6 +68,13 @@
   --max-width:       1280px;
   --nav-height:      72px;
   --bar-height:      38px;   /* announcement bar — must match the rendered bar height */
+
+  /* ── Alias variables (used by older sections) ── */
+  --white:           #FFFFFF;
+  --cream-off:       #F5EFE6;   /* same as --cream */
+  --text-body:       #3D3D3D;   /* same as --text-mid */
+  --border-color:    rgba(107, 30, 58, 0.15);
+  --color-gold:      #C9A96E;   /* same as --gold */
 }
 
 /* ============================================

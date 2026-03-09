@@ -2,8 +2,9 @@
 {{ 'contact.css' | asset_url | stylesheet_tag }}
 
 {% assign contact_hero_img = section.settings.contact_hero_image %}
-<section class="contact-hero" {% if contact_hero_img %}style="background-image:url('{{ contact_hero_img  }}')"{% endif %}>
-  <div class="container">
+<section class="contact-hero" style="position:relative;{% if contact_hero_img %}background-image:url('{{ contact_hero_img  }}');background-size:cover;background-position:center;{% endif %}">
+  {%- if contact_hero_img -%}<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,10,6,0.75) 0%,rgba(45,16,32,0.65) 100%);z-index:0;"></div>{%- endif -%}
+  <div class="container" style="position:relative;z-index:1;">
     <div class="breadcrumb">
       <a href="{{ routes.root_url }}">Home</a>
       <span class="breadcrumb-sep">›</span>

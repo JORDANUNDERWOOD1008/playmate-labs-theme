@@ -9,7 +9,26 @@
   padding: calc(var(--nav-height) + 2.5rem) 0 2rem;
   background: var(--ivory);
   border-bottom: 1px solid var(--border-light);
+  position: relative;
+  overflow: hidden;
 }
+
+/* When a hero image is set, text must be readable */
+.shop-hero[style*="background-image"] {
+  color: var(--cream);
+  border-bottom: none;
+}
+.shop-hero[style*="background-image"] .section-eyebrow,
+.shop-hero[style*="background-image"] .breadcrumb a,
+.shop-hero[style*="background-image"] .breadcrumb span {
+  color: rgba(245,239,230,0.7);
+}
+.shop-hero[style*="background-image"] h1,
+.shop-hero[style*="background-image"] .shop-hero-desc {
+  color: var(--cream);
+}
+.shop-hero[style*="background-image"] .shop-stat-num { color: var(--gold-light); }
+.shop-hero[style*="background-image"] .shop-stat-label { color: rgba(245,239,230,0.65); }
 
 .shop-hero-content {
   margin-top: 1rem;

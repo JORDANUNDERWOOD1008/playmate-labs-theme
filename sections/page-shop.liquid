@@ -12,8 +12,9 @@
 
 <!-- ===== SHOP PAGE HERO ===== -->
 {% assign shop_hero_img = section.settings.shop_hero_image %}
-<section class="shop-hero" {% if shop_hero_img %}style="background-image:url('{{ shop_hero_img  }}')"{% endif %}>
-  <div class="container">
+<section class="shop-hero" style="position:relative;{% if shop_hero_img %}background-image:url('{{ shop_hero_img  }}');background-size:cover;background-position:center;{% endif %}">
+  {%- if shop_hero_img -%}<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,10,6,0.82) 0%,rgba(45,16,32,0.7) 100%);z-index:0;"></div>{%- endif -%}
+  <div class="container" style="position:relative;z-index:1;">
     <div class="breadcrumb">
       <a href="{{ routes.root_url }}">Home</a>
       <span class="breadcrumb-sep">›</span>

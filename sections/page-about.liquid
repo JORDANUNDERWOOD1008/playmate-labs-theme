@@ -17,8 +17,8 @@
 <!-- ===== HERO ===== -->
 {%- assign _about_hero_img = section.settings.about_hero_image -%}
 <section class="about-hero" style="{% if _about_hero_img != blank %}background-image:url('{{ _about_hero_img | image_url: width: 1800 }}');background-size:cover;background-position:center;{% else %}background:linear-gradient(160deg,{{ section.settings.about_hero_bg_from | default: '#1A0A06' }} 0%,{{ section.settings.about_hero_bg_to | default: '#3D1A2E' }} 100%);{% endif %}padding:6rem 0 5rem;position:relative;">
-  {% if _about_hero_img != blank %}<div style="position:absolute;inset:0;background:rgba(0,0,0,0.45);"></div>{% endif %}
-  <div class="container">
+  {% if _about_hero_img != blank %}<div style="position:absolute;inset:0;background:rgba(0,0,0,0.45);z-index:0;"></div>{% endif %}
+  <div class="container" style="position:relative;z-index:1;">
     <div class="about-hero-inner" style="max-width:700px;">
       <span class="section-eyebrow" style="color:{{ section.settings.about_accent_color | default: 'var(--gold)' }};">{{ section.settings.about_eyebrow | default: 'Our Story' }}</span>
       <h1 style="font-family:var(--font-serif);font-size:clamp(2rem,5vw,3.25rem);color:{{ section.settings.about_hero_heading_color | default: 'var(--cream)' }};margin:0.75rem 0 1.5rem;line-height:1.2;">

@@ -315,7 +315,7 @@
         {%- assign default_texts = 'The midnight hours drop was genuinely the best thing we have done as a couple this year. Better than any restaurant honestly.,I subscribed after receiving one as a gift. That was 4 months ago. I now buy two — one for us and one for my sister&#39;s couple.,We do the drop the first Friday of every month. It&#39;s our ritual now. The quality is exceptional.' | split: ',' -%}
         {%- assign default_authors = 'Emily & Tom,Priya M.,Chris & Dan' | split: ',' -%}
         {%- assign default_subs = 'Drop Subscriber · 2 months,Drop Subscriber · 4 months,Drop Subscriber · 7 months' | split: ',' -%}
-        <div class="testimonial-card" style="background:var(--white);border-radius:12px;padding:1.75rem;">
+        <div class="testimonial-card" style="background:var(--ivory);border-radius:12px;padding:1.75rem;">
           <div class="star-rating" style="font-size:1rem;margin-bottom:0.75rem;">★★★★★</div>
           <p class="testimonial-text">"{{ section.settings[t_text] | default: default_texts[forloop.index0] }}"</p>
           <p class="testimonial-author" style="font-weight:600;">— {{ section.settings[t_author] | default: default_authors[forloop.index0] }}</p>

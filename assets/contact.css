@@ -25,3 +25,15 @@
 .form-required { color:#b91c1c; }
 @media(max-width:1024px){ .contact-layout { grid-template-columns:1fr; } }
 @media(max-width:768px){ .contact-form-grid-2 { grid-template-columns:1fr; } .contact-form-col { padding:1.5rem; } }
+
+/* When hero image is uploaded — ensure text is readable */
+.contact-hero[style*="background-image"] {
+  color: var(--cream);
+  border-bottom: none;
+}
+.contact-hero[style*="background-image"] .breadcrumb a,
+.contact-hero[style*="background-image"] .breadcrumb span,
+.contact-hero[style*="background-image"] .breadcrumb-sep { color: rgba(245,239,230,0.65); }
+.contact-hero[style*="background-image"] .section-eyebrow { color: var(--gold-light); }
+.contact-hero[style*="background-image"] .contact-hero-title { color: var(--cream); }
+.contact-hero[style*="background-image"] .contact-hero-subtitle { color: rgba(245,239,230,0.75); }

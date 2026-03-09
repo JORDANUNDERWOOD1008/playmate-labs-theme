@@ -2,8 +2,9 @@
 {{ 'faq.css' | asset_url | stylesheet_tag }}
 
 {% assign faq_hero_img = section.settings.faq_hero_image %}
-<section class="faq-hero" {% if faq_hero_img %}style="background-image:url('{{ faq_hero_img  }}')"{% endif %}>
-  <div class="container">
+<section class="faq-hero" style="position:relative;{% if faq_hero_img %}background-image:url('{{ faq_hero_img  }}');background-size:cover;background-position:center;{% endif %}">
+  {%- if faq_hero_img -%}<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,10,6,0.75) 0%,rgba(45,16,32,0.65) 100%);z-index:0;"></div>{%- endif -%}
+  <div class="container" style="position:relative;z-index:1;">
     <div class="breadcrumb">
       <a href="{{ routes.root_url }}">Home</a>
       <span class="breadcrumb-sep">›</span>
