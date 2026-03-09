@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "announcement_bar_enable": true,
@@ -23,6 +32,69 @@
     "products_per_row": "4",
     "quick_add_enable": true,
     "show_age_gate": false,
-    "show_allergen_notice": true
+    "show_allergen_notice": true,
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {
+          "logo_width": 120,
+          "dark_style": true,
+          "menu": "main-menu",
+          "mobile_menu": "main-menu",
+          "show_experience_cta": true
+        }
+      },
+      "home-hero": {
+        "type": "home-hero",
+        "settings": {
+          "eyebrow": "A new culture of connection",
+          "headline": "<p>Rewriting how <em>couples</em> do date night.</p>",
+          "subheadline": "Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships.",
+          "cta_primary_text": "Start the 5-Day Experience",
+          "cta_primary_url": "",
+          "cta_secondary_text": "Shop the Latest Drop",
+          "cta_secondary_url": "",
+          "trust_rating": "4.9 / 5 — 2,400+ couples",
+          "trust_shipping": "Free shipping over £60",
+          "hero_product": "massage-candle",
+          "hero_product_badge": "Latest Drop",
+          "hero_product_name": "",
+          "hero_product_price": "£68",
+          "badge_1_line1": "12 sold",
+          "badge_1_line2": "last 24 hours",
+          "badge_2_line1": "Limited",
+          "badge_2_line2": "Only 47 left"
+        }
+      },
+      "home-featured-drop": {
+        "type": "home-featured-drop",
+        "settings": {
+          "eyebrow": "This Month's Drop",
+          "heading": "The Velvet Hour",
+          "subheading": "An evening ritual for two. Dark chocolate, warm amber candlelight and a game that turns conversation into connection.",
+          "drop_product": "massage-candle",
+          "drop_badge": "Drop 08 — Jan 2025",
+          "limit_badge": "Limited 200 Kits",
+          "drop_tagline": "A ritual for modern romance.",
+          "drop_desc": "",
+          "drop_includes": "72% Madagascan Dark Chocolate Ritual Bar (120g)|Amber Vetiver Hand-poured Candle (150ml)|The Connection Game — 52 card deck|Velvet Hour Ritual Guide|Digital companion experience access|Luxury gift packaging",
+          "drop_price": "£68",
+          "cta_text": "Shop This Drop",
+          "urgency_text": "47 kits remaining. Drop closes January 31st."
+        }
+      },
+      "home-product-grid": {
+        "type": "home-product-grid",
+        "settings": {
+          "eyebrow": "The Collection",
+          "heading": "Rituals worth dressing up for.",
+          "collection": "",
+          "products_limit": 8,
+          "view_all_text": "View All Products",
+          "view_all_url": ""
+        }
+      }
+    },
+    "content_for_index": []
   }
 }
