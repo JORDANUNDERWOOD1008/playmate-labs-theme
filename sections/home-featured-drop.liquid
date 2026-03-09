@@ -3,16 +3,32 @@
   File: sections/home-featured-drop.liquid
 {% endcomment %}
 
+{%- comment %} ── Desktop background ─────────────────────────────────── {%- endcomment %}
 {%- assign drop_bg = section.settings.drop_bg_image -%}
-{%- assign drop_bg_url = drop_bg | image_url: width: 1600 -%}
-{%- if drop_bg == blank -%}
+{%- if drop_bg != blank -%}
+  {%- assign drop_bg_url = drop_bg | image_url: width: 1600 -%}
+{%- else -%}
   {%- assign drop_bg_url = 'featured-drop-bg.jpg' | asset_url -%}
+{%- endif -%}
+
+{%- comment %} ── Mobile background ──────────────────────────────────── {%- endcomment %}
+{%- assign drop_bg_mob = section.settings.drop_bg_image_mobile -%}
+{%- if drop_bg_mob != blank -%}
+  {%- assign drop_bg_mob_url = drop_bg_mob | image_url: width: 900 -%}
+{%- else -%}
+  {%- assign drop_bg_mob_url = 'featured-drop-bg-mobile.jpg' | asset_url -%}
 {%- endif -%}
 
 {%- assign drop_product = all_products[section.settings.drop_product] -%}
 
-<section class="section featured-drop bg-dark featured-drop--bg" id="featured-drop"
-  style="background-image: url('{{ drop_bg_url }}');">
+<style>
+  #featured-drop {
+    --fd-bg-desktop: url('{{ drop_bg_url }}');
+    --fd-bg-mobile:  url('{{ drop_bg_mob_url }}');
+  }
+</style>
+
+<section class="section featured-drop bg-dark featured-drop--bg" id="featured-drop">
 
   <div class="featured-drop__overlay"></div>
 
@@ -98,10 +114,24 @@
   "name": "Featured Drop",
   "settings": [
     {
+      "type": "header",
+      "content": "Background Images"
+    },
+    {
       "type": "image_picker",
       "id": "drop_bg_image",
-      "label": "Background image",
-      "info": "Upload a full-width product/lifestyle photo. Recommended: 1600×900px or wider."
+      "label": "Desktop background image",
+      "info": "Landscape photo — product on the left. Recommended: 1600×900px or wider."
+    },
+    {
+      "type": "image_picker",
+      "id": "drop_bg_image_mobile",
+      "label": "Mobile background image",
+      "info": "Portrait/square photo centred on the product. Recommended: 900×1100px or taller."
+    },
+    {
+      "type": "header",
+      "content": "Drop Content"
     },
     {
       "type": "text",

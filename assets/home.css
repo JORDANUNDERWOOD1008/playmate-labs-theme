@@ -330,8 +330,9 @@
   overflow: hidden;
 }
 
-/* Background-image variant — set inline via Liquid */
+/* Background-image variant — URLs injected as CSS vars by Liquid <style> block */
 .featured-drop--bg {
+  background-image: var(--fd-bg-desktop);
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -824,9 +825,14 @@
     padding-left: 0;
   }
 
-  /* On mobile, darken the whole background evenly for legibility */
+  /* On mobile: swap to portrait image, darken whole bg evenly for legibility */
+  .featured-drop--bg {
+    background-image: var(--fd-bg-mobile);
+    background-position: center top;
+  }
+
   .featured-drop__overlay {
-    background: rgba(15, 5, 10, 0.70);
+    background: rgba(15, 5, 10, 0.60);
   }
 
   .experience-inner {
