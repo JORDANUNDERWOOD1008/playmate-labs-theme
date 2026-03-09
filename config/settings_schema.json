@@ -1,0 +1,214 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Playmate Labs",
+    "theme_version": "1.0.0",
+    "theme_author": "Playmate Labs",
+    "theme_documentation_url": "https://playmate-labs.com",
+    "theme_support_url": "https://playmate-labs.com/support"
+  },
+  {
+    "name": "Brand",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon"
+      },
+      {
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "Default social share image",
+        "info": "Used on social media. 1200 x 630px recommended."
+      }
+    ]
+  },
+  {
+    "name": "Announcement Bar",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "announcement_bar_enable",
+        "label": "Show announcement bar",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "announcement_bar_text",
+        "label": "Announcement message",
+        "default": "✦ New Drop: The Velvet Hour — Limited to 200 kits."
+      },
+      {
+        "type": "text",
+        "id": "announcement_bar_link_text",
+        "label": "Link text",
+        "default": "Shop Now"
+      },
+      {
+        "type": "url",
+        "id": "announcement_bar_link",
+        "label": "Link URL"
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "cart_cross_sell_enable",
+        "label": "Show cross-sell in cart drawer",
+        "default": true,
+        "info": "Shows products from the 'ritual-add-ons' collection"
+      }
+    ]
+  },
+  {
+    "name": "Newsletter Popup",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "newsletter_popup_enable",
+        "label": "Enable newsletter popup",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "newsletter_popup_heading",
+        "label": "Popup heading",
+        "default": "Unlock Your Free 5-Day Sensory Experience"
+      },
+      {
+        "type": "textarea",
+        "id": "newsletter_popup_subtext",
+        "label": "Popup subtext",
+        "default": "Plus early access to drops, exclusive events and rituals designed for modern relationships."
+      },
+      {
+        "type": "text",
+        "id": "newsletter_popup_cta",
+        "label": "Popup CTA text",
+        "default": "Unlock Free Experience"
+      },
+      {
+        "type": "range",
+        "id": "newsletter_popup_delay",
+        "min": 3,
+        "max": 30,
+        "step": 1,
+        "default": 8,
+        "unit": "s",
+        "label": "Popup delay (seconds)"
+      }
+    ]
+  },
+  {
+    "name": "Social Media",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok_link",
+        "label": "TikTok URL"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_link",
+        "label": "Pinterest URL"
+      },
+      {
+        "type": "text",
+        "id": "social_spotify_link",
+        "label": "Spotify URL"
+      }
+    ]
+  },
+  {
+    "name": "Colours",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_burgundy",
+        "label": "Burgundy (primary)",
+        "default": "#6B1E3A"
+      },
+      {
+        "type": "color",
+        "id": "color_gold",
+        "label": "Gold (accent)",
+        "default": "#C9A96E"
+      },
+      {
+        "type": "color",
+        "id": "color_cream",
+        "label": "Cream (light)",
+        "default": "#F5EFE6"
+      },
+      {
+        "type": "color",
+        "id": "color_espresso",
+        "label": "Espresso (dark)",
+        "default": "#1A0A06"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "type_header_font",
+        "label": "Heading font",
+        "default": "playfair_display_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "label": "Body font",
+        "default": "inter_n4"
+      }
+    ]
+  },
+  {
+    "name": "Product Grid",
+    "settings": [
+      {
+        "type": "select",
+        "id": "products_per_row",
+        "label": "Products per row (desktop)",
+        "options": [
+          { "value": "3", "label": "3" },
+          { "value": "4", "label": "4" }
+        ],
+        "default": "4"
+      },
+      {
+        "type": "checkbox",
+        "id": "quick_add_enable",
+        "label": "Enable quick-add button on product cards",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Compliance",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_age_gate",
+        "label": "Show age gate (if selling age-restricted consumables)",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_allergen_notice",
+        "label": "Show allergen notice on consumable collections",
+        "default": true
+      }
+    ]
+  }
+]

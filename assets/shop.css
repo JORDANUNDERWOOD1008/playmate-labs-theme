@@ -1,0 +1,397 @@
+/* ============================================
+   PLAYMATE LABS — SHOP STYLES
+   ============================================ */
+
+/* ============================================
+   SHOP HERO
+   ============================================ */
+.shop-hero {
+  padding: calc(var(--nav-height) + 2.5rem) 0 2rem;
+  background: var(--ivory);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.shop-hero-content {
+  margin-top: 1rem;
+}
+
+.shop-hero-content h1 {
+  max-width: 600px;
+  margin-top: 0.5rem;
+}
+
+/* ============================================
+   SHOP FEATURED BANNER
+   ============================================ */
+.shop-featured-banner {
+  padding: 2rem 0;
+  background: var(--ivory);
+}
+
+.shop-banner-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.shop-banner-card {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  display: block;
+  transition: transform var(--transition-mid), box-shadow var(--transition-mid);
+}
+
+.shop-banner-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.shop-banner-bg {
+  padding: 2rem;
+  min-height: 180px;
+  position: relative;
+  overflow: hidden;
+}
+
+.shop-banner-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   SHOP LAYOUT
+   ============================================ */
+.shop-main {
+  padding-top: var(--space-lg);
+}
+
+.shop-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+/* ============================================
+   SHOP SIDEBAR
+   ============================================ */
+.shop-sidebar {
+  position: sticky;
+  top: calc(var(--nav-height) + 1.5rem);
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  border: 1px solid var(--border-light);
+}
+
+.sidebar-section {
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.sidebar-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.sidebar-heading {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.875rem;
+}
+
+.sidebar-filter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-mid);
+  cursor: pointer;
+  padding: 0.25rem 0;
+  transition: color var(--transition-fast);
+}
+
+.sidebar-filter-item:hover {
+  color: var(--burgundy);
+}
+
+.sidebar-filter-item input[type="radio"],
+.sidebar-filter-item input[type="checkbox"] {
+  accent-color: var(--burgundy);
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.sidebar-drop-cta {
+  background: var(--espresso);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+/* ============================================
+   SHOP TOP BAR
+   ============================================ */
+.shop-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 1.25rem;
+}
+
+.shop-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mobile-filter-btn {
+  display: none;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1.5px solid var(--border-mid);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.mobile-filter-btn:hover {
+  background: var(--burgundy);
+  border-color: var(--burgundy);
+  color: white;
+}
+
+.mobile-filter-chips {
+  display: none;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.mobile-filter-chips::-webkit-scrollbar { display: none; }
+
+/* ============================================
+   PRODUCTS GRID
+   ============================================ */
+.shop-products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: var(--space-xl);
+}
+
+.shop-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* ============================================
+   PAGINATION
+   ============================================ */
+.shop-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-light);
+}
+
+.page-nums {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.page-num {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.page-num:hover {
+  background: var(--cream);
+  color: var(--burgundy);
+}
+
+.page-num.active {
+  background: var(--burgundy);
+  color: white;
+}
+
+/* ============================================
+   BUNDLE SECTION
+   ============================================ */
+.bundle-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  border: 1px solid var(--border-light);
+  flex-wrap: wrap;
+}
+
+.bundle-item {
+  text-align: center;
+  flex: 1;
+  min-width: 120px;
+}
+
+.bundle-img {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-lg);
+  margin: 0 auto;
+}
+
+.bundle-plus {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.bundle-cta {
+  flex: 1;
+  min-width: 200px;
+  text-align: center;
+  padding-left: 1rem;
+  border-left: 1px solid var(--border-light);
+}
+
+/* ============================================
+   CATEGORY PAGES SHARED
+   ============================================ */
+.category-hero {
+  padding: calc(var(--nav-height) + 3rem) 0 3rem;
+  position: relative;
+  overflow: hidden;
+  color: var(--cream);
+}
+
+.category-hero-dark {
+  background: linear-gradient(135deg, var(--espresso) 0%, var(--burgundy-deep) 100%);
+}
+
+.category-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.category-hero h1 {
+  color: var(--cream);
+  max-width: 520px;
+}
+
+.category-hero p {
+  color: rgba(245,239,230,0.7);
+  max-width: 480px;
+  margin: 1rem 0 2rem;
+}
+
+/* ============================================
+   RESPONSIVE SHOP
+   ============================================ */
+@media (max-width: 1024px) {
+  .shop-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-sidebar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 300px;
+    z-index: 1100;
+    border-radius: 0;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform var(--transition-slow);
+  }
+
+  .shop-sidebar.open {
+    display: block;
+    transform: translateX(0);
+  }
+
+  .mobile-filter-btn {
+    display: flex;
+  }
+
+  .mobile-filter-chips {
+    display: flex;
+  }
+
+  .shop-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .shop-banner-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .shop-banner-card:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .shop-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.875rem;
+  }
+
+  .shop-banner-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bundle-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .bundle-cta {
+    border-left: none;
+    border-top: 1px solid var(--border-light);
+    padding-left: 0;
+    padding-top: 1rem;
+  }
+
+  .bundle-item, .bundle-plus {
+    text-align: center;
+  }
+}

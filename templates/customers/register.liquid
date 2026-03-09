@@ -1,0 +1,55 @@
+{% comment %}
+  PLAYMATE LABS — REGISTER TEMPLATE
+  File: templates/customers/register.liquid
+{% endcomment %}
+
+<section style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:calc(var(--nav-height)+3rem) 0;background:var(--ivory);">
+  <div style="width:100%;max-width:500px;margin:0 auto;padding:0 1.5rem;">
+    <div style="text-align:center;margin-bottom:2.5rem;">
+      <div style="font-size:2rem;margin-bottom:0.75rem;">🌹</div>
+      <h1 style="font-family:var(--font-serif);font-size:2rem;color:var(--espresso);margin-bottom:0.5rem;">Join Playmate Labs</h1>
+      <p style="color:var(--text-muted);">Free membership. Instant access to the 5-day sensory experience. Start earning rewards from day one.</p>
+    </div>
+
+    {%- form 'create_customer', id: 'register-form' -%}
+      {%- if form.errors -%}
+        <div class="form-error" style="margin-bottom:1.5rem;padding:1rem;background:rgba(107,30,58,0.08);border:1px solid var(--burgundy);border-radius:10px;color:var(--burgundy);font-size:0.875rem;">
+          {{ form.errors | default_errors }}
+        </div>
+      {%- endif -%}
+      <div style="display:flex;flex-direction:column;gap:0.875rem;margin-bottom:1.5rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.875rem;">
+          <input type="text" name="customer[first_name]" placeholder="First name" class="form-input" required autocomplete="given-name">
+          <input type="text" name="customer[last_name]" placeholder="Last name" class="form-input" autocomplete="family-name">
+        </div>
+        <input type="email" name="customer[email]" placeholder="Email address" class="form-input" required autocomplete="email">
+        <input type="tel" name="customer[phone]" placeholder="Phone number (for SMS drops — optional)" class="form-input" autocomplete="tel">
+        <input type="password" name="customer[password]" placeholder="Create a password" class="form-input" required autocomplete="new-password" minlength="5">
+      </div>
+
+      <input type="hidden" name="customer[accepts_marketing]" value="true">
+
+      <div style="display:flex;gap:0.75rem;align-items:flex-start;margin-bottom:1.5rem;font-size:0.8125rem;color:var(--text-muted);">
+        <input type="checkbox" id="accepts-marketing" name="customer[accepts_marketing]" value="true" checked style="margin-top:0.125rem;flex-shrink:0;">
+        <label for="accepts-marketing">
+          Send me early access to drops, events and rituals. Unsubscribe anytime.
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-gold btn-lg" style="width:100%;justify-content:center;margin-bottom:1rem;">
+        Create Free Account
+      </button>
+      <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;">
+        By creating an account you agree to our
+        <a href="{{ pages['terms-conditions'].url | default: '/policies/terms-of-service' }}" style="color:var(--burgundy);">Terms</a>
+        and
+        <a href="{{ pages['privacy-policy'].url | default: '/policies/privacy-policy' }}" style="color:var(--burgundy);">Privacy Policy</a>.
+      </p>
+    {%- endform -%}
+
+    <div style="text-align:center;margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border-color);">
+      <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:0.75rem;">Already have an account?</p>
+      <a href="{{ routes.account_login_url }}" class="btn btn-ghost btn-sm">Sign In</a>
+    </div>
+  </div>
+</section>

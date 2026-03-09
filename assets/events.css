@@ -1,0 +1,349 @@
+/* ============================================
+   PLAYMATE LABS — EVENTS PAGE STYLES
+   ============================================ */
+
+.events-hero {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  padding: calc(var(--nav-height) + 4rem) 0 5rem;
+  position: relative;
+  overflow: hidden;
+  color: var(--cream);
+}
+
+.events-hero-bg { position: absolute; inset: 0; }
+
+.events-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(107,30,58,0.65) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 30%, rgba(201,169,110,0.1) 0%, transparent 40%),
+    linear-gradient(135deg, #1A0A06 0%, #2D1020 50%, #1A0A06 100%);
+}
+
+.events-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+}
+
+.events-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 5.5vw, 5rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+  margin: 1rem 0 1.5rem;
+}
+
+.events-hero-title em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+.events-hero-sub {
+  font-size: 1.0625rem;
+  color: rgba(245,239,230,0.65);
+  line-height: 1.65;
+  max-width: 520px;
+  margin-bottom: 2.5rem;
+}
+
+.events-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.events-stat { text-align: center; }
+.events-stat span {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 300;
+  color: var(--gold);
+}
+.events-stat p {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245,239,230,0.4);
+  margin-top: 0.25rem;
+}
+.events-stat-div {
+  width: 1px;
+  height: 36px;
+  background: rgba(245,239,230,0.1);
+}
+
+/* ============================================
+   FILTERS
+   ============================================ */
+.events-filters-section {
+  background: var(--ivory);
+  border-bottom: 1px solid var(--border-light);
+  padding: 1.25rem 0;
+}
+
+.events-filter-bar {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.events-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.events-filter-group .form-label {
+  white-space: nowrap;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+/* ============================================
+   FEATURED EVENT
+   ============================================ */
+.events-featured-section {
+  background: var(--warm-white);
+}
+
+.events-featured-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-mid);
+  background: white;
+  cursor: pointer;
+}
+
+.events-featured-card:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-4px);
+  border-color: transparent;
+}
+
+.events-featured-img {
+  min-height: 400px;
+  position: relative;
+  overflow: hidden;
+}
+
+.events-featured-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  justify-content: center;
+}
+
+.events-featured-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.events-featured-date-badge {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: var(--burgundy);
+  color: var(--cream);
+  border-radius: var(--radius-md);
+  padding: 0.625rem 0.875rem;
+  text-align: center;
+}
+
+.events-featured-date-badge .day {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.events-featured-date-badge .month {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+.events-featured-content {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ============================================
+   EVENTS MAIN GRID
+   ============================================ */
+.events-main-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+/* ============================================
+   COMING SOON CTA
+   ============================================ */
+.events-coming-cta {
+  display: flex;
+  justify-content: center;
+}
+
+.events-coming-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.75rem 2rem;
+  background: white;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-light);
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* ============================================
+   EVENT TYPES
+   ============================================ */
+.events-types-section { background: var(--warm-white); }
+
+.events-type-card {
+  padding: 2rem;
+  background: white;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-mid);
+}
+
+.events-type-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--burgundy);
+}
+
+.events-type-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.events-type-card h3 {
+  font-size: 1.125rem;
+  margin-bottom: 0.625rem;
+}
+
+.events-type-card p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 0.75rem;
+}
+
+.events-type-price {
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  color: var(--burgundy) !important;
+  margin-bottom: 0 !important;
+}
+
+/* ============================================
+   PAST EVENTS
+   ============================================ */
+.events-past-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.875rem;
+}
+
+.events-past-item {
+  cursor: pointer;
+  transition: transform var(--transition-mid);
+  overflow: hidden;
+}
+
+.events-past-item:hover { transform: scale(1.02); }
+
+/* ============================================
+   EMAIL CTA
+   ============================================ */
+.events-email-cta {
+  background: var(--ivory);
+}
+
+.events-email-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+.events-email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1024px) {
+  .events-featured-card {
+    grid-template-columns: 1fr;
+  }
+  .events-featured-img { min-height: 280px; }
+
+  .events-main-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .events-past-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .events-email-inner {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .events-hero { text-align: center; }
+  .events-hero-content { max-width: 100%; }
+  .events-hero-stats { justify-content: center; }
+
+  .events-filter-bar {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .events-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .events-past-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .events-coming-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "general": {
+    "meta": {
+      "tags": "Tagged with \"{{ tag }}\"",
+      "page": "Page {{ page }}"
+    }
+  },
+  "accessibility": {
+    "skip_to_text": "Skip to content"
+  },
+  "sections": {
+    "header": {
+      "cart_count": {
+        "one": "{{ count }} item",
+        "other": "{{ count }} items"
+      }
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "quantity": {
+        "label": "Quantity",
+        "increase": "Increase quantity for {{ product }}",
+        "decrease": "Decrease quantity for {{ product }}"
+      }
+    },
+    "facets": {
+      "sort_by_label": "Sort by",
+      "filter_and_sort": "Filter + Sort",
+      "product_count": {
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      }
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Your Cart",
+      "empty": "Your cart is empty",
+      "subtotal": "Subtotal",
+      "checkout": "Checkout Securely",
+      "continue_shopping": "Continue Shopping"
+    }
+  },
+  "customer": {
+    "login": {
+      "title": "Sign In",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "forgot_password": "Forgot your password?"
+    },
+    "register": {
+      "title": "Create Account",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create Account"
+    },
+    "account": {
+      "title": "My Account",
+      "orders": "Order History",
+      "addresses": "Saved Addresses"
+    }
+  },
+  "blogs": {
+    "article": {
+      "posted_in": "Posted in",
+      "read_more": "Read More",
+      "back_to_blog": "Back to Journal"
+    },
+    "comments": {
+      "title": "Comments",
+      "form": {
+        "name": "Name",
+        "email": "Email",
+        "message": "Message",
+        "post": "Post Comment"
+      }
+    }
+  },
+  "collections": {
+    "sorting": {
+      "manual": "Featured",
+      "best-selling": "Best Selling",
+      "title-ascending": "A–Z",
+      "title-descending": "Z–A",
+      "price-ascending": "Price: Low to High",
+      "price-descending": "Price: High to Low",
+      "created-ascending": "Oldest First",
+      "created-descending": "Newest First"
+    }
+  },
+  "paginate": {
+    "previous": "← Previous",
+    "next": "Next →",
+    "current_page": "Page {{ page }} of {{ total }}"
+  }
+}

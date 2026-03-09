@@ -1,0 +1,123 @@
+{% comment %}
+  PLAYMATE LABS — COMMUNITY / MEMBERSHIP PAGE
+  File: templates/page.community.liquid
+  Assign to page handle: community
+{% endcomment %}
+
+{%- comment -%} HERO {%- endcomment -%}
+<section style="min-height:80vh;display:flex;align-items:center;padding:calc(var(--nav-height) + 4rem) 0 5rem;position:relative;overflow:hidden;background:linear-gradient(135deg,#1A0A06 0%,#2D1020 50%,#1A0A06 100%);">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(107,30,58,0.6) 0%,transparent 50%),radial-gradient(ellipse at 80% 30%,rgba(201,169,110,0.12) 0%,transparent 40%);"></div>
+  <div class="container" style="position:relative;z-index:1;">
+    <div style="max-width:680px;" class="animate-fadeInUp">
+      <span class="section-eyebrow" style="color:var(--gold);">A community worth belonging to</span>
+      <h1 style="font-family:var(--font-display);font-size:clamp(2.75rem,5.5vw,5rem);font-weight:300;line-height:1.05;color:var(--cream);margin:1rem 0 1.5rem;">
+        A new culture of<br><em style="color:var(--gold-light);">modern relationships.</em>
+      </h1>
+      <p style="font-size:1.0625rem;color:rgba(245,239,230,0.65);max-width:540px;margin-bottom:2.5rem;">
+        The Playmate Labs community is where couples who value novelty, connection and beautiful experiences find each other. Join free. Earn rewards. Get early everything.
+      </p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        {%- if customer -%}
+          <a href="{{ routes.account_url }}" class="btn btn-gold btn-xl">My Account</a>
+        {%- else -%}
+          <a href="{{ routes.account_register_url }}" class="btn btn-gold btn-xl">Join Free</a>
+          <a href="{{ routes.account_login_url }}" class="btn btn-ghost btn-xl">Sign In</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{%- comment -%} MEMBERSHIP TIERS {%- endcomment -%}
+<section class="section" style="padding:6rem 0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Membership Tiers</span>
+      <h2 class="heading-xl">The more you play,<br>the more you get.</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="membership-tiers-grid">
+      {%- assign tiers = "Curious|Intimate|Devoted|Soulmates" | split: '|' -%}
+      {%- assign tier_icons = "🌱|🌹|🔥|💎" | split: '|' -%}
+      {%- assign tier_thresholds = "Free to join|500+ points|2,000+ points|5,000+ points" | split: '|' -%}
+      {%- assign tier_colors = "var(--border-color)|var(--burgundy)|var(--espresso)|linear-gradient(135deg,var(--gold-dark),var(--gold))" | split: '|' -%}
+      {%- assign tier_perks = "Access to 5-Day Experience,Community forum access,Birthday surprise,First access to journal content|Everything in Curious,10% off all products,Monthly drop early access (24h),Invitation to community events|Everything in Intimate,15% off all products,48h early drop access,Free gift wrapping,Exclusive drop members price|Everything in Devoted,20% off all products,72h early drop access,Free shipping (always),Annual gift + personal note from the team,Invite to Soulmates-only events" | split: '|' -%}
+
+      {%- for tier in tiers -%}
+        <div class="membership-tier-card reveal" data-delay="{{ forloop.index0 }}"
+             style="border-color:{% if forloop.last %}var(--gold){% else %}var(--border-color){% endif %};">
+          {%- if forloop.last -%}
+            <div class="tier-popular-badge">Most Rewarding</div>
+          {%- endif -%}
+          <div class="tier-icon">{{ tier_icons[forloop.index0] }}</div>
+          <h3 class="tier-name">{{ tier }}</h3>
+          <p class="tier-threshold">{{ tier_thresholds[forloop.index0] }}</p>
+          <ul class="tier-perks">
+            {%- assign perks = tier_perks[forloop.index0] | split: ',' -%}
+            {%- for perk in perks -%}
+              <li>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                {{ perk | strip }}
+              </li>
+            {%- endfor -%}
+          </ul>
+          {%- unless customer -%}
+            <a href="{{ routes.account_register_url }}" class="btn {% if forloop.last %}btn-gold{% else %}btn-ghost{% endif %} btn-sm" style="width:100%;justify-content:center;margin-top:1.5rem;">
+              Join Free
+            </a>
+          {%- endunless -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- comment -%} POINTS / REWARDS EXPLAINER {%- endcomment -%}
+<section class="section bg-dark" style="padding:5rem 0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow" style="color:var(--gold);">How Points Work</span>
+      <h2 class="heading-xl text-cream">Every action earns<br>points.</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;max-width:900px;margin:0 auto;">
+      {%- assign point_actions = "Make a purchase|Write a review|Refer a friend|Follow on social|RSVP to an event|Subscribe to drops" | split: '|' -%}
+      {%- assign point_values = "1 point per £1|50 points|200 points|25 points|30 points|100 points" | split: '|' -%}
+      {%- assign point_icons = "🛒|⭐|👥|📱|🎟|📦" | split: '|' -%}
+      {%- for action in point_actions -%}
+        <div class="points-card reveal" data-delay="{{ forloop.index0 }}">
+          <div style="font-size:2rem;margin-bottom:0.75rem;">{{ point_icons[forloop.index0] }}</div>
+          <h4 style="font-family:var(--font-serif);font-size:1rem;color:var(--cream);margin-bottom:0.25rem;">{{ action }}</h4>
+          <p style="font-size:0.875rem;color:var(--gold);">{{ point_values[forloop.index0] }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+    <div style="text-align:center;margin-top:3rem;" class="reveal">
+      {%- if customer -%}
+        <a href="{{ routes.account_url }}#rewards" class="btn btn-gold btn-lg">View My Points</a>
+      {%- else -%}
+        <a href="{{ routes.account_register_url }}" class="btn btn-gold btn-lg">Start Earning Free</a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{%- comment -%} COMMUNITY SIGN UP {%- endcomment -%}
+{%- unless customer -%}
+<section class="section" id="community-join" style="padding:6rem 0;">
+  <div class="container">
+    <div style="max-width:560px;margin:0 auto;text-align:center;" class="reveal">
+      <span class="section-eyebrow" style="color:var(--gold);">Join Free Today</span>
+      <h2 style="font-family:var(--font-serif);font-size:clamp(2rem,4vw,3rem);margin:1rem 0 1rem;">
+        Be part of something worth showing up for.
+      </h2>
+      <p style="color:var(--text-muted);margin-bottom:2rem;">
+        Free membership. Instant access to the 5-day experience. Start earning rewards from your first visit.
+      </p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="{{ routes.account_register_url }}" class="btn btn-gold btn-xl">Create Free Account</a>
+        <a href="{{ routes.account_login_url }}" class="btn btn-ghost btn-xl">Sign In</a>
+      </div>
+    </div>
+  </div>
+</section>
+{%- endunless -%}

@@ -1,0 +1,37 @@
+# Shopify Theme - .gitignore
+
+# Preview / development files (not part of Shopify theme)
+preview.html
+*.html
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node modules (if ever used locally)
+node_modules/
+npm-debug.log*
+
+# Shopify CLI
+.shopify/
+shopify.theme.toml
+
+# Environment files
+.env
+.env.local
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+*.log

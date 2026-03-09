@@ -1,0 +1,598 @@
+/* ============================================
+   PLAYMATE LABS — 5-DAY EXPERIENCE PAGE
+   ============================================ */
+
+/* HERO */
+.exp-hero {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  padding: calc(var(--nav-height) + 4rem) 0 5rem;
+  position: relative;
+  overflow: hidden;
+  color: var(--cream);
+}
+
+.exp-hero-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.exp-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 60%, rgba(107,30,58,0.7) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 30%, rgba(201,169,110,0.12) 0%, transparent 40%),
+    linear-gradient(135deg, #1A0A06 0%, #2D1020 50%, #1A0A06 100%);
+}
+
+.exp-hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  animation: float 8s ease-in-out infinite;
+}
+
+.exp-orb-1 {
+  width: 350px;
+  height: 350px;
+  top: 10%;
+  right: 15%;
+  background: radial-gradient(circle, rgba(201,169,110,0.12) 0%, transparent 70%);
+}
+
+.exp-orb-2 {
+  width: 250px;
+  height: 250px;
+  bottom: 15%;
+  left: 5%;
+  background: radial-gradient(circle, rgba(107,30,58,0.3) 0%, transparent 70%);
+  animation-delay: 3s;
+}
+
+.exp-hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--space-xl);
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.exp-hero-badge {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.exp-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 5.5vw, 5rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+}
+
+.exp-hero-title em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+.exp-hero-sub {
+  font-size: 1.0625rem;
+  color: rgba(245,239,230,0.65);
+  line-height: 1.65;
+  max-width: 520px;
+  margin-bottom: 2rem;
+}
+
+.exp-hero-social-proof {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  font-size: 0.875rem;
+  color: rgba(245,239,230,0.55);
+}
+
+.exp-proof-avatars {
+  display: flex;
+}
+
+.exp-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--burgundy);
+  border: 2px solid var(--espresso);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--cream);
+  margin-left: -8px;
+}
+
+.exp-avatar:first-child { margin-left: 0; }
+
+.exp-hero-cta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Phone Mockup */
+.exp-hero-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.exp-phone-mockup {
+  width: 220px;
+  height: 420px;
+  background: #1A1A2E;
+  border-radius: 28px;
+  border: 2px solid rgba(255,255,255,0.1);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.exp-phone-glow {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(201,169,110,0.3) 0%, transparent 70%);
+  filter: blur(8px);
+}
+
+.exp-phone-notch {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 6px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 4px;
+  z-index: 10;
+}
+
+.exp-phone-screen {
+  padding: 1.5rem 0.875rem 0.875rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.exp-phone-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+}
+
+.exp-phone-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+}
+
+.exp-phone-day {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.exp-phone-question {
+  background: linear-gradient(135deg, rgba(107,30,58,0.4), rgba(74,18,40,0.3));
+  border: 1px solid rgba(107,30,58,0.3);
+  border-radius: 10px;
+  padding: 0.75rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.exp-phone-actions {
+  display: flex;
+  gap: 0.375rem;
+}
+
+/* Floating badges */
+.exp-visual-float-1,
+.exp-visual-float-2 {
+  position: absolute;
+  background: white;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.exp-visual-float-1 {
+  top: 15%;
+  left: -2rem;
+  animation: float 5s ease-in-out infinite;
+}
+
+.exp-visual-float-2 {
+  bottom: 20%;
+  right: -2rem;
+  animation: float 6s ease-in-out 2s infinite;
+}
+
+.exp-visual-float-1 p,
+.exp-visual-float-2 p { margin: 0; }
+
+/* ============================================
+   THE 5 DAYS SECTION
+   ============================================ */
+.exp-days-section { background: var(--warm-white); }
+
+.exp-days-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-top: var(--space-xl);
+}
+
+.exp-day-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: all var(--transition-mid);
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+}
+
+.exp-day-card:hover,
+.exp-day-featured {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: transparent;
+}
+
+.exp-day-featured { transform: translateY(-8px); }
+
+.exp-day-header {
+  position: relative;
+  padding: 1.5rem 1.25rem 1rem;
+  min-height: 100px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.exp-day-number {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: rgba(245,239,230,0.2);
+  line-height: 1;
+}
+
+.exp-day-emoji {
+  font-size: 2rem;
+}
+
+.exp-day-popular {
+  position: absolute;
+  top: 0.625rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: var(--espresso);
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.625rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.exp-day-body {
+  padding: 1.25rem;
+}
+
+.exp-day-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  margin-bottom: 0.25rem;
+}
+
+.exp-day-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.exp-day-desc {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.exp-day-preview {
+  background: var(--ivory);
+  border-radius: var(--radius-md);
+  padding: 0.875rem;
+  margin-bottom: 0.875rem;
+}
+
+.exp-day-time {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.exp-day-time i {
+  color: var(--burgundy);
+  font-size: 0.6875rem;
+}
+
+/* ============================================
+   WHO IT'S FOR
+   ============================================ */
+.exp-for-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-mid);
+}
+
+.exp-for-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--burgundy);
+}
+
+.exp-for-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.exp-for-card h3 {
+  font-size: 1.125rem;
+  margin-bottom: 0.625rem;
+}
+
+.exp-for-card p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+/* ============================================
+   SIGNUP SECTION
+   ============================================ */
+.exp-signup-section {
+  background: linear-gradient(135deg, var(--espresso) 0%, #2D1020 60%, var(--espresso) 100%);
+  color: var(--cream);
+  padding: var(--space-2xl) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.exp-signup-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: radial-gradient(ellipse at left center, rgba(107,30,58,0.25) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.exp-signup-inner {
+  display: grid;
+  grid-template-columns: 1fr 520px;
+  gap: var(--space-xl);
+  align-items: start;
+  position: relative;
+  z-index: 1;
+}
+
+.exp-whats-included { margin-bottom: 2.5rem; }
+
+.exp-includes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.exp-includes-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  color: rgba(245,239,230,0.75);
+}
+
+.exp-includes-list li i {
+  color: var(--gold);
+  width: 18px;
+  flex-shrink: 0;
+}
+
+.exp-social-proof-strip {
+  display: flex;
+  gap: 2rem;
+  padding: 1.25rem;
+  background: rgba(255,255,255,0.04);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.exp-sp-item { text-align: center; }
+
+.exp-sp-num {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.exp-sp-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245,239,230,0.35);
+  margin-top: 0.25rem;
+}
+
+/* Form Card */
+.exp-signup-form-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.exp-form-icon {
+  font-size: 3rem;
+}
+
+/* Success State */
+.exp-success {
+  text-align: center;
+}
+
+.exp-success-nextsteps {
+  background: rgba(255,255,255,0.04);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.exp-success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.exp-success-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg);
+  color: var(--cream);
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.exp-success-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.15);
+}
+
+.exp-success-btn strong {
+  display: block;
+  font-size: 0.875rem;
+  margin-bottom: 0.125rem;
+}
+
+.exp-success-btn p {
+  font-size: 0.75rem;
+  color: rgba(245,239,230,0.5);
+  margin: 0;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1200px) {
+  .exp-days-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .exp-hero-inner {
+    grid-template-columns: 1fr 320px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .exp-hero-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .exp-hero-visual {
+    display: none;
+  }
+
+  .exp-signup-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .exp-days-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .exp-days-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .exp-day-featured {
+    transform: none;
+  }
+
+  .exp-hero {
+    text-align: center;
+  }
+
+  .exp-hero-badge,
+  .exp-hero-social-proof {
+    justify-content: center;
+  }
+
+  .exp-hero-cta {
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .exp-social-proof-strip {
+    justify-content: space-between;
+  }
+
+  .exp-signup-form-card {
+    padding: 1.75rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .exp-days-grid {
+    grid-template-columns: 1fr;
+  }
+}

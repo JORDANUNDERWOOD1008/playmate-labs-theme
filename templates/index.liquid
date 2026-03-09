@@ -1,0 +1,10 @@
+{% comment %}
+  PLAYMATE LABS — Homepage Template
+  Uses modular sections from the sections/ directory
+{% endcomment %}
+
+{{ 'home.js' | asset_url | script_tag }}
+
+{% section 'home-hero' %}
+{% section 'home-featured-drop' %}
+{% section 'home-product-grid' %}

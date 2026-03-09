@@ -1,0 +1,112 @@
+{%- comment -%}
+  PLAYMATE LABS — PRODUCT CARD SNIPPET
+  File: snippets/product-card.liquid
+  Usage: {% render 'product-card', product: product, show_badge: true %}
+{%- endcomment -%}
+
+{%- liquid
+  assign show_badge = show_badge | default: true
+  assign badge_label = product.metafields.custom.badge_label | default: ''
+  assign is_sold_out = product.available | default: false
+  assign show_quick_add = show_quick_add | default: true
+-%}
+
+<article class="product-card" data-product-id="{{ product.id }}">
+  <a href="{{ product.url }}" class="product-card-link" aria-label="{{ product.title | escape }}">
+
+    {%- comment -%} Product Image {%- endcomment -%}
+    <div class="product-card-img">
+      {%- if product.featured_image -%}
+        <img
+          src="{{ product.featured_image | image_url: width: 600 }}"
+          alt="{{ product.featured_image.alt | default: product.title | escape }}"
+          width="600"
+          height="600"
+          loading="lazy"
+          class="product-img-main">
+        {%- if product.images[1] -%}
+          <img
+            src="{{ product.images[1] | image_url: width: 600 }}"
+            alt="{{ product.images[1].alt | default: product.title | escape }}"
+            width="600"
+            height="600"
+            loading="lazy"
+            class="product-img-hover">
+        {%- endif -%}
+      {%- else -%}
+        <div class="img-placeholder" style="aspect-ratio:1;">
+          <span style="font-size:3rem;position:relative;z-index:1;">
+            {%- case product.type -%}
+              {%- when 'Consumables' -%}🍫
+              {%- when 'Candles' -%}🕯️
+              {%- when 'Games' -%}🃏
+              {%- when 'Date Night Kits' -%}🌹
+              {%- else -%}✨
+            {%- endcase -%}
+          </span>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Badges {%- endcomment -%}
+      {%- if show_badge -%}
+        <div class="product-card-badges">
+          {%- if product.available == false -%}
+            <span class="badge badge-dark">Sold Out</span>
+          {%- elsif product.metafields.custom.is_new_drop == '1' -%}
+            <span class="badge badge-gold">New Drop</span>
+          {%- elsif product.compare_at_price > product.price -%}
+            {%- assign savings = product.compare_at_price | minus: product.price -%}
+            <span class="badge badge-burgundy">Save {{ savings | money }}</span>
+          {%- elsif badge_label != '' -%}
+            <span class="badge badge-burgundy">{{ badge_label }}</span>
+          {%- endif -%}
+          {%- if product.metafields.custom.limited_qty -%}
+            <span class="badge badge-dark">Limited</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Quick Add {%- endcomment -%}
+      {%- if show_quick_add and product.available -%}
+        <button
+          class="product-card-quick-add btn btn-ghost btn-sm"
+          data-variant-id="{{ product.first_available_variant.id }}"
+          data-product-name="{{ product.title | escape }}"
+          aria-label="Quick add {{ product.title | escape }} to cart">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:0.375rem;">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Quick Add
+        </button>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Product Info {%- endcomment -%}
+    <div class="product-card-info">
+      {%- if product.metafields.custom.category -%}
+        <p class="product-card-cat">{{ product.metafields.custom.category }}</p>
+      {%- else -%}
+        <p class="product-card-cat">{{ product.type }}</p>
+      {%- endif -%}
+      <h3 class="product-card-title">{{ product.title }}</h3>
+      {%- if product.metafields.custom.short_desc -%}
+        <p class="product-card-desc">{{ product.metafields.custom.short_desc }}</p>
+      {%- elsif product.description != blank -%}
+        <p class="product-card-desc">{{ product.description | strip_html | truncate: 90 }}</p>
+      {%- endif -%}
+      <div class="product-card-price-row">
+        <div class="product-card-price">
+          {%- if product.compare_at_price > product.price -%}
+            <span class="price-original">{{ product.compare_at_price | money }}</span>
+          {%- endif -%}
+          <span class="price-current">{{ product.price | money }}</span>
+        </div>
+        {%- if product.metafields.custom.subscription_price -%}
+          <span style="font-size:0.75rem;color:var(--text-muted);">
+            or {{ product.metafields.custom.subscription_price }}/mo
+          </span>
+        {%- endif -%}
+      </div>
+    </div>
+  </a>
+</article>

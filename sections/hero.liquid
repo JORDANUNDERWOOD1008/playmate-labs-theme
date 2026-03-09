@@ -1,0 +1,102 @@
+<!-- HERO SECTION -->
+<section class="hero-section" id="hero">
+  <div class="hero-bg">
+    {%- if section.settings.bg_image -%}
+      <img src="{{ section.settings.bg_image | img_url: '1800x' }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+      <div class="hero-overlay"></div>
+    {%- else -%}
+      <div class="hero-gradient"></div>
+      <div class="hero-particle hero-particle-1"></div>
+      <div class="hero-particle hero-particle-2"></div>
+      <div class="hero-particle hero-particle-3"></div>
+    {%- endif -%}
+  </div>
+
+  <div class="hero-content-wrap">
+    <div class="container hero-inner">
+      <div class="hero-text animate-fadeInUp">
+        <p class="hero-eyebrow animate-fadeInUp animate-delay-1">{{ section.settings.eyebrow | default: 'A new culture of connection' }}</p>
+        <h1 class="hero-headline animate-fadeInUp animate-delay-2">
+          {{ section.settings.headline_line1 | default: 'Rewriting how' }}<br><em>{{ section.settings.headline_italic | default: 'couples' }}</em> {{ section.settings.headline_line2 | default: 'do date night.' }}
+        </h1>
+        <p class="hero-sub animate-fadeInUp animate-delay-3">
+          {{ section.settings.subheadline | default: 'Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships.' }}
+        </p>
+        <div class="hero-actions animate-fadeInUp animate-delay-4">
+          <a href="{{ section.settings.cta_primary_url | default: '/pages/5-day-experience' }}" class="btn btn-gold btn-xl">
+            {{ section.settings.cta_primary | default: 'Start the 5-Day Experience' }}
+          </a>
+          <a href="{{ section.settings.cta_secondary_url | default: '/pages/monthly-drops' }}" class="btn btn-ghost btn-xl">
+            {{ section.settings.cta_secondary | default: 'Shop the Latest Drop' }}
+          </a>
+        </div>
+        <div class="hero-trust animate-fadeInUp animate-delay-5">
+          <div class="hero-trust-item">
+            <div class="star-rating">★★★★★</div>
+            <span>4.9 / 5 — 2,400+ couples</span>
+          </div>
+          <span class="hero-trust-dot">·</span>
+          <div class="hero-trust-item">
+            <i class="fas fa-lock" style="font-size:0.75rem;color:var(--gold);"></i>
+            <span>Free shipping over £60</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual animate-fadeIn animate-delay-2">
+        <div class="hero-product-card">
+          <div class="hero-product-img img-placeholder">
+            <div class="hero-product-scene">
+              <div class="candle-glow"></div>
+              <span class="hero-product-emoji">🌹</span>
+            </div>
+          </div>
+          <div class="hero-product-label">
+            <span class="badge badge-gold">Latest Drop</span>
+            <p>{{ section.settings.drop_name | default: 'The Velvet Hour Kit' }}</p>
+            <p class="hero-product-price">{{ section.settings.drop_price | default: '£68' }}</p>
+          </div>
+        </div>
+        <div class="hero-float-badge hero-float-1">
+          <span>🔥</span>
+          <div>
+            <p style="font-size:0.7rem;font-weight:700;">12 sold</p>
+            <p style="font-size:0.6rem;opacity:0.7;">last 24 hours</p>
+          </div>
+        </div>
+        <div class="hero-float-badge hero-float-2">
+          <span>⏰</span>
+          <div>
+            <p style="font-size:0.7rem;font-weight:700;">Limited</p>
+            <p style="font-size:0.6rem;opacity:0.7;">Only 47 left</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <div class="scroll-dot"></div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "A new culture of connection" },
+    { "type": "text", "id": "headline_line1", "label": "Headline Line 1", "default": "Rewriting how" },
+    { "type": "text", "id": "headline_italic", "label": "Italic Word", "default": "couples" },
+    { "type": "text", "id": "headline_line2", "label": "Headline Line 2", "default": "do date night." },
+    { "type": "textarea", "id": "subheadline", "label": "Subheadline", "default": "Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships." },
+    { "type": "text", "id": "cta_primary", "label": "Primary CTA", "default": "Start the 5-Day Experience" },
+    { "type": "url", "id": "cta_primary_url", "label": "Primary CTA URL" },
+    { "type": "text", "id": "cta_secondary", "label": "Secondary CTA", "default": "Shop the Latest Drop" },
+    { "type": "url", "id": "cta_secondary_url", "label": "Secondary CTA URL" },
+    { "type": "image_picker", "id": "bg_image", "label": "Background Image (optional)" },
+    { "type": "text", "id": "drop_name", "label": "Drop Name", "default": "The Velvet Hour Kit" },
+    { "type": "text", "id": "drop_price", "label": "Drop Price", "default": "£68" }
+  ],
+  "presets": [{ "name": "Hero", "category": "Hero" }]
+}
+{% endschema %}

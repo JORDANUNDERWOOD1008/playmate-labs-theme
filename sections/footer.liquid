@@ -1,0 +1,201 @@
+{% comment %}
+  PLAYMATE LABS — FOOTER SECTION
+  File: sections/footer.liquid
+{% endcomment %}
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+
+      {%- comment -%} Brand Column {%- endcomment -%}
+      <div class="footer-brand">
+        <a href="{{ routes.root_url }}" class="nav-logo" style="font-size:1.375rem;margin-bottom:0.25rem;display:inline-block;">
+          {%- if section.settings.footer_logo != blank -%}
+            <img src="{{ section.settings.footer_logo | image_url: height: 36 }}"
+                 alt="{{ shop.name }}"
+                 height="36"
+                 loading="lazy">
+          {%- else -%}
+            Playmate <span>Labs</span>
+          {%- endif -%}
+        </a>
+        <p>{{ section.settings.footer_tagline | default: 'Rewriting how couples do date night. Novel sensory products, monthly drops, immersive events and digital rituals for modern relationships.' }}</p>
+        <div class="footer-social">
+          {%- if settings.social_instagram_link != blank -%}
+            <a href="{{ settings.social_instagram_link }}" class="footer-social-link" aria-label="Instagram" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_tiktok_link != blank -%}
+            <a href="{{ settings.social_tiktok_link }}" class="footer-social-link" aria-label="TikTok" target="_blank" rel="noopener">T</a>
+          {%- endif -%}
+          {%- if settings.social_pinterest_link != blank -%}
+            <a href="{{ settings.social_pinterest_link }}" class="footer-social-link" aria-label="Pinterest" target="_blank" rel="noopener">P</a>
+          {%- endif -%}
+          {%- if settings.social_spotify_link != blank -%}
+            <a href="{{ settings.social_spotify_link }}" class="footer-social-link" aria-label="Spotify" target="_blank" rel="noopener">S</a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Link columns from settings {%- endcomment -%}
+      {%- for i in (1..3) -%}
+        {%- assign col_menu_key = 'footer_menu_' | append: i -%}
+        {%- assign col_heading_key = 'footer_heading_' | append: i -%}
+        {%- assign col_menu = section.settings[col_menu_key] -%}
+        {%- assign col_heading = section.settings[col_heading_key] -%}
+        {%- if col_menu != blank -%}
+          <div class="footer-col">
+            <h4>{{ col_heading }}</h4>
+            <ul>
+              {%- for link in linklists[col_menu].links -%}
+                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+
+    </div>
+
+    {%- comment -%} Newsletter in footer {%- endcomment -%}
+    {%- if section.settings.show_footer_email -%}
+    <div class="footer-newsletter">
+      <div class="footer-newsletter-inner">
+        <div>
+          <h4 style="font-family:var(--font-serif);font-size:1.125rem;color:var(--cream);margin-bottom:0.25rem;">
+            {{ section.settings.footer_newsletter_heading | default: 'Stay in the loop' }}
+          </h4>
+          <p style="font-size:0.875rem;color:var(--text-muted);">
+            {{ section.settings.footer_newsletter_sub | default: 'Early access to drops, events and rituals.' }}
+          </p>
+        </div>
+        {%- form 'customer', id: 'footer-newsletter-form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter,footer-signup">
+          <div class="footer-email-row">
+            <input type="email"
+                   name="contact[email]"
+                   placeholder="Your email address"
+                   class="form-input"
+                   required
+                   autocomplete="email">
+            <button type="submit" class="btn btn-gold btn-sm">
+              {{ section.settings.footer_newsletter_btn | default: 'Subscribe' }}
+            </button>
+          </div>
+          {%- if form.posted_successfully? -%}
+            <p style="font-size:0.8125rem;color:var(--gold);margin-top:0.75rem;">✓ You're in! Check your inbox.</p>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    </div>
+    {%- endif -%}
+
+    <div class="footer-bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        {%- if section.settings.footer_bottom_menu != blank -%}
+          {%- for link in linklists[section.settings.footer_bottom_menu].links -%}
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          {%- endfor -%}
+        {%- else -%}
+          <a href="{{ pages['privacy-policy'].url | default: '/policies/privacy-policy' }}">Privacy Policy</a>
+          <a href="{{ pages['terms-conditions'].url | default: '/policies/terms-of-service' }}">Terms &amp; Conditions</a>
+          <a href="{{ pages['cookie-policy'].url | default: '/policies/legal-notice' }}">Cookie Policy</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "Footer logo (optional)"
+    },
+    {
+      "type": "textarea",
+      "id": "footer_tagline",
+      "label": "Brand tagline",
+      "default": "Rewriting how couples do date night. Novel sensory products, monthly drops, immersive events and digital rituals for modern relationships."
+    },
+    {
+      "type": "header",
+      "content": "Navigation Columns"
+    },
+    {
+      "type": "text",
+      "id": "footer_heading_1",
+      "label": "Column 1 Heading",
+      "default": "Shop"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu_1",
+      "label": "Column 1 Menu",
+      "default": "footer-shop"
+    },
+    {
+      "type": "text",
+      "id": "footer_heading_2",
+      "label": "Column 2 Heading",
+      "default": "Explore"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu_2",
+      "label": "Column 2 Menu",
+      "default": "footer-explore"
+    },
+    {
+      "type": "text",
+      "id": "footer_heading_3",
+      "label": "Column 3 Heading",
+      "default": "Help"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu_3",
+      "label": "Column 3 Menu",
+      "default": "footer-help"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_footer_email",
+      "label": "Show email signup",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "footer_newsletter_heading",
+      "label": "Newsletter heading",
+      "default": "Stay in the loop"
+    },
+    {
+      "type": "text",
+      "id": "footer_newsletter_sub",
+      "label": "Newsletter subtext",
+      "default": "Early access to drops, events and rituals."
+    },
+    {
+      "type": "text",
+      "id": "footer_newsletter_btn",
+      "label": "Newsletter button text",
+      "default": "Subscribe"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_bottom_menu",
+      "label": "Footer bottom links menu"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,28 @@
+{
+  "current": {
+    "announcement_bar_enable": true,
+    "announcement_bar_text": "✦ New Drop: The Velvet Hour — Limited to 200 kits.",
+    "announcement_bar_link_text": "Shop Now",
+    "announcement_bar_link": "/collections/monthly-drops",
+    "cart_cross_sell_enable": true,
+    "newsletter_popup_enable": true,
+    "newsletter_popup_heading": "Unlock Your Free 5-Day Sensory Experience",
+    "newsletter_popup_subtext": "Plus early access to drops, exclusive events and rituals designed for modern relationships.",
+    "newsletter_popup_cta": "Unlock Free Experience",
+    "newsletter_popup_delay": 8,
+    "social_instagram_link": "",
+    "social_tiktok_link": "",
+    "social_pinterest_link": "",
+    "social_spotify_link": "",
+    "color_burgundy": "#6B1E3A",
+    "color_gold": "#C9A96E",
+    "color_cream": "#F5EFE6",
+    "color_espresso": "#1A0A06",
+    "type_header_font": "playfair_display_n4",
+    "type_body_font": "inter_n4",
+    "products_per_row": "4",
+    "quick_add_enable": true,
+    "show_age_gate": false,
+    "show_allergen_notice": true
+  }
+}

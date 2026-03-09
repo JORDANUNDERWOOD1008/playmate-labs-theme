@@ -1,0 +1,105 @@
+{% comment %}
+  PLAYMATE LABS — ABOUT PAGE
+  File: templates/page.about.liquid
+  Assign to page handle: about
+{% endcomment %}
+
+{%- comment -%} BRAND HERO {%- endcomment -%}
+<section style="min-height:70vh;display:flex;align-items:center;padding:calc(var(--nav-height)+4rem) 0 5rem;background:var(--espresso);position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,rgba(107,30,58,0.5) 0%,transparent 55%);"></div>
+  <div class="container" style="position:relative;z-index:1;">
+    <div style="max-width:720px;" class="animate-fadeInUp">
+      <span class="section-eyebrow" style="color:var(--gold);">Our Story</span>
+      <h1 style="font-family:var(--font-display);font-size:clamp(3rem,6vw,5.5rem);font-weight:300;color:var(--cream);line-height:1.0;margin:1rem 0 1.5rem;">
+        We believe every couple deserves<br><em style="color:var(--gold-light);">a ritual.</em>
+      </h1>
+      <p style="font-size:1.0625rem;color:rgba(245,239,230,0.65);line-height:1.7;">
+        Playmate Labs was founded by couples who kept saying the same thing: "We need a proper date night." Not dinner at the same restaurant. Not another Netflix evening. Something that required intention. Something worth dressing up for.
+      </p>
+    </div>
+  </div>
+</section>
+
+{%- comment -%} MISSION SECTION {%- endcomment -%}
+<section class="section" style="padding:6rem 0;">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;max-width:1100px;margin:0 auto;" class="responsive-grid">
+      <div class="reveal-left">
+        <div class="img-placeholder" style="height:520px;border-radius:20px;"><span style="font-size:5rem;">🌹</span></div>
+      </div>
+      <div class="reveal-right">
+        <span class="section-eyebrow" style="color:var(--burgundy);">Why We Exist</span>
+        <h2 style="font-family:var(--font-serif);font-size:clamp(1.75rem,3vw,2.5rem);margin:1rem 0 1.5rem;line-height:1.2;">
+          The average couple spends 4 minutes of quality time together daily. We think that's a problem.
+        </h2>
+        <p style="color:var(--text-muted);margin-bottom:1.25rem;line-height:1.7;">
+          Modern life pulls couples apart — not dramatically, but quietly. Different screens, different schedules, a creeping familiarity that replaces curiosity with routine.
+        </p>
+        <p style="color:var(--text-muted);line-height:1.7;">
+          Playmate Labs was built to interrupt that pattern. We design sensory experiences, products and digital rituals that help couples be genuinely present with each other — not just physically in the same room, but mentally, playfully, sensorially together.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{%- comment -%} BRAND VALUES {%- endcomment -%}
+<section class="section bg-dark" style="padding:5rem 0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow" style="color:var(--gold);">What We Stand For</span>
+      <h2 class="heading-xl text-cream">The principles behind everything we make.</h2>
+    </div>
+    {%- assign values = "Intentional Design|Sensory Truth|Inclusive Intimacy|Zero Compromise" | split: '|' -%}
+    {%- assign value_descs = "Every product starts with a question: does this make the experience better? If we can't answer yes clearly, we don't make it.|We design around how humans actually experience pleasure — through smell, taste, touch, sound, sight. Not marketing claims. Actual sensory science.|Modern relationships come in all shapes. Our products and experiences are designed for every couple who values novelty and connection.|We don't cut corners on ingredients, design, packaging or experience. Premium isn't a price point — it's a standard." | split: '|' -%}
+    {%- assign value_icons = "✦|🌿|♡|💎" | split: '|' -%}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2rem;max-width:1000px;margin:0 auto;">
+      {%- for value in values -%}
+        <div class="reveal" data-delay="{{ forloop.index0 }}" style="padding:2rem;border:1px solid rgba(201,169,110,0.2);border-radius:16px;">
+          <div style="font-size:2rem;margin-bottom:1rem;">{{ value_icons[forloop.index0] }}</div>
+          <h3 style="font-family:var(--font-serif);font-size:1.25rem;color:var(--cream);margin-bottom:0.75rem;">{{ value }}</h3>
+          <p style="font-size:0.875rem;color:rgba(245,239,230,0.6);line-height:1.7;">{{ value_descs[forloop.index0] }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- comment -%} TEAM {%- endcomment -%}
+<section class="section" style="padding:6rem 0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">The Team</span>
+      <h2 class="heading-xl">Built by people who believe<br>in this.</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2.5rem;max-width:900px;margin:0 auto;">
+      {%- assign team = "Founder & Creative Director|Co-Founder & Product Lead|Head of Experience Design" | split: '|' -%}
+      {%- assign team_icons = "👩|👨|🧑" | split: '|' -%}
+      {%- for role in team -%}
+        <div class="team-card reveal" data-delay="{{ forloop.index0 }}" style="text-align:center;">
+          <div class="img-placeholder" style="width:160px;height:160px;border-radius:50%;margin:0 auto 1.5rem;">
+            <span style="font-size:3rem;position:relative;z-index:1;">{{ team_icons[forloop.index0] }}</span>
+          </div>
+          <p style="font-size:0.8125rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">{{ role }}</p>
+          <p style="font-size:0.875rem;color:var(--text-muted);">Coming soon as we grow.</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- comment -%} CTA SECTION {%- endcomment -%}
+<section class="section bg-dark" style="padding:5rem 0;">
+  <div class="container" style="text-align:center;max-width:600px;margin:0 auto;">
+    <h2 style="font-family:var(--font-serif);font-size:clamp(2rem,4vw,3rem);color:var(--cream);margin-bottom:1rem;">
+      Come play with us.
+    </h2>
+    <p style="color:rgba(245,239,230,0.6);margin-bottom:2.5rem;font-size:1rem;">
+      Start with the free 5-day experience. It costs nothing and might change everything.
+    </p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+      <a href="{{ pages['5-day-experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-gold btn-xl">Start Free Experience</a>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn-ghost btn-xl">Shop Products</a>
+    </div>
+  </div>
+</section>

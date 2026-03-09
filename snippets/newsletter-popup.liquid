@@ -1,0 +1,48 @@
+{%- comment -%}
+  PLAYMATE LABS — NEWSLETTER POPUP SNIPPET
+  File: snippets/newsletter-popup.liquid
+{%- endcomment -%}
+
+{%- if settings.newsletter_popup_enable -%}
+<div class="newsletter-popup" id="newsletter-popup" role="dialog" aria-label="Newsletter signup" aria-modal="true">
+  <div class="newsletter-popup-overlay" id="newsletter-popup-overlay"></div>
+  <div class="newsletter-popup-inner">
+    <button class="newsletter-popup-close" id="newsletter-popup-close" aria-label="Close">✕</button>
+    <div style="font-size:2rem;margin-bottom:1rem;">🌹</div>
+    <p class="label" style="color:var(--gold);margin-bottom:0.5rem;">Something Special For You</p>
+    <h2 style="font-family:var(--font-serif);font-size:1.75rem;margin-bottom:0.75rem;color:var(--cream);">
+      {{ settings.newsletter_popup_heading | default: 'Unlock Your Free 5-Day Sensory Experience' }}
+    </h2>
+    <p style="font-size:0.875rem;color:rgba(245,239,230,0.65);margin-bottom:1.75rem;">
+      {{ settings.newsletter_popup_subtext | default: 'Plus early access to drops, exclusive events and rituals designed for modern relationships.' }}
+    </p>
+    {%- form 'customer', id: 'newsletter-popup-form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter,popup-signup">
+      <div style="display:flex;flex-direction:column;gap:0.75rem;">
+        <input class="form-input form-input-dark"
+          type="email"
+          name="contact[email]"
+          placeholder="Your email address"
+          required
+          autocomplete="email">
+        <input class="form-input form-input-dark"
+          type="tel"
+          name="contact[phone]"
+          placeholder="Phone number (for SMS drops)"
+          autocomplete="tel">
+        <button type="submit" class="btn btn-gold btn-lg" style="width:100%;justify-content:center;">
+          {{ settings.newsletter_popup_cta | default: 'Unlock Free Experience' }}
+        </button>
+      </div>
+      {%- if form.posted_successfully? -%}
+        <p class="newsletter-success" style="margin-top:1rem;color:var(--gold);font-size:0.875rem;">
+          ✓ Welcome to the community! Check your email.
+        </p>
+      {%- endif -%}
+    {%- endform -%}
+    <p style="font-size:0.6875rem;color:rgba(245,239,230,0.3);margin-top:1rem;">
+      No spam. Unsubscribe anytime. Your details are safe with us.
+    </p>
+  </div>
+</div>
+{%- endif -%}

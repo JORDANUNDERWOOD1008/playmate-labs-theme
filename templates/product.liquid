@@ -1,0 +1,409 @@
+{% comment %}
+  PLAYMATE LABS — PRODUCT TEMPLATE
+  File: templates/product.liquid
+  Used for all product detail pages
+{% endcomment %}
+
+{{ 'product.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'product.js' | asset_url }}" defer></script>
+
+{%- comment -%} BREADCRUMB {%- endcomment -%}
+<div class="pdp-breadcrumb">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="{{ routes.all_products_collection_url }}">Shop</a>
+      <span class="breadcrumb-sep">›</span>
+      {%- if product.collections.first -%}
+        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+        <span class="breadcrumb-sep">›</span>
+      {%- endif -%}
+      <span>{{ product.title }}</span>
+    </div>
+  </div>
+</div>
+
+{%- comment -%} PRODUCT SECTION {%- endcomment -%}
+<section class="pdp-section">
+  <div class="container">
+    <div class="pdp-grid">
+
+      {%- comment -%} =================== GALLERY =================== {%- endcomment -%}
+      <div class="pdp-gallery">
+        <div class="gallery-main" id="gallery-main">
+          {%- if product.featured_image -%}
+            <img id="gallery-main-img"
+                 src="{{ product.featured_image | image_url: width: 900 }}"
+                 alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                 width="900" height="900"
+                 loading="eager"
+                 style="width:100%;height:100%;object-fit:cover;border-radius:20px;">
+          {%- else -%}
+            <div class="img-placeholder" style="height:100%;flex-direction:column;gap:1.5rem;justify-content:center;align-items:center;">
+              <div style="font-size:7rem;position:relative;z-index:1;">🌹</div>
+              <p style="font-family:var(--font-serif);font-size:1.5rem;color:rgba(245,239,230,0.5);position:relative;z-index:1;">{{ product.title }}</p>
+            </div>
+          {%- endif -%}
+        </div>
+        {%- if product.images.size > 1 -%}
+          <div class="gallery-thumbs">
+            {%- for image in product.images limit: 5 -%}
+              <div class="gallery-thumb{% if forloop.first %} active{% endif %}"
+                   data-src="{{ image | image_url: width: 900 }}"
+                   data-index="{{ forloop.index0 }}">
+                <img src="{{ image | image_url: width: 150 }}"
+                     alt="{{ image.alt | default: product.title | escape }}"
+                     width="150" height="150"
+                     loading="lazy">
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} =================== PRODUCT INFO =================== {%- endcomment -%}
+      <div class="pdp-info">
+        <div class="pdp-meta">
+          <div class="pdp-badges">
+            {%- if product.metafields.custom.drop_badge -%}
+              <span class="badge badge-burgundy">{{ product.metafields.custom.drop_badge }}</span>
+            {%- endif -%}
+            {%- if product.metafields.custom.badge_label -%}
+              <span class="badge badge-gold">{{ product.metafields.custom.badge_label }}</span>
+            {%- elsif product.compare_at_price > product.price -%}
+              <span class="badge badge-gold">Save {{ product.compare_at_price | minus: product.price | money }}</span>
+            {%- endif -%}
+          </div>
+          {%- comment -%} Reviews (uses Shopify reviews or metafield) {%- endcomment -%}
+          {%- if product.metafields.reviews.rating.value != blank -%}
+            <div class="pdp-rating">
+              <div class="star-rating">
+                {%- assign rating = product.metafields.reviews.rating.value -%}
+                {%- for i in (1..5) -%}★{%- endfor -%}
+              </div>
+              <span class="rating-text">{{ rating }} ({{ product.metafields.reviews.rating_count }} reviews)</span>
+            </div>
+          {%- endif -%}
+        </div>
+
+        <h1 class="pdp-title">{{ product.title }}</h1>
+        <p class="pdp-short-desc">{{ product.metafields.custom.short_desc | default: product.description | strip_html | truncate: 200 }}</p>
+
+        {%- comment -%} Price Block {%- endcomment -%}
+        <div class="pdp-price-block">
+          <div class="pdp-price">
+            {%- if product.compare_at_price > product.price -%}
+              <span class="pdp-price-original">{{ product.compare_at_price | money }}</span>
+            {%- endif -%}
+            <span class="pdp-price-current" id="pdp-price-display">{{ product.price | money }}</span>
+            {%- if product.compare_at_price > product.price -%}
+              <span class="pdp-price-save badge badge-burgundy">
+                Save {{ product.compare_at_price | minus: product.price | money }}
+              </span>
+            {%- endif -%}
+          </div>
+          {%- if product.metafields.custom.subscription_price -%}
+            <div class="pdp-subscribe-note">
+              or <strong>{{ product.metafields.custom.subscription_price }}/mo</strong> with Drop subscription
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} Subscription Toggle {%- endcomment -%}
+        {%- if product.metafields.custom.subscription_price -%}
+        <div class="pdp-purchase-type">
+          <label class="purchase-option">
+            <input type="radio" name="purchase_type" value="one-time" checked>
+            <span class="purchase-option-label">
+              <strong>One-time purchase</strong>
+              <span>{{ product.price | money }}</span>
+            </span>
+          </label>
+          <label class="purchase-option">
+            <input type="radio" name="purchase_type" value="subscribe">
+            <span class="purchase-option-label">
+              <strong>Subscribe &amp; Save</strong>
+              <span>{{ product.metafields.custom.subscription_price }}/mo
+                <span class="badge badge-burgundy" style="font-size:0.6rem;">Save 15%</span>
+              </span>
+            </span>
+          </label>
+        </div>
+        {%- endif -%}
+
+        {%- comment -%} PRODUCT FORM {%- endcomment -%}
+        {%- form 'product', product, id: 'pdp-product-form', data-type: 'add-to-cart-form' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="selected-variant-id">
+
+          {%- comment -%} Variants {%- endcomment -%}
+          {%- unless product.has_only_default_variant -%}
+            <div class="pdp-variants">
+              {%- for option in product.options_with_values -%}
+                <div class="pdp-option-group">
+                  <p class="form-label">{{ option.name }}</p>
+                  <div class="pdp-variant-btns">
+                    {%- for value in option.values -%}
+                      <button type="button"
+                              class="pdp-variant-btn{% if option.selected_value == value %} active{% endif %}"
+                              data-option-position="{{ option.position }}"
+                              data-option-value="{{ value | escape }}">
+                        {{ value }}
+                      </button>
+                    {%- endfor -%}
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- endunless -%}
+
+          {%- comment -%} Qty + Add to Cart {%- endcomment -%}
+          <div class="pdp-cart-row">
+            <div class="qty-selector">
+              <button type="button" class="qty-btn" id="qty-dec" aria-label="Decrease quantity">−</button>
+              <span class="qty-value" id="qty-value">1</span>
+              <button type="button" class="qty-btn" id="qty-inc" aria-label="Increase quantity">+</button>
+              <input type="hidden" name="quantity" id="quantity-input" value="1">
+            </div>
+            {%- if product.available -%}
+              <button type="submit"
+                      class="btn btn-primary btn-lg pdp-atc"
+                      id="pdp-add-to-cart"
+                      style="flex:1;"
+                      aria-label="Add {{ product.title | escape }} to cart">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:0.5rem;">
+                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                  <line x1="3" y1="6" x2="21" y2="6"/>
+                  <path d="M16 10a4 4 0 01-8 0"/>
+                </svg>
+                Add to Cart — <span id="pdp-btn-price">{{ product.price | money }}</span>
+              </button>
+            {%- else -%}
+              <button type="button" class="btn btn-ghost btn-lg" style="flex:1;" disabled>
+                Sold Out
+              </button>
+              {%- comment -%} Back-in-stock notify {%- endcomment -%}
+              <div class="pdp-notify" style="width:100%;margin-top:1rem;">
+                <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:0.75rem;">Get notified when this is back:</p>
+                {%- form 'customer', id: 'notify-form' -%}
+                  <input type="hidden" name="contact[tags]" value="back-in-stock,{{ product.handle }}">
+                  <div style="display:flex;gap:0.75rem;">
+                    <input type="email" name="contact[email]" placeholder="Your email" class="form-input" required style="flex:1;">
+                    <button type="submit" class="btn btn-gold btn-sm">Notify Me</button>
+                  </div>
+                {%- endform -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endform -%}
+
+        {%- comment -%} Urgency {%- endcomment -%}
+        {%- if product.metafields.custom.urgency_text -%}
+          <div class="pdp-urgency">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+            <span>{{ product.metafields.custom.urgency_text }}</span>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Trust Signals {%- endcomment -%}
+        <div class="pdp-trust-grid">
+          <div class="pdp-trust-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span>Free delivery over £60</span>
+          </div>
+          <div class="pdp-trust-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+            <span>Luxury gift packaging</span>
+          </div>
+          <div class="pdp-trust-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <span>30-day returns</span>
+          </div>
+          <div class="pdp-trust-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <span>Secure checkout</span>
+          </div>
+        </div>
+
+        {%- comment -%} Key Features {%- endcomment -%}
+        {%- if product.metafields.custom.features -%}
+          <div class="pdp-features">
+            <h3 class="pdp-section-heading">Why couples love it</h3>
+            <ul class="pdp-features-list">
+              {%- assign features = product.metafields.custom.features | split: '|' -%}
+              {%- for feature in features -%}
+                <li>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  {{ feature | strip }}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+      </div>
+    </div><!-- /pdp-grid -->
+
+    {%- comment -%} =================== PRODUCT TABS =================== {%- endcomment -%}
+    <div class="pdp-tabs-section" data-tabs>
+      <div class="tabs-header">
+        <button class="tab-btn active" data-tab="description">Description</button>
+        {%- if product.metafields.custom.whats_inside -%}
+          <button class="tab-btn" data-tab="whats-inside">What's Inside</button>
+        {%- endif -%}
+        {%- if product.metafields.custom.how_to_use -%}
+          <button class="tab-btn" data-tab="how-to-use">How to Use</button>
+        {%- endif -%}
+        {%- if product.metafields.custom.ingredients -%}
+          <button class="tab-btn" data-tab="ingredients">Ingredients &amp; Info</button>
+        {%- endif -%}
+        <button class="tab-btn" data-tab="delivery">Delivery &amp; Gifting</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="description">
+        <div class="rte">{{ product.description }}</div>
+      </div>
+
+      {%- if product.metafields.custom.whats_inside -%}
+        <div class="tab-panel" data-panel="whats-inside">
+          <div class="rte">{{ product.metafields.custom.whats_inside }}</div>
+        </div>
+      {%- endif -%}
+
+      {%- if product.metafields.custom.how_to_use -%}
+        <div class="tab-panel" data-panel="how-to-use">
+          <div class="rte">{{ product.metafields.custom.how_to_use }}</div>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} INGREDIENTS — Compliance Section {%- endcomment -%}
+      {%- if product.metafields.custom.ingredients -%}
+        <div class="tab-panel" data-panel="ingredients">
+          <div class="ingredients-panel">
+            <div class="ingredients-block">
+              <h4>Ingredients</h4>
+              <p class="ingredients-list">{{ product.metafields.custom.ingredients }}</p>
+            </div>
+            {%- if product.metafields.custom.allergens -%}
+              <div class="allergen-warning">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <div>
+                  <p><strong>Allergens:</strong> {{ product.metafields.custom.allergens }}</p>
+                  <p style="font-size:0.8125rem;">May contain traces of nuts. Not suitable for those with severe nut allergies. Keep out of reach of children.</p>
+                </div>
+              </div>
+            {%- endif -%}
+            {%- if product.metafields.custom.nutritional_info -%}
+              <div class="nutritional-table">
+                <h4>Nutritional Information</h4>
+                <div class="rte">{{ product.metafields.custom.nutritional_info }}</div>
+              </div>
+            {%- endif -%}
+            <div class="compliance-note">
+              <p><strong>Manufactured in a facility</strong> that also processes nuts, dairy, gluten and soy. Suitable for vegans unless otherwise stated. Store in a cool, dry place away from direct sunlight.</p>
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="tab-panel" data-panel="delivery">
+        <div class="delivery-panel">
+          <div class="delivery-option">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <div>
+              <h4>Standard Delivery</h4>
+              <p>2–4 business days · FREE over £60</p>
+            </div>
+          </div>
+          <div class="delivery-option">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <div>
+              <h4>Express Next Day</h4>
+              <p>Order before 1pm · £6.95</p>
+            </div>
+          </div>
+          <div class="delivery-option">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
+            <div>
+              <h4>Gift Wrapping Available</h4>
+              <p>Luxury packaging · add at checkout · £3.95</p>
+            </div>
+          </div>
+          <div class="delivery-option">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            <div>
+              <h4>Free Returns</h4>
+              <p>30 days · unopened items only</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%} =================== RELATED PRODUCTS =================== {%- endcomment -%}
+    <div class="pdp-related">
+      <h2 class="heading-lg" style="margin-bottom:2rem;">Complete the Ritual</h2>
+      <div class="product-grid product-grid-4">
+        {%- assign related_products = product.collections.first.products -%}
+        {%- assign related_count = 0 -%}
+        {%- for related in related_products -%}
+          {%- if related.id != product.id and related_count < 4 -%}
+            {%- assign related_count = related_count | plus: 1 -%}
+            {% render 'product-card', product: related, show_badge: true, show_quick_add: true %}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{%- comment -%} Variant data for JS {%- endcomment -%}
+<script>
+  window.playmatelabsVariants = {{ product.variants | json }};
+</script>
+
+{%- comment -%} Sticky mobile ATC {%- endcomment -%}
+{%- if product.available -%}
+<div class="pdp-sticky-mobile">
+  <div>
+    <p style="font-size:0.875rem;font-weight:500;">{{ product.title }}</p>
+    <p style="font-size:0.9375rem;font-weight:600;color:var(--burgundy);">{{ product.price | money }}</p>
+  </div>
+  <button class="btn btn-primary btn-lg" style="flex:1;justify-content:center;" onclick="document.getElementById('pdp-add-to-cart')?.click()">
+    Add to Cart
+  </button>
+</div>
+{%- endif -%}
+
+{%- comment -%} Structured Data {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org/",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "description": {{ product.description | strip_html | json }},
+  "url": {{ canonical_url | json }},
+  {%- if product.featured_image -%}
+  "image": {{ product.featured_image | image_url: width: 1200 | json }},
+  {%- endif -%}
+  "brand": {
+    "@type": "Brand",
+    "name": {{ shop.name | json }}
+  },
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": {{ cart.currency.iso_code | json }},
+    "price": {{ product.price | divided_by: 100.0 | json }},
+    "availability": "{% if product.available %}http://schema.org/InStock{% else %}http://schema.org/OutOfStock{% endif %}",
+    "seller": {
+      "@type": "Organization",
+      "name": {{ shop.name | json }}
+    }
+  }
+}
+</script>

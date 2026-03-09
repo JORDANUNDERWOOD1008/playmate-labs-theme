@@ -1,0 +1,206 @@
+{% comment %}
+  PLAYMATE LABS — MONTHLY DROPS PAGE TEMPLATE
+  File: templates/page.drops.liquid
+  Assign this template to the "Monthly Drops" page in Shopify admin
+{% endcomment %}
+
+{{ 'drops.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%} DROPS HERO {%- endcomment -%}
+<section class="drops-hero">
+  <div class="drops-hero-bg">
+    <div class="drops-hero-gradient"></div>
+  </div>
+  <div class="container drops-hero-content animate-fadeInUp">
+    <span class="section-eyebrow" style="color:var(--gold);">Monthly Drops</span>
+    <h1 style="font-family:var(--font-display);font-size:clamp(3rem,6vw,5.5rem);font-weight:300;line-height:1.0;letter-spacing:-0.04em;color:var(--cream);margin:1rem 0 1.5rem;">
+      A new ritual,<br><em style="color:var(--gold-light);">every month.</em>
+    </h1>
+    <p style="font-size:1.0625rem;color:rgba(245,239,230,0.65);max-width:540px;margin-bottom:2.5rem;">
+      Limited-edition date night kits, thoughtfully curated around a theme, a season and a sensory moment worth having. Never repeated. Always limited.
+    </p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+      <a href="#current-drop" class="btn btn-gold btn-lg">Shop Current Drop</a>
+      <a href="#drop-waitlist" class="btn btn-ghost btn-lg">Join Drop Waitlist</a>
+    </div>
+    <div class="drops-hero-countdown" id="drop-countdown-section">
+      <p style="font-size:0.8125rem;color:rgba(245,239,230,0.45);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.08em;">This drop closes in</p>
+      <div class="countdown-timer" id="countdown-timer">
+        <div class="countdown-unit"><span class="countdown-num" id="cd-days">--</span><span class="countdown-label">Days</span></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit"><span class="countdown-num" id="cd-hours">--</span><span class="countdown-label">Hours</span></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit"><span class="countdown-num" id="cd-mins">--</span><span class="countdown-label">Mins</span></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit"><span class="countdown-num" id="cd-secs">--</span><span class="countdown-label">Secs</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{%- comment -%} CURRENT DROP {%- endcomment -%}
+<section class="section bg-dark" id="current-drop" style="padding:5rem 0;">
+  <div class="container">
+    <div class="section-header reveal" style="margin-bottom:3rem;">
+      <span class="section-eyebrow" style="color:var(--gold);">Current Drop</span>
+      <h2 class="heading-xl text-cream">The Velvet Hour</h2>
+      <div class="section-divider" style="background:var(--gold);"></div>
+    </div>
+
+    {%- assign current_drop_collection = collections['monthly-drops'] -%}
+    {%- assign featured_drop = current_drop_collection.products.first -%}
+
+    {%- if featured_drop != blank -%}
+      <div class="drop-featured-grid">
+        <div class="drop-featured-visual reveal-left">
+          <div class="drop-main-image">
+            {%- if featured_drop.featured_image -%}
+              <img src="{{ featured_drop.featured_image | image_url: width: 800 }}"
+                   alt="{{ featured_drop.title | escape }}"
+                   width="800" height="800"
+                   loading="lazy"
+                   style="width:100%;height:100%;object-fit:cover;border-radius:20px;">
+            {%- else -%}
+              <div class="img-placeholder" style="height:100%;">
+                <span style="font-size:5rem;">🍷</span>
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+        <div class="drop-featured-content reveal-right">
+          <div class="drop-meta-row">
+            {%- if featured_drop.metafields.custom.drop_badge -%}
+              <span class="badge badge-burgundy">{{ featured_drop.metafields.custom.drop_badge }}</span>
+            {%- endif -%}
+            {%- if featured_drop.metafields.custom.badge_label -%}
+              <span class="badge badge-gold">{{ featured_drop.metafields.custom.badge_label }}</span>
+            {%- endif -%}
+          </div>
+          <h3 class="drop-title text-cream">{{ featured_drop.title }}</h3>
+          <p class="drop-desc">{{ featured_drop.description | strip_html | truncate: 300 }}</p>
+
+          {%- if featured_drop.metafields.custom.includes -%}
+            <div class="drop-includes">
+              <h4 class="label" style="color:var(--gold);margin-bottom:1rem;">What's Inside</h4>
+              <ul class="drop-includes-list">
+                {%- assign items = featured_drop.metafields.custom.includes | split: '|' -%}
+                {%- for item in items -%}
+                  <li>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                    {{ item | strip }}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
+
+          <div class="drop-cta-row">
+            <div class="drop-price-block">
+              <p class="drop-price text-cream">{{ featured_drop.price | money }}</p>
+            </div>
+            {%- form 'product', featured_drop -%}
+              <input type="hidden" name="id" value="{{ featured_drop.first_available_variant.id }}">
+              <button type="submit" class="btn btn-gold btn-lg"
+                {% unless featured_drop.available %}disabled{% endunless %}>
+                {%- if featured_drop.available -%}Shop This Drop — {{ featured_drop.price | money }}{%- else -%}Sold Out{%- endif -%}
+              </button>
+            {%- endform -%}
+          </div>
+
+          {%- if featured_drop.metafields.custom.urgency_text -%}
+            <div class="drop-urgency">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+              <span style="font-size:0.8125rem;color:rgba(245,239,230,0.65);">{{ featured_drop.metafields.custom.urgency_text }}</span>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- else -%}
+      {%- comment -%} No product yet — placeholder {%- endcomment -%}
+      <div style="text-align:center;padding:4rem 0;">
+        <div style="font-size:4rem;margin-bottom:1rem;">📦</div>
+        <p style="font-family:var(--font-serif);font-size:1.5rem;color:var(--cream);margin-bottom:0.75rem;">
+          The next drop is coming soon.
+        </p>
+        <p style="color:rgba(245,239,230,0.55);margin-bottom:2rem;">Join the waitlist for early access.</p>
+        <a href="#drop-waitlist" class="btn btn-gold btn-lg">Join the Waitlist</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{%- comment -%} PAST DROPS ARCHIVE {%- endcomment -%}
+<section class="section" id="drop-archive" style="padding:5rem 0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">The Archive</span>
+      <h2 class="heading-xl">Past drops.</h2>
+      <div class="section-divider"></div>
+      <p>Each drop is designed once and never repeated. Once they're gone, they're gone.</p>
+    </div>
+    <div class="product-grid product-grid-3">
+      {%- for product in current_drop_collection.products offset: 1 limit: 6 -%}
+        {% render 'product-card', product: product %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- comment -%} DROP WAITLIST {%- endcomment -%}
+<section class="section bg-dark" id="drop-waitlist" style="padding:5rem 0;">
+  <div class="container">
+    <div style="max-width:560px;margin:0 auto;text-align:center;" class="reveal">
+      <span class="section-eyebrow" style="color:var(--gold);">Never Miss a Drop</span>
+      <h2 style="font-family:var(--font-serif);font-size:clamp(2rem,4vw,3rem);color:var(--cream);margin:1rem 0 1rem;">
+        Join the Drop Waitlist
+      </h2>
+      <p style="color:rgba(245,239,230,0.6);margin-bottom:2rem;">
+        Drop members get 24-hour early access, a guaranteed allocation and 10% off their first subscription box.
+      </p>
+      {%- form 'customer', id: 'drop-waitlist-form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter,drop-waitlist">
+        <div style="display:flex;flex-direction:column;gap:0.75rem;max-width:420px;margin:0 auto;">
+          <input type="text" name="contact[first_name]" placeholder="First name" class="form-input form-input-dark" required>
+          <input type="email" name="contact[email]" placeholder="Email address" class="form-input form-input-dark" required>
+          <input type="tel" name="contact[phone]" placeholder="Phone (SMS drops — optional)" class="form-input form-input-dark">
+          <button type="submit" class="btn btn-gold btn-lg" style="width:100%;justify-content:center;">
+            Join the Waitlist
+          </button>
+        </div>
+        {%- if form.posted_successfully? -%}
+          <div class="form-success" style="margin-top:1rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            You're on the list! Watch your inbox before the next drop.
+          </div>
+        {%- endif -%}
+      {%- endform -%}
+      <p style="font-size:0.75rem;color:rgba(245,239,230,0.3);margin-top:1rem;">
+        No spam. Drop notifications only. Unsubscribe anytime.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Countdown Timer — set drop end date
+  (function() {
+    const dropDate = new Date('{{ page.metafields.custom.drop_end_date | default: "2025-01-31T23:59:59" }}');
+    const timer = document.getElementById('countdown-timer');
+    if (!timer) return;
+    function update() {
+      const now = new Date();
+      const diff = dropDate - now;
+      if (diff <= 0) { timer.innerHTML = '<p style="color:var(--gold);">This drop has closed.</p>'; return; }
+      const d = Math.floor(diff/86400000);
+      const h = Math.floor((diff%86400000)/3600000);
+      const m = Math.floor((diff%3600000)/60000);
+      const s = Math.floor((diff%60000)/1000);
+      document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+      document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+      document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+      document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+    }
+    update();
+    setInterval(update, 1000);
+  })();
+</script>

@@ -1,0 +1,158 @@
+{% comment %}
+  PLAYMATE LABS — CUSTOMER ACCOUNT TEMPLATE
+  File: templates/customers/account.liquid
+{% endcomment %}
+
+{%- unless customer -%}
+  {%- redirect_to routes.account_login_url -%}
+{%- endunless -%}
+
+<section style="padding:calc(var(--nav-height)+3rem) 0 6rem;min-height:80vh;background:var(--ivory);">
+  <div class="container">
+
+    {%- comment -%} HEADER {%- endcomment -%}
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3rem;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h1 style="font-family:var(--font-serif);font-size:clamp(1.75rem,3vw,2.5rem);color:var(--espresso);">
+          Welcome back, {{ customer.first_name }}.
+        </h1>
+        <p style="color:var(--text-muted);font-size:0.9375rem;">{{ customer.email }}</p>
+      </div>
+      <a href="{{ routes.account_logout_url }}" class="btn btn-ghost btn-sm">Sign Out</a>
+    </div>
+
+    {%- comment -%} REWARDS SUMMARY (Placeholder — integrate with Smile.io or Yotpo) {%- endcomment -%}
+    <div style="background:linear-gradient(135deg,var(--espresso),var(--burgundy-dark));border-radius:20px;padding:2.5rem;margin-bottom:3rem;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(201,169,110,0.15),transparent 70%);"></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2rem;position:relative;z-index:1;">
+        <div>
+          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Loyalty Points</p>
+          <p style="font-family:var(--font-serif);font-size:2.5rem;color:var(--gold);">—</p>
+          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);">Rewards integration coming soon</p>
+        </div>
+        <div>
+          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Tier</p>
+          <p style="font-family:var(--font-serif);font-size:1.5rem;color:var(--cream);">Curious 🌱</p>
+          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);">Start earning to unlock Intimate</p>
+        </div>
+        <div>
+          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Total Spent</p>
+          <p style="font-family:var(--font-serif);font-size:2rem;color:var(--cream);">{{ customer.total_spent | money }}</p>
+        </div>
+        <div>
+          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Member Since</p>
+          <p style="font-family:var(--font-serif);font-size:1.25rem;color:var(--cream);">{{ customer.created_at | date: "%B %Y" }}</p>
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%} TABS {%- endcomment -%}
+    <div data-tabs>
+      <div class="tabs-header" style="margin-bottom:2.5rem;">
+        <button class="tab-btn active" data-tab="orders">Orders</button>
+        <button class="tab-btn" data-tab="addresses">Addresses</button>
+        <button class="tab-btn" data-tab="drops">Drop Subscriptions</button>
+        <button class="tab-btn" data-tab="experience">My Experience</button>
+      </div>
+
+      {%- comment -%} Orders Tab {%- endcomment -%}
+      <div class="tab-panel active" data-panel="orders">
+        {%- if customer.orders.size > 0 -%}
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:0.875rem;">
+              <thead>
+                <tr style="border-bottom:2px solid var(--border-color);text-align:left;">
+                  <th style="padding:0.75rem 1rem 0.75rem 0;font-weight:600;color:var(--espresso);">Order</th>
+                  <th style="padding:0.75rem 1rem;font-weight:600;color:var(--espresso);">Date</th>
+                  <th style="padding:0.75rem 1rem;font-weight:600;color:var(--espresso);">Status</th>
+                  <th style="padding:0.75rem 0 0.75rem 1rem;font-weight:600;color:var(--espresso);text-align:right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  <tr style="border-bottom:1px solid var(--border-color);">
+                    <td style="padding:1rem 1rem 1rem 0;">
+                      <a href="{{ order.customer_url }}" style="color:var(--burgundy);font-weight:500;">
+                        {{ order.name }}
+                      </a>
+                    </td>
+                    <td style="padding:1rem;color:var(--text-muted);">{{ order.created_at | date: "%d %b %Y" }}</td>
+                    <td style="padding:1rem;">
+                      <span class="badge badge-burgundy">{{ order.fulfillment_status | replace: '_', ' ' | capitalize }}</span>
+                    </td>
+                    <td style="padding:1rem 0 1rem 1rem;text-align:right;font-weight:500;">
+                      {{ order.total_price | money }}
+                    </td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          </div>
+        {%- else -%}
+          <div style="text-align:center;padding:4rem 0;">
+            <div style="font-size:3rem;margin-bottom:1rem;">🛒</div>
+            <p style="font-family:var(--font-serif);font-size:1.25rem;margin-bottom:0.75rem;">No orders yet</p>
+            <p style="color:var(--text-muted);margin-bottom:2rem;">Your first ritual awaits.</p>
+            <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary btn-sm">Shop Now</a>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Addresses Tab {%- endcomment -%}
+      <div class="tab-panel" data-panel="addresses">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+          <h3 style="font-family:var(--font-serif);font-size:1.25rem;">Saved Addresses</h3>
+          <a href="{{ routes.account_addresses_url }}" class="btn btn-ghost btn-sm">Manage Addresses</a>
+        </div>
+        {%- if customer.addresses.size > 0 -%}
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;">
+            {%- for address in customer.addresses -%}
+              <div style="padding:1.5rem;border:1px solid var(--border-color);border-radius:12px;position:relative;">
+                {%- if address == customer.default_address -%}
+                  <span class="badge badge-gold" style="position:absolute;top:1rem;right:1rem;">Default</span>
+                {%- endif -%}
+                <p style="font-weight:500;margin-bottom:0.5rem;">{{ address.name }}</p>
+                <p style="font-size:0.875rem;color:var(--text-muted);line-height:1.6;">
+                  {{ address.address1 }}{%- if address.address2 -%}, {{ address.address2 }}{%- endif -%}<br>
+                  {{ address.city }}, {{ address.province_code }} {{ address.zip }}<br>
+                  {{ address.country }}
+                </p>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- else -%}
+          <p style="color:var(--text-muted);">No saved addresses.</p>
+          <a href="{{ routes.account_addresses_url }}" class="btn btn-primary btn-sm" style="margin-top:1rem;">Add Address</a>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Drop Subscriptions Tab — Placeholder {%- endcomment -%}
+      <div class="tab-panel" data-panel="drops">
+        <div style="text-align:center;padding:4rem 0;max-width:480px;margin:0 auto;">
+          <div style="font-size:3rem;margin-bottom:1rem;">📦</div>
+          <h3 style="font-family:var(--font-serif);font-size:1.5rem;margin-bottom:0.75rem;">Drop Subscriptions</h3>
+          <p style="color:var(--text-muted);margin-bottom:2rem;">
+            Manage your monthly drop subscription. Cancel, pause or upgrade anytime.
+            Powered by <strong>Recharge</strong> — integration coming soon.
+          </p>
+          <a href="{{ collections['monthly-drops'].url }}" class="btn btn-gold btn-sm">Subscribe to Drops</a>
+        </div>
+      </div>
+
+      {%- comment -%} Experience Tab — Placeholder {%- endcomment -%}
+      <div class="tab-panel" data-panel="experience">
+        <div style="text-align:center;padding:4rem 0;max-width:480px;margin:0 auto;">
+          <div style="font-size:3rem;margin-bottom:1rem;">✨</div>
+          <h3 style="font-family:var(--font-serif);font-size:1.5rem;margin-bottom:0.75rem;">My 5-Day Experience</h3>
+          <p style="color:var(--text-muted);margin-bottom:2rem;">
+            Track your progress through the 5-day sensory experience, access past day content and start again anytime.
+          </p>
+          <a href="{{ pages['5-day-experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-gold btn-sm">
+            Go to Experience
+          </a>
+        </div>
+      </div>
+
+    </div>{%- comment -%} /data-tabs {%- endcomment -%}
+  </div>
+</section>

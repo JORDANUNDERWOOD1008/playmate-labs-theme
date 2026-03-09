@@ -1,0 +1,147 @@
+{% comment %}
+  PLAYMATE LABS — 5-DAY VIRTUAL SENSORY EXPERIENCE PAGE
+  File: templates/page.experience.liquid
+  Assign to page handle: 5-day-experience
+{% endcomment %}
+
+{{ 'experience.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%} HERO {%- endcomment -%}
+<section class="experience-hero">
+  <div class="experience-hero-bg">
+    <div class="experience-hero-gradient"></div>
+  </div>
+  <div class="container experience-hero-content animate-fadeInUp">
+    <span class="badge badge-gold" style="margin-bottom:1.5rem;">Free for a limited time</span>
+    <h1 style="font-family:var(--font-display);font-size:clamp(2.75rem,6vw,5.5rem);font-weight:300;line-height:1.0;letter-spacing:-0.04em;color:var(--cream);margin-bottom:1.5rem;">
+      The 5-Day<br><em style="color:var(--gold-light);">Sensory Experience</em>
+    </h1>
+    <p style="font-size:1.0625rem;color:rgba(245,239,230,0.65);max-width:560px;margin:0 auto 2.5rem;">
+      A free 5-day digital ritual for couples. Each morning, an experience arrives in your inbox — a sensory challenge, a conversation prompt, a small act of intimacy designed around modern relationship science.
+    </p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+      <a href="#experience-signup" class="btn btn-gold btn-xl">Start Free Today</a>
+      <a href="#how-it-works" class="btn btn-ghost btn-xl">How It Works</a>
+    </div>
+    <div style="display:flex;gap:2rem;justify-content:center;margin-top:2.5rem;flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <p style="font-family:var(--font-serif);font-size:1.75rem;color:var(--cream);">5</p>
+        <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;">Days</p>
+      </div>
+      <div style="text-align:center;">
+        <p style="font-family:var(--font-serif);font-size:1.75rem;color:var(--cream);">100%</p>
+        <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;">Free</p>
+      </div>
+      <div style="text-align:center;">
+        <p style="font-family:var(--font-serif);font-size:1.75rem;color:var(--cream);">4.9★</p>
+        <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;">2,400 couples</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{%- comment -%} HOW IT WORKS {%- endcomment -%}
+<section class="section" id="how-it-works" style="padding:6rem 0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">The Process</span>
+      <h2 class="heading-xl">Five days. Five experiences.<br>One couple.</h2>
+      <div class="section-divider"></div>
+      <p>No app downloads. No subscriptions required. Just show up for each other — your inbox does the rest.</p>
+    </div>
+    <div class="experience-days-grid">
+      {%- assign days = "Day 1: The Sense Audit|Day 2: The Ritual Meal|Day 3: The Written Word|Day 4: The Blindfold Hour|Day 5: The Memory Map" | split: '|' -%}
+      {%- assign day_descs = "A guided exercise to rediscover how you each experience pleasure. Taste, sound, scent, touch — each sense explored separately and then together.|Cook a meal designed around one shared flavour memory. We give you the framework. You bring the ingredients and the conversation.|Write letters to each other — not to send immediately. We give you the prompts. The rest is yours.|One partner leads, one follows. A structured sensory experience that builds trust and presence.|Create a shared map of your favourite moments together. Where they happened. What you felt. What you want to recreate." | split: '|' -%}
+      {%- assign day_icons = "👁|🍽|📝|🖤|🗺" | split: '|' -%}
+      {%- for day in days -%}
+        {%- assign day_parts = day | split: ': ' -%}
+        <div class="experience-day-card reveal" data-delay="{{ forloop.index0 }}">
+          <div class="experience-day-num">{{ forloop.index }}</div>
+          <div class="experience-day-icon">{{ day_icons[forloop.index0] }}</div>
+          <div>
+            <h3 class="experience-day-title">{{ day_parts[1] }}</h3>
+            <p class="experience-day-desc">{{ day_descs[forloop.index0] }}</p>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- comment -%} TESTIMONIALS {%- endcomment -%}
+<section class="section bg-dark" style="padding:5rem 0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow" style="color:var(--gold);">Real Couples</span>
+      <h2 class="heading-xl text-cream">What they said after Day 5.</h2>
+    </div>
+    <div class="testimonials-grid">
+      {%- assign testimonials = "We hadn't had a proper date night in 7 months. By Day 3 we were laughing at things we'd forgotten we even did together. — Priya & Tom, London|The Blindfold Hour was uncomfortable at first and then it was the most intimate thing we'd done in years. — Marcus & Leila, Manchester|I thought it would be cheesy. It wasn't. It was the most intentional 5 days we've had since we first started dating. — Chiara & Jules, Bristol" | split: '|' -%}
+      {%- for quote in testimonials -%}
+        {%- assign quote_parts = quote | split: ' — ' -%}
+        <div class="testimonial-card reveal" data-delay="{{ forloop.index0 }}">
+          <div class="star-rating" style="margin-bottom:0.75rem;">★★★★★</div>
+          <p class="testimonial-text">"{{ quote_parts[0] }}"</p>
+          <p class="testimonial-author">— {{ quote_parts[1] }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- comment -%} SIGN UP FORM {%- endcomment -%}
+<section class="section" id="experience-signup" style="padding:6rem 0;">
+  <div class="container">
+    <div style="max-width:560px;margin:0 auto;" class="reveal">
+      <div style="text-align:center;margin-bottom:2.5rem;">
+        <span class="section-eyebrow" style="color:var(--gold);">Free Access</span>
+        <h2 style="font-family:var(--font-serif);font-size:clamp(2rem,4vw,3rem);margin:1rem 0 1rem;">
+          Start your free 5-day experience today.
+        </h2>
+        <p style="color:var(--text-muted);max-width:440px;margin:0 auto;">
+          Day 1 arrives in your inbox within minutes. All you need is each other.
+        </p>
+      </div>
+      {%- form 'customer', id: 'experience-signup-form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter,experience-signup,5-day-experience">
+        <div style="display:flex;flex-direction:column;gap:0.875rem;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.875rem;">
+            <input type="text" name="contact[first_name]" placeholder="Your first name" class="form-input" required>
+            <input type="text" name="contact[last_name]" placeholder="Partner's first name" class="form-input" required>
+          </div>
+          <input type="email" name="contact[email]" placeholder="Your email address" class="form-input" required autocomplete="email">
+          <input type="tel" name="contact[phone]" placeholder="Phone number (optional daily SMS reminders)" class="form-input" autocomplete="tel">
+          <button type="submit" class="btn btn-gold btn-xl" style="width:100%;justify-content:center;">
+            Start the Free Experience
+          </button>
+        </div>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.75rem;text-align:center;">
+          Free. No card required. Unsubscribe anytime. Your data is safe.
+        </p>
+        {%- if form.posted_successfully? -%}
+          <div class="form-success" style="margin-top:1.25rem;text-align:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Day 1 is on its way to your inbox. See you on the other side. ✨
+          </div>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+
+{%- comment -%} UPSELL SECTION {%- endcomment -%}
+<section class="section bg-dark" style="padding:5rem 0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-eyebrow" style="color:var(--gold);">Enhance the Experience</span>
+      <h2 class="heading-xl text-cream">Make it physical.</h2>
+      <div class="section-divider" style="background:var(--gold);"></div>
+      <p style="color:rgba(245,239,230,0.65);">Pair your 5-day experience with products designed around each day's ritual.</p>
+    </div>
+    <div class="product-grid product-grid-3">
+      {%- for product in collections['ritual-add-ons'].products limit: 3 -%}
+        {% render 'product-card', product: product %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,230 @@
+{% comment %}
+  PLAYMATE LABS — HOMEPAGE HERO SECTION
+  File: sections/home-hero.liquid
+{% endcomment %}
+
+{{ 'home.css' | asset_url | stylesheet_tag }}
+
+<section class="hero-section" id="hero">
+  <div class="hero-bg">
+    <div class="hero-gradient"></div>
+    {%- if section.settings.hero_bg_image != blank -%}
+      <div class="hero-bg-img" style="background-image:url('{{ section.settings.hero_bg_image | image_url: width: 1800 }}');"></div>
+    {%- endif -%}
+    <div class="hero-particle hero-particle-1"></div>
+    <div class="hero-particle hero-particle-2"></div>
+    <div class="hero-particle hero-particle-3"></div>
+  </div>
+  <div class="hero-content-wrap">
+    <div class="container hero-inner">
+      <div class="hero-text animate-fadeInUp">
+        <p class="hero-eyebrow animate-fadeInUp animate-delay-1">
+          {{ section.settings.eyebrow | default: 'A new culture of connection' }}
+        </p>
+        <h1 class="hero-headline animate-fadeInUp animate-delay-2">
+          {{ section.settings.headline | default: 'Rewriting how <em>couples</em> do date night.' }}
+        </h1>
+        <p class="hero-sub animate-fadeInUp animate-delay-3">
+          {{ section.settings.subheadline | default: 'Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships.' }}
+        </p>
+        <div class="hero-actions animate-fadeInUp animate-delay-4">
+          <a href="{{ section.settings.cta_primary_url | default: pages['5-day-experience'].url }}"
+             class="btn btn-gold btn-xl">
+            {{ section.settings.cta_primary_text | default: 'Start the 5-Day Experience' }}
+          </a>
+          <a href="{{ section.settings.cta_secondary_url | default: collections['monthly-drops'].url }}"
+             class="btn btn-ghost btn-xl">
+            {{ section.settings.cta_secondary_text | default: 'Shop the Latest Drop' }}
+          </a>
+        </div>
+        <div class="hero-trust animate-fadeInUp animate-delay-5">
+          <div class="hero-trust-item">
+            <div class="star-rating">★★★★★</div>
+            <span>{{ section.settings.trust_rating | default: '4.9 / 5 — 2,400+ couples' }}</span>
+          </div>
+          <span class="hero-trust-dot">·</span>
+          <div class="hero-trust-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+            <span>{{ section.settings.trust_shipping | default: 'Free shipping over £60' }}</span>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} Hero Product Visual {%- endcomment -%}
+      <div class="hero-visual animate-fadeIn animate-delay-2">
+        <div class="hero-product-card">
+          <div class="hero-product-img">
+            {%- if section.settings.hero_product != blank -%}
+              {%- assign hero_product = all_products[section.settings.hero_product] -%}
+              {%- if hero_product.featured_image -%}
+                <img src="{{ hero_product.featured_image | image_url: width: 600 }}"
+                     alt="{{ hero_product.title | escape }}"
+                     width="600" height="600"
+                     loading="eager">
+              {%- else -%}
+                <div class="img-placeholder hero-product-img">
+                  <div class="hero-product-scene">
+                    <div class="candle-glow"></div>
+                    <span class="hero-product-emoji">🌹</span>
+                  </div>
+                </div>
+              {%- endif -%}
+            {%- else -%}
+              <div class="img-placeholder" style="height:100%;">
+                <div class="hero-product-scene">
+                  <div class="candle-glow"></div>
+                  <span class="hero-product-emoji">🌹</span>
+                </div>
+              </div>
+            {%- endif -%}
+          </div>
+          <div class="hero-product-label">
+            <span class="badge badge-gold">{{ section.settings.hero_product_badge | default: 'Latest Drop' }}</span>
+            <p>{{ section.settings.hero_product_name | default: 'The Velvet Hour Kit' }}</p>
+            <p class="hero-product-price">{{ section.settings.hero_product_price | default: '£68' }}</p>
+          </div>
+        </div>
+        <div class="hero-float-badge hero-float-1">
+          <span>🔥</span>
+          <div>
+            <p style="font-size:0.7rem;font-weight:700;">{{ section.settings.badge_1_line1 | default: '12 sold' }}</p>
+            <p style="font-size:0.6rem;opacity:0.7;">{{ section.settings.badge_1_line2 | default: 'last 24 hours' }}</p>
+          </div>
+        </div>
+        <div class="hero-float-badge hero-float-2">
+          <span>⏰</span>
+          <div>
+            <p style="font-size:0.7rem;font-weight:700;">{{ section.settings.badge_2_line1 | default: 'Limited' }}</p>
+            <p style="font-size:0.6rem;opacity:0.7;">{{ section.settings.badge_2_line2 | default: 'Only 47 left' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <div class="scroll-dot"></div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "hero_bg_image",
+      "label": "Background image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "A new culture of connection"
+    },
+    {
+      "type": "richtext",
+      "id": "headline",
+      "label": "Headline (supports <em> for italic)",
+      "default": "<p>Rewriting how <em>couples</em> do date night.</p>"
+    },
+    {
+      "type": "textarea",
+      "id": "subheadline",
+      "label": "Subheadline",
+      "default": "Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships."
+    },
+    {
+      "type": "text",
+      "id": "cta_primary_text",
+      "label": "Primary CTA text",
+      "default": "Start the 5-Day Experience"
+    },
+    {
+      "type": "url",
+      "id": "cta_primary_url",
+      "label": "Primary CTA URL"
+    },
+    {
+      "type": "text",
+      "id": "cta_secondary_text",
+      "label": "Secondary CTA text",
+      "default": "Shop the Latest Drop"
+    },
+    {
+      "type": "url",
+      "id": "cta_secondary_url",
+      "label": "Secondary CTA URL"
+    },
+    {
+      "type": "text",
+      "id": "trust_rating",
+      "label": "Trust signal — rating",
+      "default": "4.9 / 5 — 2,400+ couples"
+    },
+    {
+      "type": "text",
+      "id": "trust_shipping",
+      "label": "Trust signal — shipping",
+      "default": "Free shipping over £60"
+    },
+    {
+      "type": "header",
+      "content": "Product Visual"
+    },
+    {
+      "type": "product",
+      "id": "hero_product",
+      "label": "Featured product (uses image if available)"
+    },
+    {
+      "type": "text",
+      "id": "hero_product_badge",
+      "label": "Product badge label",
+      "default": "Latest Drop"
+    },
+    {
+      "type": "text",
+      "id": "hero_product_name",
+      "label": "Product name override"
+    },
+    {
+      "type": "text",
+      "id": "hero_product_price",
+      "label": "Product price override",
+      "default": "£68"
+    },
+    {
+      "type": "text",
+      "id": "badge_1_line1",
+      "label": "Float badge 1 — line 1",
+      "default": "12 sold"
+    },
+    {
+      "type": "text",
+      "id": "badge_1_line2",
+      "label": "Float badge 1 — line 2",
+      "default": "last 24 hours"
+    },
+    {
+      "type": "text",
+      "id": "badge_2_line1",
+      "label": "Float badge 2 — line 1",
+      "default": "Limited"
+    },
+    {
+      "type": "text",
+      "id": "badge_2_line2",
+      "label": "Float badge 2 — line 2",
+      "default": "Only 47 left"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner"
+    }
+  ]
+}
+{% endschema %}
