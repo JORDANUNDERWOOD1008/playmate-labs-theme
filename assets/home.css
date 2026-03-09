@@ -828,7 +828,9 @@
   /* On mobile: swap to portrait image, darken whole bg evenly for legibility */
   .featured-drop--bg {
     background-image: var(--fd-bg-mobile);
-    background-position: center top;
+    /* Full viewport width, natural height — only top/bottom cropped, never sides */
+    background-size: 100% auto;
+    background-position: center center;
   }
 
   .featured-drop__overlay {
