@@ -137,7 +137,7 @@
                 {%- if section.settings[e_url] != blank -%}
                   <a href="{{ section.settings[e_url] }}" class="btn btn-primary btn-sm">Book Now</a>
                 {%- else -%}
-                  <a href="{{ pages['event-detail'].url | default: '/pages/event-detail' }}" class="btn btn-primary btn-sm">{{ section.settings.events_book_cta | default: 'Book Now' }}</a>
+                  <a href="{{ section.settings.url_event_detail | default: '/pages/event-detail' }}" class="btn btn-primary btn-sm">{{ section.settings.events_book_cta | default: 'Book Now' }}</a>
                 {%- endif -%}
               </div>
             </div>

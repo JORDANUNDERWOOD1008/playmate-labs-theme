@@ -28,11 +28,11 @@
           {{ section.settings.subheadline | default: 'Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships.' }}
         </p>
         <div class="hero-actions animate-fadeInUp animate-delay-4">
-          <a href="{{ section.settings.cta_primary_url | default: pages['5-day-experience'].url }}"
+          <a href="{{ section.settings.cta_primary_url | default: '/pages/5-day-experience' }}"
              class="btn btn-gold btn-xl">
             {{ section.settings.cta_primary_text | default: 'Start the 5-Day Experience' }}
           </a>
-          <a href="{{ section.settings.cta_secondary_url | default: collections['monthly-drops'].url }}"
+          <a href="{{ section.settings.cta_secondary_url | default: '/collections/monthly-drops' }}"
              class="btn btn-ghost btn-xl">
             {{ section.settings.cta_secondary_text | default: 'Shop the Latest Drop' }}
           </a>

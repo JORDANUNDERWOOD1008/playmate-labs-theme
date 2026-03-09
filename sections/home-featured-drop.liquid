@@ -88,7 +88,7 @@
               <p class="drop-price text-cream">{{ section.settings.drop_price | default: '£68' }}</p>
             {%- endif -%}
           </div>
-          <a href="{{ drop_product.url | default: collections['monthly-drops'].url }}" class="btn btn-gold btn-lg">
+          <a href="{{ drop_product.url | default: '/collections/monthly-drops' }}" class="btn btn-gold btn-lg">
             {{ section.settings.cta_text | default: 'Shop This Drop' }}
           </a>
         </div>
