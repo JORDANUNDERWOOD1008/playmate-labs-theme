@@ -156,11 +156,8 @@ const Nav = {
     const nav = $('nav.site-nav, .site-nav');
     if (!nav) return;
 
-    const onScroll = () => {
-      nav.classList.toggle('scrolled', window.scrollY > 40);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    // Scroll-based header switching removed — header always uses the solid design.
+    // The .scrolled class is no longer toggled by JS.
 
     // Mobile toggle
     const toggle = $('.nav-toggle');

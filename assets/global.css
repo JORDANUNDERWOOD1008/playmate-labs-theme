@@ -593,21 +593,24 @@ h1, h2, h3, h4, h5, h6 {
   right: 0;
   z-index: 1000;
   height: var(--nav-height);
-  transition: background var(--transition-mid), box-shadow var(--transition-mid);
-}
-
-.site-nav.scrolled {
+  /* Always use the scrolled/solid design — no transparent phase */
   background: rgba(250, 247, 242, 0.97);
   backdrop-filter: blur(20px);
   box-shadow: 0 1px 0 var(--border-light), var(--shadow-sm);
 }
 
+/* .scrolled class kept for JS compatibility but adds nothing new */
+.site-nav.scrolled {
+  /* intentionally empty — base styles already apply the solid look */
+}
+
 .site-nav.nav-dark {
-  /* Transparent over dark hero */
+  /* Dark style — always solid dark */
+  background: rgba(26, 16, 10, 0.97);
 }
 
 .site-nav.nav-dark.scrolled {
-  background: rgba(26, 16, 10, 0.97);
+  /* intentionally empty — nav-dark base already applies solid */
 }
 
 .nav-inner {
@@ -623,12 +626,11 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: var(--cream);
+  color: var(--burgundy);
   transition: color var(--transition-fast);
 }
 
-.site-nav.scrolled .nav-logo { color: var(--burgundy); }
-.site-nav.nav-dark.scrolled .nav-logo { color: var(--cream); }
+.site-nav.nav-dark .nav-logo { color: var(--cream); }
 
 .nav-logo span {
   font-weight: 300;
@@ -645,20 +647,18 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0.04em;
-  color: rgba(245,239,230,0.85);
+  color: var(--text-mid);
   border-radius: var(--radius-sm);
   transition: color var(--transition-fast), background var(--transition-fast);
 }
 
 .nav-link:hover {
-  color: var(--cream);
-  background: rgba(245,239,230,0.08);
+  color: var(--burgundy);
+  background: rgba(107,30,58,0.06);
 }
 
-.site-nav.scrolled .nav-link { color: var(--text-mid); }
-.site-nav.scrolled .nav-link:hover { color: var(--burgundy); background: rgba(107,30,58,0.06); }
-.site-nav.nav-dark.scrolled .nav-link { color: rgba(245,239,230,0.75); }
-.site-nav.nav-dark.scrolled .nav-link:hover { color: var(--cream); }
+.site-nav.nav-dark .nav-link { color: rgba(245,239,230,0.75); }
+.site-nav.nav-dark .nav-link:hover { color: var(--cream); background: rgba(245,239,230,0.08); }
 
 .nav-actions {
   display: flex;
@@ -673,19 +673,18 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-full);
-  color: rgba(245,239,230,0.85);
+  color: var(--text-mid);
   transition: color var(--transition-fast), background var(--transition-fast);
   position: relative;
 }
 
 .nav-icon-btn:hover {
-  background: rgba(245,239,230,0.1);
-  color: var(--cream);
+  color: var(--burgundy);
+  background: rgba(107,30,58,0.06);
 }
 
-.site-nav.scrolled .nav-icon-btn { color: var(--text-mid); }
-.site-nav.scrolled .nav-icon-btn:hover { color: var(--burgundy); background: rgba(107,30,58,0.06); }
-.site-nav.nav-dark.scrolled .nav-icon-btn { color: rgba(245,239,230,0.75); }
+.site-nav.nav-dark .nav-icon-btn { color: rgba(245,239,230,0.75); }
+.site-nav.nav-dark .nav-icon-btn:hover { color: var(--cream); background: rgba(245,239,230,0.08); }
 
 .cart-count {
   position: absolute;
@@ -736,13 +735,12 @@ h1, h2, h3, h4, h5, h6 {
   display: block;
   width: 22px;
   height: 1.5px;
-  background: var(--cream);
+  background: var(--text-dark);
   border-radius: 2px;
   transition: all var(--transition-mid);
 }
 
-.site-nav.scrolled .nav-toggle span { background: var(--text-dark); }
-.site-nav.nav-dark.scrolled .nav-toggle span { background: var(--cream); }
+.site-nav.nav-dark .nav-toggle span { background: var(--cream); }
 
 .nav-toggle.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
 .nav-toggle.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
