@@ -1,0 +1,189 @@
+{% comment %}
+  PLAYMATE LABS — STOCKISTS PAGE
+  File: templates/page.stockists.liquid
+  Used for: /pages/stockists
+{% endcomment %}
+
+{{ 'global.css' | asset_url | stylesheet_tag }}
+
+<section class="page-hero" style="background:linear-gradient(135deg,var(--espresso) 0%,var(--burgundy-deep) 100%);padding:5rem 0 3rem;">
+  <div class="container">
+    <div class="breadcrumb" style="margin-bottom:1.5rem;">
+      <a href="{{ routes.root_url }}" style="color:rgba(245,239,230,0.6);">Home</a>
+      <span class="breadcrumb-sep" style="color:rgba(245,239,230,0.4);">›</span>
+      <span style="color:var(--cream);">Stockists</span>
+    </div>
+    <span class="section-eyebrow" style="color:var(--gold);">Find Us In Store</span>
+    <h1 class="heading-xl" style="color:var(--cream);margin-top:0.5rem;">Where to Buy<br>Playmate Labs</h1>
+    <p class="body-lg" style="color:rgba(245,239,230,0.75);max-width:520px;margin-top:1rem;">Our products are available in select boutiques, wellness stores and specialty retailers across the UK. Can't find a stockist near you? <a href="{{ routes.all_products_collection_url }}" style="color:var(--gold);text-decoration:underline;">Shop online</a> with free delivery over £{{ settings.cart_free_shipping_threshold | default: '60' }}.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- Stockist Search -->
+    <div class="stockist-search-bar" style="max-width:480px;margin:0 auto 3rem;display:flex;gap:0.75rem;">
+      <input type="text" id="stockist-search" placeholder="Search by city or postcode…" class="form-input" style="flex:1;" aria-label="Search stockists">
+      <button class="btn btn-primary" onclick="filterStockists()">
+        <i class="fas fa-map-marker-alt" style="margin-right:0.5rem;"></i>Search
+      </button>
+    </div>
+
+    <!-- Region Tabs -->
+    <div class="stockist-regions" style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem;">
+      <button class="filter-btn active" data-region="all" onclick="filterRegion(this,'all')">All Regions</button>
+      <button class="filter-btn" data-region="london" onclick="filterRegion(this,'london')">London</button>
+      <button class="filter-btn" data-region="south-east" onclick="filterRegion(this,'south-east')">South East</button>
+      <button class="filter-btn" data-region="midlands" onclick="filterRegion(this,'midlands')">Midlands</button>
+      <button class="filter-btn" data-region="north" onclick="filterRegion(this,'north')">North</button>
+      <button class="filter-btn" data-region="scotland" onclick="filterRegion(this,'scotland')">Scotland</button>
+      <button class="filter-btn" data-region="online" onclick="filterRegion(this,'online')">Online Only</button>
+    </div>
+
+    <!-- Stockist Grid -->
+    <div class="stockist-grid" id="stockist-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;">
+
+      {%- if page.content != blank -%}
+        {{ page.content }}
+      {%- else -%}
+
+        {%- comment -%} Placeholder stockists — replace with real metafield data or page content {%- endcomment -%}
+        <div class="stockist-card" data-region="london">
+          <div class="stockist-card-inner">
+            <div class="stockist-type-badge stockist-badge-boutique">Boutique</div>
+            <h3 class="stockist-name">The Ritual Edit</h3>
+            <p class="stockist-address">14 Marylebone Lane, London W1U 2PH</p>
+            <p class="stockist-phone"><i class="fas fa-phone" style="color:var(--gold);margin-right:0.5rem;"></i> 020 7935 XXXX</p>
+            <p class="stockist-hours"><i class="fas fa-clock" style="color:var(--gold);margin-right:0.5rem;"></i> Mon–Sat 10am–6pm</p>
+            <div class="stockist-products">
+              <span class="stockist-product-tag">Consumables</span>
+              <span class="stockist-product-tag">Gift Sets</span>
+            </div>
+            <a href="https://maps.google.com/?q=14+Marylebone+Lane+London" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="margin-top:1rem;width:100%;justify-content:center;">
+              <i class="fas fa-map-marker-alt" style="margin-right:0.5rem;"></i>Get Directions
+            </a>
+          </div>
+        </div>
+
+        <div class="stockist-card" data-region="london">
+          <div class="stockist-card-inner">
+            <div class="stockist-type-badge stockist-badge-wellness">Wellness</div>
+            <h3 class="stockist-name">Sweaty Betty Flagship</h3>
+            <p class="stockist-address">216–218 Westbourne Grove, London W11 2RH</p>
+            <p class="stockist-phone"><i class="fas fa-phone" style="color:var(--gold);margin-right:0.5rem;"></i> 020 7313 XXXX</p>
+            <p class="stockist-hours"><i class="fas fa-clock" style="color:var(--gold);margin-right:0.5rem;"></i> Mon–Sun 10am–7pm</p>
+            <div class="stockist-products">
+              <span class="stockist-product-tag">Full Range</span>
+            </div>
+            <a href="https://maps.google.com/?q=216+Westbourne+Grove+London" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="margin-top:1rem;width:100%;justify-content:center;">
+              <i class="fas fa-map-marker-alt" style="margin-right:0.5rem;"></i>Get Directions
+            </a>
+          </div>
+        </div>
+
+        <div class="stockist-card" data-region="north">
+          <div class="stockist-card-inner">
+            <div class="stockist-type-badge stockist-badge-boutique">Boutique</div>
+            <h3 class="stockist-name">The Curious Kind</h3>
+            <p class="stockist-address">34 King Street, Manchester M2 6AZ</p>
+            <p class="stockist-phone"><i class="fas fa-phone" style="color:var(--gold);margin-right:0.5rem;"></i> 0161 834 XXXX</p>
+            <p class="stockist-hours"><i class="fas fa-clock" style="color:var(--gold);margin-right:0.5rem;"></i> Tue–Sat 11am–6pm</p>
+            <div class="stockist-products">
+              <span class="stockist-product-tag">Kits</span>
+              <span class="stockist-product-tag">Games</span>
+            </div>
+            <a href="https://maps.google.com/?q=34+King+Street+Manchester" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="margin-top:1rem;width:100%;justify-content:center;">
+              <i class="fas fa-map-marker-alt" style="margin-right:0.5rem;"></i>Get Directions
+            </a>
+          </div>
+        </div>
+
+        <div class="stockist-card" data-region="scotland">
+          <div class="stockist-card-inner">
+            <div class="stockist-type-badge stockist-badge-specialist">Specialist</div>
+            <h3 class="stockist-name">Plum &amp; Ashby Edinburgh</h3>
+            <p class="stockist-address">97 George Street, Edinburgh EH2 3ES</p>
+            <p class="stockist-phone"><i class="fas fa-phone" style="color:var(--gold);margin-right:0.5rem;"></i> 0131 225 XXXX</p>
+            <p class="stockist-hours"><i class="fas fa-clock" style="color:var(--gold);margin-right:0.5rem;"></i> Mon–Sat 9am–6pm, Sun 11am–5pm</p>
+            <div class="stockist-products">
+              <span class="stockist-product-tag">Consumables</span>
+            </div>
+            <a href="https://maps.google.com/?q=97+George+Street+Edinburgh" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="margin-top:1rem;width:100%;justify-content:center;">
+              <i class="fas fa-map-marker-alt" style="margin-right:0.5rem;"></i>Get Directions
+            </a>
+          </div>
+        </div>
+
+        <div class="stockist-card" data-region="online">
+          <div class="stockist-card-inner">
+            <div class="stockist-type-badge stockist-badge-online">Online</div>
+            <h3 class="stockist-name">Not On The High Street</h3>
+            <p class="stockist-address">UK-wide delivery</p>
+            <p class="stockist-hours"><i class="fas fa-clock" style="color:var(--gold);margin-right:0.5rem;"></i> Available 24/7</p>
+            <div class="stockist-products">
+              <span class="stockist-product-tag">Gift Sets</span>
+              <span class="stockist-product-tag">Kits</span>
+            </div>
+            <a href="https://www.notonthehighstreet.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="margin-top:1rem;width:100%;justify-content:center;">
+              <i class="fas fa-external-link-alt" style="margin-right:0.5rem;"></i>Visit Store
+            </a>
+          </div>
+        </div>
+
+      {%- endif -%}
+
+    </div><!-- /.stockist-grid -->
+
+    <!-- Become a Stockist CTA -->
+    <div class="stockist-become-cta" style="margin-top:5rem;padding:3rem;background:var(--espresso);border-radius:16px;text-align:center;">
+      <span class="section-eyebrow" style="color:var(--gold);">Wholesale Enquiries</span>
+      <h2 style="font-family:var(--font-serif);font-size:1.875rem;color:var(--cream);margin:0.75rem 0 1rem;">Interested in stocking Playmate Labs?</h2>
+      <p style="color:rgba(245,239,230,0.7);max-width:480px;margin:0 auto 2rem;">We partner with boutiques, wellness studios, hotels and lifestyle retailers who share our values. Minimum orders from £250.</p>
+      <a href="{{ pages['contact'].url | default: '/pages/contact' }}?subject=wholesale" class="btn btn-gold">Get in Touch</a>
+    </div>
+
+  </div>
+</section>
+
+<style>
+.stockist-card-inner {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: 100%;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.stockist-card-inner:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); transform: translateY(-2px); }
+.stockist-type-badge { display:inline-block;font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:0.25rem 0.75rem;border-radius:20px;margin-bottom:0.75rem; }
+.stockist-badge-boutique { background: rgba(107,30,58,0.1); color: var(--burgundy); }
+.stockist-badge-wellness { background: rgba(201,169,110,0.15); color: #8a6a30; }
+.stockist-badge-specialist { background: rgba(26,10,6,0.08); color: var(--espresso); }
+.stockist-badge-online { background: rgba(107,30,58,0.1); color: var(--burgundy); }
+.stockist-name { font-family: var(--font-serif); font-size: 1.125rem; margin-bottom: 0.5rem; }
+.stockist-address, .stockist-phone, .stockist-hours { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.375rem; }
+.stockist-products { display:flex;flex-wrap:wrap;gap:0.375rem;margin-top:0.75rem; }
+.stockist-product-tag { background: var(--cream); color: var(--espresso); font-size: 0.75rem; padding: 0.2rem 0.625rem; border-radius: 20px; border: 1px solid var(--border-color); }
+</style>
+
+<script>
+function filterRegion(btn, region) {
+  document.querySelectorAll('.stockist-regions .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('.stockist-card').forEach(function(card) {
+    if (region === 'all' || card.dataset.region === region) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+function filterStockists() {
+  var q = document.getElementById('stockist-search').value.toLowerCase();
+  document.querySelectorAll('.stockist-card').forEach(function(card) {
+    var text = card.textContent.toLowerCase();
+    card.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+</script>

@@ -1,0 +1,102 @@
+{% comment %}
+  PLAYMATE LABS — TERMS & CONDITIONS PAGE
+  File: templates/page.terms.liquid
+  Used for: /pages/terms-and-conditions
+{% endcomment %}
+
+<section class="page-hero-minimal" style="background:var(--cream-off);padding:4rem 0 2rem;border-bottom:1px solid var(--border-color);">
+  <div class="container">
+    <div class="breadcrumb" style="margin-bottom:1rem;">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Terms &amp; Conditions</span>
+    </div>
+    <h1 style="font-family:var(--font-serif);font-size:2.25rem;">Terms &amp; Conditions</h1>
+    <p style="color:var(--text-muted);margin-top:0.5rem;">Last updated: {{ 'now' | date: '%d %B %Y' }}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="legal-layout">
+      <aside class="legal-toc">
+        <h4 style="font-size:0.875rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:1rem;color:var(--text-muted);">Contents</h4>
+        <nav class="toc-nav">
+          <a href="#acceptance" class="toc-link">1. Acceptance</a>
+          <a href="#ordering" class="toc-link">2. Ordering</a>
+          <a href="#pricing" class="toc-link">3. Pricing</a>
+          <a href="#delivery" class="toc-link">4. Delivery</a>
+          <a href="#returns" class="toc-link">5. Returns</a>
+          <a href="#consumables" class="toc-link">6. Consumables</a>
+          <a href="#ip" class="toc-link">7. IP &amp; Content</a>
+          <a href="#liability" class="toc-link">8. Liability</a>
+          <a href="#governing-law" class="toc-link">9. Governing Law</a>
+        </nav>
+      </aside>
+      <div class="legal-content">
+        {%- if page.content != blank -%}
+          <div class="rte">{{ page.content }}</div>
+        {%- else -%}
+          <div id="acceptance" class="legal-section">
+            <h2>1. Acceptance of Terms</h2>
+            <p>By accessing playmate-labs.com or placing an order, you agree to these Terms &amp; Conditions in full. If you do not agree, please do not use our website or services. We reserve the right to update these terms at any time — continued use after changes constitutes acceptance.</p>
+          </div>
+          <div id="ordering" class="legal-section">
+            <h2>2. Ordering</h2>
+            <p>By completing an order you confirm you are 18 years of age or older and are legally capable of entering into binding contracts. Orders are subject to acceptance and availability. We reserve the right to refuse any order.</p>
+            <p>A confirmation email confirms receipt of your order, not acceptance. A dispatch notification constitutes acceptance of your order and forms a contract between us.</p>
+          </div>
+          <div id="pricing" class="legal-section">
+            <h2>3. Pricing &amp; Payment</h2>
+            <p>All prices are in GBP and include UK VAT at the current rate (20%). Prices may change at any time but changes will not affect existing confirmed orders.</p>
+            <p>We accept payment via Stripe (Visa, Mastercard, American Express), PayPal, Apple Pay and Google Pay. All transactions are encrypted and PCI DSS compliant.</p>
+          </div>
+          <div id="delivery" class="legal-section">
+            <h2>4. Delivery</h2>
+            <p>We aim to dispatch orders within 2 business days. Standard UK delivery takes 3–5 business days; express delivery 1–2 business days. International delivery times vary by destination.</p>
+            <p>Free standard UK delivery on orders over £{{ settings.cart_free_shipping_threshold | default: '60' }}. Shipping costs for other orders are displayed at checkout.</p>
+            <p>We are not responsible for delays caused by couriers, customs or events outside our control.</p>
+          </div>
+          <div id="returns" class="legal-section">
+            <h2>5. Returns &amp; Refunds</h2>
+            <p>Under the Consumer Contracts Regulations 2013 you have 14 days from receipt to cancel your order. To initiate a return, email <a href="mailto:hello@playmate-labs.com">hello@playmate-labs.com</a> with your order number.</p>
+            <p>Returned items must be unused, in original packaging and in a resaleable condition. Return postage is at your cost unless the item is faulty.</p>
+            <p>Refunds are processed within 14 days of receiving the returned goods, using your original payment method.</p>
+          </div>
+          <div id="consumables" class="legal-section">
+            <h2>6. Consumable Products</h2>
+            <p>For hygiene reasons, opened or partially used consumable products (chocolates, blends, teas, oils) cannot be returned unless faulty or incorrectly supplied.</p>
+            <p>Full allergen information is available on each product page. It is your responsibility to check ingredients before purchase if you have dietary restrictions or allergies. Playmate Labs accepts no liability for reactions resulting from undisclosed dietary requirements.</p>
+          </div>
+          <div id="ip" class="legal-section">
+            <h2>7. Intellectual Property &amp; Content</h2>
+            <p>All content on playmate-labs.com — including text, images, designs, brand identity, and the Playmate Labs name and logo — is owned by or licensed to Playmate Labs Ltd. You may not reproduce, distribute or create derivative works without written permission.</p>
+          </div>
+          <div id="liability" class="legal-section">
+            <h2>8. Limitation of Liability</h2>
+            <p>To the maximum extent permitted by law, our liability for any claim arising from use of our website or products is limited to the value of the product purchased. We are not liable for indirect, consequential or special damages.</p>
+            <p>Nothing in these terms limits liability for death or personal injury caused by our negligence, fraud or fraudulent misrepresentation.</p>
+          </div>
+          <div id="governing-law" class="legal-section">
+            <h2>9. Governing Law</h2>
+            <p>These Terms are governed by and construed in accordance with English law. Any disputes shall be subject to the exclusive jurisdiction of the courts of England &amp; Wales.</p>
+            <p>For complaints or disputes, contact us first at <a href="mailto:hello@playmate-labs.com">hello@playmate-labs.com</a>. We are committed to resolving issues fairly and quickly.</p>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.legal-layout { display:grid; grid-template-columns: 200px 1fr; gap:4rem; align-items:start; }
+.legal-toc { position:sticky; top:6rem; }
+.toc-nav { display:flex; flex-direction:column; gap:0.5rem; }
+.toc-link { font-size:0.875rem; color:var(--text-muted); text-decoration:none; padding:0.25rem 0; border-left:2px solid transparent; padding-left:0.75rem; transition:all 0.2s; }
+.toc-link:hover { color:var(--burgundy); border-left-color:var(--burgundy); }
+.legal-section { margin-bottom:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid var(--border-color); }
+.legal-section:last-child { border-bottom:none; }
+.legal-section h2 { font-family:var(--font-serif); font-size:1.5rem; margin-bottom:1rem; }
+.legal-section p, .legal-section li { font-size:0.9375rem; line-height:1.7; color:var(--text-body); margin-bottom:0.75rem; }
+@media(max-width:768px) { .legal-layout { grid-template-columns:1fr; } .legal-toc { position:static; } }
+</style>

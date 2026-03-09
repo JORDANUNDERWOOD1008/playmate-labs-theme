@@ -1,0 +1,243 @@
+{% comment %}
+  PLAYMATE LABS — JOURNAL LANDING PAGE
+  File: templates/page.journal.liquid
+  Used for: /pages/journal  →  assign this template to a "Journal" page
+  Features: Hero, featured article, category filters, articles grid from blogs/journal,
+            sidebar (popular posts, tags, newsletter), pagination.
+{% endcomment %}
+
+{{ 'journal.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'journal.js' | asset_url }}" defer></script>
+
+{%- assign journal_blog = blogs['journal'] | default: blogs.first -%}
+{%- assign articles_per_page = 9 -%}
+
+<!-- ===== JOURNAL HERO ===== -->
+<section class="journal-hero">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Journal</span>
+    </div>
+    <div class="journal-hero-content">
+      <span class="section-eyebrow">Playmate Labs Journal</span>
+      <h1 class="heading-xl">Ideas, Rituals &amp;<br>Intimate Inspiration</h1>
+      <p class="body-lg journal-hero-desc">Stories, guides and rituals for couples who want more from their time together.</p>
+    </div>
+    <div class="journal-category-nav">
+      <a href="{{ journal_blog.url | default: '/blogs/journal' }}" class="filter-btn active">All</a>
+      <a href="{{ journal_blog.url | default: '/blogs/journal' }}/tagged/rituals" class="filter-btn">Rituals</a>
+      <a href="{{ journal_blog.url | default: '/blogs/journal' }}/tagged/date-ideas" class="filter-btn">Date Ideas</a>
+      <a href="{{ journal_blog.url | default: '/blogs/journal' }}/tagged/intimacy" class="filter-btn">Intimacy</a>
+      <a href="{{ journal_blog.url | default: '/blogs/journal' }}/tagged/recipes" class="filter-btn">Recipes</a>
+      <a href="{{ journal_blog.url | default: '/blogs/journal' }}/tagged/behind-the-brand" class="filter-btn">Behind the Brand</a>
+      <a href="{{ journal_blog.url | default: '/blogs/journal' }}/tagged/guides" class="filter-btn">Guides</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURED ARTICLE ===== -->
+{%- if journal_blog != blank and journal_blog.articles.size > 0 -%}
+  {%- assign featured = journal_blog.articles.first -%}
+  <section class="journal-featured">
+    <div class="container">
+      <a href="{{ featured.url }}" class="journal-featured-card">
+        <div class="journal-featured-img">
+          {%- if featured.image -%}
+            <img src="{{ featured.image | img_url: '800x500', crop: 'center' }}" alt="{{ featured.image.alt | default: featured.title }}" loading="lazy">
+          {%- else -%}
+            <div class="img-placeholder journal-img-placeholder">
+              <span style="font-size:4rem;">📖</span>
+            </div>
+          {%- endif -%}
+          <div class="journal-featured-badge">Featured</div>
+        </div>
+        <div class="journal-featured-body">
+          <div class="article-meta">
+            {%- if featured.tags.size > 0 -%}
+              <span class="article-tag">{{ featured.tags.first | replace: '-', ' ' | capitalize }}</span>
+            {%- endif -%}
+            <span class="article-date">{{ featured.published_at | date: '%d %B %Y' }}</span>
+            <span class="article-read-time">{{ featured.content | strip_html | split: ' ' | size | divided_by: 200 | plus: 1 }} min read</span>
+          </div>
+          <h2 class="journal-featured-title">{{ featured.title }}</h2>
+          <p class="journal-featured-excerpt">{{ featured.excerpt | default: featured.content | strip_html | truncate: 180 }}</p>
+          <span class="btn btn-primary btn-sm">Read Article →</span>
+        </div>
+      </a>
+    </div>
+  </section>
+{%- endif -%}
+
+<!-- ===== ARTICLES GRID + SIDEBAR ===== -->
+<section class="section journal-main">
+  <div class="container">
+    <div class="journal-layout">
+
+      <!-- ARTICLES GRID -->
+      <div class="journal-content">
+        <div class="section-header-between" style="margin-bottom:2rem;">
+          <h2 style="font-family:var(--font-serif);font-size:1.5rem;">
+            {%- if current_tags.size > 0 -%}
+              Tagged: {{ current_tags | join: ' + ' | replace: '-', ' ' | capitalize }}
+            {%- else -%}
+              Latest Articles
+            {%- endif -%}
+          </h2>
+          {%- if current_tags.size > 0 -%}
+            <a href="{{ journal_blog.url }}" class="btn btn-ghost btn-sm">Clear filter ×</a>
+          {%- endif -%}
+        </div>
+
+        {%- if journal_blog.articles.size > 0 -%}
+          <div class="articles-grid" id="articles-grid">
+            {%- for article in journal_blog.articles limit: articles_per_page -%}
+              {%- unless forloop.first and current_tags.size == 0 -%}
+                <article class="article-card">
+                  <a href="{{ article.url }}" class="article-card-img-link">
+                    <div class="article-card-img">
+                      {%- if article.image -%}
+                        <img src="{{ article.image | img_url: '400x260', crop: 'center' }}" alt="{{ article.image.alt | default: article.title }}" loading="lazy">
+                      {%- else -%}
+                        <div class="img-placeholder article-img-placeholder">
+                          <span style="font-size:2.5rem;">
+                            {%- if article.tags contains 'recipes' -%}🍫
+                            {%- elsif article.tags contains 'rituals' -%}🕯️
+                            {%- elsif article.tags contains 'date-ideas' -%}🌹
+                            {%- else -%}📖{%- endif -%}
+                          </span>
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  </a>
+                  <div class="article-card-body">
+                    <div class="article-meta">
+                      {%- if article.tags.size > 0 -%}
+                        <a href="{{ journal_blog.url }}/tagged/{{ article.tags.first }}" class="article-tag">
+                          {{ article.tags.first | replace: '-', ' ' | capitalize }}
+                        </a>
+                      {%- endif -%}
+                      <span class="article-date">{{ article.published_at | date: '%d %b %Y' }}</span>
+                    </div>
+                    <h3 class="article-card-title">
+                      <a href="{{ article.url }}">{{ article.title }}</a>
+                    </h3>
+                    <p class="article-card-excerpt">
+                      {{ article.excerpt | default: article.content | strip_html | truncate: 120 }}
+                    </p>
+                    <a href="{{ article.url }}" class="article-read-link">Read more →</a>
+                  </div>
+                </article>
+              {%- endunless -%}
+            {%- endfor -%}
+          </div>
+
+          {%- comment -%} Pagination {%- endcomment -%}
+          {%- if journal_blog.articles_count > articles_per_page -%}
+            <div class="pagination" style="margin-top:3rem;">
+              {%- if current_page > 1 -%}
+                <a href="{{ journal_blog.url }}?page={{ current_page | minus: 1 }}" class="btn btn-ghost btn-sm">← Previous</a>
+              {%- endif -%}
+              <span style="font-size:0.875rem;color:var(--text-muted);">
+                Page {{ current_page | default: 1 }} of {{ journal_blog.articles_count | divided_by: articles_per_page | ceil }}
+              </span>
+              {%- if journal_blog.articles_count > articles_per_page -%}
+                <a href="{{ journal_blog.url }}?page={{ current_page | default: 1 | plus: 1 }}" class="btn btn-ghost btn-sm">Next →</a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- else -%}
+          <div class="empty-journal">
+            <div style="font-size:3rem;margin-bottom:1rem;">📖</div>
+            <h3 style="font-family:var(--font-serif);">Articles coming soon</h3>
+            <p style="color:var(--text-muted);">We're writing up our best rituals, recipes and date ideas.</p>
+          </div>
+        {%- endif -%}
+      </div><!-- /.journal-content -->
+
+      <!-- SIDEBAR -->
+      <aside class="journal-sidebar">
+
+        <!-- Search -->
+        <div class="journal-sidebar-widget">
+          <h4 class="sidebar-heading">Search Journal</h4>
+          <form action="{{ routes.search_url }}" method="get" class="sidebar-search-form">
+            <input type="hidden" name="type" value="article">
+            <div class="sidebar-search-input-wrap">
+              <input type="search" name="q" placeholder="Search articles…" class="form-input sidebar-search-input" aria-label="Search journal">
+              <button type="submit" class="sidebar-search-btn" aria-label="Search">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Popular Articles -->
+        {%- if journal_blog.articles.size > 0 -%}
+          <div class="journal-sidebar-widget">
+            <h4 class="sidebar-heading">Popular Articles</h4>
+            <ul class="sidebar-article-list">
+              {%- for article in journal_blog.articles limit: 4 -%}
+                <li class="sidebar-article-item">
+                  <a href="{{ article.url }}" class="sidebar-article-link">
+                    <div class="sidebar-article-img">
+                      {%- if article.image -%}
+                        <img src="{{ article.image | img_url: '80x80', crop: 'center' }}" alt="{{ article.title }}" loading="lazy">
+                      {%- else -%}
+                        <div style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;height:100%;">📖</div>
+                      {%- endif -%}
+                    </div>
+                    <div class="sidebar-article-meta">
+                      <span class="sidebar-article-title">{{ article.title | truncate: 55 }}</span>
+                      <span class="sidebar-article-date">{{ article.published_at | date: '%d %b %Y' }}</span>
+                    </div>
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <!-- Tags -->
+        <div class="journal-sidebar-widget">
+          <h4 class="sidebar-heading">Browse by Topic</h4>
+          <div class="sidebar-tag-cloud">
+            {%- assign all_tags = journal_blog.all_tags -%}
+            {%- if all_tags.size > 0 -%}
+              {%- for tag in all_tags limit: 12 -%}
+                <a href="{{ journal_blog.url }}/tagged/{{ tag | handle }}" class="sidebar-tag-pill{% if current_tags contains tag %} active{% endif %}">
+                  {{ tag | replace: '-', ' ' | capitalize }}
+                </a>
+              {%- endfor -%}
+            {%- else -%}
+              <a href="{{ journal_blog.url }}/tagged/rituals" class="sidebar-tag-pill">Rituals</a>
+              <a href="{{ journal_blog.url }}/tagged/date-ideas" class="sidebar-tag-pill">Date Ideas</a>
+              <a href="{{ journal_blog.url }}/tagged/intimacy" class="sidebar-tag-pill">Intimacy</a>
+              <a href="{{ journal_blog.url }}/tagged/recipes" class="sidebar-tag-pill">Recipes</a>
+              <a href="{{ journal_blog.url }}/tagged/guides" class="sidebar-tag-pill">Guides</a>
+              <a href="{{ journal_blog.url }}/tagged/behind-the-brand" class="sidebar-tag-pill">Behind the Brand</a>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="journal-sidebar-newsletter">
+          <span class="section-eyebrow" style="color:var(--gold);">Stay Inspired</span>
+          <h4 style="font-family:var(--font-serif);font-size:1.25rem;color:var(--cream);margin:0.5rem 0 0.75rem;">New articles, rituals &amp; drops — straight to your inbox.</h4>
+          {%- form 'customer' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter,journal">
+            <div class="newsletter-form-row">
+              <input type="email" name="contact[email]" placeholder="Your email" class="form-input newsletter-input" required aria-label="Email for newsletter">
+              <button type="submit" class="btn btn-gold btn-sm">Subscribe</button>
+            </div>
+            {%- if form.posted_successfully? -%}
+              <p class="form-success-msg" style="margin-top:0.75rem;">✓ You're subscribed!</p>
+            {%- endif -%}
+          {%- endform -%}
+        </div>
+
+      </aside><!-- /.journal-sidebar -->
+    </div><!-- /.journal-layout -->
+  </div><!-- /.container -->
+</section>

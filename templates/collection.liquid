@@ -1,161 +1,527 @@
 {% comment %}
-  PLAYMATE LABS — COLLECTION TEMPLATE
+  PLAYMATE LABS — COLLECTION / SHOP TEMPLATE
   File: templates/collection.liquid
   Used for: /collections/*, /collections/all
+  Features: Sidebar filters (category, mood, occasion, price), featured banners,
+            product grid with badges, sort/count toolbar, pagination, bundle CTA.
 {% endcomment %}
 
 {{ 'shop.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'shop.js' | asset_url }}" defer></script>
 
-{%- paginate collection.products by 12 -%}
+{%- paginate collection.products by section.settings.products_per_page | default: 12 -%}
 
-{%- comment -%} Shop Hero {%- endcomment -%}
+{%- assign is_all = false -%}
+{%- if collection.handle == 'all' or collection.handle == 'frontpage' -%}
+  {%- assign is_all = true -%}
+{%- endif -%}
+
+{%- assign is_drops = false -%}
+{%- if collection.handle contains 'drop' or collection.handle contains 'monthly' -%}
+  {%- assign is_drops = true -%}
+{%- endif -%}
+
+{%- assign is_consumables = false -%}
+{%- if collection.handle contains 'consumable' or collection.handle contains 'food' -%}
+  {%- assign is_consumables = true -%}
+{%- endif -%}
+
+<!-- ===== SHOP HERO ===== -->
 <section class="shop-hero">
   <div class="container">
     <div class="breadcrumb">
       <a href="{{ routes.root_url }}">Home</a>
       <span class="breadcrumb-sep">›</span>
-      {%- if collection.handle != 'all' -%}
+      {%- unless is_all -%}
         <a href="{{ routes.all_products_collection_url }}">Shop</a>
         <span class="breadcrumb-sep">›</span>
-      {%- endif -%}
+      {%- endunless -%}
       <span>{{ collection.title }}</span>
     </div>
     <div class="shop-hero-content">
-      <span class="section-eyebrow">{{ collection.metafields.custom.eyebrow | default: 'The Collection' }}</span>
-      <h1 class="heading-xl">{{ collection.title }}</h1>
+      <span class="section-eyebrow">
+        {{ collection.metafields.custom.eyebrow | default: 'The Collection' }}
+      </span>
+      <h1 class="heading-xl">
+        {%- if is_all -%}
+          Playful rituals, sensory products<br>and experiences worth dressing up for.
+        {%- elsif is_drops -%}
+          Monthly Drops — Limited<br>editions for modern couples.
+        {%- elsif is_consumables -%}
+          Sensory Consumables — Edible<br>rituals designed for two.
+        {%- else -%}
+          {{ collection.title }}
+        {%- endif -%}
+      </h1>
       {%- if collection.description != blank -%}
-        <p class="body-lg" style="max-width:600px;margin-top:1rem;">{{ collection.description }}</p>
+        <p class="body-lg shop-hero-desc">{{ collection.description }}</p>
       {%- endif -%}
+    </div>
+    <div class="shop-hero-stats">
+      <div class="shop-stat">
+        <span class="shop-stat-num">{{ collection.products_count }}</span>
+        <span class="shop-stat-label">Products</span>
+      </div>
+      <div class="shop-stat-divider"></div>
+      <div class="shop-stat">
+        <span class="shop-stat-num">4.9★</span>
+        <span class="shop-stat-label">Avg. Rating</span>
+      </div>
+      <div class="shop-stat-divider"></div>
+      <div class="shop-stat">
+        <span class="shop-stat-num">Free</span>
+        <span class="shop-stat-label">Shipping over £{{ settings.cart_free_shipping_threshold | default: '60' }}</span>
+      </div>
     </div>
   </div>
 </section>
 
-{%- comment -%} Featured Banner for specific collections {%- endcomment -%}
-{%- if collection.handle == 'monthly-drops' or collection.handle == 'all' -%}
+<!-- ===== FEATURED BANNER (All / Drops / Consumables) ===== -->
+{%- if is_all or is_drops or is_consumables -%}
 <section class="shop-featured-banner">
   <div class="container">
     <div class="shop-banner-grid">
-      <a href="{{ collections['monthly-drops'].url }}" class="shop-banner-card shop-banner-primary">
+
+      <!-- Primary: Latest Drop -->
+      <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="shop-banner-card shop-banner-primary">
         <div class="shop-banner-bg bg-dark">
           <div class="shop-banner-inner">
             <span class="badge badge-gold" style="margin-bottom:0.75rem;">Latest Drop</span>
-            <h2 style="font-family:var(--font-serif);font-size:1.75rem;color:var(--cream);margin-bottom:0.75rem;">The Velvet Hour</h2>
-            <p style="font-size:0.875rem;color:rgba(245,239,230,0.65);margin-bottom:1.25rem;">Limited drop — 47 kits remaining</p>
-            <span class="btn btn-gold btn-sm">Shop Now</span>
+            <h2 class="shop-banner-title" style="color:var(--cream);">The Velvet Hour</h2>
+            <p class="shop-banner-sub">Limited drop — only 47 kits remaining</p>
+            <span class="btn btn-gold btn-sm">Shop Now — £68</span>
           </div>
-          <div style="font-size:6rem;opacity:0.15;position:absolute;right:1.5rem;bottom:1rem;">🍷</div>
+          <div class="shop-banner-emoji">🍷</div>
         </div>
       </a>
-      <a href="{{ pages['5-day-experience'].url | default: '/pages/5-day-experience' }}" class="shop-banner-card shop-banner-secondary">
-        <div class="shop-banner-bg" style="background:linear-gradient(135deg,var(--burgundy-dark),var(--burgundy));">
+
+      <!-- Secondary: Sensory Consumables -->
+      <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="shop-banner-card shop-banner-secondary">
+        <div class="shop-banner-bg bg-warm">
           <div class="shop-banner-inner">
-            <span class="badge badge-burgundy" style="margin-bottom:0.75rem;">Free Lead Magnet</span>
-            <h2 style="font-family:var(--font-serif);font-size:1.5rem;color:var(--cream);margin-bottom:0.75rem;">5-Day Sensory Experience</h2>
-            <p style="font-size:0.875rem;color:rgba(245,239,230,0.65);margin-bottom:1.25rem;">Free digital ritual for couples</p>
-            <span class="btn btn-ghost btn-sm">Unlock Free</span>
+            <span class="badge badge-burgundy" style="margin-bottom:0.75rem;">Popular</span>
+            <h2 class="shop-banner-title" style="color:var(--espresso);">Sensory Consumables</h2>
+            <p class="shop-banner-sub" style="color:var(--text-muted);">Edible rituals from £18</p>
+            <span class="btn btn-primary btn-sm">Explore</span>
           </div>
-          <div style="font-size:5rem;opacity:0.15;position:absolute;right:1.5rem;bottom:1rem;">✨</div>
+          <div class="shop-banner-emoji">🍫</div>
         </div>
       </a>
+
+      <!-- Tertiary: Date Night Kits -->
+      <a href="{{ collections['date-night-kits'].url | default: '/collections/date-night-kits' }}" class="shop-banner-card shop-banner-tertiary">
+        <div class="shop-banner-bg bg-deep">
+          <div class="shop-banner-inner">
+            <span class="badge badge-cream" style="margin-bottom:0.75rem;">New In</span>
+            <h2 class="shop-banner-title" style="color:var(--cream);">Date Night Kits</h2>
+            <p class="shop-banner-sub">Full evenings from £58</p>
+            <span class="btn btn-ghost btn-sm">Shop Kits</span>
+          </div>
+          <div class="shop-banner-emoji">🌹</div>
+        </div>
+      </a>
+
     </div>
   </div>
 </section>
 {%- endif -%}
 
-{%- comment -%} Filter + Sort Toolbar {%- endcomment -%}
-<section class="shop-toolbar">
+<!-- ===== MAIN SHOP LAYOUT: SIDEBAR + GRID ===== -->
+<section class="section shop-main">
   <div class="container">
-    <div class="shop-toolbar-inner">
-      <div class="shop-filter-row">
-        {%- comment -%} Type filters {%- endcomment -%}
-        <div class="shop-filters">
-          <a href="{{ collection.url }}"
-             class="filter-btn{% unless current_tags %} active{% endunless %}">
-            All
-          </a>
-          {%- for type in shop.types -%}
-            {%- if type != blank -%}
-              <a href="{{ collection.url }}/{{ type | url_encode }}"
-                 class="filter-btn{% if current_tags contains type %} active{% endif %}">
-                {{ type }}
-              </a>
-            {%- endif -%}
-          {%- endfor -%}
+    <div class="shop-layout">
+
+      <!-- ========= SIDEBAR ========= -->
+      <aside class="shop-sidebar" id="shop-sidebar">
+
+        <div class="sidebar-header">
+          <h3 class="label">Filter &amp; Refine</h3>
+          <button class="sidebar-close" id="sidebar-close" aria-label="Close filters">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
 
-        {%- comment -%} Sort {%- endcomment -%}
-        <div class="shop-sort">
-          <label for="sort-select" class="visually-hidden">Sort by</label>
-          <select id="sort-select" class="sort-select" data-sort-url="{{ collection.url }}">
-            {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
-            {%- for option in collection.sort_options -%}
-              <option value="{{ option.value }}"{% if option.value == sort_by %} selected{% endif %}>
-                {{ option.name }}
-              </option>
-            {%- endfor -%}
-          </select>
-          <span class="shop-count">{{ collection.products_count }} products</span>
+        {%- comment -%} Category {%- endcomment -%}
+        <div class="sidebar-section">
+          <h4 class="sidebar-heading">Category</h4>
+          <ul class="sidebar-filter-list">
+            <li>
+              <a href="{{ collection.url }}" class="sidebar-filter-item radio{% unless current_tags %} active{% endunless %}">
+                <span class="sidebar-radio"></span> All Products
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/consumables" class="sidebar-filter-item radio{% if current_tags contains 'consumables' %} active{% endif %}">
+                <span class="sidebar-radio"></span> Consumables
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/date-night-kits" class="sidebar-filter-item radio{% if current_tags contains 'date-night-kits' %} active{% endif %}">
+                <span class="sidebar-radio"></span> Date Night Kits
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/monthly-drops" class="sidebar-filter-item radio{% if current_tags contains 'monthly-drops' %} active{% endif %}">
+                <span class="sidebar-radio"></span> Monthly Drops
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/games" class="sidebar-filter-item radio{% if current_tags contains 'games' %} active{% endif %}">
+                <span class="sidebar-radio"></span> Games &amp; Cards
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/ritual-add-ons" class="sidebar-filter-item radio{% if current_tags contains 'ritual-add-ons' %} active{% endif %}">
+                <span class="sidebar-radio"></span> Ritual Add-Ons
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/gifts" class="sidebar-filter-item radio{% if current_tags contains 'gifts' %} active{% endif %}">
+                <span class="sidebar-radio"></span> Gift Sets
+              </a>
+            </li>
+          </ul>
         </div>
+
+        {%- comment -%} Mood {%- endcomment -%}
+        <div class="sidebar-section">
+          <h4 class="sidebar-heading">Mood</h4>
+          <ul class="sidebar-filter-list">
+            <li>
+              <a href="{{ collection.url }}/romantic" class="sidebar-filter-item checkbox{% if current_tags contains 'romantic' %} active{% endif %}">
+                <span class="sidebar-check"></span> Romantic
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/playful" class="sidebar-filter-item checkbox{% if current_tags contains 'playful' %} active{% endif %}">
+                <span class="sidebar-check"></span> Playful
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/sensory" class="sidebar-filter-item checkbox{% if current_tags contains 'sensory' %} active{% endif %}">
+                <span class="sidebar-check"></span> Sensory
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/adventurous" class="sidebar-filter-item checkbox{% if current_tags contains 'adventurous' %} active{% endif %}">
+                <span class="sidebar-check"></span> Adventurous
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/mindful" class="sidebar-filter-item checkbox{% if current_tags contains 'mindful' %} active{% endif %}">
+                <span class="sidebar-check"></span> Mindful
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {%- comment -%} Occasion {%- endcomment -%}
+        <div class="sidebar-section">
+          <h4 class="sidebar-heading">Occasion</h4>
+          <ul class="sidebar-filter-list">
+            <li>
+              <a href="{{ collection.url }}/anniversary" class="sidebar-filter-item checkbox{% if current_tags contains 'anniversary' %} active{% endif %}">
+                <span class="sidebar-check"></span> Anniversary
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/valentines" class="sidebar-filter-item checkbox{% if current_tags contains 'valentines' %} active{% endif %}">
+                <span class="sidebar-check"></span> Valentine's
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/gift" class="sidebar-filter-item checkbox{% if current_tags contains 'gift' %} active{% endif %}">
+                <span class="sidebar-check"></span> As a Gift
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/date-night" class="sidebar-filter-item checkbox{% if current_tags contains 'date-night' %} active{% endif %}">
+                <span class="sidebar-check"></span> Date Night
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/just-because" class="sidebar-filter-item checkbox{% if current_tags contains 'just-because' %} active{% endif %}">
+                <span class="sidebar-check"></span> Just Because
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {%- comment -%} Price Range {%- endcomment -%}
+        <div class="sidebar-section">
+          <h4 class="sidebar-heading">Price</h4>
+          <ul class="sidebar-filter-list">
+            <li>
+              <a href="{{ collection.url }}" class="sidebar-filter-item radio{% unless current_tags contains 'price' %} active{% endunless %}">
+                <span class="sidebar-radio"></span> All Prices
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/price-under-30" class="sidebar-filter-item radio{% if current_tags contains 'price-under-30' %} active{% endif %}">
+                <span class="sidebar-radio"></span> Under £30
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/price-30-60" class="sidebar-filter-item radio{% if current_tags contains 'price-30-60' %} active{% endif %}">
+                <span class="sidebar-radio"></span> £30 — £60
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/price-60-plus" class="sidebar-filter-item radio{% if current_tags contains 'price-60-plus' %} active{% endif %}">
+                <span class="sidebar-radio"></span> £60+
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {%- comment -%} Availability {%- endcomment -%}
+        <div class="sidebar-section">
+          <h4 class="sidebar-heading">Availability</h4>
+          <ul class="sidebar-filter-list">
+            <li>
+              <a href="{{ collection.url }}/in-stock" class="sidebar-filter-item checkbox{% if current_tags contains 'in-stock' %} active{% endif %}">
+                <span class="sidebar-check"></span> In Stock
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/limited-edition" class="sidebar-filter-item checkbox{% if current_tags contains 'limited-edition' %} active{% endif %}">
+                <span class="sidebar-check"></span> Limited Edition
+              </a>
+            </li>
+            <li>
+              <a href="{{ collection.url }}/bestseller" class="sidebar-filter-item checkbox{% if current_tags contains 'bestseller' %} active{% endif %}">
+                <span class="sidebar-check"></span> Bestsellers Only
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {%- comment -%} Active tags — clear all {%- endcomment -%}
+        {%- if current_tags.size > 0 -%}
+          <div class="sidebar-section sidebar-active-tags">
+            <h4 class="sidebar-heading">Active Filters</h4>
+            <div class="active-tags-list">
+              {%- for tag in current_tags -%}
+                <a href="{{ collection.url | remove: tag }}" class="active-tag-pill">
+                  {{ tag | replace: '-', ' ' }} <i class="fas fa-times"></i>
+                </a>
+              {%- endfor -%}
+            </div>
+            <a href="{{ collection.url }}" class="clear-filters-btn">Clear all filters</a>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Drop CTA {%- endcomment -%}
+        <div class="sidebar-drop-cta">
+          <p class="label" style="color:var(--gold);margin-bottom:0.5rem;">✦ Get Early Access</p>
+          <p style="font-size:0.8125rem;color:rgba(245,239,230,0.7);margin-bottom:1rem;">Join the drop list for first access to new releases &amp; exclusive offers.</p>
+          <a href="{{ pages['monthly-drops'].url | default: '/pages/monthly-drops' }}" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">
+            Join Drop List →
+          </a>
+        </div>
+
+      </aside><!-- /.shop-sidebar -->
+
+      <!-- ========= MAIN CONTENT ========= -->
+      <div class="shop-content">
+
+        <!-- Top Bar -->
+        <div class="shop-topbar">
+          <div class="shop-topbar-left">
+            <p class="shop-count-text" id="product-count">
+              Showing {{ collection.products.size }} of {{ collection.products_count }} products
+              {%- if current_tags.size > 0 -%}
+                <span class="filtered-by"> (filtered)</span>
+              {%- endif -%}
+            </p>
+          </div>
+          <div class="shop-topbar-right">
+            <button class="mobile-filter-btn" id="mobile-filter-toggle" aria-expanded="false" aria-controls="shop-sidebar">
+              <i class="fas fa-sliders-h"></i> Filters
+              {%- if current_tags.size > 0 -%}
+                <span class="filter-count-badge">{{ current_tags.size }}</span>
+              {%- endif -%}
+            </button>
+            <div class="sort-wrapper">
+              <label for="sort-select" class="visually-hidden">Sort by</label>
+              <select id="sort-select" class="sort-select" data-sort-url="{{ collection.url }}">
+                {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value }}"{% if option.value == sort_by %} selected{% endif %}>
+                    {{ option.name }}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Filter Chips -->
+        <div class="mobile-filter-chips" id="mobile-chips">
+          <button class="filter-btn{% unless current_tags %} active{% endunless %}" data-tag="" data-collection="{{ collection.url }}">All</button>
+          <button class="filter-btn{% if current_tags contains 'consumables' %} active{% endif %}" data-tag="consumables" data-collection="{{ collection.url }}">Consumables</button>
+          <button class="filter-btn{% if current_tags contains 'date-night-kits' %} active{% endif %}" data-tag="date-night-kits" data-collection="{{ collection.url }}">Kits</button>
+          <button class="filter-btn{% if current_tags contains 'monthly-drops' %} active{% endif %}" data-tag="monthly-drops" data-collection="{{ collection.url }}">Drops</button>
+          <button class="filter-btn{% if current_tags contains 'games' %} active{% endif %}" data-tag="games" data-collection="{{ collection.url }}">Games</button>
+          <button class="filter-btn{% if current_tags contains 'gifts' %} active{% endif %}" data-tag="gifts" data-collection="{{ collection.url }}">Gifts</button>
+          <button class="filter-btn{% if current_tags contains 'ritual-add-ons' %} active{% endif %}" data-tag="ritual-add-ons" data-collection="{{ collection.url }}">Rituals</button>
+        </div>
+
+        {%- comment -%} Products {%- endcomment -%}
+        {%- if collection.products.size == 0 -%}
+          <div class="empty-collection">
+            <div style="font-size:3rem;margin-bottom:1rem;">✨</div>
+            <h2 style="font-family:var(--font-serif);">Nothing here yet</h2>
+            <p style="color:var(--text-muted);margin-bottom:2rem;">Try a different filter or browse the full collection.</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+              <a href="{{ collection.url }}" class="btn btn-primary">Clear Filters</a>
+              <a href="{{ routes.all_products_collection_url }}" class="btn btn-ghost">Browse All</a>
+            </div>
+          </div>
+        {%- else -%}
+
+          {%- comment -%} Section label for bestsellers {%- endcomment -%}
+          {%- unless current_tags.size > 0 -%}
+            {%- if is_all or collection.handle == 'all' -%}
+              <div class="shop-section-label">
+                <span class="label">Bestsellers</span>
+                <span class="shop-label-line"></span>
+              </div>
+            {%- endif -%}
+          {%- endunless -%}
+
+          <div class="shop-products-grid" id="products-grid">
+            {%- for product in collection.products -%}
+              {% render 'product-card', product: product, show_badge: true, show_quick_add: true %}
+            {%- endfor -%}
+          </div>
+
+          {%- comment -%} Bundle CTA (mid-grid, after first 6 products on all collection) {%- endcomment -%}
+          {%- if is_all and collection.products_count > 6 -%}
+            <div class="shop-bundle-cta">
+              <div class="shop-bundle-inner">
+                <span class="section-eyebrow" style="color:var(--gold);">Bundle &amp; Save</span>
+                <h3 style="font-family:var(--font-serif);font-size:1.5rem;color:var(--cream);margin:0.5rem 0;">Build Your Own Ritual Kit</h3>
+                <p style="font-size:0.875rem;color:rgba(245,239,230,0.7);margin-bottom:1.25rem;">Pick any 3 consumables, get 15% off automatically.</p>
+                <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="btn btn-gold btn-sm">Start Building</a>
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Pagination {%- endcomment -%}
+          {%- if paginate.pages > 1 -%}
+            <div class="pagination">
+              {%- if paginate.previous -%}
+                <a href="{{ paginate.previous.url }}" class="btn btn-ghost btn-sm pagination-prev">
+                  ← Previous
+                </a>
+              {%- endif -%}
+              <div class="pagination-pages">
+                {%- for part in paginate.parts -%}
+                  {%- if part.is_link -%}
+                    <a href="{{ part.url }}" class="pagination-page">{{ part.title }}</a>
+                  {%- else -%}
+                    {%- if part.title == paginate.current_page -%}
+                      <span class="pagination-page active">{{ part.title }}</span>
+                    {%- else -%}
+                      <span class="pagination-ellipsis">…</span>
+                    {%- endif -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+              {%- if paginate.next -%}
+                <a href="{{ paginate.next.url }}" class="btn btn-ghost btn-sm pagination-next">
+                  Next →
+                </a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+        {%- endif -%}
+
+      </div><!-- /.shop-content -->
+    </div><!-- /.shop-layout -->
+  </div><!-- /.container -->
+</section>
+
+<!-- ===== MONTHLY DROP CTA ===== -->
+{%- if is_all -%}
+<section class="shop-drop-cta">
+  <div class="container">
+    <div class="shop-drop-inner">
+      <div class="shop-drop-text">
+        <span class="section-eyebrow" style="color:var(--gold);">Monthly Drops</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--cream);margin:0.5rem 0 1rem;">Never miss a limited release</h2>
+        <p style="color:rgba(245,239,230,0.7);max-width:420px;">Each month we release a single curated kit — limited to 200 pairs. Join the list for early access, 24 hours before public release.</p>
+      </div>
+      <div class="shop-drop-cta-btns">
+        <a href="{{ pages['monthly-drops'].url | default: '/pages/monthly-drops' }}" class="btn btn-gold">Join Drop List</a>
+        <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="btn btn-ghost">See Past Drops</a>
       </div>
     </div>
   </div>
 </section>
+{%- endif -%}
 
-{%- comment -%} Product Grid {%- endcomment -%}
-<section class="shop-grid-section">
-  <div class="container">
-    {%- if collection.products.size == 0 -%}
-      <div class="empty-collection">
-        <div style="font-size:3rem;margin-bottom:1rem;">✨</div>
-        <h2 style="font-family:var(--font-serif);">Nothing here yet</h2>
-        <p style="color:var(--text-muted);margin-bottom:2rem;">New products are on their way.</p>
-        <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary">Browse All Products</a>
-      </div>
-    {%- else -%}
-      <div class="product-grid product-grid-3" id="product-grid">
-        {%- for product in collection.products -%}
-          {% render 'product-card', product: product, show_badge: true, show_quick_add: true %}
-        {%- endfor -%}
-      </div>
-
-      {%- comment -%} Pagination {%- endcomment -%}
-      {%- if paginate.pages > 1 -%}
-        <div class="pagination">
-          {%- if paginate.previous -%}
-            <a href="{{ paginate.previous.url }}" class="btn btn-ghost btn-sm pagination-prev">
-              ← Previous
-            </a>
-          {%- endif -%}
-          <div class="pagination-pages">
-            {%- for part in paginate.parts -%}
-              {%- if part.is_link -%}
-                <a href="{{ part.url }}" class="pagination-page">{{ part.title }}</a>
-              {%- else -%}
-                {%- if part.title == paginate.current_page -%}
-                  <span class="pagination-page active">{{ part.title }}</span>
-                {%- else -%}
-                  <span class="pagination-ellipsis">…</span>
-                {%- endif -%}
-              {%- endif -%}
-            {%- endfor -%}
-          </div>
-          {%- if paginate.next -%}
-            <a href="{{ paginate.next.url }}" class="btn btn-ghost btn-sm pagination-next">
-              Next →
-            </a>
-          {%- endif -%}
-        </div>
-      {%- endif -%}
-    {%- endif -%}
-  </div>
-</section>
+{%- comment -%} Allergen notice for consumables {%- endcomment -%}
+{%- if is_consumables -%}
+<div class="compliance-notice container">
+  <i class="fas fa-info-circle" style="color:var(--gold);margin-right:0.5rem;"></i>
+  <strong>Allergen Information:</strong> Some products contain nuts, dairy, soy and gluten. Full ingredient lists are on each product page. Queries: <a href="mailto:hello@playmate-labs.com">hello@playmate-labs.com</a>
+</div>
+{%- endif -%}
 
 {%- endpaginate -%}
 
-{%- comment -%} Compliance notice for consumables collection {%- endcomment -%}
-{%- if collection.handle == 'consumables' or collection.handle contains 'food' -%}
-<div class="compliance-notice container" style="margin:2rem auto;padding:1.5rem;border:1px solid var(--border-color);border-radius:12px;font-size:0.8125rem;color:var(--text-muted);">
-  <strong>Allergen Information:</strong> Some products in this collection contain nuts, dairy, soy and gluten. Full ingredient lists and allergen information are available on each individual product page. If you have any dietary requirements or allergies, please review the full ingredients list before purchase. For queries contact <a href="mailto:hello@playmate-labs.com">hello@playmate-labs.com</a>.
-</div>
-{%- endif -%}
+<script>
+// Mobile sidebar toggle
+(function() {
+  var toggle = document.getElementById('mobile-filter-toggle');
+  var sidebar = document.getElementById('shop-sidebar');
+  var closeBtn = document.getElementById('sidebar-close');
+  var overlay;
+
+  function openSidebar() {
+    sidebar.classList.add('is-open');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.className = 'sidebar-overlay';
+      overlay.addEventListener('click', closeSidebar);
+      document.body.appendChild(overlay);
+    }
+    overlay.classList.add('is-visible');
+    document.body.style.overflow = 'hidden';
+    toggle.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('is-open');
+    if (overlay) overlay.classList.remove('is-visible');
+    document.body.style.overflow = '';
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+
+  if (toggle) toggle.addEventListener('click', openSidebar);
+  if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+
+  // Sort select redirect
+  var sortSel = document.getElementById('sort-select');
+  if (sortSel) {
+    sortSel.addEventListener('change', function() {
+      var url = this.dataset.sortUrl || window.location.pathname;
+      var params = new URLSearchParams(window.location.search);
+      params.set('sort_by', this.value);
+      window.location = url + '?' + params.toString();
+    });
+  }
+
+  // Mobile chips navigation
+  document.querySelectorAll('#mobile-chips .filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tag = this.dataset.tag;
+      var base = this.dataset.collection || window.location.pathname;
+      window.location = tag ? base + '/' + tag : base;
+    });
+  });
+})();
+</script>

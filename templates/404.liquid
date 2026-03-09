@@ -1,0 +1,79 @@
+{% comment %}
+  PLAYMATE LABS — 404 NOT FOUND PAGE
+  File: templates/404.liquid
+{% endcomment %}
+
+<section class="error-page-hero">
+  <div class="container">
+    <div class="error-page-inner">
+      <div class="error-number">404</div>
+      <span class="section-eyebrow" style="color:var(--gold);">Oops — lost in the ritual</span>
+      <h1 style="font-family:var(--font-serif);font-size:2.5rem;color:var(--cream);margin:1rem 0 1.25rem;">This page doesn't exist.</h1>
+      <p style="color:rgba(245,239,230,0.7);max-width:420px;margin:0 auto 2rem;font-size:1.0625rem;">The page you're looking for may have moved, been renamed or never existed. Let's get you back on track.</p>
+      <div class="error-page-links">
+        <a href="{{ routes.root_url }}" class="btn btn-gold">← Go Home</a>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn-ghost">Browse the Shop</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header" style="text-align:center;margin-bottom:2.5rem;">
+      <h2 style="font-family:var(--font-serif);font-size:1.75rem;">You might be looking for…</h2>
+    </div>
+    <div class="quick-links-grid">
+      <a href="{{ routes.all_products_collection_url }}" class="quick-link-card">
+        <span class="quick-link-icon">🛒</span>
+        <h3>Shop</h3>
+        <p>Browse all products</p>
+      </a>
+      <a href="{{ pages['monthly-drops'].url | default: '/pages/monthly-drops' }}" class="quick-link-card">
+        <span class="quick-link-icon">✦</span>
+        <h3>Monthly Drops</h3>
+        <p>Limited editions</p>
+      </a>
+      <a href="{{ pages['experience'].url | default: '/pages/5-day-experience' }}" class="quick-link-card">
+        <span class="quick-link-icon">🌟</span>
+        <h3>5-Day Experience</h3>
+        <p>Free digital ritual</p>
+      </a>
+      <a href="{{ pages['events'].url | default: '/pages/events' }}" class="quick-link-card">
+        <span class="quick-link-icon">🎭</span>
+        <h3>Events</h3>
+        <p>Live experiences</p>
+      </a>
+      <a href="{{ blogs['journal'].url | default: '/blogs/journal' }}" class="quick-link-card">
+        <span class="quick-link-icon">📖</span>
+        <h3>Journal</h3>
+        <p>Stories &amp; rituals</p>
+      </a>
+      <a href="{{ pages['contact'].url | default: '/pages/contact' }}" class="quick-link-card">
+        <span class="quick-link-icon">💬</span>
+        <h3>Contact</h3>
+        <p>Get in touch</p>
+      </a>
+    </div>
+    <div style="text-align:center;margin-top:3rem;">
+      <form action="{{ routes.search_url }}" method="get" style="max-width:400px;margin:0 auto;display:flex;gap:0.75rem;">
+        <input type="search" name="q" placeholder="Search the site…" class="form-input" style="flex:1;" aria-label="Search">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<style>
+.error-page-hero { background:linear-gradient(135deg,var(--espresso) 0%,var(--burgundy-deep,#2D0A1A) 100%); padding:6rem 0 5rem; text-align:center; }
+.error-page-inner { max-width:600px; margin:0 auto; }
+.error-number { font-family:var(--font-serif); font-size:8rem; font-weight:400; color:rgba(201,169,110,0.15); line-height:1; margin-bottom:-1rem; }
+.error-page-links { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+.quick-links-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; max-width:700px; margin:0 auto; }
+.quick-link-card { background:var(--white); border:1px solid var(--border-color); border-radius:12px; padding:1.75rem 1.5rem; text-decoration:none; color:inherit; text-align:center; transition:all 0.2s; }
+.quick-link-card:hover { border-color:var(--burgundy); transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.07); }
+.quick-link-icon { font-size:2rem; display:block; margin-bottom:0.75rem; }
+.quick-link-card h3 { font-family:var(--font-serif); font-size:1.125rem; margin-bottom:0.25rem; }
+.quick-link-card p { font-size:0.8125rem; color:var(--text-muted); margin:0; }
+@media(max-width:600px) { .quick-links-grid { grid-template-columns:repeat(2,1fr); } .error-number { font-size:5rem; } }
+</style>

@@ -2,1166 +2,591 @@
   {
     "name": "theme_info",
     "theme_name": "Playmate Labs",
-    "theme_version": "2.0.0",
+    "theme_version": "3.0.0",
     "theme_author": "Playmate Labs",
     "theme_documentation_url": "https://playmate-labs.com",
     "theme_support_url": "https://playmate-labs.com/support"
   },
+
   {
-    "name": "Brand",
+    "name": "🎨 Brand Identity",
     "settings": [
-      {
-        "type": "image_picker",
-        "id": "favicon",
-        "label": "Favicon",
-        "info": "Recommend 32×32px PNG"
-      },
-      {
-        "type": "image_picker",
-        "id": "share_image",
-        "label": "Default social share image",
-        "info": "Used when sharing on social media. 1200×630px recommended."
-      },
-      {
-        "type": "text",
-        "id": "brand_tagline",
-        "label": "Brand tagline",
-        "default": "Rewriting how couples do date night."
-      }
+      { "type": "header", "content": "Logo & Favicon" },
+      { "type": "image_picker", "id": "favicon", "label": "Favicon", "info": "Recommend 32×32px PNG" },
+      { "type": "image_picker", "id": "header_logo", "label": "Primary logo (light background)" },
+      { "type": "image_picker", "id": "header_logo_dark", "label": "Logo for dark/transparent header", "info": "Used on homepage dark nav" },
+      { "type": "image_picker", "id": "footer_logo", "label": "Footer logo (optional override)" },
+      { "type": "range", "id": "header_logo_width", "min": 60, "max": 300, "step": 5, "unit": "px", "label": "Logo max width", "default": 140 },
+      { "type": "range", "id": "footer_logo_width", "min": 60, "max": 220, "step": 5, "unit": "px", "label": "Footer logo max width", "default": 120 },
+      { "type": "header", "content": "Brand Voice" },
+      { "type": "text", "id": "brand_tagline", "label": "Short brand tagline (nav & homepage)", "default": "Rewriting how couples do date night." },
+      { "type": "textarea", "id": "brand_description", "label": "Longer brand description (footer & SEO)", "default": "Novel sensory products, monthly drops, immersive events and digital rituals for modern relationships." },
+      { "type": "header", "content": "Social Share" },
+      { "type": "image_picker", "id": "share_image", "label": "Default OG social share image", "info": "1200×630px recommended" },
+      { "type": "text", "id": "share_title_suffix", "label": "Page title suffix", "default": "— Playmate Labs" }
     ]
   },
+
   {
-    "name": "Announcement Bar",
+    "name": "🎨 Colours",
     "settings": [
-      {
-        "type": "checkbox",
-        "id": "announcement_bar_enable",
-        "label": "Show announcement bar",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "announcement_bar_text",
-        "label": "Announcement message",
-        "default": "✦ New Drop: The Velvet Hour — Limited to 200 kits."
-      },
-      {
-        "type": "text",
-        "id": "announcement_bar_link_text",
-        "label": "Link text",
-        "default": "Shop Now →"
-      },
-      {
-        "type": "url",
-        "id": "announcement_bar_link",
-        "label": "Link URL"
-      },
-      {
-        "type": "select",
-        "id": "announcement_bar_style",
-        "label": "Bar style",
-        "options": [
-          { "value": "dark", "label": "Dark (espresso)" },
-          { "value": "burgundy", "label": "Burgundy" },
-          { "value": "gold", "label": "Gold" }
-        ],
-        "default": "dark"
-      }
+      { "type": "header", "content": "Core Brand Palette" },
+      { "type": "color", "id": "color_burgundy", "label": "Burgundy (primary)", "default": "#6B1E3A" },
+      { "type": "color", "id": "color_gold", "label": "Gold (accent)", "default": "#C9A96E" },
+      { "type": "color", "id": "color_cream", "label": "Cream (background)", "default": "#F5EFE6" },
+      { "type": "color", "id": "color_espresso", "label": "Espresso (dark)", "default": "#1A0A06" },
+      { "type": "header", "content": "Extended Palette" },
+      { "type": "color", "id": "color_burgundy_dark", "label": "Burgundy Dark", "default": "#4A1228" },
+      { "type": "color", "id": "color_burgundy_deep", "label": "Burgundy Deep", "default": "#2D0A1A" },
+      { "type": "color", "id": "color_gold_light", "label": "Gold Light", "default": "#D4B483" },
+      { "type": "color", "id": "color_cream_off", "label": "Off-white / Cream Subtle", "default": "#FAF7F2" },
+      { "type": "color", "id": "color_border", "label": "Border / divider colour", "default": "#E8E0D5" },
+      { "type": "header", "content": "Text Colours" },
+      { "type": "color", "id": "color_text_body", "label": "Body text", "default": "#2C1810" },
+      { "type": "color", "id": "color_text_muted", "label": "Muted / secondary text", "default": "#7A6055" },
+      { "type": "color", "id": "color_text_inverse", "label": "Text on dark backgrounds", "default": "#F5EFE6" },
+      { "type": "header", "content": "Button Colours" },
+      { "type": "color", "id": "color_btn_primary_bg", "label": "Primary button background", "default": "#6B1E3A" },
+      { "type": "color", "id": "color_btn_primary_text", "label": "Primary button text", "default": "#F5EFE6" },
+      { "type": "color", "id": "color_btn_gold_bg", "label": "Gold button background", "default": "#C9A96E" },
+      { "type": "color", "id": "color_btn_gold_text", "label": "Gold button text", "default": "#1A0A06" },
+      { "type": "header", "content": "Section Backgrounds" },
+      { "type": "color", "id": "color_bg_primary", "label": "Main page background", "default": "#FFFFFF" },
+      { "type": "color", "id": "color_bg_dark", "label": "Dark section background", "default": "#1A0A06" },
+      { "type": "color", "id": "color_bg_warm", "label": "Warm section background", "default": "#FAF7F2" }
     ]
   },
+
   {
-    "name": "Header",
+    "name": "✍️ Typography",
     "settings": [
-      {
-        "type": "image_picker",
-        "id": "header_logo",
-        "label": "Logo image"
-      },
-      {
-        "type": "range",
-        "id": "header_logo_width",
-        "min": 50,
-        "max": 250,
-        "step": 5,
-        "unit": "px",
-        "label": "Logo width",
-        "default": 120
-      },
-      {
-        "type": "checkbox",
-        "id": "header_dark_style",
-        "label": "Use dark (transparent) nav on homepage",
-        "default": true
-      },
-      {
-        "type": "link_list",
-        "id": "header_menu",
-        "label": "Desktop navigation menu",
-        "default": "main-menu"
-      },
-      {
-        "type": "link_list",
-        "id": "header_mobile_menu",
-        "label": "Mobile navigation menu",
-        "default": "main-menu"
-      },
-      {
-        "type": "checkbox",
-        "id": "header_show_experience_cta",
-        "label": "Show 'Unlock Free Experience' CTA button",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "header_experience_cta_text",
-        "label": "Experience CTA button text",
-        "default": "Unlock Free Experience"
-      },
-      {
-        "type": "url",
-        "id": "header_experience_cta_url",
-        "label": "Experience CTA URL"
-      },
-      {
-        "type": "checkbox",
-        "id": "header_show_search",
-        "label": "Show search icon",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "header_sticky",
-        "label": "Sticky header on scroll",
-        "default": true
-      }
+      { "type": "header", "content": "Font Families" },
+      { "type": "font_picker", "id": "font_heading", "label": "Heading font", "default": "playfair_display_n4" },
+      { "type": "font_picker", "id": "font_body", "label": "Body font", "default": "inter_n4" },
+      { "type": "font_picker", "id": "font_accent", "label": "Accent / italic font", "default": "cormorant_garamond_n3" },
+      { "type": "header", "content": "Scale & Sizing" },
+      { "type": "range", "id": "font_size_base", "min": 14, "max": 20, "step": 1, "unit": "px", "label": "Base body font size", "default": 16 },
+      { "type": "range", "id": "font_size_h1", "min": 2.0, "max": 5.0, "step": 0.25, "unit": "rem", "label": "H1 size", "default": 3.5 },
+      { "type": "range", "id": "font_size_h2", "min": 1.5, "max": 3.5, "step": 0.25, "unit": "rem", "label": "H2 size", "default": 2.25 },
+      { "type": "range", "id": "font_size_h3", "min": 1.0, "max": 2.5, "step": 0.125, "unit": "rem", "label": "H3 size", "default": 1.5 },
+      { "type": "range", "id": "line_height_body", "min": 1.4, "max": 2.0, "step": 0.05, "unit": "", "label": "Body line height", "default": 1.6 },
+      { "type": "range", "id": "letter_spacing_heading", "min": -0.05, "max": 0.15, "step": 0.01, "unit": "em", "label": "Heading letter spacing", "default": -0.02 },
+      { "type": "range", "id": "letter_spacing_eyebrow", "min": 0.05, "max": 0.3, "step": 0.01, "unit": "em", "label": "Eyebrow letter spacing", "default": 0.12 },
+      { "type": "header", "content": "Weights" },
+      { "type": "select", "id": "font_weight_heading", "label": "Heading weight", "options": [{"value":"300","label":"Light 300"},{"value":"400","label":"Regular 400"},{"value":"500","label":"Medium 500"},{"value":"600","label":"Semibold 600"},{"value":"700","label":"Bold 700"}], "default": "400" },
+      { "type": "select", "id": "font_weight_body", "label": "Body weight", "options": [{"value":"300","label":"Light 300"},{"value":"400","label":"Regular 400"},{"value":"500","label":"Medium 500"}], "default": "400" }
     ]
   },
+
   {
-    "name": "Footer",
+    "name": "📢 Announcement Bar",
     "settings": [
-      {
-        "type": "image_picker",
-        "id": "footer_logo",
-        "label": "Footer logo (optional)"
-      },
-      {
-        "type": "textarea",
-        "id": "footer_tagline",
-        "label": "Brand tagline in footer",
-        "default": "Rewriting how couples do date night. Novel sensory products, monthly drops, immersive events and digital rituals for modern relationships."
-      },
-      {
-        "type": "header",
-        "content": "Navigation Columns"
-      },
-      {
-        "type": "text",
-        "id": "footer_heading_1",
-        "label": "Column 1 heading",
-        "default": "Shop"
-      },
-      {
-        "type": "link_list",
-        "id": "footer_menu_1",
-        "label": "Column 1 menu",
-        "default": "footer-shop"
-      },
-      {
-        "type": "text",
-        "id": "footer_heading_2",
-        "label": "Column 2 heading",
-        "default": "Explore"
-      },
-      {
-        "type": "link_list",
-        "id": "footer_menu_2",
-        "label": "Column 2 menu",
-        "default": "footer-explore"
-      },
-      {
-        "type": "text",
-        "id": "footer_heading_3",
-        "label": "Column 3 heading",
-        "default": "Help"
-      },
-      {
-        "type": "link_list",
-        "id": "footer_menu_3",
-        "label": "Column 3 menu",
-        "default": "footer-help"
-      },
-      {
-        "type": "header",
-        "content": "Newsletter"
-      },
-      {
-        "type": "checkbox",
-        "id": "show_footer_email",
-        "label": "Show newsletter signup",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "footer_newsletter_heading",
-        "label": "Newsletter heading",
-        "default": "Stay in the loop"
-      },
-      {
-        "type": "text",
-        "id": "footer_newsletter_subtext",
-        "label": "Newsletter subtext",
-        "default": "Early access to drops, events and rituals."
-      },
-      {
-        "type": "text",
-        "id": "footer_newsletter_btn",
-        "label": "Subscribe button text",
-        "default": "Subscribe"
-      },
-      {
-        "type": "header",
-        "content": "Bottom Bar"
-      },
-      {
-        "type": "link_list",
-        "id": "footer_bottom_menu",
-        "label": "Bottom legal links menu",
-        "info": "Leave blank to use default Privacy, T&Cs, Cookies links"
-      }
+      { "type": "checkbox", "id": "announcement_bar_enable", "label": "Show announcement bar", "default": true },
+      { "type": "select", "id": "announcement_bar_style", "label": "Bar style", "options": [{"value":"dark","label":"Dark espresso"},{"value":"burgundy","label":"Burgundy"},{"value":"gold","label":"Gold"},{"value":"cream","label":"Cream"}], "default": "dark" },
+      { "type": "text", "id": "announcement_bar_text", "label": "Announcement message", "default": "✦ New Drop: The Velvet Hour — Limited to 200 kits." },
+      { "type": "text", "id": "announcement_bar_link_text", "label": "Link text", "default": "Shop Now →" },
+      { "type": "url", "id": "announcement_bar_link", "label": "Link URL" },
+      { "type": "header", "content": "Rotating Messages (up to 3)" },
+      { "type": "checkbox", "id": "announcement_rotate", "label": "Rotate multiple messages", "default": false },
+      { "type": "text", "id": "announcement_bar_text_2", "label": "Message 2 text" },
+      { "type": "url", "id": "announcement_bar_link_2", "label": "Message 2 link" },
+      { "type": "text", "id": "announcement_bar_text_3", "label": "Message 3 text" },
+      { "type": "url", "id": "announcement_bar_link_3", "label": "Message 3 link" },
+      { "type": "range", "id": "announcement_rotate_interval", "min": 3, "max": 10, "step": 1, "unit": "s", "label": "Rotation interval", "default": 5 },
+      { "type": "header", "content": "Countdown Timer" },
+      { "type": "checkbox", "id": "announcement_show_countdown", "label": "Show countdown timer", "default": false },
+      { "type": "text", "id": "announcement_countdown_end", "label": "Countdown end date (YYYY-MM-DD HH:MM)", "info": "Leave blank to hide" },
+      { "type": "text", "id": "announcement_countdown_label", "label": "Countdown label", "default": "Drop ends in:" }
     ]
   },
+
   {
-    "name": "Cart",
+    "name": "🧭 Header & Navigation",
     "settings": [
-      {
-        "type": "checkbox",
-        "id": "cart_cross_sell_enable",
-        "label": "Show cross-sell products in cart drawer",
-        "default": true,
-        "info": "Shows products from the 'ritual-add-ons' collection"
-      },
-      {
-        "type": "text",
-        "id": "cart_cross_sell_heading",
-        "label": "Cross-sell heading",
-        "default": "You might also love"
-      },
-      {
-        "type": "text",
-        "id": "cart_free_shipping_threshold",
-        "label": "Free shipping threshold (£)",
-        "default": "60",
-        "info": "Shows free shipping progress bar in cart"
-      },
-      {
-        "type": "checkbox",
-        "id": "cart_show_shipping_bar",
-        "label": "Show free shipping progress bar",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "cart_empty_heading",
-        "label": "Empty cart heading",
-        "default": "Your cart is empty"
-      },
-      {
-        "type": "text",
-        "id": "cart_empty_subtext",
-        "label": "Empty cart subtext",
-        "default": "Looks like you haven't added anything yet."
-      }
+      { "type": "header", "content": "Layout & Behaviour" },
+      { "type": "select", "id": "header_layout", "label": "Header layout", "options": [{"value":"logo-center","label":"Logo centred"},{"value":"logo-left","label":"Logo left"},{"value":"logo-left-compact","label":"Logo left (compact)"}], "default": "logo-left" },
+      { "type": "checkbox", "id": "header_sticky", "label": "Sticky header on scroll", "default": true },
+      { "type": "checkbox", "id": "header_dark_style", "label": "Transparent dark nav on homepage", "default": true },
+      { "type": "range", "id": "header_height", "min": 56, "max": 100, "step": 4, "unit": "px", "label": "Header height", "default": 72 },
+      { "type": "header", "content": "Menus" },
+      { "type": "link_list", "id": "header_menu", "label": "Desktop navigation menu", "default": "main-menu" },
+      { "type": "link_list", "id": "header_mobile_menu", "label": "Mobile navigation menu", "default": "main-menu" },
+      { "type": "header", "content": "Nav Extras" },
+      { "type": "checkbox", "id": "header_show_search", "label": "Show search icon", "default": true },
+      { "type": "checkbox", "id": "header_show_wishlist", "label": "Show wishlist icon", "default": false },
+      { "type": "checkbox", "id": "header_show_account", "label": "Show account icon", "default": true },
+      { "type": "checkbox", "id": "header_show_experience_cta", "label": "Show CTA button in header", "default": true },
+      { "type": "text", "id": "header_experience_cta_text", "label": "Header CTA button text", "default": "Unlock Free Experience" },
+      { "type": "url", "id": "header_experience_cta_url", "label": "Header CTA button URL" },
+      { "type": "header", "content": "Mega Menu" },
+      { "type": "checkbox", "id": "header_mega_menu_enable", "label": "Enable mega menu dropdown", "default": false },
+      { "type": "text", "id": "header_mega_menu_trigger", "label": "Nav item that triggers mega menu", "default": "Shop", "info": "Exact text of the nav link" },
+      { "type": "image_picker", "id": "header_mega_menu_image", "label": "Mega menu featured image" },
+      { "type": "text", "id": "header_mega_menu_image_title", "label": "Mega menu image title", "default": "The Velvet Hour" },
+      { "type": "url", "id": "header_mega_menu_image_url", "label": "Mega menu image link" }
     ]
   },
+
   {
-    "name": "Newsletter Popup",
+    "name": "🦶 Footer",
     "settings": [
-      {
-        "type": "checkbox",
-        "id": "newsletter_popup_enable",
-        "label": "Enable newsletter popup",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "newsletter_popup_heading",
-        "label": "Popup heading",
-        "default": "Unlock Your Free 5-Day Sensory Experience"
-      },
-      {
-        "type": "textarea",
-        "id": "newsletter_popup_subtext",
-        "label": "Popup subtext",
-        "default": "Plus early access to drops, exclusive events and rituals designed for modern relationships."
-      },
-      {
-        "type": "text",
-        "id": "newsletter_popup_cta",
-        "label": "CTA button text",
-        "default": "Unlock Free Experience"
-      },
-      {
-        "type": "range",
-        "id": "newsletter_popup_delay",
-        "min": 3,
-        "max": 60,
-        "step": 1,
-        "default": 8,
-        "unit": "s",
-        "label": "Delay before showing popup"
-      },
-      {
-        "type": "checkbox",
-        "id": "newsletter_popup_show_phone",
-        "label": "Show phone field",
-        "default": false
-      },
-      {
-        "type": "image_picker",
-        "id": "newsletter_popup_image",
-        "label": "Popup background image (optional)"
-      }
+      { "type": "header", "content": "Layout" },
+      { "type": "select", "id": "footer_layout", "label": "Footer layout", "options": [{"value":"4col","label":"4 columns"},{"value":"3col","label":"3 columns + newsletter"},{"value":"minimal","label":"Minimal (single row)"}], "default": "4col" },
+      { "type": "header", "content": "Brand Column" },
+      { "type": "textarea", "id": "footer_tagline", "label": "Footer brand tagline", "default": "Rewriting how couples do date night. Novel sensory products, monthly drops, immersive events and digital rituals for modern relationships." },
+      { "type": "header", "content": "Navigation Columns" },
+      { "type": "text", "id": "footer_heading_1", "label": "Column 1 heading", "default": "Shop" },
+      { "type": "link_list", "id": "footer_menu_1", "label": "Column 1 menu", "default": "footer-shop" },
+      { "type": "text", "id": "footer_heading_2", "label": "Column 2 heading", "default": "Explore" },
+      { "type": "link_list", "id": "footer_menu_2", "label": "Column 2 menu", "default": "footer-explore" },
+      { "type": "text", "id": "footer_heading_3", "label": "Column 3 heading", "default": "Help" },
+      { "type": "link_list", "id": "footer_menu_3", "label": "Column 3 menu", "default": "footer-help" },
+      { "type": "header", "content": "Newsletter Signup" },
+      { "type": "checkbox", "id": "show_footer_email", "label": "Show newsletter signup in footer", "default": true },
+      { "type": "text", "id": "footer_newsletter_heading", "label": "Newsletter heading", "default": "Stay in the loop" },
+      { "type": "text", "id": "footer_newsletter_subtext", "label": "Newsletter subtext", "default": "Early access to drops, events and rituals." },
+      { "type": "text", "id": "footer_newsletter_btn", "label": "Subscribe button text", "default": "Subscribe" },
+      { "type": "text", "id": "footer_newsletter_placeholder", "label": "Email input placeholder", "default": "Your email address" },
+      { "type": "header", "content": "Trust Badges" },
+      { "type": "checkbox", "id": "footer_show_trust_badges", "label": "Show payment / trust icons", "default": true },
+      { "type": "select", "id": "footer_trust_badge_style", "label": "Trust badge style", "options": [{"value":"payments","label":"Payment icons"},{"value":"certifications","label":"Certifications"},{"value":"both","label":"Both"}], "default": "payments" },
+      { "type": "header", "content": "Bottom Bar" },
+      { "type": "link_list", "id": "footer_bottom_menu", "label": "Legal links menu", "info": "Privacy, T&Cs, Cookies etc." },
+      { "type": "text", "id": "footer_copyright_text", "label": "Copyright text", "default": "© 2025 Playmate Labs Ltd. All rights reserved." },
+      { "type": "checkbox", "id": "footer_show_country_selector", "label": "Show country/currency selector", "default": false }
     ]
   },
+
   {
-    "name": "Social Media",
+    "name": "🛒 Cart & Checkout",
     "settings": [
-      {
-        "type": "text",
-        "id": "social_instagram_link",
-        "label": "Instagram URL"
-      },
-      {
-        "type": "text",
-        "id": "social_tiktok_link",
-        "label": "TikTok URL"
-      },
-      {
-        "type": "text",
-        "id": "social_pinterest_link",
-        "label": "Pinterest URL"
-      },
-      {
-        "type": "text",
-        "id": "social_spotify_link",
-        "label": "Spotify URL"
-      },
-      {
-        "type": "text",
-        "id": "social_youtube_link",
-        "label": "YouTube URL"
-      }
+      { "type": "header", "content": "Cart Drawer" },
+      { "type": "select", "id": "cart_type", "label": "Cart type", "options": [{"value":"drawer","label":"Side drawer"},{"value":"page","label":"Full page"},{"value":"modal","label":"Modal popup"}], "default": "drawer" },
+      { "type": "checkbox", "id": "cart_show_shipping_bar", "label": "Show free shipping progress bar", "default": true },
+      { "type": "text", "id": "cart_free_shipping_threshold", "label": "Free shipping threshold (£)", "default": "60" },
+      { "type": "text", "id": "cart_free_shipping_message", "label": "Progress bar message", "default": "Add £{amount} more for free shipping!" },
+      { "type": "text", "id": "cart_free_shipping_achieved", "label": "Message when free shipping unlocked", "default": "🎉 You've unlocked free shipping!" },
+      { "type": "header", "content": "Cross-Sell / Upsell" },
+      { "type": "checkbox", "id": "cart_cross_sell_enable", "label": "Show cross-sell section", "default": true },
+      { "type": "text", "id": "cart_cross_sell_heading", "label": "Cross-sell heading", "default": "You might also love" },
+      { "type": "collection", "id": "cart_cross_sell_collection", "label": "Cross-sell collection", "info": "Products shown as add-ons in cart" },
+      { "type": "range", "id": "cart_cross_sell_limit", "min": 2, "max": 6, "step": 1, "label": "Max cross-sell items shown", "default": 3 },
+      { "type": "header", "content": "Cart Behaviour" },
+      { "type": "checkbox", "id": "cart_auto_open_drawer", "label": "Auto-open cart on add to cart", "default": true },
+      { "type": "checkbox", "id": "cart_show_quantity_stepper", "label": "Show quantity +/- stepper", "default": true },
+      { "type": "checkbox", "id": "cart_show_product_image", "label": "Show product image in cart", "default": true },
+      { "type": "text", "id": "cart_empty_heading", "label": "Empty cart heading", "default": "Your cart is empty" },
+      { "type": "text", "id": "cart_empty_subtext", "label": "Empty cart subtext", "default": "Looks like you haven't added anything yet." },
+      { "type": "url", "id": "cart_empty_cta_url", "label": "Empty cart CTA URL" },
+      { "type": "text", "id": "cart_empty_cta_text", "label": "Empty cart CTA text", "default": "Browse the shop" },
+      { "type": "header", "content": "Trust & Reassurance" },
+      { "type": "checkbox", "id": "cart_show_trust_icons", "label": "Show trust icons below cart total", "default": true },
+      { "type": "text", "id": "cart_trust_text_1", "label": "Trust item 1", "default": "🔒 Secure checkout" },
+      { "type": "text", "id": "cart_trust_text_2", "label": "Trust item 2", "default": "📦 Free delivery over £60" },
+      { "type": "text", "id": "cart_trust_text_3", "label": "Trust item 3", "default": "↩ Easy 14-day returns" }
     ]
   },
+
   {
-    "name": "Colours",
+    "name": "🔔 Newsletter Popup",
     "settings": [
-      {
-        "type": "color",
-        "id": "color_burgundy",
-        "label": "Primary (Burgundy)",
-        "default": "#6B1E3A",
-        "info": "Main brand colour — used for CTAs and accents"
-      },
-      {
-        "type": "color",
-        "id": "color_gold",
-        "label": "Accent (Gold)",
-        "default": "#C9A96E",
-        "info": "Premium accent colour — used for highlights"
-      },
-      {
-        "type": "color",
-        "id": "color_cream",
-        "label": "Light (Cream)",
-        "default": "#F5EFE6",
-        "info": "Background and light sections"
-      },
-      {
-        "type": "color",
-        "id": "color_espresso",
-        "label": "Dark (Espresso)",
-        "default": "#1A0A06",
-        "info": "Dark sections and footers"
-      },
-      {
-        "type": "color",
-        "id": "color_ivory",
-        "label": "Ivory (section background)",
-        "default": "#FAF7F2"
-      },
-      {
-        "type": "color",
-        "id": "color_text",
-        "label": "Body text colour",
-        "default": "#2C1810"
-      }
+      { "type": "checkbox", "id": "popup_enable", "label": "Enable newsletter popup", "default": true },
+      { "type": "select", "id": "popup_style", "label": "Popup style", "options": [{"value":"full","label":"Full-screen overlay"},{"value":"card","label":"Centred card"},{"value":"slide-in","label":"Slide-in bottom right"}], "default": "card" },
+      { "type": "image_picker", "id": "popup_image", "label": "Popup background / side image" },
+      { "type": "text", "id": "popup_heading", "label": "Heading", "default": "Unlock Your Free 5-Day Sensory Experience" },
+      { "type": "textarea", "id": "popup_subtext", "label": "Subtext", "default": "Plus early access to drops, exclusive events and rituals designed for modern relationships." },
+      { "type": "text", "id": "popup_cta_text", "label": "Subscribe button text", "default": "Unlock Free Experience" },
+      { "type": "text", "id": "popup_decline_text", "label": "Decline link text", "default": "No thanks, I'll miss out" },
+      { "type": "header", "content": "Timing & Conditions" },
+      { "type": "range", "id": "popup_delay", "min": 0, "max": 60, "step": 1, "unit": "s", "label": "Delay before showing", "default": 8 },
+      { "type": "checkbox", "id": "popup_exit_intent", "label": "Also trigger on exit intent", "default": true },
+      { "type": "range", "id": "popup_scroll_trigger", "min": 0, "max": 100, "step": 5, "unit": "%", "label": "Show after % page scrolled", "default": 0, "info": "0 = disable scroll trigger" },
+      { "type": "range", "id": "popup_session_suppress", "min": 1, "max": 90, "step": 1, "unit": "days", "label": "Suppress after first view (days)", "default": 7 },
+      { "type": "checkbox", "id": "popup_hide_for_customers", "label": "Hide for logged-in customers", "default": true }
     ]
   },
+
   {
-    "name": "Typography",
+    "name": "📱 Social Media",
     "settings": [
-      {
-        "type": "font_picker",
-        "id": "type_header_font",
-        "label": "Heading font",
-        "default": "playfair_display_n4"
-      },
-      {
-        "type": "font_picker",
-        "id": "type_body_font",
-        "label": "Body font",
-        "default": "inter_n4"
-      },
-      {
-        "type": "range",
-        "id": "type_body_size",
-        "min": 14,
-        "max": 20,
-        "step": 1,
-        "unit": "px",
-        "label": "Base body font size",
-        "default": 16
-      },
-      {
-        "type": "range",
-        "id": "type_heading_size_scale",
-        "min": 80,
-        "max": 130,
-        "step": 5,
-        "unit": "%",
-        "label": "Heading size scale",
-        "default": 100,
-        "info": "Scale all headings up or down proportionally"
-      }
+      { "type": "header", "content": "Social Profiles" },
+      { "type": "text", "id": "social_instagram", "label": "Instagram URL" },
+      { "type": "text", "id": "social_tiktok", "label": "TikTok URL" },
+      { "type": "text", "id": "social_pinterest", "label": "Pinterest URL" },
+      { "type": "text", "id": "social_spotify", "label": "Spotify URL" },
+      { "type": "text", "id": "social_youtube", "label": "YouTube URL" },
+      { "type": "text", "id": "social_facebook", "label": "Facebook URL" },
+      { "type": "header", "content": "Social Feed" },
+      { "type": "checkbox", "id": "social_feed_enable", "label": "Show Instagram feed on homepage", "default": false },
+      { "type": "text", "id": "social_feed_heading", "label": "Feed section heading", "default": "Join the community" },
+      { "type": "text", "id": "social_feed_handle", "label": "Instagram handle (without @)", "default": "playmate.labs" },
+      { "type": "range", "id": "social_feed_posts", "min": 4, "max": 12, "step": 2, "label": "Posts to display", "default": 6 }
     ]
   },
+
   {
-    "name": "Product Grid",
+    "name": "🏠 Homepage — Hero",
     "settings": [
-      {
-        "type": "select",
-        "id": "products_per_row",
-        "label": "Products per row (desktop)",
-        "options": [
-          { "value": "3", "label": "3" },
-          { "value": "4", "label": "4" }
-        ],
-        "default": "3"
-      },
-      {
-        "type": "select",
-        "id": "products_per_row_mobile",
-        "label": "Products per row (mobile)",
-        "options": [
-          { "value": "1", "label": "1" },
-          { "value": "2", "label": "2" }
-        ],
-        "default": "2"
-      },
-      {
-        "type": "checkbox",
-        "id": "quick_add_enable",
-        "label": "Enable quick-add button on product cards",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "product_card_show_desc",
-        "label": "Show short description on product cards",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "product_card_show_vendor",
-        "label": "Show vendor/brand on product cards",
-        "default": false
-      },
-      {
-        "type": "select",
-        "id": "product_card_image_ratio",
-        "label": "Product card image ratio",
-        "options": [
-          { "value": "square", "label": "Square (1:1)" },
-          { "value": "portrait", "label": "Portrait (3:4)" },
-          { "value": "landscape", "label": "Landscape (4:3)" }
-        ],
-        "default": "portrait"
-      }
+      { "type": "header", "content": "Layout" },
+      { "type": "select", "id": "home_hero_layout", "label": "Hero layout", "options": [{"value":"full-screen","label":"Full screen"},{"value":"split","label":"Split (text + image)"},{"value":"tall","label":"Tall banner"}], "default": "full-screen" },
+      { "type": "select", "id": "home_hero_text_position", "label": "Text alignment", "options": [{"value":"center","label":"Centre"},{"value":"left","label":"Left"},{"value":"right","label":"Right"}], "default": "center" },
+      { "type": "header", "content": "Content" },
+      { "type": "text", "id": "home_hero_eyebrow", "label": "Eyebrow text", "default": "Rewriting how couples do date night." },
+      { "type": "textarea", "id": "home_hero_heading", "label": "Main heading", "default": "Sensory products & rituals for modern couples." },
+      { "type": "textarea", "id": "home_hero_subtext", "label": "Supporting text" },
+      { "type": "text", "id": "home_hero_cta_primary", "label": "Primary CTA text", "default": "Shop Now" },
+      { "type": "url", "id": "home_hero_cta_primary_url", "label": "Primary CTA URL" },
+      { "type": "text", "id": "home_hero_cta_secondary", "label": "Secondary CTA text", "default": "Unlock Free Experience" },
+      { "type": "url", "id": "home_hero_cta_secondary_url", "label": "Secondary CTA URL" },
+      { "type": "header", "content": "Background" },
+      { "type": "image_picker", "id": "home_hero_image", "label": "Hero background image" },
+      { "type": "image_picker", "id": "home_hero_image_mobile", "label": "Mobile hero image (optional override)" },
+      { "type": "video_url", "id": "home_hero_video", "label": "Hero background video URL", "accept": ["youtube","vimeo"] },
+      { "type": "range", "id": "home_hero_overlay_opacity", "min": 0, "max": 80, "step": 5, "unit": "%", "label": "Background overlay opacity", "default": 40 },
+      { "type": "color", "id": "home_hero_overlay_color", "label": "Overlay colour", "default": "#1A0A06" },
+      { "type": "header", "content": "Animation" },
+      { "type": "select", "id": "home_hero_animation", "label": "Text entrance animation", "options": [{"value":"none","label":"None"},{"value":"fade-up","label":"Fade up"},{"value":"fade-in","label":"Fade in"},{"value":"typewriter","label":"Typewriter"}], "default": "fade-up" },
+      { "type": "range", "id": "home_hero_min_height", "min": 400, "max": 100, "step": 50, "unit": "px", "label": "Minimum hero height (desktop)", "default": 700, "info": "Use 0 for full viewport height" }
     ]
   },
+
   {
-    "name": "Journal",
+    "name": "🏠 Homepage — Featured Drop",
     "settings": [
-      {
-        "type": "text",
-        "id": "journal_eyebrow",
-        "label": "Journal eyebrow label",
-        "default": "The Playmate Journal"
-      },
-      {
-        "type": "text",
-        "id": "journal_heading",
-        "label": "Journal page heading",
-        "default": "Culture, rituals & relationship experiments."
-      },
-      {
-        "type": "textarea",
-        "id": "journal_subtext",
-        "label": "Journal page subtext",
-        "default": "Editorial content for modern couples — date ideas, sensory rituals, event recaps and the cultural conversation around modern relationships."
-      },
-      {
-        "type": "checkbox",
-        "id": "journal_show_newsletter",
-        "label": "Show newsletter signup at bottom of journal",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "journal_newsletter_eyebrow",
-        "label": "Newsletter eyebrow",
-        "default": "Stay in the culture"
-      },
-      {
-        "type": "text",
-        "id": "journal_newsletter_heading",
-        "label": "Newsletter heading",
-        "default": "Get new stories delivered to your inbox"
-      },
-      {
-        "type": "text",
-        "id": "journal_newsletter_subtext",
-        "label": "Newsletter subtext",
-        "default": "Weekly reads on modern relationships, rituals and sensory date nights."
-      },
-      {
-        "type": "text",
-        "id": "journal_newsletter_cta",
-        "label": "Subscribe button text",
-        "default": "Subscribe"
-      }
+      { "type": "checkbox", "id": "home_drop_enable", "label": "Show featured drop section", "default": true },
+      { "type": "text", "id": "home_drop_eyebrow", "label": "Eyebrow", "default": "Latest Monthly Drop" },
+      { "type": "text", "id": "home_drop_title", "label": "Drop name", "default": "The Velvet Hour" },
+      { "type": "textarea", "id": "home_drop_description", "label": "Drop description", "default": "An evening of sensory exploration. Crafted for two — deep connection, slow pleasure, perfect presence." },
+      { "type": "product", "id": "home_drop_product", "label": "Featured product" },
+      { "type": "image_picker", "id": "home_drop_image", "label": "Drop hero image" },
+      { "type": "text", "id": "home_drop_stock_label", "label": "Stock scarcity label", "default": "Limited — 47 kits remaining" },
+      { "type": "range", "id": "home_drop_stock_count", "min": 0, "max": 500, "step": 1, "label": "Available quantity (for display)", "default": 47 },
+      { "type": "checkbox", "id": "home_drop_show_countdown", "label": "Show countdown timer", "default": true },
+      { "type": "text", "id": "home_drop_countdown_end", "label": "Drop expiry (YYYY-MM-DD HH:MM)" }
     ]
   },
+
   {
-    "name": "Events",
+    "name": "🏠 Homepage — Product Grid",
     "settings": [
-      {
-        "type": "text",
-        "id": "events_eyebrow",
-        "label": "Events page eyebrow",
-        "default": "Live Experiences"
-      },
-      {
-        "type": "text",
-        "id": "events_heading",
-        "label": "Events page heading",
-        "default": "IRL Experiences for Modern Couples"
-      },
-      {
-        "type": "textarea",
-        "id": "events_subtext",
-        "label": "Events page subtext",
-        "default": "Intimate sensory evenings, couples mixers and pop-up experiences across the UK."
-      }
+      { "type": "checkbox", "id": "home_grid_enable", "label": "Show homepage product grid", "default": true },
+      { "type": "text", "id": "home_grid_eyebrow", "label": "Eyebrow text", "default": "The Collection" },
+      { "type": "text", "id": "home_grid_heading", "label": "Section heading", "default": "Thoughtfully made for two." },
+      { "type": "collection", "id": "home_grid_collection", "label": "Collection to display" },
+      { "type": "range", "id": "home_grid_product_count", "min": 4, "max": 12, "step": 2, "label": "Number of products", "default": 8 },
+      { "type": "select", "id": "home_grid_columns", "label": "Columns per row (desktop)", "options": [{"value":"3","label":"3"},{"value":"4","label":"4"}], "default": "4" },
+      { "type": "checkbox", "id": "home_grid_show_view_all", "label": "Show 'View All' link", "default": true }
     ]
   },
+
   {
-    "name": "Event Detail Pages",
+    "name": "🛍️ Shop / Collection Page",
     "settings": [
-      {
-        "type": "text",
-        "id": "event_detail_default_type",
-        "label": "Default event type badge",
-        "default": "Sensory Date Night"
-      },
-      {
-        "type": "text",
-        "id": "event_detail_availability_badge",
-        "label": "Availability badge text",
-        "default": "Selling Fast"
-      },
-      {
-        "type": "text",
-        "id": "event_detail_price",
-        "label": "Default event price (fallback)",
-        "default": "£85"
-      },
-      {
-        "type": "text",
-        "id": "event_detail_price_includes",
-        "label": "Price includes note",
-        "default": "Includes welcome drinks & all materials"
-      },
-      {
-        "type": "text",
-        "id": "event_detail_capacity_text",
-        "label": "Capacity description",
-        "default": "Limited to 40 couples (80 guests)"
-      },
-      {
-        "type": "checkbox",
-        "id": "event_detail_show_itinerary",
-        "label": "Show event itinerary section",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "event_itinerary_heading",
-        "label": "Itinerary section heading",
-        "default": "The Evening Itinerary"
-      },
-      {
-        "type": "text",
-        "id": "event_itinerary_time_1",
-        "label": "Itinerary item 1 — time",
-        "default": "7:00pm"
-      },
-      {
-        "type": "text",
-        "id": "event_itinerary_item_1",
-        "label": "Itinerary item 1 — description",
-        "default": "Doors open — welcome drinks on arrival"
-      },
-      {
-        "type": "text",
-        "id": "event_itinerary_time_2",
-        "label": "Itinerary item 2 — time",
-        "default": "7:30pm"
-      },
-      {
-        "type": "text",
-        "id": "event_itinerary_item_2",
-        "label": "Itinerary item 2 — description",
-        "default": "Guided sensory tasting ceremony begins"
-      },
-      {
-        "type": "text",
-        "id": "event_itinerary_time_3",
-        "label": "Itinerary item 3 — time",
-        "default": "8:30pm"
-      },
-      {
-        "type": "text",
-        "id": "event_itinerary_item_3",
-        "label": "Itinerary item 3 — description",
-        "default": "The Connection Game — couples tournament"
-      },
-      {
-        "type": "text",
-        "id": "event_itinerary_time_4",
-        "label": "Itinerary item 4 — time",
-        "default": "9:15pm"
-      },
-      {
-        "type": "text",
-        "id": "event_itinerary_item_4",
-        "label": "Itinerary item 4 — description",
-        "default": "Ambient live performance & candlelit conversation"
-      },
-      {
-        "type": "text",
-        "id": "event_itinerary_time_5",
-        "label": "Itinerary item 5 — time",
-        "default": "10:30pm"
-      },
-      {
-        "type": "text",
-        "id": "event_itinerary_item_5",
-        "label": "Itinerary item 5 — description",
-        "default": "Doors close"
-      },
-      {
-        "type": "header",
-        "content": "RSVP Form"
-      },
-      {
-        "type": "text",
-        "id": "event_rsvp_heading",
-        "label": "RSVP form heading",
-        "default": "Reserve Your Spot"
-      },
-      {
-        "type": "text",
-        "id": "event_rsvp_subtext",
-        "label": "RSVP form subtext",
-        "default": "Secure your place for this intimate event. Spaces are limited."
-      },
-      {
-        "type": "text",
-        "id": "event_rsvp_cta",
-        "label": "RSVP submit button text",
-        "default": "Reserve My Spot"
-      },
-      {
-        "type": "text",
-        "id": "event_rsvp_success_heading",
-        "label": "RSVP success heading",
-        "default": "You're on the list!"
-      },
-      {
-        "type": "text",
-        "id": "event_rsvp_success_text",
-        "label": "RSVP success message",
-        "default": "We'll be in touch with confirmation and venue details."
-      },
-      {
-        "type": "text",
-        "id": "event_rsvp_disclaimer",
-        "label": "RSVP disclaimer text",
-        "default": "No payment required now. We will contact you with payment details."
-      },
-      {
-        "type": "checkbox",
-        "id": "event_rsvp_show_dietary",
-        "label": "Show dietary requirements field",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "event_waitlist_cta",
-        "label": "Waitlist button text",
-        "default": "Join Waitlist"
-      },
-      {
-        "type": "header",
-        "content": "Testimonials"
-      },
-      {
-        "type": "checkbox",
-        "id": "event_detail_show_testimonials",
-        "label": "Show testimonials on event detail pages",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "event_testimonials_eyebrow",
-        "label": "Testimonials eyebrow",
-        "default": "From past events"
-      },
-      {
-        "type": "text",
-        "id": "event_testimonials_heading",
-        "label": "Testimonials heading",
-        "default": "What couples say"
-      },
-      {
-        "type": "textarea",
-        "id": "event_testimonial_quote_1",
-        "label": "Testimonial 1 quote"
-      },
-      {
-        "type": "text",
-        "id": "event_testimonial_author_1",
-        "label": "Testimonial 1 author"
-      },
-      {
-        "type": "textarea",
-        "id": "event_testimonial_quote_2",
-        "label": "Testimonial 2 quote"
-      },
-      {
-        "type": "text",
-        "id": "event_testimonial_author_2",
-        "label": "Testimonial 2 author"
-      },
-      {
-        "type": "textarea",
-        "id": "event_testimonial_quote_3",
-        "label": "Testimonial 3 quote"
-      },
-      {
-        "type": "text",
-        "id": "event_testimonial_author_3",
-        "label": "Testimonial 3 author"
-      },
-      {
-        "type": "header",
-        "content": "More Events Section"
-      },
-      {
-        "type": "text",
-        "id": "event_more_heading",
-        "label": "More events heading",
-        "default": "More events coming soon"
-      },
-      {
-        "type": "text",
-        "id": "event_more_subtext",
-        "label": "More events subtext",
-        "default": "We host intimate sensory evenings, couples mixers and pop-ups across the UK."
-      }
+      { "type": "header", "content": "Layout" },
+      { "type": "select", "id": "collection_layout", "label": "Default layout", "options": [{"value":"sidebar-left","label":"Sidebar left"},{"value":"sidebar-right","label":"Sidebar right"},{"value":"top-filters","label":"Top filter bar (no sidebar)"}], "default": "sidebar-left" },
+      { "type": "range", "id": "products_per_page", "min": 8, "max": 48, "step": 4, "label": "Products per page", "default": 12 },
+      { "type": "select", "id": "collection_columns_desktop", "label": "Grid columns (desktop)", "options": [{"value":"3","label":"3"},{"value":"4","label":"4"}], "default": "4" },
+      { "type": "select", "id": "collection_columns_mobile", "label": "Grid columns (mobile)", "options": [{"value":"1","label":"1"},{"value":"2","label":"2"}], "default": "2" },
+      { "type": "header", "content": "Product Cards" },
+      { "type": "checkbox", "id": "product_card_quick_add", "label": "Show quick-add button on hover", "default": true },
+      { "type": "checkbox", "id": "product_card_second_image", "label": "Show second image on hover", "default": true },
+      { "type": "checkbox", "id": "product_card_show_rating", "label": "Show star rating on card", "default": true },
+      { "type": "checkbox", "id": "product_card_show_vendor", "label": "Show vendor name", "default": false },
+      { "type": "checkbox", "id": "product_card_show_savings", "label": "Show savings amount on sale items", "default": true },
+      { "type": "header", "content": "Filtering & Sorting" },
+      { "type": "checkbox", "id": "collection_show_sort", "label": "Show sort options", "default": true },
+      { "type": "checkbox", "id": "collection_show_count", "label": "Show product count", "default": true },
+      { "type": "checkbox", "id": "collection_infinite_scroll", "label": "Infinite scroll (instead of pagination)", "default": false },
+      { "type": "header", "content": "Featured Banners" },
+      { "type": "checkbox", "id": "collection_show_featured_banners", "label": "Show featured category banners", "default": true },
+      { "type": "text", "id": "collection_banner_1_title", "label": "Banner 1 title", "default": "The Velvet Hour" },
+      { "type": "text", "id": "collection_banner_1_sub", "label": "Banner 1 subtext", "default": "Limited drop — 47 kits remaining" },
+      { "type": "url", "id": "collection_banner_1_url", "label": "Banner 1 link URL" },
+      { "type": "text", "id": "collection_banner_2_title", "label": "Banner 2 title", "default": "Sensory Consumables" },
+      { "type": "url", "id": "collection_banner_2_url", "label": "Banner 2 link URL" }
     ]
   },
+
   {
-    "name": "Account Page",
+    "name": "📦 Product Page",
     "settings": [
-      {
-        "type": "text",
-        "id": "account_welcome_label",
-        "label": "Welcome label text",
-        "default": "Welcome back"
-      },
-      {
-        "type": "text",
-        "id": "account_guest_heading",
-        "label": "Guest heading text",
-        "default": "Your Account"
-      },
-      {
-        "type": "checkbox",
-        "id": "account_redirect_guests",
-        "label": "Redirect guests to login page",
-        "default": false
-      },
-      {
-        "type": "text",
-        "id": "account_rewards_heading",
-        "label": "Rewards tab heading",
-        "default": "Your Rewards"
-      },
-      {
-        "type": "text",
-        "id": "account_no_orders_heading",
-        "label": "'No orders' heading",
-        "default": "No orders yet"
-      },
-      {
-        "type": "text",
-        "id": "account_no_orders_text",
-        "label": "'No orders' subtext",
-        "default": "When you place your first order, it will appear here."
-      },
-      {
-        "type": "checkbox",
-        "id": "account_show_events_tab",
-        "label": "Show 'My Events' tab",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "account_no_events_heading",
-        "label": "'No events' heading",
-        "default": "No upcoming events"
-      },
-      {
-        "type": "text",
-        "id": "account_no_events_text",
-        "label": "'No events' subtext",
-        "default": "RSVPs and event bookings will appear here."
-      },
-      {
-        "type": "checkbox",
-        "id": "account_show_profile_tab",
-        "label": "Show 'Profile Settings' tab",
-        "default": true
-      }
+      { "type": "header", "content": "Layout" },
+      { "type": "select", "id": "product_layout", "label": "Product page layout", "options": [{"value":"media-left","label":"Media left, info right"},{"value":"media-right","label":"Media right, info left"},{"value":"stacked","label":"Stacked (full width)"}], "default": "media-left" },
+      { "type": "select", "id": "product_gallery_style", "label": "Gallery style", "options": [{"value":"thumbnails","label":"Thumbnails below"},{"value":"thumbnails-side","label":"Thumbnails beside"},{"value":"filmstrip","label":"Horizontal filmstrip"},{"value":"single","label":"Single image only"}], "default": "thumbnails" },
+      { "type": "header", "content": "Product Info" },
+      { "type": "checkbox", "id": "product_show_vendor", "label": "Show vendor / brand name", "default": false },
+      { "type": "checkbox", "id": "product_show_sku", "label": "Show SKU", "default": false },
+      { "type": "checkbox", "id": "product_show_rating", "label": "Show star rating", "default": true },
+      { "type": "checkbox", "id": "product_show_review_count", "label": "Show review count", "default": true },
+      { "type": "checkbox", "id": "product_show_stock_level", "label": "Show stock level / scarcity message", "default": true },
+      { "type": "range", "id": "product_low_stock_threshold", "min": 1, "max": 20, "step": 1, "label": "Low stock threshold (shows warning)", "default": 5 },
+      { "type": "header", "content": "Add to Cart" },
+      { "type": "text", "id": "product_atc_text", "label": "Add to cart button text", "default": "Add to Cart" },
+      { "type": "text", "id": "product_atc_sold_out", "label": "Sold out button text", "default": "Sold Out" },
+      { "type": "text", "id": "product_atc_preorder", "label": "Pre-order button text", "default": "Pre-order Now" },
+      { "type": "checkbox", "id": "product_show_buy_now", "label": "Show 'Buy it now' button", "default": true },
+      { "type": "header", "content": "Trust & Badges" },
+      { "type": "checkbox", "id": "product_show_trust_strip", "label": "Show trust strip below ATC", "default": true },
+      { "type": "text", "id": "product_trust_1", "label": "Trust item 1", "default": "🔒 Secure checkout" },
+      { "type": "text", "id": "product_trust_2", "label": "Trust item 2", "default": "📦 Free delivery over £60" },
+      { "type": "text", "id": "product_trust_3", "label": "Trust item 3", "default": "↩ 14-day returns" },
+      { "type": "text", "id": "product_trust_4", "label": "Trust item 4", "default": "🌱 Eco packaging" },
+      { "type": "header", "content": "Product Tabs" },
+      { "type": "checkbox", "id": "product_show_tabs", "label": "Show description tabs", "default": true },
+      { "type": "text", "id": "product_tab_1_label", "label": "Tab 1 label", "default": "The Story" },
+      { "type": "text", "id": "product_tab_2_label", "label": "Tab 2 label", "default": "Ingredients" },
+      { "type": "text", "id": "product_tab_3_label", "label": "Tab 3 label", "default": "Ritual Guide" },
+      { "type": "text", "id": "product_tab_4_label", "label": "Tab 4 label", "default": "Delivery" },
+      { "type": "header", "content": "Related Products" },
+      { "type": "checkbox", "id": "product_show_related", "label": "Show related products", "default": true },
+      { "type": "text", "id": "product_related_heading", "label": "Related products heading", "default": "You might also love" },
+      { "type": "range", "id": "product_related_count", "min": 2, "max": 8, "step": 2, "label": "Related products count", "default": 4 }
     ]
   },
+
   {
-    "name": "Search Page",
+    "name": "📝 Journal / Blog",
     "settings": [
-      {
-        "type": "text",
-        "id": "search_placeholder",
-        "label": "Search input placeholder",
-        "default": "Search products, articles, pages…"
-      },
-      {
-        "type": "text",
-        "id": "search_no_results_heading",
-        "label": "No results heading",
-        "default": "No results found"
-      },
-      {
-        "type": "text",
-        "id": "search_no_results_text",
-        "label": "No results subtext",
-        "default": "Try different keywords, or explore our collections below."
-      },
-      {
-        "type": "text",
-        "id": "search_popular_label",
-        "label": "Popular searches label",
-        "default": "Popular searches:"
-      },
-      {
-        "type": "text",
-        "id": "search_popular_terms",
-        "label": "Popular search terms (comma separated)",
-        "default": "Velvet Hour, Date Night, Sensory Kit, Monthly Drop, Ritual",
-        "info": "Separate terms with commas"
-      }
+      { "type": "header", "content": "Journal Page" },
+      { "type": "text", "id": "journal_heading", "label": "Journal page heading", "default": "Ideas, Rituals & Intimate Inspiration" },
+      { "type": "textarea", "id": "journal_subtext", "label": "Journal page subtext", "default": "Stories, guides and rituals for couples who want more from their time together." },
+      { "type": "select", "id": "journal_layout", "label": "Articles layout", "options": [{"value":"grid","label":"Grid"},{"value":"list","label":"List"},{"value":"masonry","label":"Masonry"}], "default": "grid" },
+      { "type": "range", "id": "journal_articles_per_row", "min": 2, "max": 4, "step": 1, "label": "Articles per row (desktop)", "default": 3 },
+      { "type": "range", "id": "journal_articles_per_page", "min": 6, "max": 24, "step": 3, "label": "Articles per page", "default": 9 },
+      { "type": "checkbox", "id": "journal_show_featured", "label": "Show featured article (first article hero)", "default": true },
+      { "type": "checkbox", "id": "journal_show_sidebar", "label": "Show sidebar", "default": true },
+      { "type": "checkbox", "id": "journal_show_category_nav", "label": "Show category filter bar", "default": true },
+      { "type": "header", "content": "Article Pages" },
+      { "type": "checkbox", "id": "article_show_author", "label": "Show author name", "default": true },
+      { "type": "checkbox", "id": "article_show_read_time", "label": "Show estimated read time", "default": true },
+      { "type": "checkbox", "id": "article_show_share_buttons", "label": "Show social share buttons", "default": true },
+      { "type": "checkbox", "id": "article_show_tags", "label": "Show article tags", "default": true },
+      { "type": "checkbox", "id": "article_show_related", "label": "Show related articles", "default": true },
+      { "type": "range", "id": "article_related_count", "min": 2, "max": 6, "step": 1, "label": "Related articles count", "default": 3 },
+      { "type": "checkbox", "id": "article_show_comments", "label": "Enable Shopify comments", "default": false }
     ]
   },
+
   {
-    "name": "FAQ Page",
+    "name": "🎭 Events",
     "settings": [
-      {
-        "type": "text",
-        "id": "faq_eyebrow",
-        "label": "FAQ page eyebrow",
-        "default": "Help & FAQ"
-      },
-      {
-        "type": "text",
-        "id": "faq_heading",
-        "label": "FAQ page heading",
-        "default": "Frequently Asked Questions"
-      },
-      {
-        "type": "textarea",
-        "id": "faq_subtext",
-        "label": "FAQ page subtext",
-        "default": "Everything you need to know about our products, drops, events and membership."
-      },
-      {
-        "type": "header",
-        "content": "Contact Card"
-      },
-      {
-        "type": "text",
-        "id": "faq_contact_heading",
-        "label": "Contact card heading",
-        "default": "Still need help?"
-      },
-      {
-        "type": "text",
-        "id": "faq_contact_text",
-        "label": "Contact card subtext",
-        "default": "Our team responds within 24 hours."
-      },
-      {
-        "type": "text",
-        "id": "faq_contact_email",
-        "label": "Support email address",
-        "default": "hello@playmate-labs.com"
-      },
-      {
-        "type": "text",
-        "id": "faq_contact_cta",
-        "label": "Contact CTA button text",
-        "default": "Email Us"
-      },
-      {
-        "type": "header",
-        "content": "FAQ Content — Events"
-      },
-      {
-        "type": "textarea",
-        "id": "faq_events_locations",
-        "label": "Events locations answer",
-        "default": "We currently host events in London, with Manchester and other UK cities coming soon. Exact venue details are sent after booking."
-      },
-      {
-        "type": "textarea",
-        "id": "faq_events_couples",
-        "label": "Couples-only answer",
-        "default": "Most events are designed for couples, though some community mixers welcome individuals. Check the specific event listing for details."
-      },
-      {
-        "type": "textarea",
-        "id": "faq_events_cancellation",
-        "label": "Cancellation policy answer",
-        "default": "Full refunds are available up to 48 hours before the event. Within 48 hours, we can transfer your booking to a future event but cannot issue refunds."
-      },
-      {
-        "type": "header",
-        "content": "FAQ Content — Rewards"
-      },
-      {
-        "type": "textarea",
-        "id": "faq_rewards_earn",
-        "label": "How to earn points answer"
-      },
-      {
-        "type": "textarea",
-        "id": "faq_rewards_redeem",
-        "label": "How to redeem points answer"
-      },
-      {
-        "type": "header",
-        "content": "FAQ Content — Returns"
-      },
-      {
-        "type": "textarea",
-        "id": "faq_returns_policy",
-        "label": "Returns policy answer"
-      },
-      {
-        "type": "textarea",
-        "id": "faq_returns_process",
-        "label": "How to return answer"
-      },
-      {
-        "type": "header",
-        "content": "Bottom CTA Banner"
-      },
-      {
-        "type": "text",
-        "id": "faq_cta_heading",
-        "label": "CTA banner heading",
-        "default": "Can't find what you're looking for?"
-      },
-      {
-        "type": "text",
-        "id": "faq_cta_text",
-        "label": "CTA banner subtext",
-        "default": "Our customer care team is here to help. We typically respond within 24 hours."
-      }
+      { "type": "header", "content": "Events Page" },
+      { "type": "text", "id": "events_page_heading", "label": "Events page heading", "default": "Live Experiences" },
+      { "type": "textarea", "id": "events_page_subtext", "label": "Events page subtext", "default": "Immersive evenings, couples workshops and sensory rituals — designed to be experienced together." },
+      { "type": "image_picker", "id": "events_hero_image", "label": "Events hero background image" },
+      { "type": "select", "id": "events_layout", "label": "Event cards layout", "options": [{"value":"grid","label":"2-column grid"},{"value":"list","label":"List view"},{"value":"cards","label":"Featured cards"}], "default": "grid" },
+      { "type": "header", "content": "Event Detail Page" },
+      { "type": "checkbox", "id": "event_show_countdown", "label": "Show countdown to event", "default": true },
+      { "type": "checkbox", "id": "event_show_rsvp_form", "label": "Show RSVP / booking form", "default": true },
+      { "type": "text", "id": "event_rsvp_heading", "label": "RSVP form heading", "default": "Reserve Your Place" },
+      { "type": "text", "id": "event_rsvp_cta", "label": "RSVP button text", "default": "Book Now" },
+      { "type": "checkbox", "id": "event_show_itinerary", "label": "Show itinerary section", "default": true },
+      { "type": "checkbox", "id": "event_show_testimonials", "label": "Show past event testimonials", "default": true }
     ]
   },
+
   {
-    "name": "Contact Page",
+    "name": "✨ 5-Day Experience / Lead Magnet",
     "settings": [
-      {
-        "type": "text",
-        "id": "contact_eyebrow",
-        "label": "Contact page eyebrow",
-        "default": "Get in touch"
-      },
-      {
-        "type": "text",
-        "id": "contact_heading",
-        "label": "Contact page heading",
-        "default": "We'd love to hear from you"
-      },
-      {
-        "type": "textarea",
-        "id": "contact_subtext",
-        "label": "Contact page subtext",
-        "default": "Questions about an order, an upcoming event, or just want to say hello? We respond within 24 hours."
-      },
-      {
-        "type": "text",
-        "id": "contact_email",
-        "label": "Contact email address",
-        "default": "hello@playmate-labs.com"
-      },
-      {
-        "type": "text",
-        "id": "contact_email_label",
-        "label": "Email section heading",
-        "default": "Email Us"
-      },
-      {
-        "type": "text",
-        "id": "contact_message_placeholder",
-        "label": "Message field placeholder",
-        "default": "How can we help you?"
-      },
-      {
-        "type": "text",
-        "id": "contact_submit_text",
-        "label": "Submit button text",
-        "default": "Send Message"
-      },
-      {
-        "type": "checkbox",
-        "id": "contact_show_order_number",
-        "label": "Show order number field",
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "contact_success_heading",
-        "label": "Success message heading",
-        "default": "Message received!"
-      },
-      {
-        "type": "text",
-        "id": "contact_success_text",
-        "label": "Success message body",
-        "default": "We'll get back to you within 24 hours."
-      },
-      {
-        "type": "text",
-        "id": "contact_privacy_note",
-        "label": "Privacy note below form",
-        "default": "We respect your privacy and will never share your details."
-      },
-      {
-        "type": "text",
-        "id": "contact_response_heading",
-        "label": "Response time heading",
-        "default": "Quick Response"
-      },
-      {
-        "type": "text",
-        "id": "contact_response_text",
-        "label": "Response time text",
-        "default": "We typically respond within 24 hours, Monday to Friday."
-      },
-      {
-        "type": "text",
-        "id": "contact_social_heading",
-        "label": "Social DM heading",
-        "default": "Chat with us"
-      },
-      {
-        "type": "text",
-        "id": "contact_social_text",
-        "label": "Social DM subtext",
-        "default": "Reach us directly on social media."
-      },
-      {
-        "type": "text",
-        "id": "contact_faq_heading",
-        "label": "FAQ card heading",
-        "default": "Check our FAQ"
-      },
-      {
-        "type": "text",
-        "id": "contact_faq_text",
-        "label": "FAQ card subtext",
-        "default": "Find quick answers to common questions."
-      }
+      { "type": "header", "content": "Page Content" },
+      { "type": "text", "id": "experience_heading", "label": "Page heading", "default": "Your Free 5-Day Sensory Experience" },
+      { "type": "textarea", "id": "experience_subtext", "label": "Subtext", "default": "A free digital ritual programme for couples — 5 days, 5 experiences, one deeper connection." },
+      { "type": "image_picker", "id": "experience_hero_image", "label": "Experience hero image" },
+      { "type": "header", "content": "Email Capture Form" },
+      { "type": "text", "id": "experience_form_heading", "label": "Form heading", "default": "Start Your 5-Day Ritual" },
+      { "type": "text", "id": "experience_form_cta", "label": "Form submit text", "default": "Unlock Free Access" },
+      { "type": "text", "id": "experience_form_success", "label": "Success message", "default": "✓ Check your inbox — your first ritual is on its way!" },
+      { "type": "header", "content": "Day Breakdown" },
+      { "type": "text", "id": "experience_day_1", "label": "Day 1 title", "default": "Day 1: The Slow Arrival" },
+      { "type": "text", "id": "experience_day_2", "label": "Day 2 title", "default": "Day 2: Sensory Awakening" },
+      { "type": "text", "id": "experience_day_3", "label": "Day 3 title", "default": "Day 3: The Deep Conversation" },
+      { "type": "text", "id": "experience_day_4", "label": "Day 4 title", "default": "Day 4: Creative Together" },
+      { "type": "text", "id": "experience_day_5", "label": "Day 5 title", "default": "Day 5: The Grand Ritual" }
     ]
   },
+
   {
-    "name": "Compliance",
+    "name": "✦ Monthly Drops",
     "settings": [
-      {
-        "type": "checkbox",
-        "id": "show_age_gate",
-        "label": "Show age gate (for age-restricted products)",
-        "default": false
-      },
-      {
-        "type": "checkbox",
-        "id": "show_allergen_notice",
-        "label": "Show allergen notice on consumable collections",
-        "default": true
-      },
-      {
-        "type": "textarea",
-        "id": "allergen_notice_text",
-        "label": "Allergen notice text",
-        "default": "This collection may contain products with allergens including nuts, dairy, gluten and soy. Please review individual product pages for full ingredient lists before purchase."
-      }
+      { "type": "header", "content": "Drops Page" },
+      { "type": "text", "id": "drops_page_heading", "label": "Page heading", "default": "Monthly Drops" },
+      { "type": "textarea", "id": "drops_page_subtext", "label": "Subtext", "default": "One kit. Every month. Limited to 200 pairs. Each drop is a complete sensory experience — designed for a single extraordinary evening together." },
+      { "type": "image_picker", "id": "drops_hero_image", "label": "Drops hero image" },
+      { "type": "header", "content": "Current Drop" },
+      { "type": "text", "id": "drops_current_name", "label": "Current drop name", "default": "The Velvet Hour" },
+      { "type": "product", "id": "drops_current_product", "label": "Current drop product" },
+      { "type": "range", "id": "drops_remaining_count", "min": 0, "max": 200, "step": 1, "label": "Kits remaining (for display)", "default": 47 },
+      { "type": "text", "id": "drops_countdown_end", "label": "Drop ends (YYYY-MM-DD HH:MM)" },
+      { "type": "header", "content": "Archive" },
+      { "type": "checkbox", "id": "drops_show_archive", "label": "Show past drops archive", "default": true },
+      { "type": "text", "id": "drops_archive_heading", "label": "Archive heading", "default": "Previous Drops" }
     ]
   },
+
   {
-    "name": "Performance",
+    "name": "👤 Account & Loyalty",
     "settings": [
-      {
-        "type": "checkbox",
-        "id": "lazy_load_images",
-        "label": "Lazy load images",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_scroll_animations",
-        "label": "Enable scroll reveal animations",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_parallax",
-        "label": "Enable hero parallax effect",
-        "default": true
-      }
+      { "type": "header", "content": "Account Dashboard" },
+      { "type": "select", "id": "account_layout", "label": "Dashboard layout", "options": [{"value":"tabs","label":"Tabs"},{"value":"sidebar","label":"Sidebar navigation"},{"value":"grid","label":"Cards grid"}], "default": "tabs" },
+      { "type": "checkbox", "id": "account_show_loyalty", "label": "Show loyalty points / rewards", "default": true },
+      { "type": "text", "id": "account_points_name", "label": "Loyalty points name", "default": "Playmate Points" },
+      { "type": "checkbox", "id": "account_show_orders", "label": "Show order history", "default": true },
+      { "type": "checkbox", "id": "account_show_addresses", "label": "Show saved addresses", "default": true },
+      { "type": "checkbox", "id": "account_show_wishlist", "label": "Show wishlist", "default": false },
+      { "type": "checkbox", "id": "account_show_rituals", "label": "Show completed rituals / experience tracker", "default": true },
+      { "type": "header", "content": "Welcome Banner" },
+      { "type": "text", "id": "account_welcome_heading", "label": "Welcome heading", "default": "Welcome back" },
+      { "type": "text", "id": "account_member_title", "label": "Default member title", "default": "Explorer" }
+    ]
+  },
+
+  {
+    "name": "🔍 Search",
+    "settings": [
+      { "type": "header", "content": "Search Page" },
+      { "type": "text", "id": "search_heading", "label": "Search page heading", "default": "Search Playmate Labs" },
+      { "type": "checkbox", "id": "search_show_type_filter", "label": "Show type filters (Products / Articles)", "default": true },
+      { "type": "checkbox", "id": "search_predictive_enable", "label": "Enable predictive search in header", "default": true },
+      { "type": "range", "id": "search_predictive_limit", "min": 3, "max": 10, "step": 1, "label": "Predictive search results limit", "default": 5 },
+      { "type": "checkbox", "id": "search_show_popular", "label": "Show popular searches", "default": true },
+      { "type": "text", "id": "search_popular_1", "label": "Popular search 1", "default": "Velvet Hour" },
+      { "type": "text", "id": "search_popular_2", "label": "Popular search 2", "default": "Sensory chocolate" },
+      { "type": "text", "id": "search_popular_3", "label": "Popular search 3", "default": "Date night kit" },
+      { "type": "text", "id": "search_popular_4", "label": "Popular search 4", "default": "Connection game" },
+      { "type": "text", "id": "search_no_results_heading", "label": "No results heading", "default": "No results found" },
+      { "type": "text", "id": "search_no_results_subtext", "label": "No results subtext", "default": "Try a different search term, or browse our full collection." }
+    ]
+  },
+
+  {
+    "name": "❓ FAQ Page",
+    "settings": [
+      { "type": "text", "id": "faq_heading", "label": "FAQ page heading", "default": "Frequently Asked Questions" },
+      { "type": "textarea", "id": "faq_subtext", "label": "FAQ subtext", "default": "Everything you need to know about Playmate Labs — from products and delivery to events and the 5-day experience." },
+      { "type": "select", "id": "faq_layout", "label": "Layout", "options": [{"value":"sidebar","label":"Sidebar categories"},{"value":"accordion","label":"Single accordion"},{"value":"two-col","label":"Two columns"}], "default": "sidebar" },
+      { "type": "checkbox", "id": "faq_show_search", "label": "Show search within FAQs", "default": true },
+      { "type": "checkbox", "id": "faq_show_contact_cta", "label": "Show contact CTA at bottom", "default": true },
+      { "type": "text", "id": "faq_contact_heading", "label": "CTA heading", "default": "Still have questions?" },
+      { "type": "text", "id": "faq_contact_subtext", "label": "CTA subtext", "default": "Our team usually replies within a few hours." },
+      { "type": "url", "id": "faq_contact_url", "label": "CTA link URL" }
+    ]
+  },
+
+  {
+    "name": "📬 Contact Page",
+    "settings": [
+      { "type": "text", "id": "contact_heading", "label": "Contact page heading", "default": "Get in Touch" },
+      { "type": "textarea", "id": "contact_subtext", "label": "Contact page subtext", "default": "Questions, collabs, wholesale enquiries or just want to say hello — we'd love to hear from you." },
+      { "type": "checkbox", "id": "contact_show_map", "label": "Show embedded map", "default": false },
+      { "type": "text", "id": "contact_email", "label": "Contact email address", "default": "hello@playmate-labs.com" },
+      { "type": "text", "id": "contact_response_time", "label": "Response time note", "default": "We usually reply within 4 hours" },
+      { "type": "text", "id": "contact_wholesale_email", "label": "Wholesale enquiry email", "default": "wholesale@playmate-labs.com" },
+      { "type": "text", "id": "contact_press_email", "label": "Press / media email", "default": "press@playmate-labs.com" },
+      { "type": "header", "content": "Subject Dropdown" },
+      { "type": "checkbox", "id": "contact_show_subject_dropdown", "label": "Show subject dropdown in form", "default": true },
+      { "type": "text", "id": "contact_subject_options", "label": "Subject options (comma-separated)", "default": "General Enquiry, Order Issue, Wholesale, Press & Media, Events, Other" }
+    ]
+  },
+
+  {
+    "name": "📍 Stockists",
+    "settings": [
+      { "type": "text", "id": "stockists_heading", "label": "Page heading", "default": "Where to Buy Playmate Labs" },
+      { "type": "textarea", "id": "stockists_subtext", "label": "Page subtext", "default": "Our products are available in select boutiques, wellness stores and specialty retailers across the UK." },
+      { "type": "checkbox", "id": "stockists_show_map", "label": "Show Google Maps embed", "default": false },
+      { "type": "checkbox", "id": "stockists_show_search", "label": "Show location search bar", "default": true },
+      { "type": "checkbox", "id": "stockists_show_become_cta", "label": "Show 'Become a Stockist' CTA", "default": true },
+      { "type": "text", "id": "stockists_wholesale_heading", "label": "Wholesale CTA heading", "default": "Interested in stocking Playmate Labs?" },
+      { "type": "url", "id": "stockists_wholesale_url", "label": "Wholesale enquiry URL" }
+    ]
+  },
+
+  {
+    "name": "🎁 Gifts Page",
+    "settings": [
+      { "type": "text", "id": "gifts_heading", "label": "Gifts page heading", "default": "Gifts Worth Remembering." },
+      { "type": "textarea", "id": "gifts_subtext", "label": "Subtext", "default": "Curated gift sets for anniversaries, birthdays and just because moments." },
+      { "type": "image_picker", "id": "gifts_hero_image", "label": "Gifts hero background image" },
+      { "type": "checkbox", "id": "gifts_show_finder", "label": "Show gift finder strip", "default": true },
+      { "type": "text", "id": "gifts_finder_text", "label": "Gift finder strip text", "default": "Not sure what to get? Answer 3 quick questions." },
+      { "type": "url", "id": "gifts_finder_url", "label": "Gift finder link URL" },
+      { "type": "checkbox", "id": "gifts_show_wrapping_info", "label": "Show gifting services section", "default": true },
+      { "type": "collection", "id": "gifts_collection", "label": "Gift products collection" }
+    ]
+  },
+
+  {
+    "name": "👥 About Page",
+    "settings": [
+      { "type": "text", "id": "about_heading", "label": "About page heading", "default": "Born from a belief that modern couples deserve more." },
+      { "type": "textarea", "id": "about_story", "label": "Brand story (intro paragraph)", "default": "Playmate Labs was founded on a simple observation: most of us are too busy, too distracted, and too comfortable to create truly memorable moments with our partners." },
+      { "type": "image_picker", "id": "about_hero_image", "label": "About hero image" },
+      { "type": "image_picker", "id": "about_founder_image", "label": "Founder / team image" },
+      { "type": "text", "id": "about_founder_name", "label": "Founder name" },
+      { "type": "text", "id": "about_founder_title", "label": "Founder title", "default": "Founder & Creative Director" },
+      { "type": "checkbox", "id": "about_show_values", "label": "Show brand values section", "default": true },
+      { "type": "text", "id": "about_value_1_title", "label": "Value 1 title", "default": "Intentional" },
+      { "type": "textarea", "id": "about_value_1_desc", "label": "Value 1 description", "default": "Every product is designed with a specific ritual in mind — not just aesthetically pleasing, but experientially purposeful." },
+      { "type": "text", "id": "about_value_2_title", "label": "Value 2 title", "default": "Sensory" },
+      { "type": "textarea", "id": "about_value_2_desc", "label": "Value 2 description", "default": "We work with all five senses to create moments that are truly felt, not just experienced." },
+      { "type": "text", "id": "about_value_3_title", "label": "Value 3 title", "default": "Sustainable" },
+      { "type": "textarea", "id": "about_value_3_desc", "label": "Value 3 description", "default": "Eco packaging, ethically sourced ingredients, carbon-neutral shipping." }
+    ]
+  },
+
+  {
+    "name": "🌐 Community Page",
+    "settings": [
+      { "type": "text", "id": "community_heading", "label": "Page heading", "default": "The Playmate Labs Community" },
+      { "type": "textarea", "id": "community_subtext", "label": "Subtext", "default": "Thousands of couples using ritual to reconnect, explore and grow — together." },
+      { "type": "image_picker", "id": "community_hero_image", "label": "Community hero image" },
+      { "type": "checkbox", "id": "community_show_stats", "label": "Show community stats strip", "default": true },
+      { "type": "text", "id": "community_stat_1_number", "label": "Stat 1 number", "default": "12,000+" },
+      { "type": "text", "id": "community_stat_1_label", "label": "Stat 1 label", "default": "Couples in the community" },
+      { "type": "text", "id": "community_stat_2_number", "label": "Stat 2 number", "default": "4.9★" },
+      { "type": "text", "id": "community_stat_2_label", "label": "Stat 2 label", "default": "Average product rating" },
+      { "type": "text", "id": "community_stat_3_number", "label": "Stat 3 number", "default": "84%" },
+      { "type": "text", "id": "community_stat_3_label", "label": "Stat 3 label", "default": "Repeat customers" }
+    ]
+  },
+
+  {
+    "name": "⚡ Performance",
+    "settings": [
+      { "type": "header", "content": "Loading & Images" },
+      { "type": "checkbox", "id": "perf_lazy_images", "label": "Lazy load images", "default": true },
+      { "type": "select", "id": "perf_image_format", "label": "Preferred image format", "options": [{"value":"webp","label":"WebP (recommended)"},{"value":"jpg","label":"JPEG"},{"value":"auto","label":"Auto"}], "default": "webp" },
+      { "type": "range", "id": "perf_image_quality", "min": 60, "max": 100, "step": 5, "unit": "%", "label": "Image quality", "default": 85 },
+      { "type": "header", "content": "Scripts" },
+      { "type": "checkbox", "id": "perf_defer_scripts", "label": "Defer non-critical scripts", "default": true },
+      { "type": "checkbox", "id": "perf_preconnect_fonts", "label": "Preconnect to Google Fonts", "default": true },
+      { "type": "header", "content": "Animations" },
+      { "type": "checkbox", "id": "perf_scroll_animations", "label": "Enable scroll reveal animations", "default": true },
+      { "type": "select", "id": "perf_animation_speed", "label": "Animation speed", "options": [{"value":"fast","label":"Fast (200ms)"},{"value":"normal","label":"Normal (400ms)"},{"value":"slow","label":"Slow (600ms)"}], "default": "normal" },
+      { "type": "checkbox", "id": "perf_respect_reduced_motion", "label": "Respect prefers-reduced-motion", "default": true },
+      { "type": "header", "content": "Third-Party Scripts" },
+      { "type": "textarea", "id": "perf_head_scripts", "label": "Custom scripts in <head>", "info": "Use with caution. For analytics, pixels, etc." },
+      { "type": "textarea", "id": "perf_body_end_scripts", "label": "Custom scripts before </body>", "info": "Loaded last — least impact on page speed" }
+    ]
+  },
+
+  {
+    "name": "🔐 Compliance & Legal",
+    "settings": [
+      { "type": "header", "content": "Age Gate" },
+      { "type": "checkbox", "id": "age_gate_enable", "label": "Enable age verification gate", "default": false },
+      { "type": "text", "id": "age_gate_heading", "label": "Age gate heading", "default": "You must be 18 or over to enter this site." },
+      { "type": "text", "id": "age_gate_confirm", "label": "Confirm button text", "default": "I am 18 or older" },
+      { "type": "text", "id": "age_gate_deny", "label": "Deny button text", "default": "I am under 18" },
+      { "type": "url", "id": "age_gate_redirect_url", "label": "Redirect URL if underage" },
+      { "type": "header", "content": "Cookies & GDPR" },
+      { "type": "checkbox", "id": "cookie_banner_enable", "label": "Show cookie consent banner", "default": true },
+      { "type": "select", "id": "cookie_banner_style", "label": "Banner style", "options": [{"value":"bar-bottom","label":"Bottom bar"},{"value":"modal","label":"Modal"},{"value":"corner","label":"Bottom corner card"}], "default": "bar-bottom" },
+      { "type": "text", "id": "cookie_banner_text", "label": "Cookie banner text", "default": "We use cookies to personalise your experience and analyse site traffic. You can manage your preferences at any time." },
+      { "type": "url", "id": "cookie_privacy_url", "label": "Privacy policy URL" },
+      { "type": "header", "content": "Allergen Notices" },
+      { "type": "checkbox", "id": "allergen_notice_enable", "label": "Show allergen notice on consumables collection", "default": true },
+      { "type": "textarea", "id": "allergen_notice_text", "label": "Allergen notice text", "default": "Some products contain nuts, dairy, soy and gluten. Full ingredient lists are on each product page. Contact hello@playmate-labs.com with queries." }
     ]
   }
 ]
