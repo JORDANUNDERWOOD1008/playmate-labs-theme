@@ -1217,3 +1217,67 @@
     gap: 0.875rem;
   }
 }
+
+/* ============================================
+   HOME PRODUCT GRID — MOBILE CAROUSEL
+   Desktop: unchanged 4-col grid
+   Mobile: horizontal snap-scroll carousel
+   ============================================ */
+@media (max-width: 768px) {
+  /* Override grid → flex carousel on the home section only */
+  .home-products .product-grid {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1rem;
+    /* Bleed to screen edges, indent start so first card has left padding */
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    padding-bottom: 1rem;   /* space for scrollbar on Android */
+    margin-left: -1.25rem;  /* cancel container padding so cards bleed full width */
+    margin-right: -1.25rem;
+    /* Hide scrollbar — Chrome/Safari/Firefox */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .home-products .product-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Each card: fixed 72vw wide so the next card peeks in at the right edge */
+  .home-products .product-grid .product-card {
+    flex: 0 0 72vw;
+    width: 72vw;
+    scroll-snap-align: start;
+    /* Reset any grid-specific sizing */
+    min-width: 0;
+  }
+
+  /* Last card gets extra right padding so it doesn't sit flush at edge */
+  .home-products .product-grid .product-card:last-child {
+    margin-right: 1.25rem;
+  }
+
+  /* Category pills: also scroll horizontally on mobile */
+  .home-products .shop-category-pills {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    flex-wrap: nowrap;
+  }
+
+  .home-products .shop-category-pills::-webkit-scrollbar {
+    display: none;
+  }
+
+  .home-products .shop-category-pills .category-pill {
+    flex-shrink: 0;
+  }
+}
