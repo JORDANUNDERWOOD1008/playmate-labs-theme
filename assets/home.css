@@ -862,20 +862,24 @@
     align-items: center;
     text-align: center;
     padding-bottom: 1.5rem;
+    grid-column: 1;  /* reset — mobile is single column */
+    grid-row: 1;
   }
 
-  /* Row 2: window gap — min-height ensures text above NEVER overlaps product.
-     Product centre is ~40% down the image = 40% of (100vw × 3.6184) = ~145vw.
-     Text block is ~35vw tall. So window needs at least: 145vw - 35vw - nav ≈ 90vw */
+  /* Row 2: window gap — min-height ensures text above NEVER overlaps product. */
   .featured-drop__window {
     display: block;
     min-height: calc(100vw * 0.90);
+    grid-column: 1;  /* reset */
+    grid-row: 2;
   }
 
   /* Row 3: badges + desc + CTA — anchored to the bottom */
   .featured-drop__content {
     padding-left: 0;
     padding-top: 0;
+    grid-column: 1;  /* reset — override desktop grid-column: 2 */
+    grid-row: 3;
   }
 
   /* Desktop heading block — hide on mobile (shown in __top instead) */
