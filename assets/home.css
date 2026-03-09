@@ -812,9 +812,12 @@
   /* On tablet/mobile: stack to single column, spacer collapses */
   .featured-drop__inner {
     grid-template-columns: 1fr;
-    min-height: auto;
-    padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 2rem);
-    padding-bottom: var(--space-xl);
+    /* Tall enough so portrait bg has room — product in centre, copy above + below */
+    min-height: 85vh;
+    padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 1.5rem);
+    padding-bottom: 3rem;
+    /* Push content to the bottom half so product centre stays clear */
+    align-items: end;
   }
 
   .featured-drop__spacer {
@@ -825,16 +828,22 @@
     padding-left: 0;
   }
 
-  /* On mobile: swap to portrait image, darken whole bg evenly for legibility */
+  /* On mobile: swap to portrait image — full width, only top/bottom crop */
   .featured-drop--bg {
     background-image: var(--fd-bg-mobile);
-    /* Full viewport width, natural height — only top/bottom cropped, never sides */
-    background-size: 100% auto;
-    background-position: center center;
+    background-size: 100% auto;   /* locks to viewport width, no side crop */
+    background-position: center center; /* vertical crop is equal top & bottom */
   }
 
   .featured-drop__overlay {
-    background: rgba(15, 5, 10, 0.60);
+    /* Lighter at top (above product), heavier at bottom (behind copy) */
+    background: linear-gradient(
+      to bottom,
+      rgba(15, 5, 10, 0.30) 0%,
+      rgba(15, 5, 10, 0.20) 35%,
+      rgba(15, 5, 10, 0.55) 65%,
+      rgba(15, 5, 10, 0.82) 100%
+    );
   }
 
   .experience-inner {
