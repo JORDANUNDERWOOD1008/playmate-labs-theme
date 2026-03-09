@@ -7,6 +7,7 @@
    ============================================ */
 
 /* ---- ANNOUNCEMENT BAR ---- */
+/* Position/z-index are controlled by global.css — only colours/typography here */
 .announcement-bar {
   background: var(--color-espresso);
   color: var(--color-cream);
@@ -16,8 +17,7 @@
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  position: relative;
-  z-index: 100;
+  /* position and z-index intentionally omitted — set in global.css */
 }
 .announcement-bar a { color: var(--color-gold); text-decoration: underline; margin-left: 0.5rem; }
 .announcement-bar__close {

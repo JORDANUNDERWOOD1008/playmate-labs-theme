@@ -54,12 +54,19 @@
   {%- comment -%} Header overlap fix — neutralise Shopify's section wrapper {%- endcomment -%}
   <style>
     /*
-     * FIX: Shopify wraps {% section 'header' %} in:
-     *   <div id="shopify-section-header" class="shopify-section site-header">
-     * The old navigation.css defined .site-header { position:fixed }
-     * which created a DOUBLE fixed wrapper around our .site-nav.
-     * Solution: the wrapper is reset to static; only .site-nav itself is fixed.
+     * ============================================================
+     * PLAYMATE LABS — HEADER OVERLAP FIX
+     * ============================================================
+     * Our nav (#main-nav.site-nav) is position:fixed at the top.
+     * Shopify wraps sections in <div class="shopify-section">,
+     * which must NOT be fixed itself — only the inner .site-nav is.
+     *
+     * CRITICAL: <main id="MainContent"> needs padding-top equal to
+     * the nav height so content is never hidden behind the fixed bar.
+     * ============================================================
      */
+
+    /* 1. Neutralise the Shopify section wrapper — must be static */
     #shopify-section-header,
     .shopify-section.site-header,
     .playmate-header-section {
@@ -68,21 +75,45 @@
       z-index: auto !important;
     }
 
-    /* Ensure our actual nav element is the only fixed layer */
+    /* 2. Only the inner nav element is fixed */
     #main-nav.site-nav {
       position: fixed !important;
       top: 0;
       left: 0;
       right: 0;
       z-index: 1000;
-      height: var(--nav-height);
+      height: var(--nav-height, 72px);
     }
 
-    /* Announcement bar renders above the fixed nav in the DOM
-       but visually the nav sits on top — keep announcement accessible */
-    #shopify-section-announcement-bar {
-      position: relative;
-      z-index: 1001;
+    /* 3. Announcement bar — fixed, sitting flush under the nav */
+    .announcement-bar {
+      position: fixed !important;
+      top: var(--nav-height, 72px);
+      left: 0;
+      right: 0;
+      z-index: 999;   /* just below nav (1000) but above page content */
+      /* height is ~38px — captured in --bar-height below */
+    }
+
+    /* 4. Push main content below BOTH the nav and the announcement bar */
+    :root { --bar-height: 38px; }
+    #MainContent {
+      padding-top: calc(var(--nav-height, 72px) + var(--bar-height, 38px));
+    }
+
+    /* 5. Hero sections that need to reach behind both bars */
+    #MainContent > .hero-full-bleed:first-child,
+    #MainContent > .home-hero:first-child,
+    #MainContent > .exp-hero:first-child {
+      margin-top: calc(-1 * (var(--nav-height, 72px) + var(--bar-height, 38px)));
+      padding-top: calc(var(--nav-height, 72px) + var(--bar-height, 38px));
+    }
+
+    /* 6. Mobile */
+    @media (max-width: 768px) {
+      #MainContent {
+        padding-top: calc(var(--nav-height, 64px) + var(--bar-height, 38px));
+      }
     }
   </style>
 

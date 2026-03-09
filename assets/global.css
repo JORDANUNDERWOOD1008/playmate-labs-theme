@@ -67,6 +67,7 @@
   /* Layout */
   --max-width:       1280px;
   --nav-height:      72px;
+  --bar-height:      38px;   /* announcement bar — must match the rendered bar height */
 }
 
 /* ============================================
@@ -755,11 +756,11 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   max-width: 380px;
   background: var(--espresso);
-  z-index: 999;
+  z-index: 998;  /* below nav (1000) and bar (999) */
   transform: translateX(100%);
   transition: transform var(--transition-slow);
   overflow-y: auto;
-  padding: calc(var(--nav-height) + 2rem) 2rem 3rem;
+  padding: calc(var(--nav-height) + var(--bar-height) + 2rem) 2rem 3rem;
 }
 
 .mobile-menu.open {
@@ -1032,8 +1033,16 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.06em;
-  position: relative;
-  z-index: 1001;
+  /* Fixed directly under the nav — always visible, never overlapping content */
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  z-index: 999;
+  height: var(--bar-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .announcement-bar a {
@@ -1282,13 +1291,13 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 40vh;
   display: flex;
   align-items: center;
-  padding: calc(var(--nav-height) + 4rem) 0 4rem;
+  padding: calc(var(--nav-height) + var(--bar-height) + 4rem) 0 4rem;
   position: relative;
 }
 
 .page-hero-sm {
   min-height: 30vh;
-  padding: calc(var(--nav-height) + 3rem) 0 3rem;
+  padding: calc(var(--nav-height) + var(--bar-height) + 3rem) 0 3rem;
 }
 
 /* ============================================
