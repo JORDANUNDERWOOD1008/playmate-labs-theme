@@ -1119,3 +1119,75 @@
     margin-right: 1.25rem;
   }
 }
+
+/* ============================================
+   5-DAY EXPERIENCE TIMELINE — MOBILE CAROUSEL
+   Desktop: unchanged vertical column stack
+   Mobile only (≤768px): snap-scroll horizontal carousel
+   ============================================ */
+@media (max-width: 768px) {
+  /* Turn the vertical column into a horizontal scroll strip */
+  .experience-days {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1rem;
+    align-items: stretch;
+    /* Bleed to screen edges */
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    padding-bottom: 1rem;
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+    /* Hide scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .experience-days::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Each day card: 72vw so the next card always peeks */
+  .experience-days .exp-day-item {
+    flex: 0 0 72vw;
+    width: 72vw;
+    min-width: 0;
+    scroll-snap-align: start;
+    /* Switch from the 44px + 1fr grid to a simple vertical stack */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,169,110,0.18);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1.25rem;
+    padding-bottom: 1.75rem;
+  }
+
+  /* Remove the vertical connector line — no longer needed */
+  .experience-days .exp-day-item::after {
+    display: none;
+  }
+
+  /* Circle sits at top of the card */
+  .experience-days .exp-day-circle {
+    margin-bottom: 0.25rem;
+  }
+
+  /* Text block: full width, no extra top padding */
+  .experience-days .exp-day-item div:last-child {
+    padding-top: 0;
+    width: 100%;
+  }
+
+  /* Last card: breathing room at the right edge */
+  .experience-days .exp-day-item:last-child {
+    margin-right: 1.25rem;
+  }
+}
