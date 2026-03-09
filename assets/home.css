@@ -330,6 +330,26 @@
   overflow: hidden;
 }
 
+/* Background-image variant — set inline via Liquid */
+.featured-drop--bg {
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.featured-drop__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(15, 5, 10, 0.82) 0%,
+    rgba(15, 5, 10, 0.65) 45%,
+    rgba(15, 5, 10, 0.25) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
 .featured-drop::before {
   content: '';
   position: absolute;
@@ -339,6 +359,7 @@
   height: 100%;
   background: radial-gradient(ellipse at right center, rgba(201,169,110,0.08) 0%, transparent 60%);
   pointer-events: none;
+  z-index: 0;
 }
 
 .drop-featured-grid {
@@ -347,6 +368,14 @@
   gap: var(--space-xl);
   align-items: center;
   margin-top: var(--space-xl);
+}
+
+/* Single-column layout when product image box is removed */
+.drop-featured-grid--solo {
+  grid-template-columns: 1fr;
+  max-width: 640px;
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .drop-main-image {
@@ -746,6 +775,10 @@
   .drop-featured-grid {
     grid-template-columns: 1fr;
     gap: var(--space-lg);
+  }
+
+  .drop-featured-grid--solo {
+    max-width: 100%;
   }
 
   .experience-inner {
