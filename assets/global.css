@@ -1492,6 +1492,14 @@ h1, h2, h3, h4, h5, h6 {
   .nav-links { display: none; }
   .nav-toggle { display: flex; }
 
+  /* Hide "Unlock Free Experience" CTA button on mobile */
+  .nav-cta { display: none; }
+
+  /* Larger logo on mobile */
+  .nav-logo img {
+    height: 52px;
+  }
+
   .grid-2,
   .grid-3,
   .grid-4 {
