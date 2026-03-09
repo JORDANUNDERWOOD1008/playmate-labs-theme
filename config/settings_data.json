@@ -9,6 +9,7 @@
  */
 {
   "current": {
+    "favicon": "shopify://shop_images/PLAYMATE-WHITE.png",
     "announcement_bar_enable": true,
     "announcement_bar_text": "✦ New Drop: The Velvet Hour — Limited to 200 kits.",
     "announcement_bar_link_text": "Shop Now",
@@ -53,7 +54,7 @@
           "cta_primary_text": "Start the 5-Day Experience",
           "cta_primary_url": "",
           "cta_secondary_text": "Shop the Latest Drop",
-          "cta_secondary_url": "",
+          "cta_secondary_url": "shopify://collections/frontpage",
           "trust_rating": "4.9 / 5 — 2,400+ couples",
           "trust_shipping": "Free shipping over £60",
           "hero_product": "massage-candle",
@@ -92,6 +93,46 @@
           "products_limit": 8,
           "view_all_text": "View All Products",
           "view_all_url": ""
+        }
+      },
+      "value-strip": {
+        "type": "value-strip",
+        "settings": {}
+      },
+      "how-it-works": {
+        "type": "how-it-works",
+        "settings": {}
+      },
+      "social-proof": {
+        "type": "social-proof",
+        "settings": {}
+      },
+      "experience-cta": {
+        "type": "experience-cta",
+        "settings": {}
+      },
+      "events-preview": {
+        "type": "events-preview",
+        "settings": {}
+      },
+      "journal-preview": {
+        "type": "journal-preview",
+        "settings": {}
+      },
+      "email-capture": {
+        "type": "email-capture",
+        "settings": {
+          "dark_bg": true,
+          "section_id": "email-capture",
+          "eyebrow": "Something Special For You",
+          "heading": "Unlock Your Free 5-Day Sensory Experience",
+          "subtext": "",
+          "show_phone": true,
+          "email_placeholder": "Your email address",
+          "phone_placeholder": "Phone (for SMS drops — optional)",
+          "cta_text": "Unlock Free Experience",
+          "disclaimer": "No spam. Unsubscribe anytime.",
+          "success_message": "You're in! Check your inbox for your free experience."
         }
       }
     },
