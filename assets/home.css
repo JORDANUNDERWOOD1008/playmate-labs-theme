@@ -842,7 +842,8 @@
     grid-template-rows: auto 1fr auto;  /* top / elastic window / bottom */
     align-items: start;
     /* Give the grid an explicit height = full image height so row 2 can stretch */
-    height: calc(100vw * 3.52);
+    /* Image is 283×1024px → ratio 3.6184 */
+    height: calc(100vw * 3.6184);
     min-height: 500px;   /* safety floor on very small screens */
     padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 1.5rem);
     padding-bottom: 3rem;
