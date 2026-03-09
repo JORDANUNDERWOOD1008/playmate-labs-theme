@@ -845,7 +845,7 @@
     /* Image is 283×1024px → ratio 3.6184 */
     height: calc(100vw * 3.6184);
     min-height: 500px;   /* safety floor on very small screens */
-    padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 1.5rem);
+    padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 4rem);
     padding-bottom: 3rem;
     box-sizing: border-box;
     gap: 0;
