@@ -1016,3 +1016,60 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ============================================
+   HOW IT WORKS — MOBILE CAROUSEL
+   Desktop: unchanged horizontal flex row
+   Mobile only (≤768px): snap-scroll carousel
+   ============================================ */
+@media (max-width: 768px) {
+  /* Override both wrap/stack rules from earlier breakpoints */
+  .how-it-works .hiw-steps {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1rem;
+    align-items: stretch;
+    /* Bleed to edges like product carousel */
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    padding-bottom: 1rem;
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+    /* Hide scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .how-it-works .hiw-steps::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Each step card: 72vw so next card always peeks in */
+  .how-it-works .hiw-steps .step-card {
+    flex: 0 0 72vw;
+    width: 72vw;
+    min-width: 0;
+    scroll-snap-align: start;
+    background: var(--ivory, #faf8f5);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Last card: extra right margin so it doesn't sit flush */
+  .how-it-works .hiw-steps .step-card:last-child {
+    margin-right: 1.25rem;
+  }
+
+  /* Arrows hidden — not needed in carousel */
+  .how-it-works .hiw-arrow {
+    display: none;
+  }
+}
