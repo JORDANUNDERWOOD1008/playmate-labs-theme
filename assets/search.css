@@ -1,0 +1,40 @@
+/* PLAYMATE LABS — Search Page */
+.search-hero { padding:calc(var(--nav-height,80px) + 3rem) 0 3rem;background:var(--ivory,#FAF7F2);border-bottom:1px solid var(--border-light,#E8DDD3); }
+.search-hero-title { font-family:var(--font-serif,'Playfair Display',serif);font-size:clamp(2rem,4vw,3.5rem);margin:.75rem 0 .5rem; }
+.search-result-count { color:var(--text-muted,#6B5E54);margin-bottom:1.5rem; }
+.search-form { margin-top:2rem; }
+.search-input-wrap { display:flex;gap:.75rem;max-width:680px;position:relative; }
+.search-icon { position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-muted,#6B5E54); }
+.search-input { padding-left:2.75rem!important;flex:1; }
+.search-submit { flex-shrink:0; }
+.search-results { }
+.search-type-filter { display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border-light,#E8DDD3); }
+.search-filter-label { font-size:.875rem;color:var(--text-muted,#6B5E54);display:flex;align-items:center; }
+.search-results-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem; }
+.search-result-card { display:flex;flex-direction:column;background:white;border:1px solid var(--border-light,#E8DDD3);border-radius:var(--radius-xl,1.5rem);overflow:hidden;text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s; }
+.search-result-card:hover { transform:translateY(-3px);box-shadow:0 8px 30px rgba(107,30,58,.08); }
+.search-result-img { aspect-ratio:16/10;overflow:hidden; }
+.search-result-img img { width:100%;height:100%;object-fit:cover; }
+.search-result-body { padding:1.25rem; }
+.search-result-type { font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--burgundy,#6B1E3A);margin-bottom:.375rem; }
+.search-result-title { font-family:var(--font-serif,'Playfair Display',serif);font-size:1rem;font-weight:500;margin-bottom:.5rem;line-height:1.35; }
+.search-result-excerpt { font-size:.875rem;color:var(--text-muted,#6B5E54);line-height:1.5;margin-bottom:.5rem; }
+.search-result-price { font-weight:600;color:var(--burgundy,#6B1E3A); }
+.search-result-meta { font-size:.8125rem;color:var(--text-muted,#6B5E54); }
+.search-result-card--page { background:var(--ivory,#FAF7F2); }
+.search-pagination { display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border-light,#E8DDD3); }
+.search-page-info { font-size:.875rem;color:var(--text-muted,#6B5E54); }
+.search-no-results,.search-landing { }
+.search-empty-state { text-align:center;padding:3rem 0; }
+.search-empty-icon { font-size:4rem;display:block;margin-bottom:1rem; }
+.search-empty-state h2 { font-family:var(--font-serif,'Playfair Display',serif);font-size:2rem;margin-bottom:.75rem; }
+.search-empty-state p { color:var(--text-muted,#6B5E54);margin-bottom:2rem; }
+.search-suggestions { display:flex;gap:1rem;justify-content:center;flex-wrap:wrap; }
+.search-popular { margin-top:3rem; }
+.search-popular-label { font-size:.875rem;color:var(--text-muted,#6B5E54);margin-bottom:.75rem; }
+.search-popular-pills { display:flex;flex-wrap:wrap;gap:.5rem; }
+.search-browse-card { display:flex;flex-direction:column;align-items:center;gap:.625rem;padding:1.25rem;background:white;border:1px solid var(--border-light,#E8DDD3);border-radius:var(--radius-xl,1.5rem);text-decoration:none;color:inherit;transition:border-color .2s,transform .2s;font-weight:500; }
+.search-browse-card:hover { border-color:var(--burgundy,#6B1E3A);transform:translateY(-2px); }
+.search-browse-icon { font-size:2rem; }
+@media(max-width:1024px){ .search-results-grid { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:768px){ .search-results-grid { grid-template-columns:1fr; } .search-input-wrap { flex-direction:column; } }

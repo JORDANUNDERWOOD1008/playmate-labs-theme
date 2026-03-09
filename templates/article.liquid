@@ -1,129 +1,191 @@
-{% comment %}
-  PLAYMATE LABS — ARTICLE TEMPLATE (Journal Single Post)
-  File: templates/article.liquid
-{% endcomment %}
+{% comment %} PLAYMATE LABS — Article Template (Journal Post) {% endcomment %}
+{{ 'journal.css' | asset_url | stylesheet_tag }}
 
-{%- comment -%} ARTICLE HERO {%- endcomment -%}
-<section style="padding:calc(var(--nav-height)+2rem) 0 0;background:var(--ivory);">
-  <div class="container" style="max-width:860px;margin:0 auto;">
-    <div class="breadcrumb" style="margin-bottom:2rem;">
-      <a href="{{ routes.root_url }}">Home</a>
-      <span class="breadcrumb-sep">›</span>
-      <a href="{{ blog.url }}">Journal</a>
-      <span class="breadcrumb-sep">›</span>
-      <span>{{ article.title | truncate: 50 }}</span>
-    </div>
-    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.25rem;">
-      {%- for tag in article.tags -%}
-        <a href="{{ blog.url }}/tagged/{{ tag | url_encode }}" class="badge badge-burgundy">{{ tag }}</a>
-      {%- endfor -%}
-    </div>
-    <h1 style="font-family:var(--font-serif);font-size:clamp(2rem,4vw,3.5rem);color:var(--espresso);line-height:1.1;margin-bottom:1.5rem;">
-      {{ article.title }}
-    </h1>
-    <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:2.5rem;flex-wrap:wrap;">
-      <div style="font-size:0.875rem;color:var(--text-muted);">
-        By <strong>{{ article.author }}</strong>
-      </div>
-      <div style="font-size:0.875rem;color:var(--text-muted);">
-        {{ article.published_at | date: "%d %B %Y" }}
-      </div>
-      <div style="font-size:0.875rem;color:var(--text-muted);">
-        {{ article.content | strip_html | split: ' ' | size | divided_by: 200 | plus: 1 }} min read
-      </div>
-    </div>
-    {%- if article.image -%}
-      <div style="border-radius:20px;overflow:hidden;aspect-ratio:16/9;margin-bottom:3rem;">
-        <img src="{{ article.image | image_url: width: 1400 }}"
-             alt="{{ article.image.alt | default: article.title | escape }}"
-             width="1400" height="788"
-             loading="eager"
-             style="width:100%;height:100%;object-fit:cover;">
-      </div>
-    {%- endif -%}
-  </div>
-</section>
+<article class="article-page" itemscope itemtype="https://schema.org/Article">
 
-{%- comment -%} ARTICLE BODY {%- endcomment -%}
-<section style="padding:0 0 6rem;background:var(--ivory);">
-  <div class="container" style="max-width:720px;margin:0 auto;">
-    <div class="rte article-body">
-      {{ article.content }}
-    </div>
+  <!-- ARTICLE HERO -->
+  <section class="article-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="{{ blog.url }}">{{ blog.title | default: 'Journal' }}</a>
+        <span class="breadcrumb-sep">›</span>
+        <span>{{ article.title | truncate: 40 }}</span>
+      </div>
 
-    {%- comment -%} Tags {%- endcomment -%}
-    {%- if article.tags.size > 0 -%}
-      <div style="margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border-color);">
-        <p style="font-size:0.8125rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:0.75rem;">Topics</p>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-          {%- for tag in article.tags -%}
-            <a href="{{ blog.url }}/tagged/{{ tag | url_encode }}" class="badge badge-burgundy">{{ tag }}</a>
-          {%- endfor -%}
+      <div class="article-hero-meta">
+        {%- for tag in article.tags -%}
+          <span class="article-tag">{{ tag }}</span>
+        {%- endfor -%}
+      </div>
+
+      <h1 class="article-hero-title" itemprop="headline">{{ article.title }}</h1>
+      <p class="article-hero-excerpt">{{ article.excerpt_or_content | strip_html | truncate: 200 }}</p>
+
+      <div class="article-meta-row">
+        <div class="article-author-avatar">
+          <span>{{ article.author | slice: 0 }}</span>
+        </div>
+        <div class="article-meta-details">
+          <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">{{ article.author }}</span>
+          </span>
+          <span class="article-meta-sep">·</span>
+          <time itemprop="datePublished" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+            {{ article.published_at | date: '%B %d, %Y' }}
+          </time>
+          <span class="article-meta-sep">·</span>
+          <span>{{ article.content | strip_html | split: ' ' | size | divided_by: 200 | plus: 1 }} min read</span>
         </div>
       </div>
-    {%- endif -%}
-
-    {%- comment -%} Share {%- endcomment -%}
-    <div style="margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border-color);">
-      <p style="font-size:0.8125rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:0.75rem;">Share</p>
-      <div style="display:flex;gap:0.75rem;">
-        <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Instagram</a>
-        <a href="https://twitter.com/intent/tweet?url={{ canonical_url | url_encode }}&text={{ article.title | url_encode }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Twitter / X</a>
-        <a href="https://www.pinterest.com/pin/create/button/?url={{ canonical_url | url_encode }}&description={{ article.title | url_encode }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">Pinterest</a>
-      </div>
     </div>
 
-    {%- comment -%} Comments (if enabled) {%- endcomment -%}
-    {%- if blog.comments_enabled? -%}
-      <div style="margin-top:4rem;" id="comments">
-        <h3 style="font-family:var(--font-serif);font-size:1.5rem;margin-bottom:2rem;">
-          Comments ({{ article.comments_count }})
-        </h3>
-        {%- if article.comments.size > 0 -%}
-          {%- for comment in article.comments -%}
-            <div style="padding:1.5rem 0;border-bottom:1px solid var(--border-color);">
-              <p style="font-weight:500;font-size:0.875rem;margin-bottom:0.25rem;">{{ comment.author }}</p>
-              <p style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:0.75rem;">{{ comment.created_at | date: "%d %B %Y" }}</p>
-              <p style="font-size:0.9375rem;line-height:1.7;">{{ comment.content }}</p>
+    {%- if article.image -%}
+      <div class="article-hero-img">
+        <img
+          src="{{ article.image | image_url: width: 1400 }}"
+          alt="{{ article.image.alt | escape }}"
+          itemprop="image"
+          loading="eager"
+        >
+      </div>
+    {%- endif -%}
+  </section>
+
+  <!-- ARTICLE CONTENT -->
+  <section class="article-content-section">
+    <div class="container">
+      <div class="article-layout">
+
+        <!-- Main Content -->
+        <div class="article-body" itemprop="articleBody">
+          {{ article.content }}
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="article-sidebar">
+
+          <!-- Author Card -->
+          <div class="article-sidebar-card">
+            <h4 class="article-sidebar-heading">About the Author</h4>
+            <div class="article-author-card">
+              <div class="article-author-big-avatar">
+                <span>{{ article.author | slice: 0 }}</span>
+              </div>
+              <div>
+                <p class="article-author-name">{{ article.author }}</p>
+                <p class="article-author-role">Playmate Labs Editorial</p>
+              </div>
             </div>
-          {%- endfor -%}
-        {%- endif -%}
-        {%- form 'new_comment', article -%}
-          <h4 style="font-family:var(--font-serif);font-size:1.25rem;margin:2rem 0 1.25rem;">Leave a comment</h4>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.875rem;margin-bottom:0.875rem;">
-            <input type="text" name="comment[author]" placeholder="Your name" class="form-input" required>
-            <input type="email" name="comment[email]" placeholder="Email address" class="form-input" required>
           </div>
-          <textarea name="comment[body]" placeholder="Your comment…" class="form-input" rows="4" required style="width:100%;resize:vertical;margin-bottom:1rem;"></textarea>
-          <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
-        {%- endform -%}
-      </div>
-    {%- endif -%}
-  </div>
-</section>
 
-{%- comment -%} RELATED ARTICLES {%- endcomment -%}
-<section style="padding:5rem 0;background:var(--cream);">
-  <div class="container">
-    <h2 style="font-family:var(--font-serif);font-size:1.75rem;color:var(--espresso);margin-bottom:2.5rem;">More from the Journal</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2rem;">
-      {%- assign other_articles = blog.articles -%}
-      {%- assign count = 0 -%}
-      {%- for a in other_articles limit: 4 -%}
-        {%- if a.id != article.id and count < 3 -%}
-          {%- assign count = count | plus: 1 -%}
-          <a href="{{ a.url }}" style="text-decoration:none;color:inherit;">
-            <div style="border-radius:12px;overflow:hidden;aspect-ratio:16/9;margin-bottom:1rem;">
-              {%- if a.image -%}
-                <img src="{{ a.image | image_url: width: 600 }}" alt="{{ a.title | escape }}" width="600" height="338" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
-              {%- else -%}
-                <div class="img-placeholder" style="height:100%;font-size:2rem;">📖</div>
-              {%- endif -%}
+          <!-- Tags -->
+          {%- if article.tags.size > 0 -%}
+          <div class="article-sidebar-card">
+            <h4 class="article-sidebar-heading">Filed under</h4>
+            <div class="article-tag-list">
+              {%- for tag in article.tags -%}
+                <a href="{{ blog.url }}/tagged/{{ tag | handleize }}" class="article-tag">{{ tag }}</a>
+              {%- endfor -%}
             </div>
-            <h3 style="font-family:var(--font-serif);font-size:1.1rem;color:var(--espresso);line-height:1.3;">{{ a.title }}</h3>
-          </a>
-        {%- endif -%}
-      {%- endfor -%}
+          </div>
+          {%- endif -%}
+
+          <!-- Share -->
+          <div class="article-sidebar-card">
+            <h4 class="article-sidebar-heading">Share this story</h4>
+            <div class="article-share-btns">
+              <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="article-share-btn instagram">
+                <i class="fab fa-instagram"></i> Instagram
+              </a>
+              <a href="https://twitter.com/intent/tweet?text={{ article.title | url_encode }}&url={{ shop.url }}{{ article.url | url_encode }}" target="_blank" rel="noopener" class="article-share-btn twitter">
+                <i class="fab fa-twitter"></i> Twitter
+              </a>
+            </div>
+          </div>
+
+          <!-- Newsletter Sidebar -->
+          <div class="article-sidebar-newsletter">
+            <span class="section-eyebrow" style="color:var(--gold);font-size:0.6875rem;">Stay in the loop</span>
+            <h4>New drops &amp; rituals to your inbox</h4>
+            <form action="/contact#contact_form" method="post" class="article-newsletter-form">
+              <input type="hidden" name="form_type" value="customer">
+              <input type="hidden" name="utf8" value="✓">
+              <input type="hidden" name="contact[tags]" value="newsletter,journal-reader">
+              <input type="email" name="contact[email]" placeholder="your@email.com" required class="form-input form-input-sm">
+              <button type="submit" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;margin-top:0.5rem;">Subscribe</button>
+            </form>
+          </div>
+
+        </aside>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- RELATED ARTICLES -->
+  {%- if blog.articles.size > 1 -%}
+  <section class="article-related section bg-ivory">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Keep Reading</span>
+        <h2>More from the Journal</h2>
+      </div>
+      <div class="article-related-grid">
+        {%- assign count = 0 -%}
+        {%- for a in blog.articles -%}
+          {%- if a.id != article.id and count < 3 -%}
+            <a href="{{ a.url }}" class="journal-card reveal">
+              <div class="journal-card-img">
+                {%- if a.image -%}
+                  <img src="{{ a.image | image_url: width: 600 }}" alt="{{ a.image.alt | escape }}" loading="lazy">
+                {%- else -%}
+                  <div class="img-placeholder"><span>📖</span></div>
+                {%- endif -%}
+              </div>
+              <div class="journal-card-body">
+                <p class="journal-card-category">{{ a.tags.first | default: 'Journal' }}</p>
+                <h3 class="journal-card-title">{{ a.title }}</h3>
+                <div class="journal-card-meta">
+                  <span>{{ a.published_at | date: '%b %d, %Y' }}</span>
+                </div>
+              </div>
+            </a>
+            {%- assign count = count | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      <div style="text-align:center;margin-top:2.5rem;">
+        <a href="{{ blog.url }}" class="btn btn-secondary">View All Articles</a>
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+</article>
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "headline": {{ article.title | json }},
+  "author": {
+    "@type": "Person",
+    "name": {{ article.author | json }}
+  },
+  "datePublished": "{{ article.published_at | date: '%Y-%m-%d' }}",
+  "description": {{ article.excerpt_or_content | strip_html | truncate: 200 | json }},
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ settings.share_image | image_url: width: 200 }}"
+    }
+  }
+  {%- if article.image -%}
+  ,"image": "{{ article.image | image_url: width: 1200 }}"
+  {%- endif -%}
+}
+</script>

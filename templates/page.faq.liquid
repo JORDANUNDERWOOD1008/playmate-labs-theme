@@ -1,0 +1,251 @@
+{% comment %} PLAYMATE LABS — FAQ Page {% endcomment %}
+{{ 'faq.css' | asset_url | stylesheet_tag }}
+
+<section class="faq-hero">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>FAQ</span>
+    </div>
+    <span class="section-eyebrow">{{ settings.faq_eyebrow | default: 'Help & FAQ' }}</span>
+    <h1 class="faq-hero-title">{{ settings.faq_heading | default: 'Frequently Asked Questions' }}</h1>
+    <p class="faq-hero-subtitle">{{ settings.faq_subtext | default: 'Everything you need to know about our products, drops, events and membership.' }}</p>
+  </div>
+</section>
+
+<section class="faq-section section">
+  <div class="container">
+    <div class="faq-layout">
+
+      <!-- Category Nav -->
+      <aside class="faq-sidebar">
+        <nav class="faq-category-nav">
+          <button class="faq-cat-btn active" data-category="all">All Questions</button>
+          {%- assign faq_categories = 'Orders & Shipping,Products & Drops,Events,Membership & Rewards,Returns & Refunds' | split: ',' -%}
+          {%- for cat in faq_categories -%}
+            <button class="faq-cat-btn" data-category="{{ cat | handleize }}">{{ cat }}</button>
+          {%- endfor -%}
+        </nav>
+
+        <!-- Still need help card -->
+        <div class="faq-contact-card">
+          <span style="font-size:2rem;">💬</span>
+          <h4>{{ settings.faq_contact_heading | default: 'Still need help?' }}</h4>
+          <p>{{ settings.faq_contact_text | default: 'Our team responds within 24 hours.' }}</p>
+          {%- if settings.faq_contact_email != blank -%}
+            <a href="mailto:{{ settings.faq_contact_email }}" class="btn btn-primary btn-sm">
+              {{ settings.faq_contact_cta | default: 'Email Us' }}
+            </a>
+          {%- else -%}
+            <a href="{{ routes.root_url }}pages/contact" class="btn btn-primary btn-sm">
+              {{ settings.faq_contact_cta | default: 'Contact Us' }}
+            </a>
+          {%- endif -%}
+        </div>
+      </aside>
+
+      <!-- FAQ Items -->
+      <div class="faq-items" id="faq-items">
+
+        <!-- Orders & Shipping -->
+        <div class="faq-category-group" data-category="orders-shipping">
+          <h2 class="faq-category-title">Orders &amp; Shipping</h2>
+          <div class="faq-list accordion-list">
+            {%- assign faq_orders = 'How long does shipping take?|Standard delivery takes 3-5 working days. Express options available at checkout. Free standard shipping on orders over £60.|How do I track my order?|You will receive a tracking email once your order has shipped. You can also check your order status in your account under Order History.|Can I change or cancel my order?|We process orders quickly. Please contact us within 1 hour of placing your order to make changes. After this, we cannot guarantee modifications.|Do you ship internationally?|Currently we ship within the UK. International shipping is coming soon — sign up to our newsletter to be notified.' | split: '|' -%}
+            {%- assign i = 0 -%}
+            {%- for faq_item in faq_orders -%}
+              {%- assign mod = i | modulo: 2 -%}
+              {%- if mod == 0 -%}
+                <div class="accordion-item faq-item" data-faq-cat="orders-shipping">
+                  <button class="accordion-btn faq-question" aria-expanded="false">
+                    {{ faq_item }}
+                    <span class="accordion-icon"><i class="fas fa-plus"></i></span>
+                  </button>
+                  <div class="accordion-panel faq-answer">
+              {%- else -%}
+                    <p>{{ faq_item }}</p>
+                  </div>
+                </div>
+              {%- endif -%}
+              {%- assign i = i | plus: 1 -%}
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <!-- Products & Drops -->
+        <div class="faq-category-group" data-category="products-drops">
+          <h2 class="faq-category-title">Products &amp; Drops</h2>
+          <div class="faq-list accordion-list">
+            {%- assign faq_products = "What is a Monthly Drop?|Each month we curate a limited-edition sensory kit for couples. Each drop is themed, limited in quantity and ships once per month. Once it's gone, it's gone.|How do I get early access to drops?|Subscribe to our newsletter or join the Playmate Community to receive early access notifications before each drop goes public.|Are the products safe / allergen-free?|All products are clearly labelled with ingredients and allergen information. Please review product pages carefully if you have specific dietary requirements or sensitivities.|What's the difference between the experience and the kit?|The 5-Day Sensory Experience is our free digital programme delivered by email. The monthly drop kits are physical products — premium sensory items delivered to your door." | split: '|' -%}
+            {%- assign j = 0 -%}
+            {%- for faq_item in faq_products -%}
+              {%- assign mod = j | modulo: 2 -%}
+              {%- if mod == 0 -%}
+                <div class="accordion-item faq-item" data-faq-cat="products-drops">
+                  <button class="accordion-btn faq-question" aria-expanded="false">
+                    {{ faq_item }}
+                    <span class="accordion-icon"><i class="fas fa-plus"></i></span>
+                  </button>
+                  <div class="accordion-panel faq-answer">
+              {%- else -%}
+                    <p>{{ faq_item }}</p>
+                  </div>
+                </div>
+              {%- endif -%}
+              {%- assign j = j | plus: 1 -%}
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <!-- Events -->
+        <div class="faq-category-group" data-category="events">
+          <h2 class="faq-category-title">Events</h2>
+          <div class="faq-list accordion-list">
+            <div class="accordion-item faq-item" data-faq-cat="events">
+              <button class="accordion-btn faq-question" aria-expanded="false">
+                Where are your events held?
+                <span class="accordion-icon"><i class="fas fa-plus"></i></span>
+              </button>
+              <div class="accordion-panel faq-answer">
+                <p>{{ settings.faq_events_locations | default: 'We currently host events in London, with Manchester and other UK cities coming soon. Exact venue details are sent after booking.' }}</p>
+              </div>
+            </div>
+            <div class="accordion-item faq-item" data-faq-cat="events">
+              <button class="accordion-btn faq-question" aria-expanded="false">
+                Do I need to come as a couple?
+                <span class="accordion-icon"><i class="fas fa-plus"></i></span>
+              </button>
+              <div class="accordion-panel faq-answer">
+                <p>{{ settings.faq_events_couples | default: 'Most events are designed for couples, though some community mixers welcome individuals. Check the specific event listing for details.' }}</p>
+              </div>
+            </div>
+            <div class="accordion-item faq-item" data-faq-cat="events">
+              <button class="accordion-btn faq-question" aria-expanded="false">
+                What is your cancellation policy for events?
+                <span class="accordion-icon"><i class="fas fa-plus"></i></span>
+              </button>
+              <div class="accordion-panel faq-answer">
+                <p>{{ settings.faq_events_cancellation | default: 'Full refunds are available up to 48 hours before the event. Within 48 hours, we can transfer your booking to a future event but cannot issue refunds.' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Membership & Rewards -->
+        <div class="faq-category-group" data-category="membership-rewards">
+          <h2 class="faq-category-title">Membership &amp; Rewards</h2>
+          <div class="faq-list accordion-list">
+            <div class="accordion-item faq-item" data-faq-cat="membership-rewards">
+              <button class="accordion-btn faq-question" aria-expanded="false">
+                How do I earn Playmate Points?
+                <span class="accordion-icon"><i class="fas fa-plus"></i></span>
+              </button>
+              <div class="accordion-panel faq-answer">
+                <p>{{ settings.faq_rewards_earn | default: 'Earn 1 point per £1 spent, 50 points for writing a review, 200 points for referring a friend, 25 points for following us on social media, and 100 points when you subscribe to monthly drops.' }}</p>
+              </div>
+            </div>
+            <div class="accordion-item faq-item" data-faq-cat="membership-rewards">
+              <button class="accordion-btn faq-question" aria-expanded="false">
+                How do I redeem my points?
+                <span class="accordion-icon"><i class="fas fa-plus"></i></span>
+              </button>
+              <div class="accordion-panel faq-answer">
+                <p>{{ settings.faq_rewards_redeem | default: 'Points can be redeemed at checkout for discounts. 100 points = £1 off. Higher membership tiers unlock bonus multipliers and exclusive rewards.' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Returns & Refunds -->
+        <div class="faq-category-group" data-category="returns-refunds">
+          <h2 class="faq-category-title">Returns &amp; Refunds</h2>
+          <div class="faq-list accordion-list">
+            <div class="accordion-item faq-item" data-faq-cat="returns-refunds">
+              <button class="accordion-btn faq-question" aria-expanded="false">
+                What is your returns policy?
+                <span class="accordion-icon"><i class="fas fa-plus"></i></span>
+              </button>
+              <div class="accordion-panel faq-answer">
+                <p>{{ settings.faq_returns_policy | default: 'We offer 30-day returns on unopened, unused items in original packaging. Consumable food items and personalised products cannot be returned for hygiene reasons.' }}</p>
+              </div>
+            </div>
+            <div class="accordion-item faq-item" data-faq-cat="returns-refunds">
+              <button class="accordion-btn faq-question" aria-expanded="false">
+                How do I start a return?
+                <span class="accordion-icon"><i class="fas fa-plus"></i></span>
+              </button>
+              <div class="accordion-panel faq-answer">
+                <p>{{ settings.faq_returns_process | default: 'Email us at hello@playmate-labs.com with your order number and reason for return. We will send you a return label within 24 hours.' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STILL NEED HELP BANNER -->
+<section class="faq-cta-banner">
+  <div class="container">
+    <div class="faq-cta-inner">
+      <h2>{{ settings.faq_cta_heading | default: "Can't find what you're looking for?" }}</h2>
+      <p>{{ settings.faq_cta_text | default: 'Our customer care team is here to help. We typically respond within 24 hours.' }}</p>
+      <div class="faq-cta-actions">
+        {%- if settings.faq_contact_email != blank -%}
+          <a href="mailto:{{ settings.faq_contact_email }}" class="btn btn-primary">
+            <i class="fas fa-envelope"></i> {{ settings.faq_contact_cta | default: 'Email Us' }}
+          </a>
+        {%- else -%}
+          <a href="{{ routes.root_url }}pages/contact" class="btn btn-primary">
+            <i class="fas fa-envelope"></i> {{ settings.faq_contact_cta | default: 'Contact Us' }}
+          </a>
+        {%- endif -%}
+        {%- if settings.social_instagram_link != blank -%}
+          <a href="{{ settings.social_instagram_link }}" target="_blank" rel="noopener" class="btn btn-secondary">
+            <i class="fab fa-instagram"></i> DM on Instagram
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Category filter
+  const catBtns = document.querySelectorAll('.faq-cat-btn');
+  catBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      catBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const cat = this.dataset.category;
+      document.querySelectorAll('.faq-category-group').forEach(group => {
+        if (cat === 'all' || group.dataset.category === cat) {
+          group.style.display = '';
+        } else {
+          group.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Accordion
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const expanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', !expanded);
+      const panel = this.nextElementSibling;
+      if (!expanded) {
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+        this.querySelector('.accordion-icon i').className = 'fas fa-minus';
+      } else {
+        panel.style.maxHeight = '0';
+        this.querySelector('.accordion-icon i').className = 'fas fa-plus';
+      }
+    });
+  });
+});
+</script>

@@ -1,158 +1,389 @@
-{% comment %}
-  PLAYMATE LABS — CUSTOMER ACCOUNT TEMPLATE
-  File: templates/customers/account.liquid
-{% endcomment %}
+{% comment %} PLAYMATE LABS — Customer Account Page (Enhanced) {% endcomment %}
+{{ 'account.css' | asset_url | stylesheet_tag }}
 
 {%- unless customer -%}
-  {%- redirect_to routes.account_login_url -%}
+  {%- if settings.account_redirect_guests -%}
+    <script>window.location.href = '{{ routes.account_login_url }}';</script>
+  {%- endif -%}
 {%- endunless -%}
 
-<section style="padding:calc(var(--nav-height)+3rem) 0 6rem;min-height:80vh;background:var(--ivory);">
-  <div class="container">
+<div class="account-page">
+  <div class="container account-container">
 
-    {%- comment -%} HEADER {%- endcomment -%}
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3rem;flex-wrap:wrap;gap:1rem;">
+    <!-- Account Header -->
+    <div class="account-header">
       <div>
-        <h1 style="font-family:var(--font-serif);font-size:clamp(1.75rem,3vw,2.5rem);color:var(--espresso);">
-          Welcome back, {{ customer.first_name }}.
+        <p class="account-welcome-label">{{ settings.account_welcome_label | default: 'Welcome back' }}</p>
+        <h1 class="account-heading">
+          {%- if customer -%}
+            {{ customer.first_name | default: 'Your' }}'s Account
+          {%- else -%}
+            {{ settings.account_guest_heading | default: 'Your Account' }}
+          {%- endif -%}
         </h1>
-        <p style="color:var(--text-muted);font-size:0.9375rem;">{{ customer.email }}</p>
       </div>
-      <a href="{{ routes.account_logout_url }}" class="btn btn-ghost btn-sm">Sign Out</a>
-    </div>
-
-    {%- comment -%} REWARDS SUMMARY (Placeholder — integrate with Smile.io or Yotpo) {%- endcomment -%}
-    <div style="background:linear-gradient(135deg,var(--espresso),var(--burgundy-dark));border-radius:20px;padding:2.5rem;margin-bottom:3rem;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(201,169,110,0.15),transparent 70%);"></div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2rem;position:relative;z-index:1;">
-        <div>
-          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Loyalty Points</p>
-          <p style="font-family:var(--font-serif);font-size:2.5rem;color:var(--gold);">—</p>
-          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);">Rewards integration coming soon</p>
-        </div>
-        <div>
-          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Tier</p>
-          <p style="font-family:var(--font-serif);font-size:1.5rem;color:var(--cream);">Curious 🌱</p>
-          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);">Start earning to unlock Intimate</p>
-        </div>
-        <div>
-          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Total Spent</p>
-          <p style="font-family:var(--font-serif);font-size:2rem;color:var(--cream);">{{ customer.total_spent | money }}</p>
-        </div>
-        <div>
-          <p style="font-size:0.75rem;color:rgba(245,239,230,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Member Since</p>
-          <p style="font-family:var(--font-serif);font-size:1.25rem;color:var(--cream);">{{ customer.created_at | date: "%B %Y" }}</p>
-        </div>
-      </div>
-    </div>
-
-    {%- comment -%} TABS {%- endcomment -%}
-    <div data-tabs>
-      <div class="tabs-header" style="margin-bottom:2.5rem;">
-        <button class="tab-btn active" data-tab="orders">Orders</button>
-        <button class="tab-btn" data-tab="addresses">Addresses</button>
-        <button class="tab-btn" data-tab="drops">Drop Subscriptions</button>
-        <button class="tab-btn" data-tab="experience">My Experience</button>
-      </div>
-
-      {%- comment -%} Orders Tab {%- endcomment -%}
-      <div class="tab-panel active" data-panel="orders">
-        {%- if customer.orders.size > 0 -%}
-          <div style="overflow-x:auto;">
-            <table style="width:100%;border-collapse:collapse;font-size:0.875rem;">
-              <thead>
-                <tr style="border-bottom:2px solid var(--border-color);text-align:left;">
-                  <th style="padding:0.75rem 1rem 0.75rem 0;font-weight:600;color:var(--espresso);">Order</th>
-                  <th style="padding:0.75rem 1rem;font-weight:600;color:var(--espresso);">Date</th>
-                  <th style="padding:0.75rem 1rem;font-weight:600;color:var(--espresso);">Status</th>
-                  <th style="padding:0.75rem 0 0.75rem 1rem;font-weight:600;color:var(--espresso);text-align:right;">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {%- for order in customer.orders -%}
-                  <tr style="border-bottom:1px solid var(--border-color);">
-                    <td style="padding:1rem 1rem 1rem 0;">
-                      <a href="{{ order.customer_url }}" style="color:var(--burgundy);font-weight:500;">
-                        {{ order.name }}
-                      </a>
-                    </td>
-                    <td style="padding:1rem;color:var(--text-muted);">{{ order.created_at | date: "%d %b %Y" }}</td>
-                    <td style="padding:1rem;">
-                      <span class="badge badge-burgundy">{{ order.fulfillment_status | replace: '_', ' ' | capitalize }}</span>
-                    </td>
-                    <td style="padding:1rem 0 1rem 1rem;text-align:right;font-weight:500;">
-                      {{ order.total_price | money }}
-                    </td>
-                  </tr>
-                {%- endfor -%}
-              </tbody>
-            </table>
-          </div>
+      <div class="account-header-actions">
+        {%- if customer -%}
+          <a href="{{ routes.account_logout_url }}" class="btn btn-secondary btn-sm">Sign Out</a>
         {%- else -%}
-          <div style="text-align:center;padding:4rem 0;">
-            <div style="font-size:3rem;margin-bottom:1rem;">🛒</div>
-            <p style="font-family:var(--font-serif);font-size:1.25rem;margin-bottom:0.75rem;">No orders yet</p>
-            <p style="color:var(--text-muted);margin-bottom:2rem;">Your first ritual awaits.</p>
-            <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary btn-sm">Shop Now</a>
-          </div>
+          <a href="{{ routes.account_register_url }}" class="btn btn-secondary btn-sm">Create Account</a>
+          <a href="{{ routes.account_login_url }}" class="btn btn-primary btn-sm">Sign In</a>
         {%- endif -%}
       </div>
+    </div>
 
-      {%- comment -%} Addresses Tab {%- endcomment -%}
-      <div class="tab-panel" data-panel="addresses">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
-          <h3 style="font-family:var(--font-serif);font-size:1.25rem;">Saved Addresses</h3>
-          <a href="{{ routes.account_addresses_url }}" class="btn btn-ghost btn-sm">Manage Addresses</a>
+    <div class="account-layout">
+
+      <!-- SIDEBAR -->
+      <aside class="account-sidebar">
+        <!-- Member Card -->
+        <div class="account-member-card">
+          <div class="account-avatar">
+            {%- if customer -%}
+              {{ customer.first_name | slice: 0 | upcase }}{{ customer.last_name | slice: 0 | upcase }}
+            {%- else -%}
+              ?
+            {%- endif -%}
+          </div>
+          <p class="account-member-name">
+            {%- if customer -%}
+              {{ customer.first_name }} {{ customer.last_name }}
+            {%- else -%}
+              Guest
+            {%- endif -%}
+          </p>
+          {%- if customer -%}
+            <p class="account-member-email">{{ customer.email }}</p>
+          {%- endif -%}
+          <span class="badge badge-gold account-tier-badge">
+            {%- if customer -%}
+              {%- if customer.orders_count >= 10 -%}
+                Soulmates
+              {%- elsif customer.orders_count >= 5 -%}
+                Devoted
+              {%- elsif customer.orders_count >= 2 -%}
+                Intimate
+              {%- else -%}
+                Curious
+              {%- endif -%}
+            {%- else -%}
+              Explorer
+            {%- endif -%}
+          </span>
+          <div class="account-points-display">
+            <p class="account-points-number">
+              {%- if customer -%}
+                {{ customer.orders_count | times: 100 }}
+              {%- else -%}
+                0
+              {%- endif -%}
+            </p>
+            <p class="account-points-label">Playmate Points</p>
+          </div>
         </div>
-        {%- if customer.addresses.size > 0 -%}
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;">
-            {%- for address in customer.addresses -%}
-              <div style="padding:1.5rem;border:1px solid var(--border-color);border-radius:12px;position:relative;">
-                {%- if address == customer.default_address -%}
-                  <span class="badge badge-gold" style="position:absolute;top:1rem;right:1rem;">Default</span>
-                {%- endif -%}
-                <p style="font-weight:500;margin-bottom:0.5rem;">{{ address.name }}</p>
-                <p style="font-size:0.875rem;color:var(--text-muted);line-height:1.6;">
-                  {{ address.address1 }}{%- if address.address2 -%}, {{ address.address2 }}{%- endif -%}<br>
-                  {{ address.city }}, {{ address.province_code }} {{ address.zip }}<br>
-                  {{ address.country }}
+
+        <!-- Sidebar Nav -->
+        <nav class="account-nav">
+          <a href="#orders" class="account-nav-link active" data-tab="orders">
+            <i class="fas fa-shopping-bag"></i> Orders
+          </a>
+          <a href="#rewards" class="account-nav-link" data-tab="rewards">
+            <i class="fas fa-star"></i> Rewards
+          </a>
+          <a href="#addresses" class="account-nav-link" data-tab="addresses">
+            <i class="fas fa-map-marker-alt"></i> Addresses
+          </a>
+          {%- if settings.account_show_events_tab -%}
+          <a href="#events" class="account-nav-link" data-tab="events">
+            <i class="fas fa-calendar"></i> My Events
+          </a>
+          {%- endif -%}
+          {%- if settings.account_show_profile_tab -%}
+          <a href="#profile" class="account-nav-link" data-tab="profile">
+            <i class="fas fa-user"></i> Profile
+          </a>
+          {%- endif -%}
+        </nav>
+
+        <!-- Quick Links -->
+        <div class="account-sidebar-links">
+          <a href="{{ routes.root_url }}pages/community" class="account-sidebar-link">
+            <i class="fas fa-users"></i> Community & Rewards
+          </a>
+          <a href="{{ routes.root_url }}pages/events" class="account-sidebar-link">
+            <i class="fas fa-calendar-alt"></i> Browse Events
+          </a>
+          <a href="{{ routes.collections_url }}/monthly-drops" class="account-sidebar-link">
+            <i class="fas fa-box"></i> Monthly Drops
+          </a>
+          <a href="{{ routes.root_url }}pages/5-day-experience" class="account-sidebar-link">
+            <i class="fas fa-gift"></i> Free 5-Day Experience
+          </a>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="account-main">
+
+        <!-- ORDERS TAB -->
+        <div class="account-tab active" id="tab-orders">
+          <div class="account-section-header">
+            <h2 class="account-section-title">Order History</h2>
+            {%- if customer -%}
+              <a href="{{ routes.collections_url }}" class="btn btn-secondary btn-sm">Shop Now</a>
+            {%- endif -%}
+          </div>
+
+          {%- if customer -%}
+            {%- if customer.orders.size > 0 -%}
+              <div class="account-orders-list">
+                {%- for order in customer.orders -%}
+                  <div class="account-order-card">
+                    <div class="account-order-header">
+                      <div>
+                        <p class="account-order-number">{{ order.name }}</p>
+                        <p class="account-order-date">{{ order.created_at | date: '%B %d, %Y' }}</p>
+                      </div>
+                      <div class="account-order-status-wrap">
+                        <span class="account-order-status account-order-status--{{ order.financial_status }}">
+                          {{ order.financial_status | capitalize }}
+                        </span>
+                        <span class="account-order-total">{{ order.total_price | money }}</span>
+                      </div>
+                    </div>
+                    <div class="account-order-items">
+                      {%- for line_item in order.line_items limit: 3 -%}
+                        <div class="account-order-item">
+                          {%- if line_item.image -%}
+                            <img src="{{ line_item.image | image_url: width: 80 }}" alt="{{ line_item.title }}" class="account-order-item-img">
+                          {%- else -%}
+                            <div class="account-order-item-img-placeholder">📦</div>
+                          {%- endif -%}
+                          <div>
+                            <p class="account-order-item-name">{{ line_item.title }}</p>
+                            <p class="account-order-item-qty">Qty: {{ line_item.quantity }} · {{ line_item.price | money }}</p>
+                          </div>
+                        </div>
+                      {%- endfor -%}
+                      {%- if order.line_items.size > 3 -%}
+                        <p class="account-order-more">+{{ order.line_items.size | minus: 3 }} more items</p>
+                      {%- endif -%}
+                    </div>
+                    <div class="account-order-actions">
+                      <a href="{{ order.customer_url }}" class="btn btn-secondary btn-sm">View Order</a>
+                      {%- if order.fulfillment_status == 'fulfilled' -%}
+                        <a href="#" class="btn btn-ghost btn-sm">Track Delivery</a>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                {%- endfor -%}
+              </div>
+            {%- else -%}
+              <div class="account-empty-state">
+                <span class="account-empty-icon">🛍️</span>
+                <h3>{{ settings.account_no_orders_heading | default: 'No orders yet' }}</h3>
+                <p>{{ settings.account_no_orders_text | default: 'When you place your first order, it will appear here.' }}</p>
+                <a href="{{ routes.collections_url }}" class="btn btn-primary">Shop Now</a>
+              </div>
+            {%- endif -%}
+          {%- else -%}
+            <div class="account-empty-state">
+              <span class="account-empty-icon">🔒</span>
+              <h3>Sign in to see your orders</h3>
+              <p>Create an account to track orders, earn rewards and unlock member benefits.</p>
+              <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+                <a href="{{ routes.account_login_url }}" class="btn btn-primary">Sign In</a>
+                <a href="{{ routes.account_register_url }}" class="btn btn-secondary">Create Account</a>
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+
+        <!-- REWARDS TAB -->
+        <div class="account-tab" id="tab-rewards">
+          <div class="account-section-header">
+            <h2 class="account-section-title">{{ settings.account_rewards_heading | default: 'Your Rewards' }}</h2>
+            <a href="{{ routes.root_url }}pages/community" class="btn btn-secondary btn-sm">How It Works</a>
+          </div>
+
+          <!-- Points Progress -->
+          <div class="rewards-progress-card">
+            <div class="rewards-progress-header">
+              <div>
+                <p class="rewards-points-big">
+                  {%- if customer -%}{{ customer.orders_count | times: 100 }}{%- else -%}0{%- endif -%}
                 </p>
+                <p class="rewards-points-label">Playmate Points</p>
+              </div>
+              <div class="rewards-tier-info">
+                <span class="badge badge-gold">
+                  {%- if customer -%}
+                    {%- if customer.orders_count >= 10 -%}Soulmates 💎
+                    {%- elsif customer.orders_count >= 5 -%}Devoted 🔥
+                    {%- elsif customer.orders_count >= 2 -%}Intimate 🌹
+                    {%- else -%}Curious 🌱
+                    {%- endif -%}
+                  {%- else -%}Explorer
+                  {%- endif -%}
+                </span>
+                <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.375rem;">Your tier</p>
+              </div>
+            </div>
+            <div class="rewards-progress-bar-wrap">
+              <div class="rewards-progress-bar">
+                <div class="rewards-progress-fill" style="width:{%- if customer -%}{{ customer.orders_count | times: 10 | at_most: 100 }}%{%- else -%}0%{%- endif -%}"></div>
+              </div>
+              <p class="rewards-progress-label">
+                {%- if customer -%}
+                  {%- assign next_points = 500 -%}
+                  {%- if customer.orders_count >= 10 -%}Maximum tier reached 🎉
+                  {%- elsif customer.orders_count >= 5 -%}{{ 5000 | minus: customer.orders_count | times: 100 }} points to Soulmates
+                  {%- elsif customer.orders_count >= 2 -%}{{ 2000 | minus: customer.orders_count | times: 100 }} points to Devoted
+                  {%- else -%}{{ 500 | minus: customer.orders_count | times: 100 }} points to Intimate
+                  {%- endif -%}
+                {%- else -%}
+                  Sign in to track your progress
+                {%- endif -%}
+              </p>
+            </div>
+          </div>
+
+          <!-- Earn Points -->
+          <div class="rewards-earn-grid">
+            {%- assign earn_items = '🛍️ Make a purchase,1 point per £1 spent|⭐ Write a review,50 points|👥 Refer a friend,200 points|📱 Follow on social,25 points|🎫 RSVP to an event,30 points|📦 Subscribe to drops,100 points' | split: '|' -%}
+            {%- for item in earn_items -%}
+              {%- assign parts = item | split: ',' -%}
+              <div class="rewards-earn-item">
+                <span class="rewards-earn-action">{{ parts[0] }}</span>
+                <span class="rewards-earn-points">{{ parts[1] }}</span>
               </div>
             {%- endfor -%}
           </div>
-        {%- else -%}
-          <p style="color:var(--text-muted);">No saved addresses.</p>
-          <a href="{{ routes.account_addresses_url }}" class="btn btn-primary btn-sm" style="margin-top:1rem;">Add Address</a>
+        </div>
+
+        <!-- ADDRESSES TAB -->
+        <div class="account-tab" id="tab-addresses">
+          <div class="account-section-header">
+            <h2 class="account-section-title">Saved Addresses</h2>
+            {%- if customer -%}
+              <a href="{{ customer.default_address.url }}/new" class="btn btn-secondary btn-sm">+ Add Address</a>
+            {%- endif -%}
+          </div>
+
+          {%- if customer and customer.addresses.size > 0 -%}
+            <div class="account-addresses-grid">
+              {%- for address in customer.addresses -%}
+                <div class="account-address-card{% if address == customer.default_address %} account-address-card--default{% endif %}">
+                  {%- if address == customer.default_address -%}
+                    <span class="account-address-default-badge">Default</span>
+                  {%- endif -%}
+                  <p class="account-address-name">{{ address.first_name }} {{ address.last_name }}</p>
+                  <p class="account-address-lines">
+                    {{ address.address1 }}{%- if address.address2 %}, {{ address.address2 }}{%- endif -%}<br>
+                    {{ address.city }}{%- if address.province %}, {{ address.province }}{%- endif %} {{ address.zip }}<br>
+                    {{ address.country }}
+                  </p>
+                  <div class="account-address-actions">
+                    <a href="{{ address.url }}/edit" class="btn btn-ghost btn-sm">Edit</a>
+                    <a href="{{ address.url }}" class="btn btn-ghost btn-sm account-address-delete" data-confirm="Delete this address?">Delete</a>
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- elsif customer -%}
+            <div class="account-empty-state">
+              <span class="account-empty-icon">📍</span>
+              <h3>No saved addresses</h3>
+              <p>Add an address to speed up checkout.</p>
+              <a href="{{ customer.default_address.url }}/new" class="btn btn-primary">Add Address</a>
+            </div>
+          {%- else -%}
+            <div class="account-empty-state">
+              <span class="account-empty-icon">🔒</span>
+              <h3>Sign in to manage addresses</h3>
+              <a href="{{ routes.account_login_url }}" class="btn btn-primary">Sign In</a>
+            </div>
+          {%- endif -%}
+        </div>
+
+        <!-- EVENTS TAB -->
+        {%- if settings.account_show_events_tab -%}
+        <div class="account-tab" id="tab-events">
+          <div class="account-section-header">
+            <h2 class="account-section-title">My Events</h2>
+            <a href="{{ routes.root_url }}pages/events" class="btn btn-secondary btn-sm">Browse Events</a>
+          </div>
+          <div class="account-empty-state">
+            <span class="account-empty-icon">🎫</span>
+            <h3>{{ settings.account_no_events_heading | default: 'No upcoming events' }}</h3>
+            <p>{{ settings.account_no_events_text | default: 'RSVPs and event bookings will appear here.' }}</p>
+            <a href="{{ routes.root_url }}pages/events" class="btn btn-primary">Browse Events</a>
+          </div>
+        </div>
         {%- endif -%}
-      </div>
 
-      {%- comment -%} Drop Subscriptions Tab — Placeholder {%- endcomment -%}
-      <div class="tab-panel" data-panel="drops">
-        <div style="text-align:center;padding:4rem 0;max-width:480px;margin:0 auto;">
-          <div style="font-size:3rem;margin-bottom:1rem;">📦</div>
-          <h3 style="font-family:var(--font-serif);font-size:1.5rem;margin-bottom:0.75rem;">Drop Subscriptions</h3>
-          <p style="color:var(--text-muted);margin-bottom:2rem;">
-            Manage your monthly drop subscription. Cancel, pause or upgrade anytime.
-            Powered by <strong>Recharge</strong> — integration coming soon.
-          </p>
-          <a href="{{ collections['monthly-drops'].url }}" class="btn btn-gold btn-sm">Subscribe to Drops</a>
+        <!-- PROFILE TAB -->
+        {%- if settings.account_show_profile_tab -%}
+        <div class="account-tab" id="tab-profile">
+          <div class="account-section-header">
+            <h2 class="account-section-title">Profile Settings</h2>
+          </div>
+          {%- if customer -%}
+            <div class="account-profile-form">
+              <form action="/account" method="post">
+                <div class="account-form-grid">
+                  <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" name="customer[first_name]" value="{{ customer.first_name }}" class="form-input">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" name="customer[last_name]" value="{{ customer.last_name }}" class="form-input">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Email</label>
+                  <input type="email" name="customer[email]" value="{{ customer.email }}" class="form-input">
+                </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </form>
+            </div>
+          {%- else -%}
+            <div class="account-empty-state">
+              <a href="{{ routes.account_login_url }}" class="btn btn-primary">Sign In</a>
+            </div>
+          {%- endif -%}
         </div>
-      </div>
+        {%- endif -%}
 
-      {%- comment -%} Experience Tab — Placeholder {%- endcomment -%}
-      <div class="tab-panel" data-panel="experience">
-        <div style="text-align:center;padding:4rem 0;max-width:480px;margin:0 auto;">
-          <div style="font-size:3rem;margin-bottom:1rem;">✨</div>
-          <h3 style="font-family:var(--font-serif);font-size:1.5rem;margin-bottom:0.75rem;">My 5-Day Experience</h3>
-          <p style="color:var(--text-muted);margin-bottom:2rem;">
-            Track your progress through the 5-day sensory experience, access past day content and start again anytime.
-          </p>
-          <a href="{{ pages['5-day-experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-gold btn-sm">
-            Go to Experience
-          </a>
-        </div>
-      </div>
-
-    </div>{%- comment -%} /data-tabs {%- endcomment -%}
+      </main>
+    </div>
   </div>
-</section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const navLinks = document.querySelectorAll('.account-nav-link[data-tab]');
+  const tabs = document.querySelectorAll('.account-tab');
+
+  function switchTab(tabId) {
+    tabs.forEach(t => t.classList.remove('active'));
+    navLinks.forEach(l => l.classList.remove('active'));
+    const target = document.getElementById('tab-' + tabId);
+    if (target) target.classList.add('active');
+    const link = document.querySelector('[data-tab="' + tabId + '"]');
+    if (link) link.classList.add('active');
+  }
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      switchTab(this.dataset.tab);
+    });
+  });
+
+  // Handle hash on load
+  const hash = window.location.hash.replace('#', '');
+  if (hash) switchTab(hash);
+});
+</script>

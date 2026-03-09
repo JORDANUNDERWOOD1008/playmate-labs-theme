@@ -51,6 +51,41 @@
   {{ 'components.css' | asset_url | stylesheet_tag }}
   {{ 'theme-extra.css' | asset_url | stylesheet_tag }}
 
+  {%- comment -%} Page-specific stylesheets {%- endcomment -%}
+  {%- case template.name -%}
+    {%- when 'index' -%}
+      {{ 'home.css' | asset_url | stylesheet_tag }}
+    {%- when 'collection' -%}
+      {{ 'shop.css' | asset_url | stylesheet_tag }}
+    {%- when 'product' -%}
+      {{ 'product.css' | asset_url | stylesheet_tag }}
+    {%- when 'blog' -%}
+      {{ 'journal.css' | asset_url | stylesheet_tag }}
+    {%- when 'article' -%}
+      {{ 'journal.css' | asset_url | stylesheet_tag }}
+    {%- when 'search' -%}
+      {{ 'search.css' | asset_url | stylesheet_tag }}
+    {%- when 'customers/account' -%}
+      {{ 'account.css' | asset_url | stylesheet_tag }}
+    {%- when 'page' -%}
+      {%- case template.suffix -%}
+        {%- when 'experience', '5-day-experience' -%}
+          {{ 'experience.css' | asset_url | stylesheet_tag }}
+        {%- when 'drops', 'monthly-drops' -%}
+          {{ 'drops.css' | asset_url | stylesheet_tag }}
+        {%- when 'events' -%}
+          {{ 'events.css' | asset_url | stylesheet_tag }}
+        {%- when 'event-detail' -%}
+          {{ 'event-detail.css' | asset_url | stylesheet_tag }}
+        {%- when 'faq' -%}
+          {{ 'faq.css' | asset_url | stylesheet_tag }}
+        {%- when 'contact' -%}
+          {{ 'contact.css' | asset_url | stylesheet_tag }}
+        {%- when 'about', 'community' -%}
+          {%- comment -%} Shared page styles covered by components.css {%- endcomment -%}
+      {%- endcase -%}
+  {%- endcase -%}
+
   <script>
     // Theme feature flags
     window.Shopify = window.Shopify || {};

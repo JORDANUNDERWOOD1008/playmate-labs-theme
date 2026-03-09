@@ -1,0 +1,227 @@
+{% comment %} PLAYMATE LABS — Search Results Page {% endcomment %}
+{{ 'search.css' | asset_url | stylesheet_tag }}
+
+{%- paginate search.results by 12 -%}
+
+<section class="search-hero">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Search</span>
+    </div>
+    <h1 class="search-hero-title">
+      {%- if search.performed -%}
+        Results for "{{ search.terms }}"
+      {%- else -%}
+        Search
+      {%- endif -%}
+    </h1>
+    {%- if search.performed -%}
+      <p class="search-result-count">
+        {{ search.results_count }} result{%- if search.results_count != 1 -%}s{%- endif -%} found
+      </p>
+    {%- endif -%}
+
+    <!-- Search Form -->
+    <form action="{{ routes.search_url }}" method="get" class="search-form" role="search">
+      <div class="search-input-wrap">
+        <i class="fas fa-search search-icon"></i>
+        <input
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ settings.search_placeholder | default: 'Search products, articles, pages…' }}"
+          class="form-input search-input"
+          aria-label="Search"
+          autofocus
+        >
+        <button type="submit" class="btn btn-primary search-submit">Search</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+{%- if search.performed -%}
+  {%- if search.results.size > 0 -%}
+
+    <section class="search-results section">
+      <div class="container">
+
+        <!-- Type Filter -->
+        <div class="search-type-filter">
+          <span class="search-filter-label">Filter:</span>
+          <button class="filter-btn active" data-type="all">All ({{ search.results_count }})</button>
+          {%- assign product_count = 0 -%}
+          {%- assign article_count = 0 -%}
+          {%- assign page_count = 0 -%}
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}{%- assign product_count = product_count | plus: 1 -%}
+            {%- elsif item.object_type == 'article' -%}{%- assign article_count = article_count | plus: 1 -%}
+            {%- else -%}{%- assign page_count = page_count | plus: 1 -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if product_count > 0 -%}
+            <button class="filter-btn" data-type="product">Products ({{ product_count }})</button>
+          {%- endif -%}
+          {%- if article_count > 0 -%}
+            <button class="filter-btn" data-type="article">Journal ({{ article_count }})</button>
+          {%- endif -%}
+          {%- if page_count > 0 -%}
+            <button class="filter-btn" data-type="page">Pages ({{ page_count }})</button>
+          {%- endif -%}
+        </div>
+
+        <!-- Results Grid -->
+        <div class="search-results-grid" id="search-results-grid">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              <div class="search-result-item" data-type="product">
+                <a href="{{ item.url }}" class="search-result-card">
+                  <div class="search-result-img">
+                    {%- if item.featured_image -%}
+                      <img src="{{ item.featured_image | image_url: width: 400 }}" alt="{{ item.featured_image.alt | escape }}" loading="lazy">
+                    {%- else -%}
+                      <div class="img-placeholder"><span>🛍️</span></div>
+                    {%- endif -%}
+                  </div>
+                  <div class="search-result-body">
+                    <p class="search-result-type">Product</p>
+                    <h3 class="search-result-title">{{ item.title }}</h3>
+                    <p class="search-result-excerpt">{{ item.body_html | strip_html | truncate: 100 }}</p>
+                    <p class="search-result-price">{{ item.price | money }}</p>
+                  </div>
+                </a>
+              </div>
+            {%- elsif item.object_type == 'article' -%}
+              <div class="search-result-item" data-type="article">
+                <a href="{{ item.url }}" class="search-result-card">
+                  <div class="search-result-img">
+                    {%- if item.image -%}
+                      <img src="{{ item.image | image_url: width: 400 }}" alt="{{ item.image.alt | escape }}" loading="lazy">
+                    {%- else -%}
+                      <div class="img-placeholder" style="background:linear-gradient(135deg,#1A0A06,#3D1A2E);"><span>📖</span></div>
+                    {%- endif -%}
+                  </div>
+                  <div class="search-result-body">
+                    <p class="search-result-type">Journal</p>
+                    <h3 class="search-result-title">{{ item.title }}</h3>
+                    <p class="search-result-excerpt">{{ item.excerpt_or_content | strip_html | truncate: 100 }}</p>
+                    <p class="search-result-meta">{{ item.published_at | date: '%b %d, %Y' }}</p>
+                  </div>
+                </a>
+              </div>
+            {%- else -%}
+              <div class="search-result-item" data-type="page">
+                <a href="{{ item.url }}" class="search-result-card search-result-card--page">
+                  <div class="search-result-body">
+                    <p class="search-result-type">Page</p>
+                    <h3 class="search-result-title">{{ item.title }}</h3>
+                    <p class="search-result-excerpt">{{ item.content | strip_html | truncate: 150 }}</p>
+                  </div>
+                </a>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        <!-- Pagination -->
+        {%- if paginate.pages > 1 -%}
+          <div class="search-pagination">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="btn btn-secondary btn-sm">← Previous</a>
+            {%- endif -%}
+            <span class="search-page-info">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="btn btn-secondary btn-sm">Next →</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+      </div>
+    </section>
+
+  {%- else -%}
+    <section class="search-no-results section">
+      <div class="container">
+        <div class="search-empty-state">
+          <span class="search-empty-icon">🔍</span>
+          <h2>{{ settings.search_no_results_heading | default: 'No results found' }}</h2>
+          <p>{{ settings.search_no_results_text | default: 'Try different keywords, or explore our collections below.' }}</p>
+          <div class="search-suggestions">
+            <a href="{{ routes.collections_url }}" class="btn btn-primary">Browse All Products</a>
+            <a href="{{ routes.root_url }}blogs/journal" class="btn btn-secondary">Read the Journal</a>
+          </div>
+        </div>
+
+        <!-- Popular Searches -->
+        {%- if settings.search_popular_terms != blank -%}
+          <div class="search-popular">
+            <p class="search-popular-label">{{ settings.search_popular_label | default: 'Popular searches:' }}</p>
+            <div class="search-popular-pills">
+              {%- assign popular = settings.search_popular_terms | split: ',' -%}
+              {%- for term in popular -%}
+                <a href="{{ routes.search_url }}?q={{ term | strip | url_encode }}" class="filter-btn">{{ term | strip }}</a>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
+{%- else -%}
+  <!-- Search Landing - not yet searched -->
+  <section class="search-landing section">
+    <div class="container">
+      {%- if settings.search_popular_terms != blank -%}
+        <div class="search-popular">
+          <p class="search-popular-label">{{ settings.search_popular_label | default: 'Popular searches:' }}</p>
+          <div class="search-popular-pills">
+            {%- assign popular = settings.search_popular_terms | split: ',' -%}
+            {%- for term in popular -%}
+              <a href="{{ routes.search_url }}?q={{ term | strip | url_encode }}" class="filter-btn">{{ term | strip }}</a>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      <!-- Featured Collections -->
+      <div class="search-featured-collections">
+        <h2 style="font-family:var(--font-serif);margin-bottom:1.5rem;">Browse by category</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;">
+          {%- assign browse_links = 'Monthly Drops|/collections/monthly-drops|📦,Date Night Kits|/collections/all|🌹,Ritual Add-Ons|/collections/ritual-add-ons|🕯️,The Experience|/pages/5-day-experience|🎁' | split: ',' -%}
+          {%- for link_item in browse_links -%}
+            {%- assign link_parts = link_item | split: '|' -%}
+            <a href="{{ link_parts[1] }}" class="search-browse-card">
+              <span class="search-browse-icon">{{ link_parts[2] }}</span>
+              <span>{{ link_parts[0] }}</span>
+            </a>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{%- endpaginate -%}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const filterBtns = document.querySelectorAll('[data-type]');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const type = this.dataset.type;
+      document.querySelectorAll('.search-result-item').forEach(item => {
+        if (type === 'all' || item.dataset.type === type) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  });
+});
+</script>
