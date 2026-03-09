@@ -48,6 +48,7 @@
       "home-hero": {
         "type": "home-hero",
         "settings": {
+          "hero_bg_image": "shopify://shop_images/jnjnjnj.png",
           "eyebrow": "A new culture of connection",
           "headline": "<p>Rewriting how <em>couples</em> do date night.</p>",
           "subheadline": "Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships.",
