@@ -6,7 +6,7 @@
    SHOP HERO
    ============================================ */
 .shop-hero {
-  padding: calc(var(--nav-height) + 2.5rem) 0 2rem;
+  padding: calc(var(--nav-height) + var(--bar-height, 38px) + 2.5rem) 0 2rem;
   background: var(--ivory);
   border-bottom: 1px solid var(--border-light);
   position: relative;
@@ -96,7 +96,7 @@
    ============================================ */
 .shop-sidebar {
   position: sticky;
-  top: calc(var(--nav-height) + 1.5rem);
+  top: calc(var(--nav-height) + var(--bar-height, 38px) + 1.5rem);
   background: white;
   border-radius: var(--radius-xl);
   padding: 1.75rem;
@@ -314,7 +314,7 @@
    CATEGORY PAGES SHARED
    ============================================ */
 .category-hero {
-  padding: calc(var(--nav-height) + 3rem) 0 3rem;
+  padding: calc(var(--nav-height) + var(--bar-height, 38px) + 3rem) 0 3rem;
   position: relative;
   overflow: hidden;
   color: var(--cream);

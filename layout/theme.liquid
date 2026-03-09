@@ -95,24 +95,33 @@
       /* height is ~38px — captured in --bar-height below */
     }
 
-    /* 4. Push main content below BOTH the nav and the announcement bar */
+    /* 4. No global padding on MainContent — each hero handles its own
+          top offset via calc(var(--nav-height) + var(--bar-height) + Xrem).
+          Adding padding here causes a double-gap above full-bleed heroes. */
     :root { --bar-height: 38px; }
     #MainContent {
-      padding-top: calc(var(--nav-height, 72px) + var(--bar-height, 38px));
+      padding-top: 0;
     }
 
-    /* 5. Hero sections that need to reach behind both bars */
-    #MainContent > .hero-full-bleed:first-child,
-    #MainContent > .home-hero:first-child,
-    #MainContent > .exp-hero:first-child {
-      margin-top: calc(-1 * (var(--nav-height, 72px) + var(--bar-height, 38px)));
-      padding-top: calc(var(--nav-height, 72px) + var(--bar-height, 38px));
+    /* 5. Non-hero pages (legal, contact, faq etc.) that have no full-bleed
+          hero get a simple spacer pushed onto their first section instead */
+    #MainContent > .shopify-section:first-child > .page-hero-minimal,
+    #MainContent > .shopify-section:first-child > .contact-hero,
+    #MainContent > .shopify-section:first-child > .faq-hero,
+    #MainContent > .shopify-section:first-child > .page-hero {
+      padding-top: calc(var(--nav-height, 72px) + var(--bar-height, 38px) + 2rem);
     }
 
     /* 6. Mobile */
     @media (max-width: 768px) {
       #MainContent {
-        padding-top: calc(var(--nav-height, 64px) + var(--bar-height, 38px));
+        padding-top: 0;
+      }
+      #MainContent > .shopify-section:first-child > .page-hero-minimal,
+      #MainContent > .shopify-section:first-child > .contact-hero,
+      #MainContent > .shopify-section:first-child > .faq-hero,
+      #MainContent > .shopify-section:first-child > .page-hero {
+        padding-top: calc(var(--nav-height, 64px) + var(--bar-height, 38px) + 1.5rem);
       }
     }
   </style>

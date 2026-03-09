@@ -67,7 +67,7 @@
   flex: 1;
   display: flex;
   align-items: center;
-  padding-top: calc(var(--nav-height) + 3rem);
+  padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 3rem);
   padding-bottom: 6rem;
   position: relative;
   z-index: 1;
@@ -799,7 +799,7 @@
   .hero-visual { display: none; }
 
   .hero-content-wrap {
-    padding-top: calc(var(--nav-height) + 2rem);
+    padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 2rem);
     padding-bottom: 4rem;
   }
 

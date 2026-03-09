@@ -1,5 +1,5 @@
 /* PLAYMATE LABS — Contact Page */
-.contact-hero { padding:calc(var(--nav-height,80px) + 3rem) 0 3rem;background:var(--ivory,#FAF7F2);border-bottom:1px solid var(--border-light,#E8DDD3); }
+.contact-hero { padding:calc(var(--nav-height) + var(--bar-height, 38px) + 3rem) 0 3rem;background:var(--ivory,#FAF7F2);border-bottom:1px solid var(--border-light,#E8DDD3); }
 .contact-hero-title { font-family:var(--font-serif,'Playfair Display',serif);font-size:clamp(2rem,4vw,3.5rem);margin:.75rem 0 1rem; }
 .contact-hero-subtitle { color:var(--text-muted,#6B5E54);max-width:520px;line-height:1.7; }
 .contact-main { background:var(--warm-white,#FDF9F5); }
