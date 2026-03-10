@@ -1123,93 +1123,155 @@
 /* ============================================
    5-DAY EXPERIENCE TIMELINE — MOBILE CAROUSEL
    Desktop: unchanged vertical column stack
-   Mobile only (≤768px): JS-driven drag carousel
-   (body overflow-x:hidden blocks CSS scroll — JS scrollLeft used instead)
+   Mobile (≤768px): transform-based drag carousel
+   (body overflow-x:hidden kills scrollLeft too — only translateX works)
    ============================================ */
 
-/* Desktop: track wrapper is invisible */
-.experience-days-track {
-  position: relative;
+/* ── Desktop: new elements are invisible / behave like old ones ── */
+.exp-carousel-viewport { position: relative; }
+.exp-connector-line    { display: none; }  /* hidden on desktop */
+.exp-dots              { display: none; }  /* hidden on desktop */
+
+/* ── Fix text running off screen on all widths ── */
+.experience-content .exp-desc {
+  max-width: 100%;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
+/* ── Mobile only ── */
 @media (max-width: 768px) {
-  /* ── 1. Stack layout: content (title + carousel) first, form second ── */
+
+  /* 1. Prevent the section description from bleeding off-screen */
+  .experience-section .container {
+    overflow: hidden;
+  }
+  .experience-content .exp-desc {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  /* 2. Stack: title/carousel first, form second */
   .experience-inner {
     display: flex;
     flex-direction: column;
     gap: var(--space-lg);
   }
-  /* Eyebrow / heading / carousel stays on top */
-  .experience-content {
-    order: 1;
-  }
-  /* Form sits below */
-  .experience-form-wrap {
-    order: 2;
-  }
+  .experience-content  { order: 1; }
+  .experience-form-wrap { order: 2; }
 
-  /* ── 2. Track: clips the sliding cards, full viewport width ── */
-  .experience-days-track {
-    /* Break out of container padding to reach screen edges */
-    margin-left: -1.5rem;
+  /* 3. Viewport: clipping window, full bleed, grab cursor */
+  .exp-carousel-viewport {
+    position: relative;
+    margin-left:  -1.5rem;
     margin-right: -1.5rem;
-    overflow: hidden;           /* clips cards that aren't in view */
-    /* cursor hint */
+    overflow: hidden;          /* clips off-screen cards */
     cursor: grab;
-  }
-  .experience-days-track:active {
-    cursor: grabbing;
-  }
-
-  /* ── 3. The inner flex row — scrolled via JS scrollLeft ── */
-  .experience-days {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    /* overflow intentionally NOT set to auto/scroll here —
-       JS manipulates scrollLeft directly to work around body overflow-x:hidden */
-    overflow: hidden;
-    gap: 1rem;
-    align-items: stretch;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    padding-bottom: 1rem;
-    /* Smooth scroll for snap landing */
-    scroll-behavior: smooth;
-    /* Prevent text selection during drag */
+    touch-action: pan-y;       /* allow vertical page scroll */
     user-select: none;
     -webkit-user-select: none;
   }
+  .exp-carousel-viewport:active { cursor: grabbing; }
 
-  /* Each day card: 72vw so the next card peeks */
-  .experience-days .exp-day-item {
+  /* 4. Horizontal connector line through the circles */
+  .exp-connector-line {
+    display: block;
+    position: absolute;
+    top: calc(1.5rem + 22px);  /* vertically centred on the 44px circles */
+    left:  1.5rem;
+    right: 1.5rem;
+    height: 2px;
+    background: linear-gradient(
+      to right,
+      rgba(201,169,110,0.15) 0%,
+      rgba(201,169,110,0.55) 20%,
+      rgba(201,169,110,0.55) 80%,
+      rgba(201,169,110,0.15) 100%
+    );
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* 5. Track: flex row, moved by JS translateX */
+  .exp-carousel-track {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    align-items: stretch;
+    padding: 1.5rem;
+    padding-bottom: 1.25rem;
+    will-change: transform;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 6. Each card: 72vw so the next always peeks */
+  .exp-carousel-track .exp-day-item {
     flex: 0 0 72vw;
     width: 72vw;
     min-width: 0;
-    /* Switch from 44px+1fr grid to simple vertical stack */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
     background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(201,169,110,0.18);
+    border: 1px solid rgba(201,169,110,0.22);
     border-radius: var(--radius-lg);
     padding: 1.5rem 1.25rem 1.75rem;
+    position: relative;
+    z-index: 2;
   }
 
-  /* Remove vertical connector line — no longer needed horizontally */
-  .experience-days .exp-day-item::after {
-    display: none;
+  /* Circle stays above the connector line */
+  .exp-carousel-track .exp-day-circle {
+    position: relative;
+    z-index: 3;
+    flex-shrink: 0;
   }
 
-  /* Text block: full width, no extra top padding */
-  .experience-days .exp-day-item div:last-child {
+  /* Remove old vertical connector line */
+  .exp-carousel-track .exp-day-item::after { display: none; }
+
+  /* Body text area */
+  .exp-carousel-track .exp-day-body {
     padding-top: 0;
     width: 100%;
   }
-
-  /* Last card: extra right breathing room */
-  .experience-days .exp-day-item:last-child {
-    margin-right: 1.5rem;
+  .exp-carousel-track .exp-day-body strong {
+    display: block;
+    font-size: 0.9375rem;
+    margin-bottom: 0.25rem;
+    color: var(--cream);
   }
+  .exp-carousel-track .exp-day-body p {
+    font-size: 0.8125rem;
+    color: rgba(245,239,230,0.6);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* 7. Dot indicators */
+  .exp-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding-bottom: 0.25rem;
+  }
+  .exp-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(201,169,110,0.3);
+    transition: background 0.25s, transform 0.25s;
+  }
+  .exp-dot--active {
+    background: var(--gold, #C9A96E);
+    transform: scale(1.4);
+  }
+
+  /* 8. Desktop .experience-days keeps its vertical stack — hide on mobile */
+  .experience-days { display: none; }
 }

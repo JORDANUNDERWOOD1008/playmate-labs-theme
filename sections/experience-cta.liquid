@@ -7,49 +7,62 @@
         <span class="section-eyebrow">Free Lead Magnet</span>
         <h2 class="heading-xl">The 5-Day Sensory<br><em>Experience</em></h2>
         <div class="section-divider" style="margin:1.25rem 0;"></div>
-        <p class="body-lg" style="color:rgba(245,239,230,0.65);margin-bottom:var(--space-lg);">
+        <p class="body-lg exp-desc" style="color:rgba(245,239,230,0.65);margin-bottom:var(--space-lg);">
           A free 5-day digital date night experience designed for modern couples. Flirty games, sensory rituals and playful prompts — one a day, delivered to your inbox.
         </p>
 
-        <!-- Carousel wrapper — JS drag scroll handles touch since body overflow-x:hidden blocks native scroll -->
-        <div class="experience-days-track">
-          <div class="experience-days" id="expDaysCarousel">
+        <!-- ── CAROUSEL ─────────────────────────────────────────────────────
+             body { overflow-x: hidden } kills native scroll AND scrollLeft.
+             Solution: translate the entire cards strip via CSS transform,
+             driven by touch/pointer JS — zero dependency on overflow. -->
+        <div class="exp-carousel-viewport" id="expViewport" aria-label="5-day experience carousel" role="region">
+          <!-- horizontal line sits behind the circles, full width of strip -->
+          <div class="exp-connector-line" aria-hidden="true"></div>
+          <div class="exp-carousel-track" id="expTrack">
             <div class="exp-day-item">
               <div class="exp-day-circle">1</div>
-              <div>
+              <div class="exp-day-body">
                 <strong>Curiosity</strong>
                 <p>Rediscover each other through 10 questions you've never asked</p>
               </div>
             </div>
             <div class="exp-day-item">
               <div class="exp-day-circle">2</div>
-              <div>
+              <div class="exp-day-body">
                 <strong>Play</strong>
                 <p>A competitive sensory challenge — who knows the other better?</p>
               </div>
             </div>
             <div class="exp-day-item">
               <div class="exp-day-circle">3</div>
-              <div>
+              <div class="exp-day-body">
                 <strong>Sensory</strong>
                 <p>A guided 20-minute ritual using things already in your home</p>
               </div>
             </div>
             <div class="exp-day-item">
               <div class="exp-day-circle">4</div>
-              <div>
+              <div class="exp-day-body">
                 <strong>Adventure</strong>
                 <p>A secret location date night prompt — designed to surprise</p>
               </div>
             </div>
             <div class="exp-day-item">
               <div class="exp-day-circle">5</div>
-              <div>
+              <div class="exp-day-body">
                 <strong>Invitation</strong>
                 <p>Your personal welcome into the Playmate world</p>
               </div>
             </div>
           </div>
+        </div>
+        <!-- dot indicators -->
+        <div class="exp-dots" id="expDots" aria-hidden="true">
+          <span class="exp-dot exp-dot--active"></span>
+          <span class="exp-dot"></span>
+          <span class="exp-dot"></span>
+          <span class="exp-dot"></span>
+          <span class="exp-dot"></span>
         </div>
       </div>
 
@@ -102,69 +115,124 @@
 </section>
 
 <script>
-(function() {
-  function initExpCarousel() {
-    var track = document.getElementById('expDaysCarousel');
-    if (!track) return;
+(function () {
+  'use strict';
 
-    // Only activate on mobile
+  function initCarousel() {
+    var viewport = document.getElementById('expViewport');
+    var track    = document.getElementById('expTrack');
+    var dotsWrap = document.getElementById('expDots');
+    if (!viewport || !track) return;
+
+    // Only activate on mobile widths
     if (window.innerWidth > 768) return;
 
-    var isDown = false;
-    var startX, startScrollLeft;
+    var cards      = track.querySelectorAll('.exp-day-item');
+    var totalCards = cards.length;
+    var currentIdx = 0;
+    var offsetX    = 0;     // current translateX value (negative = moved left)
+    var startX     = 0;
+    var startOffset = 0;
+    var dragging   = false;
+    var CARD_GAP   = 16;    // 1rem gap in px
 
-    function getClientX(e) {
-      return e.touches ? e.touches[0].clientX : e.clientX;
+    function cardWidth() {
+      // Each card is 72vw; read actual rendered width
+      return cards[0] ? cards[0].offsetWidth : window.innerWidth * 0.72;
     }
 
-    track.addEventListener('touchstart', function(e) {
-      isDown = true;
-      startX = getClientX(e);
-      startScrollLeft = track.scrollLeft;
-      track.style.cursor = 'grabbing';
+    function maxOffset() {
+      // Maximum negative translateX (last card fully visible)
+      return -((totalCards - 1) * (cardWidth() + CARD_GAP));
+    }
+
+    function applyTransform(x, animate) {
+      track.style.transition = animate ? 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)' : 'none';
+      track.style.transform  = 'translateX(' + x + 'px)';
+    }
+
+    function snapTo(idx) {
+      idx = Math.max(0, Math.min(totalCards - 1, idx));
+      currentIdx = idx;
+      offsetX    = -(idx * (cardWidth() + CARD_GAP));
+      applyTransform(offsetX, true);
+      updateDots(idx);
+    }
+
+    function updateDots(idx) {
+      if (!dotsWrap) return;
+      dotsWrap.querySelectorAll('.exp-dot').forEach(function (d, i) {
+        d.classList.toggle('exp-dot--active', i === idx);
+      });
+    }
+
+    function pointerStart(x) {
+      dragging    = true;
+      startX      = x;
+      startOffset = offsetX;
+      track.style.transition = 'none';
+    }
+
+    function pointerMove(x) {
+      if (!dragging) return;
+      var delta = x - startX;
+      var next  = startOffset + delta;
+      // Rubber-band at edges
+      var max = maxOffset();
+      if (next > 0)   next = next * 0.25;
+      if (next < max) next = max + (next - max) * 0.25;
+      offsetX = next;
+      applyTransform(offsetX, false);
+    }
+
+    function pointerEnd(x) {
+      if (!dragging) return;
+      dragging = false;
+      var delta = x - startX;
+      var threshold = cardWidth() * 0.2; // 20% of card width
+      if (delta < -threshold) {
+        snapTo(currentIdx + 1);
+      } else if (delta > threshold) {
+        snapTo(currentIdx - 1);
+      } else {
+        snapTo(currentIdx); // snap back
+      }
+    }
+
+    // ── Touch events ──
+    viewport.addEventListener('touchstart', function (e) {
+      pointerStart(e.touches[0].clientX);
     }, { passive: true });
 
-    track.addEventListener('touchmove', function(e) {
-      if (!isDown) return;
-      var x = getClientX(e);
-      var walk = startX - x;
-      track.scrollLeft = startScrollLeft + walk;
+    viewport.addEventListener('touchmove', function (e) {
+      pointerMove(e.touches[0].clientX);
+      // Don't call preventDefault — passive listener
     }, { passive: true });
 
-    track.addEventListener('touchend', function() {
-      isDown = false;
-      track.style.cursor = '';
-      // Snap to nearest card
-      var cardWidth = track.querySelector('.exp-day-item').offsetWidth + 16; // gap 1rem = 16px
-      var snapped = Math.round(track.scrollLeft / cardWidth) * cardWidth;
-      track.scrollTo({ left: snapped, behavior: 'smooth' });
-    });
+    viewport.addEventListener('touchend', function (e) {
+      pointerEnd(e.changedTouches[0].clientX);
+    }, { passive: true });
 
-    // Mouse drag for desktop testing
-    track.addEventListener('mousedown', function(e) {
-      isDown = true;
-      startX = e.clientX;
-      startScrollLeft = track.scrollLeft;
-      track.style.cursor = 'grabbing';
+    // ── Mouse drag (desktop testing) ──
+    viewport.addEventListener('mousedown', function (e) {
+      pointerStart(e.clientX);
       e.preventDefault();
     });
-
-    document.addEventListener('mousemove', function(e) {
-      if (!isDown) return;
-      var walk = startX - e.clientX;
-      track.scrollLeft = startScrollLeft + walk;
+    document.addEventListener('mousemove', function (e) {
+      pointerMove(e.clientX);
+    });
+    document.addEventListener('mouseup', function (e) {
+      pointerEnd(e.clientX);
     });
 
-    document.addEventListener('mouseup', function() {
-      isDown = false;
-      if (track) track.style.cursor = '';
-    });
+    // Initial position
+    snapTo(0);
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initExpCarousel);
+    document.addEventListener('DOMContentLoaded', initCarousel);
   } else {
-    initExpCarousel();
+    initCarousel();
   }
 })();
 </script>
