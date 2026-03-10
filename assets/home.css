@@ -437,9 +437,9 @@
   top: 50%;               /* full section height — vertically centred */
   left: 26%;              /* covers the left half of the screen */
   transform: translateX(-50%) translateY(-50%);
-  height: 100%;           /* full section height */
-  width: auto;
-  max-width: none;        /* unrestricted — let height drive the size */
+  height: auto;           /* let width drive the size */
+  width: 54%;             /* wide enough for left edge to reach page edge */
+  max-width: none;
   object-fit: contain;
   image-rendering: -webkit-optimize-contrast;
 }
