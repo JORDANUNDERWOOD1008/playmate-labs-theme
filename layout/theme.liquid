@@ -223,6 +223,57 @@
   </script>
   {%- endif -%}
 
+
+  {%- if template == 'product' and product.handle == 'playmate-chocolate' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Do aphrodisiac chocolates actually work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, with the right ingredients and consistent use. Maca root has been studied in multiple double-blind clinical trials and shown to significantly increase self-reported sexual desire. Ashwagandha has robust evidence for reducing stress-related libido suppression. Dark chocolate’s mood-lifting effects are well established. These ingredients are backed by peer-reviewed research and work best as part of a sensory ritual."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How many aphrodisiac chocolates should I eat?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "One to two pieces each, around 30–60 minutes before you want to feel the effects. Consistency over time matters too—most adaptogens show stronger results with regular use over several weeks."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are Playmate Chocolates suitable for vegans?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. All Playmate Chocolates are plant-based, vegan, and gluten-free. Made without dairy or artificial additives."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does delivery take?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Standard UK delivery within 3–5 working days. Free delivery on orders over £60. We ship across the UK and internationally."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I gift Playmate Chocolates?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. The packaging is designed to be gifted. Add a personalised note at checkout for birthdays, anniversaries, Valentine’s Day, or any occasion."
+        }
+      }
+    ]
+  }
+  </script>
+  {%- endif -%}
 </head>
 
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}--{{ template.suffix }}{% endif %}">
