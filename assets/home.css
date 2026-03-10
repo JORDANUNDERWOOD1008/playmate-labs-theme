@@ -1417,7 +1417,7 @@
     object-fit: cover;
     object-position: center center;
     pointer-events: none;
-    z-index: 2; /* above gradient, below text */
+    z-index: 0; /* behind all text and CTAs */
     opacity: 1;
   }
 }
