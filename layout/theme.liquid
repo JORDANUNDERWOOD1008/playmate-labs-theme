@@ -274,6 +274,35 @@
   }
   </script>
   {%- endif -%}
+
+  {%- if template == 'page' and page.handle == 'jordan-underwood' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Jordan Underwood",
+    "url": "https://playmatelabs.com/pages/jordan-underwood",
+    "jobTitle": "Founder & Creative Director",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "Playmate Labs",
+      "url": "https://playmatelabs.com"
+    },
+    "description": "Founder of Playmate Labs. Writer on relationship psychology, long-term desire, sensory rituals, and modern intimacy. Worked with 14,000+ couples through the Playmate experience.",
+    "sameAs": [
+      "https://www.linkedin.com/in/jordanunderwood"
+    ],
+    "knowsAbout": [
+      "Relationship psychology",
+      "Long-term intimacy",
+      "Aphrodisiac ingredients",
+      "Sensory experiences for couples",
+      "Couples date night ideas",
+      "Modern relationships"
+    ]
+  }
+  </script>
+  {%- endif -%}
 </head>
 
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}--{{ template.suffix }}{% endif %}">
