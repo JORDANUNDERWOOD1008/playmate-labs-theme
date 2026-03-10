@@ -303,6 +303,32 @@
   }
   </script>
   {%- endif -%}
+
+  {%- if template contains 'article' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": {{ article.title | json }},
+    "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%S' | json }},
+    "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%S' | json }},
+    "author": {
+      "@type": "Person",
+      "name": "Jordan Underwood",
+      "url": "https://playmatelabs.com/pages/jordan-underwood"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Playmate Labs",
+      "url": "https://playmatelabs.com"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": {{ canonical_url | json }}
+    }
+  }
+  </script>
+  {%- endif -%}
 </head>
 
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}--{{ template.suffix }}{% endif %}">
