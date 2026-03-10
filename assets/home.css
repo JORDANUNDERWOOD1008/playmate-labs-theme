@@ -1138,6 +1138,7 @@
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: normal;
+  box-sizing: border-box;
 }
 
 /* ── Mobile only ── */
@@ -1146,10 +1147,23 @@
   /* 1. Prevent the section description from bleeding off-screen */
   .experience-section .container {
     overflow: hidden;
+    box-sizing: border-box;
+  }
+  /* Content column must not exceed container width */
+  .experience-content {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
   .experience-content .exp-desc {
+    width: 100%;
     max-width: 100%;
-    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   /* 2. Stack: title/carousel first, form second */
