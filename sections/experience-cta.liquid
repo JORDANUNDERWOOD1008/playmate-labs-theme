@@ -2,6 +2,7 @@
 <section class="experience-section section" id="experience">
   <div class="container">
     <div class="experience-inner">
+
       <div class="experience-content reveal-left">
         <span class="section-eyebrow">Free Lead Magnet</span>
         <h2 class="heading-xl">The 5-Day Sensory<br><em>Experience</em></h2>
@@ -10,40 +11,43 @@
           A free 5-day digital date night experience designed for modern couples. Flirty games, sensory rituals and playful prompts — one a day, delivered to your inbox.
         </p>
 
-        <div class="experience-days">
-          <div class="exp-day-item">
-            <div class="exp-day-circle">1</div>
-            <div>
-              <strong>Curiosity</strong>
-              <p>Rediscover each other through 10 questions you've never asked</p>
+        <!-- Carousel wrapper — JS drag scroll handles touch since body overflow-x:hidden blocks native scroll -->
+        <div class="experience-days-track">
+          <div class="experience-days" id="expDaysCarousel">
+            <div class="exp-day-item">
+              <div class="exp-day-circle">1</div>
+              <div>
+                <strong>Curiosity</strong>
+                <p>Rediscover each other through 10 questions you've never asked</p>
+              </div>
             </div>
-          </div>
-          <div class="exp-day-item">
-            <div class="exp-day-circle">2</div>
-            <div>
-              <strong>Play</strong>
-              <p>A competitive sensory challenge — who knows the other better?</p>
+            <div class="exp-day-item">
+              <div class="exp-day-circle">2</div>
+              <div>
+                <strong>Play</strong>
+                <p>A competitive sensory challenge — who knows the other better?</p>
+              </div>
             </div>
-          </div>
-          <div class="exp-day-item">
-            <div class="exp-day-circle">3</div>
-            <div>
-              <strong>Sensory</strong>
-              <p>A guided 20-minute ritual using things already in your home</p>
+            <div class="exp-day-item">
+              <div class="exp-day-circle">3</div>
+              <div>
+                <strong>Sensory</strong>
+                <p>A guided 20-minute ritual using things already in your home</p>
+              </div>
             </div>
-          </div>
-          <div class="exp-day-item">
-            <div class="exp-day-circle">4</div>
-            <div>
-              <strong>Adventure</strong>
-              <p>A secret location date night prompt — designed to surprise</p>
+            <div class="exp-day-item">
+              <div class="exp-day-circle">4</div>
+              <div>
+                <strong>Adventure</strong>
+                <p>A secret location date night prompt — designed to surprise</p>
+              </div>
             </div>
-          </div>
-          <div class="exp-day-item">
-            <div class="exp-day-circle">5</div>
-            <div>
-              <strong>Invitation</strong>
-              <p>Your personal welcome into the Playmate world</p>
+            <div class="exp-day-item">
+              <div class="exp-day-circle">5</div>
+              <div>
+                <strong>Invitation</strong>
+                <p>Your personal welcome into the Playmate world</p>
+              </div>
             </div>
           </div>
         </div>
@@ -92,9 +96,78 @@
           </p>
         </div>
       </div>
+
     </div>
   </div>
 </section>
+
+<script>
+(function() {
+  function initExpCarousel() {
+    var track = document.getElementById('expDaysCarousel');
+    if (!track) return;
+
+    // Only activate on mobile
+    if (window.innerWidth > 768) return;
+
+    var isDown = false;
+    var startX, startScrollLeft;
+
+    function getClientX(e) {
+      return e.touches ? e.touches[0].clientX : e.clientX;
+    }
+
+    track.addEventListener('touchstart', function(e) {
+      isDown = true;
+      startX = getClientX(e);
+      startScrollLeft = track.scrollLeft;
+      track.style.cursor = 'grabbing';
+    }, { passive: true });
+
+    track.addEventListener('touchmove', function(e) {
+      if (!isDown) return;
+      var x = getClientX(e);
+      var walk = startX - x;
+      track.scrollLeft = startScrollLeft + walk;
+    }, { passive: true });
+
+    track.addEventListener('touchend', function() {
+      isDown = false;
+      track.style.cursor = '';
+      // Snap to nearest card
+      var cardWidth = track.querySelector('.exp-day-item').offsetWidth + 16; // gap 1rem = 16px
+      var snapped = Math.round(track.scrollLeft / cardWidth) * cardWidth;
+      track.scrollTo({ left: snapped, behavior: 'smooth' });
+    });
+
+    // Mouse drag for desktop testing
+    track.addEventListener('mousedown', function(e) {
+      isDown = true;
+      startX = e.clientX;
+      startScrollLeft = track.scrollLeft;
+      track.style.cursor = 'grabbing';
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (!isDown) return;
+      var walk = startX - e.clientX;
+      track.scrollLeft = startScrollLeft + walk;
+    });
+
+    document.addEventListener('mouseup', function() {
+      isDown = false;
+      if (track) track.style.cursor = '';
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initExpCarousel);
+  } else {
+    initExpCarousel();
+  }
+})();
+</script>
 
 {% schema %}
 {

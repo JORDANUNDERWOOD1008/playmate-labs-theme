@@ -1123,69 +1123,70 @@
 /* ============================================
    5-DAY EXPERIENCE TIMELINE — MOBILE CAROUSEL
    Desktop: unchanged vertical column stack
-   Mobile only (≤768px): snap-scroll horizontal carousel
+   Mobile only (≤768px): JS-driven drag carousel
+   (body overflow-x:hidden blocks CSS scroll — JS scrollLeft used instead)
    ============================================ */
-@media (max-width: 768px) {
-  /* ── 1. Unlock overflow on every clipping ancestor ── */
-  /* The section has overflow:hidden by default which kills horizontal scroll */
-  .experience-section {
-    overflow: visible;
-  }
-  /* Container and content wrapper must not clip either */
-  .experience-section .container,
-  .experience-section .experience-inner,
-  .experience-section .experience-content {
-    overflow: visible;
-  }
 
-  /* ── 2. Stack layout: form first, carousel second ── */
+/* Desktop: track wrapper is invisible */
+.experience-days-track {
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  /* ── 1. Stack layout: content (title + carousel) first, form second ── */
   .experience-inner {
     display: flex;
     flex-direction: column;
     gap: var(--space-lg);
   }
-  /* Form card moves to top on mobile */
-  .experience-form-wrap {
-    order: -1;
-  }
-  /* Content (eyebrow + heading + carousel) sits below form */
+  /* Eyebrow / heading / carousel stays on top */
   .experience-content {
     order: 1;
   }
+  /* Form sits below */
+  .experience-form-wrap {
+    order: 2;
+  }
 
-  /* ── 3. Carousel: full-bleed horizontal scroll ── */
+  /* ── 2. Track: clips the sliding cards, full viewport width ── */
+  .experience-days-track {
+    /* Break out of container padding to reach screen edges */
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    overflow: hidden;           /* clips cards that aren't in view */
+    /* cursor hint */
+    cursor: grab;
+  }
+  .experience-days-track:active {
+    cursor: grabbing;
+  }
+
+  /* ── 3. The inner flex row — scrolled via JS scrollLeft ── */
   .experience-days {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: visible;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
+    /* overflow intentionally NOT set to auto/scroll here —
+       JS manipulates scrollLeft directly to work around body overflow-x:hidden */
+    overflow: hidden;
     gap: 1rem;
     align-items: stretch;
-    /* Break out of the 1.5rem container padding so cards bleed edge-to-edge */
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     padding-bottom: 1rem;
-    margin-left: -1.5rem;
-    margin-right: -1.5rem;
-    /* Hide scrollbar */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    /* Smooth scroll for snap landing */
+    scroll-behavior: smooth;
+    /* Prevent text selection during drag */
+    user-select: none;
+    -webkit-user-select: none;
   }
 
-  .experience-days::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Each day card: 72vw so the next card always peeks */
+  /* Each day card: 72vw so the next card peeks */
   .experience-days .exp-day-item {
     flex: 0 0 72vw;
     width: 72vw;
     min-width: 0;
-    scroll-snap-align: start;
-    /* Switch from the 44px + 1fr grid to a simple vertical stack */
+    /* Switch from 44px+1fr grid to simple vertical stack */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1196,7 +1197,7 @@
     padding: 1.5rem 1.25rem 1.75rem;
   }
 
-  /* Remove the vertical connector line — no longer needed */
+  /* Remove vertical connector line — no longer needed horizontally */
   .experience-days .exp-day-item::after {
     display: none;
   }
@@ -1207,7 +1208,7 @@
     width: 100%;
   }
 
-  /* Last card: breathing room so it doesn't sit flush at the right edge */
+  /* Last card: extra right breathing room */
   .experience-days .exp-day-item:last-child {
     margin-right: 1.5rem;
   }
