@@ -32,6 +32,18 @@
 
   <div class="featured-drop__overlay"></div>
 
+  <!-- High-res product overlay — covers the low-res background product exactly -->
+  <div class="featured-drop__product-overlay" aria-hidden="true">
+    <img
+      src="{{ 'velvet-hour-product.png' | asset_url }}"
+      alt=""
+      class="featured-drop__product-img"
+      draggable="false"
+      loading="eager"
+      decoding="async"
+    >
+  </div>
+
   <div class="container featured-drop__inner">
 
     <!-- ─────────────────────────────────────────────────────────────
