@@ -1,8 +1,7 @@
 {% comment %}
-  PLAYMATE LABS — EVENTS PAGE  v3
-  File: templates/page.events.liquid
+  PLAYMATE LABS — EVENTS PAGE  v4
+  File: sections/page-events.liquid
   Used for: /pages/events
-  Mirrors: https://njpvfxya.gensparkspace.com/events.html
 {% endcomment %}
 
 {{ 'events.css' | asset_url | stylesheet_tag }}
@@ -18,29 +17,29 @@
 <!-- ===== HERO ===== -->
 <section class="events-hero">
   {%- assign _events_hero_img = section.settings.events_hero_image -%}
-  <div class="events-hero-bg" {% if _events_hero_img %}style="background-image:url('{{ _events_hero_img  }}');"{% endif %}>
+  <div class="events-hero-bg" {% if _events_hero_img %}style="background-image:url('{{ _events_hero_img | image_url: width: 1800 }}');background-size:cover;background-position:center;"{% endif %}>
     <div class="events-hero-overlay"></div>
     <div class="container events-hero-inner">
       <span class="section-eyebrow" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_eyebrow | default: 'IRL Experiences' }}</span>
       <h1 class="events-hero-heading">
         {{ section.settings.events_hero_line1 | default: 'Experiences worth' }}<br>
-        <em style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_hero_italic | default: 'dressing up for.' }}</em>
+        <em>{{ section.settings.events_hero_italic | default: 'dressing up for.' }}</em>
       </h1>
       <p class="events-hero-sub">{{ section.settings.events_hero_sub | default: 'Sensory date nights, couples mixers and immersive pop-up experiences. Designed for modern relationships. Happening near you.' }}</p>
 
       <div class="events-hero-stats">
         <div class="events-stat">
-          <span class="events-stat-num" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_stat_1_num | default: '22+' }}</span>
+          <span class="events-stat-num">{{ section.settings.events_stat_1_num | default: '22+' }}</span>
           <span class="events-stat-label">{{ section.settings.events_stat_1_label | default: 'Events in 2024' }}</span>
         </div>
         <div class="events-stat-div"></div>
         <div class="events-stat">
-          <span class="events-stat-num" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_stat_2_num | default: '2,400+' }}</span>
+          <span class="events-stat-num">{{ section.settings.events_stat_2_num | default: '2,400+' }}</span>
           <span class="events-stat-label">{{ section.settings.events_stat_2_label | default: 'Attendees' }}</span>
         </div>
         <div class="events-stat-div"></div>
         <div class="events-stat">
-          <span class="events-stat-num" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_stat_3_num | default: '4' }}</span>
+          <span class="events-stat-num">{{ section.settings.events_stat_3_num | default: '4' }}</span>
           <span class="events-stat-label">{{ section.settings.events_stat_3_label | default: 'UK Cities' }}</span>
         </div>
       </div>
@@ -80,7 +79,9 @@
 <section class="section events-main" id="events-grid">
   <div class="container">
 
-    {%- comment -%} Schema-driven events — up to 8 {%- endcomment -%}
+    {%- comment -%} Default lifestyle photography images (Pexels CDN, royalty-free) {%- endcomment -%}
+    {%- assign event_defaults_img = 'https://images.pexels.com/photos/6787202/pexels-photo-6787202.jpeg?auto=compress&cs=tinysrgb&w=800,https://images.pexels.com/photos/3184183/pexels-photo-3184183.jpeg?auto=compress&cs=tinysrgb&w=800,https://images.pexels.com/photos/1581384/pexels-photo-1581384.jpeg?auto=compress&cs=tinysrgb&w=800,https://images.pexels.com/photos/1729807/pexels-photo-1729807.jpeg?auto=compress&cs=tinysrgb&w=800,https://images.pexels.com/photos/2788792/pexels-photo-2788792.jpeg?auto=compress&cs=tinysrgb&w=800,https://images.pexels.com/photos/3985062/pexels-photo-3985062.jpeg?auto=compress&cs=tinysrgb&w=800,https://images.pexels.com/photos/3933080/pexels-photo-3933080.jpeg?auto=compress&cs=tinysrgb&w=800,https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=800' | split: ',' -%}
+
     {%- assign event_defaults_icon = '🌙,🥂,🎭,🎵,🌿,✨,🍷,🌸' | split: ',' -%}
     {%- assign event_defaults_date = '14 Feb,22 Feb,8 Mar,15 Mar,29 Mar,5 Apr,19 Apr,3 May' | split: ',' -%}
     {%- assign event_defaults_city = 'London,Manchester,London,Birmingham,London,Leeds,Edinburgh,London' | split: ',' -%}
@@ -111,9 +112,10 @@
           {%- assign city_val = section.settings[e_city] | default: event_defaults_city[forloop.index0] -%}
           {%- assign type_val = section.settings[e_type] | default: event_defaults_type_filter[forloop.index0] -%}
           {%- assign spots_val = section.settings[e_spots] | default: event_defaults_spots[forloop.index0] -%}
+          {%- assign img_fallback = event_defaults_img[forloop.index0] -%}
 
           <div class="event-card" data-city="{{ city_val | downcase | replace: ' ', '-' }}" data-type="{{ type_val | downcase | replace: ' ', '-' }}">
-            <div class="event-card-header" style="{% if e_img != blank %}background-image:url('{{ e_img | image_url: width: 800 }}');background-size:cover;background-position:center;{% else %}background:{{ section.settings.events_card_bg | default: 'linear-gradient(135deg,var(--espresso),#3D1A2E)' }};{% endif %}">
+            <div class="event-card-header" style="{% if e_img != blank %}background-image:url('{{ e_img | image_url: width: 800 }}');background-size:cover;background-position:center;{% else %}background-image:url('{{ img_fallback }}');background-size:cover;background-position:center;{% endif %}">
               <div class="event-card-top">
                 <span class="event-icon">{{ section.settings[e_icon] | default: event_defaults_icon[forloop.index0] }}</span>
                 {%- assign spots = section.settings[e_spots] | default: event_defaults_spots[forloop.index0] -%}
@@ -133,7 +135,7 @@
               <h3 class="event-card-title">{{ section.settings[e_title] | default: event_defaults_title[forloop.index0] }}</h3>
               <p class="event-card-desc">{{ section.settings[e_desc] | default: event_defaults_desc[forloop.index0] }}</p>
               <div class="event-card-footer">
-                <span class="event-price" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings[e_price] | default: event_defaults_price[forloop.index0] }}</span>
+                <span class="event-price">{{ section.settings[e_price] | default: event_defaults_price[forloop.index0] }}</span>
                 {%- if section.settings[e_url] != blank -%}
                   <a href="{{ section.settings[e_url] }}" class="btn btn-primary btn-sm">Book Now</a>
                 {%- else -%}
@@ -147,7 +149,7 @@
     </div>
 
     {%- comment -%} No city CTA {%- endcomment -%}
-    <div class="events-no-city" style="background:{{ section.settings.events_no_city_bg | default: 'var(--cream-off)' }};border-radius:12px;padding:2.5rem;text-align:center;margin-top:3rem;">
+    <div class="events-no-city">
       <div style="font-size:1.5rem;margin-bottom:0.75rem;">📍</div>
       <h3 style="font-family:var(--font-serif);margin-bottom:0.5rem;color:{{ section.settings.events_no_city_heading_color | default: 'var(--espresso)' }};">{{ section.settings.events_no_city_heading | default: "Don't see your city?" }}</h3>
       <p style="color:var(--text-muted);margin-bottom:1.25rem;">{{ section.settings.events_no_city_desc | default: "We're expanding. Register your interest and be first to know when we come to your city." }}</p>
@@ -174,23 +176,23 @@
 
       <div class="events-format-card">
         <div class="events-format-icon">🌙</div>
-        <h3 style="color:{{ section.settings.events_format_title_color | default: 'var(--cream)' }};">{{ section.settings.events_format_1_title | default: 'Sensory Date Nights' }}</h3>
-        <p style="color:{{ section.settings.events_format_desc_color | default: 'rgba(245,239,230,0.7)' }};">{{ section.settings.events_format_1_desc | default: 'Intimate evenings for couples — guided chocolate tastings, ambient environments, ritual play and connection games. Limited to 30–50 couples. Smart casual to formal dress.' }}</p>
-        <span class="events-format-price" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_format_1_price | default: 'From £75 per couple' }}</span>
+        <h3>{{ section.settings.events_format_1_title | default: 'Sensory Date Nights' }}</h3>
+        <p>{{ section.settings.events_format_1_desc | default: 'Intimate evenings for couples — guided chocolate tastings, ambient environments, ritual play and connection games. Limited to 30–50 couples. Smart casual to formal dress.' }}</p>
+        <span class="events-format-price">{{ section.settings.events_format_1_price | default: 'From £75 per couple' }}</span>
       </div>
 
       <div class="events-format-card">
         <div class="events-format-icon">🥂</div>
-        <h3 style="color:{{ section.settings.events_format_title_color | default: 'var(--cream)' }};">{{ section.settings.events_format_2_title | default: 'Couples Mixers' }}</h3>
-        <p style="color:{{ section.settings.events_format_desc_color | default: 'rgba(245,239,230,0.7)' }};">{{ section.settings.events_format_2_desc | default: 'Social nights for couples and people dating — cocktails, games, conversation starters and the chance to meet other like-minded people. Slightly less structured. Equally excellent.' }}</p>
-        <span class="events-format-price" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_format_2_price | default: 'From £40 per person' }}</span>
+        <h3>{{ section.settings.events_format_2_title | default: 'Couples Mixers' }}</h3>
+        <p>{{ section.settings.events_format_2_desc | default: 'Social nights for couples and people dating — cocktails, games, conversation starters and the chance to meet other like-minded people. Slightly less structured. Equally excellent.' }}</p>
+        <span class="events-format-price">{{ section.settings.events_format_2_price | default: 'From £40 per person' }}</span>
       </div>
 
       <div class="events-format-card">
         <div class="events-format-icon">🎭</div>
-        <h3 style="color:{{ section.settings.events_format_title_color | default: 'var(--cream)' }};">{{ section.settings.events_format_3_title | default: 'Pop-Up Experiences' }}</h3>
-        <p style="color:{{ section.settings.events_format_desc_color | default: 'rgba(245,239,230,0.7)' }};">{{ section.settings.events_format_3_desc | default: 'Immersive activations and brand pop-ups — sample products, discover your ritual style, meet the Playmate team and get early access to upcoming drops.' }}</p>
-        <span class="events-format-price" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_format_3_price | default: 'Free — £20' }}</span>
+        <h3>{{ section.settings.events_format_3_title | default: 'Pop-Up Experiences' }}</h3>
+        <p>{{ section.settings.events_format_3_desc | default: 'Immersive activations and brand pop-ups — sample products, discover your ritual style, meet the Playmate team and get early access to upcoming drops.' }}</p>
+        <span class="events-format-price">{{ section.settings.events_format_3_price | default: 'Free — £20' }}</span>
       </div>
 
     </div>
@@ -198,7 +200,7 @@
 </section>
 
 <!-- ===== NEWSLETTER CTA ===== -->
-<section class="section" style="background:{{ section.settings.events_newsletter_bg | default: 'var(--cream-off)' }};text-align:center;">
+<section class="section events-newsletter" style="background:{{ section.settings.events_newsletter_bg | default: 'var(--cream-off)' }};text-align:center;">
   <div class="container" style="max-width:560px;">
     <span class="section-eyebrow" style="color:{{ section.settings.events_accent_color | default: 'var(--gold)' }};">{{ section.settings.events_newsletter_eyebrow | default: 'Never Miss an Event' }}</span>
     <h2 style="font-family:var(--font-serif);font-size:1.875rem;color:{{ section.settings.events_newsletter_heading_color | default: 'var(--espresso)' }};margin:0.75rem 0 1rem;">
@@ -217,28 +219,36 @@
 </section>
 
 <script>
-// City filter
-document.querySelectorAll('#city-filters .filter-btn').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('#city-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
-    this.classList.add('active');
-    var city = this.dataset.filter;
+(function() {
+  var cityActive = 'all';
+  var typeActive = 'all';
+
+  function applyFilters() {
     document.querySelectorAll('.event-card').forEach(function(card) {
-      card.style.display = (city === 'all' || card.dataset.city === city) ? '' : 'none';
+      var cityMatch = (cityActive === 'all' || card.dataset.city === cityActive);
+      var typeMatch = (typeActive === 'all' || card.dataset.type === typeActive);
+      card.style.display = (cityMatch && typeMatch) ? '' : 'none';
+    });
+  }
+
+  document.querySelectorAll('#city-filters .filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#city-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      cityActive = this.dataset.filter;
+      applyFilters();
     });
   });
-});
-// Type filter
-document.querySelectorAll('#type-filters .filter-btn').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('#type-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
-    this.classList.add('active');
-    var type = this.dataset.filterType;
-    document.querySelectorAll('.event-card').forEach(function(card) {
-      card.style.display = (type === 'all' || card.dataset.type === type) ? '' : 'none';
+
+  document.querySelectorAll('#type-filters .filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#type-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      typeActive = this.dataset.filterType;
+      applyFilters();
     });
   });
-});
+})();
 </script>
 
 {% schema %}
@@ -292,38 +302,67 @@ document.querySelectorAll('#type-filters .filter-btn').forEach(function(btn) {
     },
     {
       "type": "text",
-      "id": "events_hero_eyebrow",
+      "id": "events_eyebrow",
       "label": "Hero eyebrow",
-      "default": "Live Events"
+      "default": "IRL Experiences"
     },
     {
       "type": "text",
-      "id": "events_hero_heading",
-      "label": "Hero heading",
-      "default": "Experiences you can only have"
+      "id": "events_hero_line1",
+      "label": "Hero heading line 1",
+      "default": "Experiences worth"
     },
     {
       "type": "text",
-      "id": "events_hero_heading_italic",
-      "label": "Hero italic heading",
-      "default": "in the room."
+      "id": "events_hero_italic",
+      "label": "Hero heading italic line",
+      "default": "dressing up for."
     },
     {
       "type": "textarea",
-      "id": "events_hero_subtext",
+      "id": "events_hero_sub",
       "label": "Hero subtext",
-      "default": "Intimate dinners, sensory tastings, and guided rituals for couples — hosted across the UK."
+      "default": "Sensory date nights, couples mixers and immersive pop-up experiences. Designed for modern relationships. Happening near you."
+    },
+    {
+      "type": "header",
+      "content": "📊 Stats"
     },
     {
       "type": "text",
-      "id": "events_hero_cta",
-      "label": "Hero CTA button text",
-      "default": "Browse Events"
+      "id": "events_stat_1_num",
+      "label": "Stat 1 number",
+      "default": "22+"
     },
     {
-      "type": "url",
-      "id": "events_hero_cta_url",
-      "label": "Hero CTA button link"
+      "type": "text",
+      "id": "events_stat_1_label",
+      "label": "Stat 1 label",
+      "default": "Events in 2024"
+    },
+    {
+      "type": "text",
+      "id": "events_stat_2_num",
+      "label": "Stat 2 number",
+      "default": "2,400+"
+    },
+    {
+      "type": "text",
+      "id": "events_stat_2_label",
+      "label": "Stat 2 label",
+      "default": "Attendees"
+    },
+    {
+      "type": "text",
+      "id": "events_stat_3_num",
+      "label": "Stat 3 number",
+      "default": "4"
+    },
+    {
+      "type": "text",
+      "id": "events_stat_3_label",
+      "label": "Stat 3 label",
+      "default": "UK Cities"
     },
     {
       "type": "header",
