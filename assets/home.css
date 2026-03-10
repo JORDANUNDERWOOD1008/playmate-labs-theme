@@ -1289,3 +1289,66 @@
   /* 8. Desktop .experience-days keeps its vertical stack — hide on mobile */
   .experience-days { display: none; }
 }
+
+/* ============================================
+   EVENTS — MOBILE CAROUSEL
+   Desktop: unchanged 3-col grid
+   Mobile (≤768px): transform-based drag carousel
+   ============================================ */
+
+/* Desktop: viewport wrapper transparent */
+.events-carousel-viewport { position: relative; }
+.events-dots { display: none; }
+
+@media (max-width: 768px) {
+
+  /* Viewport: clipping window, full-bleed */
+  .events-carousel-viewport {
+    margin-left:  -1.5rem;
+    margin-right: -1.5rem;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .events-carousel-viewport:active { cursor: grabbing; }
+
+  /* Track: flex row, moved by JS translateX */
+  .events-preview-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    grid-template-columns: unset !important;
+    gap: 1rem;
+    align-items: stretch;
+    padding: 0.25rem 1.5rem 1rem;
+    will-change: transform;
+  }
+
+  /* Each card: 82vw so the next card always peeks */
+  .events-preview-grid .event-card {
+    flex: 0 0 82vw;
+    width: 82vw;
+    min-width: 0;
+  }
+
+  /* Dot indicators */
+  .events-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .events-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(107,30,58,0.25);
+    transition: background 0.25s, transform 0.25s;
+  }
+  .events-dot--active {
+    background: var(--burgundy, #6B1E3A);
+    transform: scale(1.4);
+  }
+}
