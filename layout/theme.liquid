@@ -178,6 +178,51 @@
       shopName: {{ shop.name | json }}
     };
   </script>
+
+  {%- if template == 'index' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Playmate Labs",
+    "url": "https://playmatelabs.com",
+    "logo": "https://playmatelabs.com/cdn/shop/files/playmate-logo.png",
+    "description": "The cultural platform for modern relationships. Sensory products, monthly drops, immersive events and digital rituals for couples.",
+    "foundingLocation": {
+      "@type": "Place",
+      "addressLocality": "London",
+      "addressCountry": "GB"
+    },
+    "sameAs": [
+      "https://www.instagram.com/playmatelabs",
+      "https://www.tiktok.com/@playmatelabs"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "info@playmatelabs.com",
+      "contactType": "customer service"
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Playmate Labs",
+    "url": "https://playmatelabs.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://playmatelabs.com/search?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  {%- endif -%}
+
 </head>
 
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}--{{ template.suffix }}{% endif %}">
