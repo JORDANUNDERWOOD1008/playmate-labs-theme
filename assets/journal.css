@@ -314,3 +314,24 @@
   .article-hero-title { font-size: clamp(1.75rem, 7vw, 3rem); }
   .article-related-grid { grid-template-columns: 1fr; }
 }
+
+/* Figure / image captions in articles */
+.article-body figure { margin: 2rem 0; }
+.article-body figure img { margin: 0; width: 100%; border-radius: var(--radius-lg, 1rem); }
+.article-body figcaption { font-size: 0.8125rem; color: #888; text-align: center; margin-top: 0.5rem; font-style: italic; }
+
+/* Journal more grid (secondary row on homepage) */
+.journal-more-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+.journal-more-card { transition: transform 0.25s; }
+.journal-more-card:hover { transform: translateY(-4px); }
+@media (max-width: 1024px) {
+  .journal-more-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .journal-more-grid { grid-template-columns: 1fr; }
+}
