@@ -1126,7 +1126,34 @@
    Mobile only (≤768px): snap-scroll horizontal carousel
    ============================================ */
 @media (max-width: 768px) {
-  /* Turn the vertical column into a horizontal scroll strip */
+  /* ── 1. Unlock overflow on every clipping ancestor ── */
+  /* The section has overflow:hidden by default which kills horizontal scroll */
+  .experience-section {
+    overflow: visible;
+  }
+  /* Container and content wrapper must not clip either */
+  .experience-section .container,
+  .experience-section .experience-inner,
+  .experience-section .experience-content {
+    overflow: visible;
+  }
+
+  /* ── 2. Stack layout: form first, carousel second ── */
+  .experience-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+  /* Form card moves to top on mobile */
+  .experience-form-wrap {
+    order: -1;
+  }
+  /* Content (eyebrow + heading + carousel) sits below form */
+  .experience-content {
+    order: 1;
+  }
+
+  /* ── 3. Carousel: full-bleed horizontal scroll ── */
   .experience-days {
     display: flex;
     flex-direction: row;
@@ -1137,12 +1164,12 @@
     -webkit-overflow-scrolling: touch;
     gap: 1rem;
     align-items: stretch;
-    /* Bleed to screen edges */
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
+    /* Break out of the 1.5rem container padding so cards bleed edge-to-edge */
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     padding-bottom: 1rem;
-    margin-left: -1.25rem;
-    margin-right: -1.25rem;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
     /* Hide scrollbar */
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -1166,18 +1193,12 @@
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(201,169,110,0.18);
     border-radius: var(--radius-lg);
-    padding: 1.5rem 1.25rem;
-    padding-bottom: 1.75rem;
+    padding: 1.5rem 1.25rem 1.75rem;
   }
 
   /* Remove the vertical connector line — no longer needed */
   .experience-days .exp-day-item::after {
     display: none;
-  }
-
-  /* Circle sits at top of the card */
-  .experience-days .exp-day-circle {
-    margin-bottom: 0.25rem;
   }
 
   /* Text block: full width, no extra top padding */
@@ -1186,8 +1207,8 @@
     width: 100%;
   }
 
-  /* Last card: breathing room at the right edge */
+  /* Last card: breathing room so it doesn't sit flush at the right edge */
   .experience-days .exp-day-item:last-child {
-    margin-right: 1.25rem;
+    margin-right: 1.5rem;
   }
 }
