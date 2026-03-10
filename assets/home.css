@@ -435,7 +435,7 @@
 .featured-drop__product-img {
   position: absolute;
   top: 50%;               /* full section height — vertically centred */
-  left: 20%;              /* shifted further left to better cover bg candle */
+  left: 26%;              /* covers the left half of the screen */
   transform: translateX(-50%) translateY(-50%);
   height: 100%;           /* full section height */
   width: auto;
