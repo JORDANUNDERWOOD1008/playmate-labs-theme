@@ -651,55 +651,8 @@
     obs.observe(atcBtn);
   }
 
-  // ATC form with cart drawer — passes selling_plan when set
-  var atcForm = document.getElementById('add-to-cart-form');
-  if (atcForm) {
-    atcForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      var variantId  = document.getElementById('variant-id').value;
-      var qty        = parseInt(document.getElementById('quantity').value) || 1;
-      var planId     = (document.getElementById('selling-plan-id') || {}).value || '';
-      var btn        = document.getElementById('atc-btn');
-      btn.disabled   = true;
-      btn.innerHTML  = '<i class="fas fa-spinner fa-spin"></i> Adding...';
-
-      var payload = { id: parseInt(variantId), quantity: qty };
-      if (planId) payload.selling_plan = parseInt(planId);
-
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      .then(function(r) { return r.json(); })
-      .then(function() {
-        btn.innerHTML = '<i class="fas fa-check"></i> Added to cart!';
-        btn.style.background = '#2d7a3a';
-        // Open cart drawer
-        var cartOpen = document.querySelector('[data-cart-open]');
-        if (cartOpen) cartOpen.click();
-        // Also try custom event approach
-        document.dispatchEvent(new CustomEvent('cart:open'));
-        return fetch('/cart.js');
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(cart) {
-        document.querySelectorAll('.cart-count').forEach(function(c) { c.textContent = cart.item_count; });
-        setTimeout(function() {
-          btn.disabled  = false;
-          btn.innerHTML = '<i class="fas fa-shopping-bag"></i> Add to Cart';
-          btn.style.background = '';
-          var lbl = document.getElementById('atc-label');
-          if (lbl) lbl.textContent = 'Add to Cart';
-        }, 2500);
-      })
-      .catch(function(err) {
-        btn.disabled  = false;
-        btn.innerHTML = '<i class="fas fa-shopping-bag"></i> Add to Cart';
-        console.error('ATC error:', err);
-      });
-    });
-  }
+  // ATC form submit is handled by PLProductPage in cart-api.js (v2).
+  // Do NOT add a duplicate submit listener here.
   // ── Selling plan price map (injected by Liquid) ─────────────────────────
 </script>
 {%- comment -%} JSON price map for selling plan JS {%- endcomment -%}
@@ -713,6 +666,11 @@
     {%- endfor -%}
   {%- endfor -%}
 }
+</script>
+
+{%- comment -%} Variant data for JS variant-switcher {%- endcomment -%}
+<script>
+window.playmatelabsVariants = {{ product.variants | json }};
 </script>
 
 {%- comment -%} ITEM 9: Product structured data — JSON-LD {%- endcomment -%}

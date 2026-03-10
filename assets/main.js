@@ -35,7 +35,8 @@ const Cart = {
     else { this.items.push({ ...product, qty: product.qty || 1 }); }
     this.save();
     this.updateUI();
-    CartDrawer.open();
+    // CartDrawer.open() — delegated to PLCartDrawer in cart-api.js
+    if (window.PLCartDrawer) { window.PLCartDrawer.open(); } else { CartDrawer.open(); }
     showToast(`${product.name} added to cart`, 'success');
   },
 
@@ -179,10 +180,8 @@ const Nav = {
       document.body.style.overflow = '';
     });
 
-    // Cart icon
-    $$('[data-cart-open]').forEach(el => {
-      el.addEventListener('click', () => CartDrawer.open());
-    });
+    // Cart icon — delegated to PLCartDrawer (cart-api.js) to avoid conflicts
+    // $$('[data-cart-open]') is handled by cart-api.js PLCartDrawer.init()
 
     Cart.updateUI();
   }

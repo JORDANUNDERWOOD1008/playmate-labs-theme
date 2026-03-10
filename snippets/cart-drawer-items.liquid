@@ -1,0 +1,145 @@
+{%- comment -%}
+  PLAYMATE LABS — CART DRAWER ITEMS SNIPPET
+  File: snippets/cart-drawer-items.liquid
+  
+  Rendered by sections/cart-drawer.liquid AND fetched via:
+    GET /?section_id=cart-drawer
+  cart-api.js extracts #cart-drawer-inner from the response
+  and hot-swaps it without a full page reload.
+{%- endcomment -%}
+
+{%- assign free_ship_threshold = 6000 -%}
+{%- assign cart_total_cents = cart.total_price -%}
+{%- assign remaining_cents = free_ship_threshold | minus: cart_total_cents -%}
+{%- assign progress_pct = cart_total_cents | times: 100 | divided_by: free_ship_threshold -%}
+{%- if progress_pct > 100 -%}{%- assign progress_pct = 100 -%}{%- endif -%}
+
+{%- comment -%} ── BODY ── {%- endcomment -%}
+<div class="cart-drawer-body" id="cart-body">
+  {%- if cart.item_count == 0 -%}
+    <div class="cart-empty">
+      <div style="font-size:3rem;margin-bottom:1rem;">🛒</div>
+      <p style="font-family:var(--font-serif);font-size:1.125rem;margin-bottom:0.5rem;">Your cart is empty</p>
+      <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1.5rem;">Add some products to get started</p>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary btn-sm">
+        Browse Shop
+      </a>
+    </div>
+  {%- else -%}
+    {%- for item in cart.items -%}
+      <div class="cart-item" data-key="{{ item.key }}">
+        <div class="cart-item-img">
+          {%- if item.image -%}
+            <img src="{{ item.image | image_url: width: 120 }}"
+                 alt="{{ item.title | escape }}"
+                 width="80" height="80" loading="lazy"
+                 style="width:80px;height:80px;object-fit:cover;border-radius:8px;">
+          {%- else -%}
+            <div class="img-placeholder" style="width:80px;height:80px;border-radius:8px;font-size:1.75rem;display:flex;align-items:center;justify-content:center;background:var(--ivory);">🌹</div>
+          {%- endif -%}
+        </div>
+        <div class="cart-item-info">
+          <p class="cart-item-name">{{ item.product.title }}</p>
+          {%- unless item.product.has_only_default_variant -%}
+            <p class="cart-item-variant">{{ item.variant.title }}</p>
+          {%- endunless -%}
+          {%- if item.selling_plan_allocation -%}
+            <p style="font-size:0.75rem;color:var(--gold);font-weight:600;">🔄 {{ item.selling_plan_allocation.selling_plan.name }}</p>
+          {%- endif -%}
+          <p class="cart-item-price">{{ item.final_line_price | money }}</p>
+        </div>
+        <div class="cart-item-actions">
+          <div class="qty-selector qty-sm">
+            <button class="qty-btn cart-qty-dec" data-key="{{ item.key }}" aria-label="Decrease quantity">−</button>
+            <span class="qty-value">{{ item.quantity }}</span>
+            <button class="qty-btn cart-qty-inc" data-key="{{ item.key }}" aria-label="Increase quantity">+</button>
+          </div>
+          <button class="cart-item-remove" data-key="{{ item.key }}" aria-label="Remove {{ item.title | escape }}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    {%- endfor -%}
+  {%- endif -%}
+</div>
+
+{%- comment -%} ── FOOTER (only when items exist) ── {%- endcomment -%}
+{%- if cart.item_count > 0 -%}
+<div class="cart-drawer-footer" id="cart-footer">
+
+  {%- comment -%} Free shipping progress bar {%- endcomment -%}
+  <div class="cart-ship-bar">
+    {%- if remaining_cents <= 0 -%}
+      <p class="cart-ship-msg cart-ship-msg--done">🎉 You've unlocked <strong>free delivery!</strong></p>
+    {%- else -%}
+      <p class="cart-ship-msg">Spend <strong>{{ remaining_cents | money }}</strong> more for <strong>free delivery</strong> 🚚</p>
+    {%- endif -%}
+    <div class="cart-ship-track">
+      <div class="cart-ship-fill" style="width:{{ progress_pct }}%;"></div>
+    </div>
+  </div>
+
+  {%- comment -%} Subtotal {%- endcomment -%}
+  <div class="cart-subtotal">
+    <span>Subtotal</span>
+    <span id="cart-total">{{ cart.total_price | money }}</span>
+  </div>
+  <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;">
+    {%- if remaining_cents <= 0 -%}✅ Free delivery applied at checkout
+    {%- else -%}Shipping &amp; taxes calculated at checkout{%- endif -%}
+  </p>
+
+  {%- comment -%} Buttons {%- endcomment -%}
+  <a href="{{ routes.cart_url }}" class="btn btn-ghost btn-lg" style="width:100%;justify-content:center;margin-bottom:0.75rem;">
+    View Cart
+  </a>
+  <a href="/checkout" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:0.5rem;">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+    Checkout Securely
+  </a>
+
+  {%- comment -%} Cross-sells {%- endcomment -%}
+  {%- assign cross_sell_collection = collections['ritual-add-ons'] -%}
+  {%- if cross_sell_collection.products.size > 0 -%}
+    {%- assign cart_product_ids = cart.items | map: 'product_id' -%}
+    {%- assign shown_cross_sells = 0 -%}
+    {%- for product in cross_sell_collection.products -%}
+      {%- unless cart_product_ids contains product.id -%}
+        {%- if shown_cross_sells < 2 and product.first_available_variant -%}
+          {%- if shown_cross_sells == 0 -%}
+            <div class="cart-cross-sells">
+              <p style="font-size:0.8125rem;font-weight:700;color:var(--gold);margin:1.25rem 0 0.75rem;text-transform:uppercase;letter-spacing:0.06em;">Complete Your Ritual</p>
+          {%- endif -%}
+              <div class="cart-cross-sell-item">
+                <div class="cart-cross-sell-img">
+                  {%- if product.featured_image -%}
+                    <img src="{{ product.featured_image | image_url: width: 80 }}" alt="{{ product.title | escape }}" width="60" height="60" loading="lazy" style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
+                  {%- else -%}
+                    <div class="img-placeholder" style="width:60px;height:60px;border-radius:8px;font-size:1.25rem;display:flex;align-items:center;justify-content:center;background:var(--ivory);">✨</div>
+                  {%- endif -%}
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <p style="font-size:0.8125rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ product.title }}</p>
+                  <p style="font-size:0.75rem;color:var(--text-muted);">{{ product.price | money }}</p>
+                </div>
+                <button class="btn btn-ghost btn-sm quick-add-to-cart"
+                  data-variant-id="{{ product.first_available_variant.id }}"
+                  style="white-space:nowrap;flex-shrink:0;">
+                  + Add
+                </button>
+              </div>
+          {%- assign shown_cross_sells = shown_cross_sells | plus: 1 -%}
+        {%- endif -%}
+      {%- endunless -%}
+    {%- endfor -%}
+    {%- if shown_cross_sells > 0 -%}
+            </div>
+    {%- endif -%}
+  {%- endif -%}
+
+</div>
+{%- endif -%}
