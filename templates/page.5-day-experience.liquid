@@ -1,7 +1,32 @@
-<style>body { padding-top: var(--nav-height); }</style>
+<style>
+  /* Remove body padding — hero handles its own top offset */
+  body { padding-top: 0 !important; }
+  /* Hero background matches home-page hero: espresso/burgundy dark gradient */
+  .exp-page-hero {
+    background: linear-gradient(135deg, #1A0A06 0%, #2D1020 50%, #1A0A06 100%);
+    color: var(--cream);
+    position: relative;
+    overflow: hidden;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    padding: calc(var(--nav-height, 72px) + var(--bar-height, 38px) + 3rem) 0 5rem;
+  }
+  /* Subtle warm radial glow, matching home hero */
+  .exp-page-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 60%, rgba(107,30,58,0.55) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 30%, rgba(201,169,110,0.12) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .exp-page-hero .container { position: relative; z-index: 1; }
+</style>
 
 <!-- HERO -->
-<section class="experience-section section-lg" style="min-height:70vh;display:flex;align-items:center;">
+<section class="exp-page-hero">
   <div class="container" style="position:relative;z-index:2;">
     <div style="text-align:center;max-width:700px;margin:0 auto;">
       <span class="section-eyebrow" style="color:var(--gold);">It's Free. It's For You.</span>

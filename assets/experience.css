@@ -11,6 +11,8 @@
   position: relative;
   overflow: hidden;
   color: var(--cream);
+  /* Match home-hero dark background so no white flash at top of fold */
+  background: linear-gradient(135deg, #1A0A06 0%, #2D1020 50%, #1A0A06 100%);
 }
 
 .exp-hero-bg {
