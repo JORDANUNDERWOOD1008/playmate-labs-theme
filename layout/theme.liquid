@@ -18,13 +18,19 @@
   {%- assign formatted_initial_value = cart.total_price | money_with_currency -%}
 
   <title>
-    {{ page_title }}
-    {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
-    {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-    {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    {%- if template == 'index' -%}
+      Playmate Labs &mdash; Date Night Experiences, Monthly Drops &amp; Couples Rituals
+    {%- else -%}
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    {%- endif -%}
   </title>
 
-  {% if page_description %}
+  {% if template == 'index' %}
+    <meta name="description" content="Novel sensory experiences, monthly date night drops and immersive events for modern couples. Rewriting how couples do date night. Join 14,000+ couples.">
+  {% elsif page_description %}
     <meta name="description" content="{{ page_description | escape }}">
   {% endif %}
 
