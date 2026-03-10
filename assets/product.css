@@ -561,3 +561,68 @@
     width: 100%;
   }
 }
+
+/* ── Subscribe & Save – Selling Plans UI ─────────────────────── */
+.product-purchase-options { margin-bottom: 1.5rem; }
+
+.product-purchase-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-light, #e8e0d5);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 0.625rem;
+  background: var(--cream, #faf7f4);
+}
+.product-purchase-option.selected {
+  border-color: var(--burgundy, #6B2737);
+  background: rgba(107,39,55,0.04);
+}
+.product-purchase-option input[type="radio"] {
+  accent-color: var(--burgundy, #6B2737);
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+}
+.product-purchase-option-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-dark, #1a1a1a);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.product-sub-discount {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--burgundy, #6B2737);
+  color: #fff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.product-purchase-option-sub {
+  font-size: 0.8125rem;
+  color: var(--text-muted, #7a6e65);
+  margin-top: 0.2rem;
+}
+.sub-frequency-select {
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-light, #e8e0d5);
+  font-size: 0.875rem;
+  background: white;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.sub-frequency-select:focus {
+  outline: none;
+  border-color: var(--burgundy, #6B2737);
+}

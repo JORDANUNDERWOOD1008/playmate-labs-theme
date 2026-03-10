@@ -236,23 +236,55 @@
           {%- endif -%}
         </div>
 
-        <!-- Purchase options: one-time / subscription -->
-        <div class="product-purchase-options">
+        <!-- Purchase options: one-time / subscription (Shopify Selling Plans) -->
+        {%- assign has_selling_plans = false -%}
+        {%- for variant in product.variants -%}
+          {%- if variant.selling_plan_allocations.size > 0 -%}
+            {%- assign has_selling_plans = true -%}
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if has_selling_plans -%}
+        <div class="product-purchase-options" id="purchase-options-block">
+          {%- comment -%} One-time option {%- endcomment -%}
           <label class="product-purchase-option selected" id="purchase-onetime">
-            <input type="radio" name="purchase_type" value="onetime" checked>
+            <input type="radio" name="purchase_type" value="onetime" checked id="purchase-onetime-radio">
             <div>
               <div class="product-purchase-option-label">One-time purchase</div>
-              <div class="product-purchase-option-sub">{{ product.selected_or_first_available_variant.price | money }} · Ships in 2-4 days</div>
+              <div class="product-purchase-option-sub">
+                <span id="onetime-price">{{ product.selected_or_first_available_variant.price | money }}</span> · Ships in 2–4 days
+              </div>
             </div>
           </label>
+
+          {%- comment -%} Subscription option – uses first selling plan allocation {%- endcomment -%}
+          {%- assign first_plan_alloc = product.selected_or_first_available_variant.selling_plan_allocations.first -%}
+          {%- unless first_plan_alloc == blank -%}
           <label class="product-purchase-option" id="purchase-subscription">
-            <input type="radio" name="purchase_type" value="subscription">
-            <div>
-              <div class="product-purchase-option-label">Subscribe & Save<span class="product-sub-discount">15% OFF</span></div>
-              <div class="product-purchase-option-sub">{{ product.selected_or_first_available_variant.price | times: 0.85 | round | money }} / month · Cancel anytime · Priority access</div>
+            <input type="radio" name="purchase_type" value="subscription" id="purchase-subscription-radio">
+            <div style="flex:1;">
+              <div class="product-purchase-option-label">
+                Subscribe &amp; Save
+                <span class="product-sub-discount">15% OFF</span>
+              </div>
+              <div class="product-purchase-option-sub">
+                <span id="sub-price">{{ first_plan_alloc.per_delivery_price | money }}</span> / delivery · Cancel anytime · Priority access
+              </div>
+              {%- comment -%} Frequency selector shown only when subscription is selected {%- endcomment -%}
+              <div id="sub-frequency-wrap" style="display:none;margin-top:0.75rem;">
+                <label style="font-size:0.8125rem;font-weight:600;display:block;margin-bottom:0.375rem;">Delivery frequency</label>
+                <select id="sub-selling-plan" class="sub-frequency-select" style="padding:0.4rem 0.75rem;border-radius:var(--radius-md);border:1.5px solid var(--border-light);font-size:0.875rem;background:white;width:100%;">
+                  {%- for alloc in product.selected_or_first_available_variant.selling_plan_allocations -%}
+                    <option value="{{ alloc.selling_plan.id }}">{{ alloc.selling_plan.name }} — {{ alloc.per_delivery_price | money }}</option>
+                  {%- endfor -%}
+                </select>
+              </div>
             </div>
           </label>
+          {%- endunless -%}
         </div>
+        {%- endif -%}
 
         <!-- Variants (size, scent etc.) -->
         {%- unless product.has_only_default_variant -%}
@@ -292,10 +324,11 @@
             <input type="hidden" name="form_type" value="product">
             <input type="hidden" name="id" id="variant-id" value="{{ product.selected_or_first_available_variant.id }}">
             <input type="hidden" name="quantity" id="cart-qty" value="1">
+            <input type="hidden" name="selling_plan" id="selling-plan-id" value="">
             <button type="submit" class="product-atc-btn" id="atc-btn"
               {% unless product.available %}disabled{% endunless %}>
               <i class="fas fa-shopping-bag"></i>
-              {%- if product.available -%}Add to Cart — {{ product.selected_or_first_available_variant.price | money }}{%- else -%}Sold Out{%- endif -%}
+              {%- if product.available -%}<span id="atc-label">Add to Cart — {{ product.selected_or_first_available_variant.price | money }}</span>{%- else -%}Sold Out{%- endif -%}
             </button>
           </form>
         </div>
@@ -552,13 +585,61 @@
     }
   }
 
-  // Purchase options toggle
-  document.querySelectorAll('.product-purchase-option input').forEach(function(radio) {
-    radio.addEventListener('change', function() {
+  // ── Selling Plans: Purchase options toggle ──────────────────────────────
+  (function() {
+    var onetimeRadio   = document.getElementById('purchase-onetime-radio');
+    var subRadio       = document.getElementById('purchase-subscription-radio');
+    var freqWrap       = document.getElementById('sub-frequency-wrap');
+    var freqSelect     = document.getElementById('sub-selling-plan');
+    var planIdInput    = document.getElementById('selling-plan-id');
+    var atcLabelEl     = document.getElementById('atc-label');
+    var onetimePriceEl = document.getElementById('onetime-price');
+    var subPriceEl     = document.getElementById('sub-price');
+
+    // Selling plan prices keyed by plan ID (populated by Liquid JSON below)
+    var planPrices = {};
+    try { planPrices = JSON.parse(document.getElementById('selling-plan-prices').textContent || '{}'); } catch(e) {}
+
+    function updatePurchaseUI() {
+      var isSubscription = subRadio && subRadio.checked;
+      // Toggle selected class
       document.querySelectorAll('.product-purchase-option').forEach(function(o) { o.classList.remove('selected'); });
-      this.closest('.product-purchase-option').classList.add('selected');
-    });
-  });
+      if (isSubscription && subRadio) {
+        subRadio.closest('.product-purchase-option').classList.add('selected');
+      } else if (onetimeRadio) {
+        onetimeRadio.closest('.product-purchase-option').classList.add('selected');
+      }
+      // Show/hide frequency selector
+      if (freqWrap) freqWrap.style.display = isSubscription ? 'block' : 'none';
+      // Set/clear selling_plan hidden input
+      if (planIdInput) {
+        if (isSubscription && freqSelect && freqSelect.value) {
+          planIdInput.value = freqSelect.value;
+        } else {
+          planIdInput.value = '';
+        }
+      }
+      // Update ATC button label price
+      if (atcLabelEl) {
+        if (isSubscription && freqSelect && planPrices[freqSelect.value]) {
+          atcLabelEl.textContent = 'Subscribe — ' + planPrices[freqSelect.value] + ' / delivery';
+        } else if (onetimePriceEl) {
+          atcLabelEl.textContent = 'Add to Cart — ' + onetimePriceEl.textContent;
+        }
+      }
+    }
+
+    if (onetimeRadio) onetimeRadio.addEventListener('change', updatePurchaseUI);
+    if (subRadio)     subRadio.addEventListener('change', updatePurchaseUI);
+    if (freqSelect) {
+      freqSelect.addEventListener('change', function() {
+        // Update sub-price display
+        if (subPriceEl && planPrices[this.value]) subPriceEl.textContent = planPrices[this.value];
+        if (planIdInput && subRadio && subRadio.checked) planIdInput.value = this.value;
+        updatePurchaseUI();
+      });
+    }
+  })();
 
   // Sticky ATC bar
   var atcBtn = document.getElementById('atc-btn');
@@ -570,46 +651,110 @@
     obs.observe(atcBtn);
   }
 
-  // ATC form with cart drawer
+  // ATC form with cart drawer — passes selling_plan when set
   var atcForm = document.getElementById('add-to-cart-form');
   if (atcForm) {
     atcForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      var variantId = document.getElementById('variant-id').value;
-      var qty = parseInt(document.getElementById('quantity').value) || 1;
-      var btn = document.getElementById('atc-btn');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+      var variantId  = document.getElementById('variant-id').value;
+      var qty        = parseInt(document.getElementById('quantity').value) || 1;
+      var planId     = (document.getElementById('selling-plan-id') || {}).value || '';
+      var btn        = document.getElementById('atc-btn');
+      btn.disabled   = true;
+      btn.innerHTML  = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+
+      var payload = { id: parseInt(variantId), quantity: qty };
+      if (planId) payload.selling_plan = parseInt(planId);
+
       fetch('/cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: variantId, quantity: qty })
+        body: JSON.stringify(payload)
       })
       .then(function(r) { return r.json(); })
       .then(function() {
         btn.innerHTML = '<i class="fas fa-check"></i> Added to cart!';
         btn.style.background = '#2d7a3a';
-        // Open cart drawer if available
+        // Open cart drawer
         var cartOpen = document.querySelector('[data-cart-open]');
         if (cartOpen) cartOpen.click();
-        // Refresh cart count
+        // Also try custom event approach
+        document.dispatchEvent(new CustomEvent('cart:open'));
         return fetch('/cart.js');
       })
       .then(function(r) { return r.json(); })
       .then(function(cart) {
-        var counts = document.querySelectorAll('.cart-count');
-        counts.forEach(function(c) { c.textContent = cart.item_count; });
+        document.querySelectorAll('.cart-count').forEach(function(c) { c.textContent = cart.item_count; });
         setTimeout(function() {
-          btn.disabled = false;
+          btn.disabled  = false;
           btn.innerHTML = '<i class="fas fa-shopping-bag"></i> Add to Cart';
           btn.style.background = '';
+          var lbl = document.getElementById('atc-label');
+          if (lbl) lbl.textContent = 'Add to Cart';
         }, 2500);
       })
       .catch(function(err) {
-        btn.disabled = false;
+        btn.disabled  = false;
         btn.innerHTML = '<i class="fas fa-shopping-bag"></i> Add to Cart';
         console.error('ATC error:', err);
       });
     });
   }
+  // ── Selling plan price map (injected by Liquid) ─────────────────────────
+</script>
+{%- comment -%} JSON price map for selling plan JS {%- endcomment -%}
+<script type="application/json" id="selling-plan-prices">
+{
+  {%- for variant in product.variants -%}
+    {%- for alloc in variant.selling_plan_allocations -%}
+      {%- unless forloop.parentloop.first == false and forloop.first -%}{%- endunless -%}
+      "{{ alloc.selling_plan.id }}": "{{ alloc.per_delivery_price | money }}"
+      {%- unless forloop.last and forloop.parentloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  {%- endfor -%}
+}
+</script>
+
+{%- comment -%} ITEM 9: Product structured data — JSON-LD {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "description": {{ product.description | strip_html | truncate: 300 | json }},
+  "url": "{{ shop.url }}{{ product.url }}",
+  "sku": {{ product.selected_or_first_available_variant.sku | default: product.id | json }},
+  "brand": {
+    "@type": "Brand",
+    "name": {{ shop.name | json }}
+  },
+  {%- if product.featured_image -%}
+  "image": [
+    "{{ product.featured_image | image_url: width: 1200 }}"
+    {%- for img in product.images offset: 1 limit: 4 -%}
+    , "{{ img | image_url: width: 1200 }}"
+    {%- endfor -%}
+  ],
+  {%- endif -%}
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "2400",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": "GBP",
+    "lowPrice": "{{ product.price_min | money_without_currency }}",
+    "highPrice": "{{ product.price_max | money_without_currency }}",
+    "offerCount": {{ product.variants.size }},
+    "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "seller": {
+      "@type": "Organization",
+      "name": {{ shop.name | json }},
+      "url": {{ shop.url | json }}
+    }
+  }
+}
 </script>

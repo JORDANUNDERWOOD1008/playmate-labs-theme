@@ -65,11 +65,43 @@
 
   {%- if cart.item_count > 0 -%}
   <div class="cart-drawer-footer" id="cart-footer">
+
+    {%- comment -%} FREE SHIPPING PROGRESS BAR — threshold £60 {%- endcomment -%}
+    {%- assign free_ship_threshold = 6000 -%}
+    {%- assign cart_total_cents = cart.total_price -%}
+    {%- assign remaining_cents = free_ship_threshold | minus: cart_total_cents -%}
+    {%- assign progress_pct = cart_total_cents | times: 100 | divided_by: free_ship_threshold -%}
+    {%- if progress_pct > 100 -%}{%- assign progress_pct = 100 -%}{%- endif -%}
+
+    <div class="cart-ship-bar" id="cart-ship-bar">
+      {%- if remaining_cents <= 0 -%}
+        <p class="cart-ship-msg cart-ship-msg--done">
+          🎉 You've unlocked <strong>free delivery!</strong>
+        </p>
+      {%- else -%}
+        <p class="cart-ship-msg">
+          Spend <strong>{{ remaining_cents | money }}</strong> more for <strong>free delivery</strong>
+        </p>
+      {%- endif -%}
+      <div class="cart-ship-track">
+        <div class="cart-ship-fill" style="width:{{ progress_pct }}%;"
+             id="cart-ship-fill"
+             data-threshold="{{ free_ship_threshold }}"
+             data-total="{{ cart_total_cents }}"></div>
+      </div>
+    </div>
+
     <div class="cart-subtotal">
       <span>Subtotal</span>
       <span id="cart-total">{{ cart.total_price | money }}</span>
     </div>
-    <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;">Shipping &amp; taxes calculated at checkout</p>
+    <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;">
+      {%- if remaining_cents <= 0 -%}
+        ✅ Free delivery applied at checkout
+      {%- else -%}
+        Shipping &amp; taxes calculated at checkout
+      {%- endif -%}
+    </p>
     <a href="{{ routes.cart_url }}" class="btn btn-ghost btn-lg" style="width:100%;justify-content:center;margin-bottom:0.75rem;">
       View Cart
     </a>
@@ -79,12 +111,12 @@
       </svg>
       Checkout Securely
     </a>
-    {%- if settings.cart_cross_sell_enable -%}
+    {%- assign cross_sell_collection = collections['ritual-add-ons'] -%}
+    {%- if cross_sell_collection.products.size > 0 -%}
       <div class="cart-cross-sells">
         <p class="label" style="color:var(--gold);margin:1.25rem 0 0.75rem;">Complete Your Ritual</p>
-        {%- assign cross_sell_collection = collections['ritual-add-ons'] -%}
-        {%- if cross_sell_collection -%}
-          {%- for product in cross_sell_collection.products limit: 2 -%}
+        {%- for product in cross_sell_collection.products limit: 2 -%}
+          {%- unless cart.items | map: 'product_id' | contains: product.id -%}
             <div class="cart-cross-sell-item">
               <div class="cart-cross-sell-img">
                 {%- if product.featured_image -%}
@@ -103,8 +135,8 @@
                 + Add
               </button>
             </div>
-          {%- endfor -%}
-        {%- endif -%}
+          {%- endunless -%}
+        {%- endfor -%}
       </div>
     {%- endif -%}
   </div>
