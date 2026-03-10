@@ -434,12 +434,12 @@
    top:30% = shifted well above vertical centre to cover the bg product. */
 .featured-drop__product-img {
   position: absolute;
-  top: 30%;               /* shifted up significantly to align with bg candle */
-  left: 25%;              /* centred in the left 50% */
+  top: 50%;               /* full section height — vertically centred */
+  left: 20%;              /* shifted further left to better cover bg candle */
   transform: translateX(-50%) translateY(-50%);
-  height: 115%;           /* enlarged to fully cover background product */
+  height: 100%;           /* full section height */
   width: auto;
-  max-width: 52%;         /* wider container — fills the left column fully */
+  max-width: none;        /* unrestricted — let height drive the size */
   object-fit: contain;
   image-rendering: -webkit-optimize-contrast;
 }
@@ -924,11 +924,11 @@
   }
   .featured-drop__product-img {
     left: 50%;
-    top: 42%;               /* shifted up on mobile too */
+    top: 42%;
     transform: translateX(-50%) translateY(-50%);
     height: auto;
-    width: 95vw;            /* full-width on mobile */
-    max-width: 95vw;
+    width: 100vw;           /* true full viewport width */
+    max-width: 100vw;
   }
 
   /* Overlay: dark top (behind heading) + dark bottom (behind CTA),
