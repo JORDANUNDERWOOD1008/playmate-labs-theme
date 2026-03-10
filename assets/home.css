@@ -428,18 +428,18 @@
   overflow: hidden;
 }
 
-/* DESKTOP: product is in left 50% of section, vertically centred.
-   Background image is 1024×576 displayed cover-centred.
-   PNG is 659×1024 (portrait 0.644 ratio).
-   Height = 92% of section; left edge centred in left-half column. */
+/* DESKTOP: full-width image, shifted up so it covers the background candle.
+   PNG is 659×1024 (portrait 0.644 ratio) — displayed tall.
+   left:25% = centre of the left 50% column.
+   top:30% = shifted well above vertical centre to cover the bg product. */
 .featured-drop__product-img {
   position: absolute;
-  top: 50%;
-  left: 25%;   /* centre of the left 50% column */
+  top: 30%;               /* shifted up significantly to align with bg candle */
+  left: 25%;              /* centred in the left 50% */
   transform: translateX(-50%) translateY(-50%);
-  height: 92%;
+  height: 115%;           /* enlarged to fully cover background product */
   width: auto;
-  max-width: 44%;
+  max-width: 52%;         /* wider container — fills the left column fully */
   object-fit: contain;
   image-rendering: -webkit-optimize-contrast;
 }
@@ -923,14 +923,12 @@
     z-index: 1;
   }
   .featured-drop__product-img {
-    /* Reset desktop left/transform */
     left: 50%;
-    top: 50%;
+    top: 42%;               /* shifted up on mobile too */
     transform: translateX(-50%) translateY(-50%);
-    /* Width-based sizing to match the mobile background product */
     height: auto;
-    width: 78vw;
-    max-width: 78vw;
+    width: 95vw;            /* full-width on mobile */
+    max-width: 95vw;
   }
 
   /* Overlay: dark top (behind heading) + dark bottom (behind CTA),
