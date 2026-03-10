@@ -1,0 +1,378 @@
+{% comment %}
+  PLAYMATE LABS — JOURNAL BLOG CREATOR
+  =====================================
+  Access at: /pages/create-blog  (assign template: page.create-blog)
+  
+  Creates "The Playmate Journal" blog + all 7 articles via Shopify Admin API.
+  Requires write_content scope on your Admin API token.
+
+  HOW TO USE:
+  1. In Shopify Admin → Apps → Develop Apps → Your App → Configuration
+  2. Add "write_content" and "read_content" scopes → Save → Reinstall
+  3. Visit /pages/create-blog?token=YOUR_NEW_ADMIN_TOKEN
+{% endcomment %}
+
+{{ 'global.css' | asset_url | stylesheet_tag }}
+
+<style>
+* { box-sizing: border-box; }
+body { background: #1A0A06; color: #F5EFE6; font-family: -apple-system, 'Inter', sans-serif; margin: 0; padding: 0; min-height: 100vh; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem; }
+.logo { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: #C9A96E; margin-bottom: 2rem; }
+h1 { font-family: Georgia, serif; font-size: 2rem; color: #F5EFE6; margin-bottom: 0.5rem; }
+.sub { color: rgba(245,239,230,0.55); margin-bottom: 2.5rem; font-size: 0.9375rem; line-height: 1.7; }
+.token-form { display: flex; gap: 0.75rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+.token-input { flex: 1; min-width: 260px; padding: 0.75rem 1rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #F5EFE6; font-size: 0.875rem; }
+.token-input::placeholder { color: rgba(245,239,230,0.3); }
+.btn-run { padding: 0.75rem 1.5rem; background: #C9A96E; color: #1A0A06; border: none; border-radius: 8px; font-weight: 700; font-size: 0.875rem; cursor: pointer; letter-spacing: 0.04em; white-space: nowrap; }
+.btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+.log { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 1.5rem; font-family: monospace; font-size: 0.8125rem; line-height: 1.8; min-height: 200px; }
+.ok { color: #5dde87; }
+.err { color: #ff6b6b; }
+.info { color: #C9A96E; }
+.muted { color: rgba(245,239,230,0.4); }
+.instructions { background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.2); border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem; }
+.instructions h3 { color: #C9A96E; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 0.75rem; }
+.instructions ol { margin: 0; padding-left: 1.25rem; color: rgba(245,239,230,0.75); font-size: 0.875rem; line-height: 1.8; }
+.instructions code { background: rgba(201,169,110,0.15); padding: 0.1em 0.4em; border-radius: 4px; color: #C9A96E; font-size: 0.8125rem; }
+</style>
+
+<div class="wrap">
+  <div class="logo">Playmate Labs · Admin Tools</div>
+  <h1>Journal Blog Creator</h1>
+  <p class="sub">Creates "The Playmate Journal" blog and all 7 SEO-optimised articles in one click. Requires an Admin API token with <code>write_content</code> scope.</p>
+
+  <div class="instructions">
+    <h3>How to get the right token</h3>
+    <ol>
+      <li>Go to <strong>Shopify Admin → Settings → Apps and sales channels → Develop apps</strong></li>
+      <li>Click your app → <strong>Configuration</strong> tab</li>
+      <li>Under "Admin API access scopes", add <code>write_content</code> and <code>read_content</code></li>
+      <li>Save → click <strong>Install app</strong> → copy the new Admin API access token</li>
+      <li>Paste it below and click Run</li>
+    </ol>
+  </div>
+
+  <div class="token-form">
+    <input type="password" class="token-input" id="apiToken" placeholder="shpat_xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+    <button class="btn-run" id="runBtn" onclick="runCreator()">▶ Create Blog &amp; Articles</button>
+  </div>
+
+  <div class="log" id="log"><span class="muted">Awaiting token...</span></div>
+</div>
+
+<script>
+const STORE = {{ shop.permanent_domain | json }};
+
+const ARTICLES = [
+  {
+    title: "We Did 30 Date Nights in 30 Days. Here's What Happened.",
+    handle: "30-date-nights-in-30-days",
+    author: "Playmate Labs",
+    tags: "Relationship Experiments, Featured",
+    published_at: "2025-01-12T09:00:00+00:00",
+    seo_title: "30 Date Nights in 30 Days: What We Learned About Novelty & Intimacy | Playmate Labs Journal",
+    seo_desc: "One couple, one calendar month, 30 structured date nights. From sensory rituals at home to IRL experiences across London — here's what we learned about novelty, intimacy and ourselves.",
+    body_html: `<p class="article-lead">One couple. One calendar month. 30 structured, novel date nights — ranging from sensory rituals at home to IRL experiences across London. This is what we learned about novelty, intimacy and ourselves.</p>
+<h2>The Premise</h2>
+<p>We set a simple rule: every evening for 30 days, we would do something we had never done together before. Not necessarily expensive. Not necessarily elaborate. Just <em>new</em>. No scrolling on the sofa. No defaulting to the same restaurant. Every night had a structure, a prompt, or a ritual.</p>
+<p>We kept a shared journal. We rated each night on three axes: connection, novelty and enjoyment. By day 30, we had 90 data points, several arguments, one genuinely transcendent evening, and a clearer picture of what we actually want from time together.</p>
+<h2>What We Did</h2>
+<ul>
+  <li><strong>12 at-home rituals</strong> — sensory tastings, blindfolded dinners, structured conversation games, a guided movement session, a scent-mapping exercise.</li>
+  <li><strong>8 neighbourhood explorations</strong> — a walk with a rule (no phones, no familiar routes), a local gallery we'd passed a hundred times, a pub quiz in a borough we'd never visited.</li>
+  <li><strong>6 structured experiences</strong> — a pottery class, a sound bath, a Playmate Pairs event, a wine tasting with a specialist, a jazz basement, an axe-throwing session that neither of us expected to love.</li>
+  <li><strong>4 digital-free evenings</strong> — devices in a drawer, a conversation prompt deck, a specific sensory ritual and a rule that we couldn't mention work, family logistics or money.</li>
+</ul>
+<h2>What the Data Said</h2>
+<p>Average connection score: <strong>7.4 / 10</strong>. Average novelty: <strong>8.1 / 10</strong>. Average enjoyment: <strong>7.9 / 10</strong>. The highest-rated nights were almost never the most expensive. The lowest were those where we'd planned too much and left no room for the unexpected.</p>
+<p>The biggest pattern: novelty alone isn't enough. The nights that scored highest on connection were those where the novel activity created a shared <em>challenge</em> — something we had to figure out together, something that made one of us slightly vulnerable.</p>
+<h2>What We Learned About Each Other</h2>
+<p>We learned that one of us is significantly more risk-tolerant than the other — and that the low-risk partner actually <em>wanted</em> to be pushed, but needed the invitation from a structured prompt rather than a spontaneous suggestion. That's a meaningful distinction.</p>
+<p>We learned that silence is underrated. Some of our highest-scoring evenings involved very little talking — a sound bath, a slow sensory tasting — and the intimacy came not from conversation but from shared attention.</p>
+<p>We learned that £20 spent intentionally beats £200 spent habitually, every time.</p>
+<h2>The One Night That Changed Everything</h2>
+<p>Day 17. A Tuesday. No screens from 7pm, a single candle, a chocolate tasting guide, and three questions from a prompt deck. We expected awkward. It lasted four hours. We talked about things we hadn't discussed in three years. Neither of us fully understood why that combination worked — the darkness, the slow pacing, the structured questions that gave us permission to go somewhere real.</p>
+<p>That evening became the template for everything we've built since.</p>
+<h2>Try It Yourself</h2>
+<p>You don't need 30 nights. Start with five. Our free <a href="/pages/5-day-experience">Virtual Sensory Experience</a> gives you exactly that — one structured evening per day, delivered to your inbox. No kit required. No credit card.</p>`
+  },
+  {
+    title: "5 Sensory Rituals Every Couple Should Try Before the Year Ends",
+    handle: "5-sensory-rituals-for-couples",
+    author: "Playmate Labs",
+    tags: "Sensory Rituals",
+    published_at: "2025-01-08T09:00:00+00:00",
+    seo_title: "5 Sensory Rituals for Couples: Under 30 Minutes, No Kit Needed | Playmate Labs",
+    seo_desc: "Five sensory rituals for couples that take under 30 minutes each and use only what you already have at home. No kit, no preparation, just presence.",
+    body_html: `<p class="article-lead">Rituals don't need to be elaborate. These five take under 30 minutes each and work with things you already own. The only requirement is that you're both present.</p>
+<h2>Why Sensory Rituals Work</h2>
+<p>Most date nights engage two senses: sight and hearing. Sensory rituals deliberately activate the other three — touch, taste, smell — and the research is consistent: multi-sensory shared experiences create stronger memories, deeper emotional connection, and a measurable increase in relationship satisfaction. More importantly, they're hard to do on autopilot. They require presence.</p>
+<h2>Ritual 1: The Blind Tasting</h2>
+<p><strong>Time: 20 minutes.</strong> Take turns blindfolding each other and feeding one item at a time. The blindfolded partner describes what they're tasting using only non-food language — textures, emotions, memories, colours. No flavour words allowed.</p>
+<h2>Ritual 2: The Scent Map</h2>
+<p><strong>Time: 25 minutes.</strong> Collect five to eight things with distinct smells from around your home — coffee, a candle, a book, perfume, fresh herbs. For each one, write independently: one word, one memory, one emotion. Then compare. The gap between responses is where the conversation lives.</p>
+<h2>Ritual 3: The Slow Touch</h2>
+<p><strong>Time: 15 minutes.</strong> One partner lies still. The other spends seven minutes exploring their partner's hand with focused, curious attention — the way you'd touch something you'd never touched before. Then switch. No talking during. This is consistently rated as one of the highest-connection experiences in our user data.</p>
+<h2>Ritual 4: The Question You've Never Asked</h2>
+<p><strong>Time: 30 minutes.</strong> Each partner writes one question they've never asked the other — not because it was forbidden, but because it simply never came up. Take turns. Rule: no deflection, no jokes, at least two minutes per answer.</p>
+<h2>Ritual 5: The Guided Sound Bath</h2>
+<p><strong>Time: 20 minutes.</strong> Find a sound bath track on Spotify or YouTube. Lie down together in the dark. Listen for 15 minutes without speaking. Spend five minutes describing what you saw, felt or thought — rule: you can't use the word "relaxed."</p>
+<h2>Where to Go Next</h2>
+<p>These rituals are versions of what we've built into our <a href="/pages/5-day-experience">Virtual Sensory Experience</a> — five structured evenings, free, delivered to your inbox.</p>`
+  },
+  {
+    title: "The Art of a Perfect Date Night at Home (That Isn't Just Netflix)",
+    handle: "perfect-date-night-at-home",
+    author: "Playmate Labs",
+    tags: "Date Ideas",
+    published_at: "2025-01-05T09:00:00+00:00",
+    seo_title: "How to Design a Perfect Date Night at Home: Environmental Design & Sensory Rituals | Playmate Labs",
+    seo_desc: "Environmental design, flavour sequencing and conversation structure — how to turn your home into the best date venue you'll ever visit.",
+    body_html: `<p class="article-lead">Environmental design, flavour sequencing and conversation structure — how to turn your flat into the best date venue you'll ever visit. No reservations. No Ubers. No compromise on quality.</p>
+<h2>The Problem With "Staying In"</h2>
+<p>Staying in has a perception problem. It sounds like settling. The truth is a well-designed home experience can do things a restaurant never can: total control of environment, zero interruption, and freedom to move between activities without a check-in time. The difference between an evening that feels special and one that doesn't isn't the venue. It's the intention.</p>
+<h2>Step 1: Change the Environment</h2>
+<p>Your home on a Tuesday evening has a feel your nervous system associates with work emails and laundry. You cannot create a new experience in the same sensory environment without effort. Practical changes that work: lights off, candles only; one room cleared of clutter; a new smell; furniture moved slightly; something on the table that wasn't there before. This takes fifteen minutes. The payoff is enormous.</p>
+<h2>Step 2: Sequence the Evening</h2>
+<p>A good date night at home is a sequence of shorter acts, not one long one:</p>
+<ul>
+  <li><strong>Act 1 (15–20 min): Arrival ritual</strong> — a drink, no phones, one conversation starter.</li>
+  <li><strong>Act 2 (30–40 min): Sensory component</strong> — a tasting, ritual or shared creative task. See our <a href="/blogs/journal/5-sensory-rituals-for-couples">sensory rituals guide</a>.</li>
+  <li><strong>Act 3 (45–60 min): Dinner eaten slowly</strong> — no phones, no background TV.</li>
+  <li><strong>Act 4 (30–45 min): The conversation depth charge</strong> — one question written down in advance, designed to go somewhere real.</li>
+  <li><strong>Act 5 (open-ended): Whatever the evening becomes.</strong></li>
+</ul>
+<h2>Step 3: The Conversation Structure</h2>
+<p>The reason most at-home date nights feel flat isn't the food or the candles — it's the conversation. Without a new environment, couples default to functional talk. The fix is structural: before the evening starts, each partner writes one question they genuinely want to ask. These go in an envelope and open at Act 4. You can't hedge on a question you've already written down.</p>
+<h2>The Kit That Helps</h2>
+<p>Our <a href="/collections/monthly-drops">monthly drops</a> are designed specifically for this format. The Velvet Hour includes a cocktail candle, a chocolate ritual guide and a connection game. <a href="/collections/monthly-drops">See the current drop.</a></p>`
+  },
+  {
+    title: "Inside Our First Couples Mixer: 60 People, One Night, No Scripts",
+    handle: "first-couples-mixer-event-recap",
+    author: "Playmate Labs",
+    tags: "Event Recap",
+    published_at: "2024-12-18T09:00:00+00:00",
+    seo_title: "Inside Playmate Pairs London: Our First Couples Mixer Recap | Playmate Labs Journal",
+    seo_desc: "What actually happened at Playmate Pairs London — the moments we didn't plan, the connections we watched form, and what we're doing differently next time.",
+    body_html: `<p class="article-lead">What actually happened at Playmate Pairs London — the moments we didn't plan, the connections we watched form and what we're doing differently next time.</p>
+<h2>The Setup</h2>
+<p>Sixty people. An East London venue. Low lighting. Four dedicated sensory stations. A structured programme that looked nothing like a networking event and everything like an experiment. No name badges. No business cards. One rule: talk only about experiences, not about work.</p>
+<h2>What We Planned</h2>
+<ol>
+  <li><strong>Arrival tasting:</strong> Cards with flavour descriptions — find the person whose card describes the complementary taste.</li>
+  <li><strong>The connection game:</strong> A 15-minute structured conversation guide at paired tables.</li>
+  <li><strong>Sensory stations:</strong> A scent bar, blind tasting, touch-texture table and sound corner.</li>
+  <li><strong>The dinner:</strong> Long tables, unassigned seating, conversation prompt cards at each place, dishes requiring shared engagement.</li>
+  <li><strong>The close:</strong> A guided ten-minute ritual — silence with your partner, one prompt, one shared observation out loud.</li>
+</ol>
+<h2>What We Didn't Plan</h2>
+<p>Two guests spent 45 minutes at the arrival bar before moving on, later saying it was the best conversation they'd had in months. One couple who'd had an argument weeks prior ended up at the connection game station by accident. The structured prompt gave them permission to have the conversation they'd been avoiding. They left holding hands. We found this out three weeks later via an email that made us cry in the office.</p>
+<p>The sound corner — our least popular station on paper — became the most impactful in practice. People stood in silence, eyes closed, for five to fifteen minutes in the middle of a social event. Now it's a non-negotiable in every future event design.</p>
+<h2>The Numbers</h2>
+<p>Average evening rating: <strong>9.1/10</strong>. 91% said they'd had at least one "meaningful" conversation. 88% felt genuinely present for most of the evening. 94% asked when the next one was.</p>
+<h2>What We're Doing Differently</h2>
+<p>Smaller groups (30–40 sweet spot). Extended silent ritual. Sensory stations moved earlier, before dinner. <a href="/pages/events">See all upcoming events →</a></p>`
+  },
+  {
+    title: "The Neuroscience of Novelty: Why New Experiences Genuinely Strengthen Relationships",
+    handle: "neuroscience-of-novelty-relationships",
+    author: "Playmate Labs",
+    tags: "Relationship Culture",
+    published_at: "2024-12-10T09:00:00+00:00",
+    seo_title: "The Neuroscience of Novelty: Why New Experiences Strengthen Relationships | Playmate Labs",
+    seo_desc: "Not pop-science. Here's what the actual research says about dopamine, bonding and why trying new things with your partner consistently improves relationship satisfaction.",
+    body_html: `<p class="article-lead">Not theory. Not pop-science. Here's what the actual research says about dopamine, bonding and why trying something new with your partner works — and why it stops working if you do it wrong.</p>
+<h2>The Dopamine Misunderstanding</h2>
+<p>Dopamine is not the pleasure chemical. It's the <em>anticipation and seeking</em> chemical — it fires in response to novelty, to the expectation of reward, and to the resolution of uncertainty. In the context of relationships, the early period of intense bonding is characterised by constant novelty and is neurologically distinct from the comfortable later stages. The question is whether intentional novelty can recreate some of those conditions within an established relationship. The research says: yes, but only under specific conditions.</p>
+<h2>The Aron Studies</h2>
+<p>Arthur Aron's work at Stony Brook University is the foundational research. Couples who regularly engage in novel and challenging activities together report significantly higher relationship satisfaction than those who engage in pleasant but familiar activities. The effect size is substantial. The mechanism: the brain attributes the physiological arousal of novelty and challenge to the person you're experiencing it with. Excitement misattributed as attraction. Challenge misattributed as compatibility.</p>
+<h2>The Hedonic Treadmill Problem</h2>
+<p>The same mechanism that makes novelty powerful makes it self-defeating without structure. New experiences become ordinary through repetition. The fix is variation rather than escalation — a wide enough variety that the nervous system never fully habituates. This is why a diverse ritual practice outperforms a single repeated activity, even a very good one.</p>
+<h2>Shared Vulnerability and Oxytocin</h2>
+<p>Shared vulnerability — doing something that makes you feel slightly exposed, uncertain or genuinely moved — triggers oxytocin release in both partners simultaneously. This is why the best Playmate rituals include a vulnerability component: a question with some stakes, an unfamiliar moment of physical presence, a creative act that reveals something true.</p>
+<h2>Three Principles in Practice</h2>
+<ol>
+  <li><strong>Prioritise challenge over comfort.</strong> A slightly challenging evening consistently outperforms a pleasant one on bonding metrics.</li>
+  <li><strong>Vary the type of novelty.</strong> Sensory, social, intellectual and emotional novelty each activate different pathways. A varied practice sustains the effect.</li>
+  <li><strong>Create structured permission for vulnerability.</strong> Research consistently shows vulnerability is more reliably triggered by structured prompts than by open-ended socialising.</li>
+</ol>
+<p>Our free <a href="/pages/5-day-experience">Virtual Sensory Experience</a> is built directly on this research — five evenings designed to activate novelty, shared challenge and structured vulnerability.</p>`
+  },
+  {
+    title: "We Tried the \"No Phones for One Evening\" Experiment. Here's the Data.",
+    handle: "no-phones-for-one-evening-experiment",
+    author: "Playmate Labs",
+    tags: "Experiments",
+    published_at: "2024-12-02T09:00:00+00:00",
+    seo_title: "No Phones for One Evening: What Actually Changed for Two Couples | Playmate Labs",
+    seo_desc: "Two couples, one rule: no phones for 90 minutes with a structured ritual guide. Here's what actually changed when we removed the devices and added intentional structure.",
+    body_html: `<p class="article-lead">Two couples, one rule, 90 minutes and a structured ritual guide. What actually changed when we removed the devices — and what the numbers said afterwards.</p>
+<h2>The Setup</h2>
+<p>One established couple (six years together). One newer couple (14 months). Same protocol: no phones from 7pm to 8:30pm, with a structured guide to replace the vacuum. Five components: arrival drink, 20-minute sensory ritual, 30-minute structured dinner, 15-minute creative task, 10-minute reflection prompt. No phones. No TV.</p>
+<h2>What the Couples Said Immediately After</h2>
+<p><strong>Couple A (six years):</strong> "The first 20 minutes were genuinely uncomfortable. We kept reaching for phones that weren't there. By the tasting, something shifted. By dinner, we were talking like we hadn't talked in months."</p>
+<p><strong>Couple B (14 months):</strong> "We thought this would be easy because we don't have that bad phone habit. We were wrong. The ritual structure was the thing that saved it. Without the guide, we would have just sat there feeling awkward."</p>
+<h2>The Quantitative Data</h2>
+<ul>
+  <li><strong>Presence:</strong> Couple A 9/10 (usual: 5/10). Couple B 8/10 (usual: 6/10).</li>
+  <li><strong>Connection:</strong> Couple A 9/10. Couple B 8.5/10.</li>
+  <li><strong>Overall evening rating:</strong> Couple A 9/10. Couple B 8.5/10.</li>
+</ul>
+<h2>Seven Days Later</h2>
+<p>Both couples had spontaneously repeated at least one element without prompting. Couple A had done three phone-free dinners. Couple B reran the blind tasting with different food. Both said the evening had changed something about how they thought about their time together.</p>
+<h2>What the Structure Did</h2>
+<p>Both couples independently identified the ritual structure as the critical element — more important than the phone removal itself. Phone removal alone is a restriction. Phone removal plus a ritual guide is a gift. Constraints without purpose are just rules. Constraints with purpose are rituals.</p>
+<p>The ritual guide from this experiment is a version of what's in our <a href="/pages/5-day-experience">Virtual Sensory Experience</a>. Sign up free — Day 1 arrives tomorrow.</p>`
+  },
+  {
+    title: "The Chocolate Ritual: How to Turn a £20 Bar Into a 90-Minute Experience",
+    handle: "chocolate-ritual-90-minute-experience",
+    author: "Playmate Labs",
+    tags: "Sensory Rituals, Date Ideas",
+    published_at: "2024-11-28T09:00:00+00:00",
+    seo_title: "The Chocolate Ritual: Turn a £20 Bar Into a 90-Minute Sensory Experience | Playmate Labs",
+    seo_desc: "A step-by-step guide to the chocolate ritual from The Velvet Hour. Works with any high-quality dark chocolate — no kit required, just presence and intention.",
+    body_html: `<p class="article-lead">A step-by-step guide to the chocolate ritual from The Velvet Hour. Works with any high-quality dark chocolate — no kit required. What makes it work isn't the chocolate. It's the structure.</p>
+<h2>Why Chocolate</h2>
+<p>Three reasons. First, quality range — the difference between a £2 supermarket bar and a £20 single-origin bar is extraordinary and immediately legible. Second, complexity — good dark chocolate has more flavour compounds than red wine. Third, pacing — chocolate demands to be eaten slowly, creating the conditions for presence that are the actual goal.</p>
+<h2>What You Need</h2>
+<ul>
+  <li>Two to three bars of dark chocolate at different origins or percentages (70%, 85% and 100% works well)</li>
+  <li>A clean palate (no coffee or strong food for 30 minutes before)</li>
+  <li>A glass of still water each</li>
+  <li>A single candle</li>
+  <li>No phones from the moment you begin</li>
+</ul>
+<h2>Phase 1: The Preparation (10 min)</h2>
+<p>Break the first bar into pieces. Don't eat yet. Smell it together. Each describe the smell — independently, before the other speaks. The descriptions are usually both accurate and completely different.</p>
+<h2>Phase 2: The First Tasting (20 min)</h2>
+<p>Place one piece on your tongue. Do not chew. Let it begin to melt. Find the top note (first flavour), the mid note (develops as it melts), and the finish (what lingers). Use non-food language only — colours, textures, memories, emotions. If anyone says "bitter" or "sweet" before the first round is done, they owe a forfeit.</p>
+<h2>Phase 3: The Conversation (30 min)</h2>
+<p>Work through these prompts — one per chocolate:</p>
+<ol>
+  <li><em>"Describe a sensory memory from before you were ten — the smell, taste or texture, not the event."</em></li>
+  <li><em>"What's the most recent thing you tasted that genuinely surprised you?"</em></li>
+  <li><em>"If this chocolate were a place you've been together, which place would it be and why?"</em></li>
+</ol>
+<h2>Phase 4: The Blind Round (20 min)</h2>
+<p>One partner is blindfolded. The other selects a piece from any bar and feeds it to them — they try to identify which bar using only taste. Then switch. This phase gets competitive quickly and is almost always the highlight. Wrong guesses are as interesting as right ones.</p>
+<h2>Phase 5: The Close (10 min)</h2>
+<p>Each partner writes one thing they noticed this evening they hadn't expected. Read them out loud. End there. Don't explain or analyse — just let it land.</p>
+<h2>The Velvet Hour Kit</h2>
+<p>This ritual is included in full in <a href="/collections/monthly-drops">The Velvet Hour</a> — alongside a cocktail candle, the complete ritual guide and an extended conversation deck. <a href="/collections/monthly-drops">See the current drop.</a></p>`
+  }
+];
+
+async function log(msg, cls = '') {
+  const el = document.getElementById('log');
+  if (el.innerHTML.includes('Awaiting')) el.innerHTML = '';
+  const span = document.createElement('div');
+  span.innerHTML = msg;
+  if (cls) span.className = cls;
+  el.appendChild(span);
+  el.scrollTop = el.scrollHeight;
+}
+
+async function runCreator() {
+  const tokenInput = document.getElementById('apiToken');
+  const btn = document.getElementById('runBtn');
+  const token = tokenInput.value.trim();
+  
+  if (!token) { alert('Please enter your Admin API token first.'); return; }
+  
+  btn.disabled = true;
+  btn.textContent = '⏳ Running...';
+  
+  const headers = { 
+    'Content-Type': 'application/json',
+    'X-Shopify-Access-Token': token
+  };
+  const base = `https://${STORE}/admin/api/2024-01`;
+
+  // Step 1: Create blog
+  await log('⬡ Creating blog: The Playmate Journal...', 'info');
+  let blogId;
+  try {
+    const r = await fetch(`${base}/blogs.json`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ blog: { title: 'The Playmate Journal', handle: 'journal', commentable: 'moderate' } })
+    });
+    const data = await r.json();
+    if (!r.ok) {
+      // Blog may already exist — try to fetch it
+      await log(`  ⚠ Blog creation returned ${r.status}: ${JSON.stringify(data.errors)} — checking if it exists already...`, 'err');
+      const listR = await fetch(`${base}/blogs.json`, { headers });
+      const listData = await listR.json();
+      const existing = listData.blogs && listData.blogs.find(b => b.handle === 'journal');
+      if (existing) { blogId = existing.id; await log(`  ✓ Found existing blog ID: ${blogId}`, 'ok'); }
+      else { await log('  ✗ Cannot create or find journal blog. Check token scope.', 'err'); btn.disabled = false; btn.textContent = '▶ Create Blog & Articles'; return; }
+    } else {
+      blogId = data.blog.id;
+      await log(`  ✓ Blog created! ID: ${blogId} → /blogs/journal`, 'ok');
+    }
+  } catch(e) { await log(`  ✗ Error: ${e.message}`, 'err'); btn.disabled = false; return; }
+
+  // Step 2: Create articles
+  await log('', '');
+  await log('⬡ Creating articles...', 'info');
+  const created = [];
+
+  for (const art of ARTICLES) {
+    try {
+      const payload = {
+        article: {
+          blog_id: blogId,
+          title: art.title,
+          author: art.author,
+          tags: art.tags,
+          body_html: art.body_html,
+          published_at: art.published_at,
+          handle: art.handle,
+          metafields: [
+            { namespace: 'global', key: 'title_tag', value: art.seo_title, type: 'single_line_text_field' },
+            { namespace: 'global', key: 'description_tag', value: art.seo_desc, type: 'single_line_text_field' }
+          ]
+        }
+      };
+      const r = await fetch(`${base}/blogs/${blogId}/articles.json`, {
+        method: 'POST', headers,
+        body: JSON.stringify(payload)
+      });
+      const data = await r.json();
+      if (r.ok) {
+        const url = `/blogs/journal/${data.article.handle}`;
+        created.push({ title: art.title, url });
+        await log(`  ✓ <a href="${url}" target="_blank" style="color:#C9A96E">${art.title.substring(0,55)}...</a>`, 'ok');
+      } else {
+        await log(`  ✗ FAILED: ${art.title.substring(0,55)} — ${JSON.stringify(data.errors)}`, 'err');
+      }
+    } catch(e) { await log(`  ✗ Error: ${e.message}`, 'err'); }
+  }
+
+  await log('', '');
+  if (created.length > 0) {
+    await log(`✅ Done! Created ${created.length}/7 articles.`, 'ok');
+    await log('', '');
+    await log('📋 Article URLs:', 'info');
+    for (const c of created) {
+      await log(`  <a href="${c.url}" target="_blank" style="color:#C9A96E">${c.url}</a>`, '');
+    }
+    await log('', '');
+    await log('Next: Go to your Journal page and verify the articles appear in the dynamic grid. The page automatically displays live Shopify blog articles when the blog exists.', 'muted');
+  } else {
+    await log('⚠ No articles were created. Check the errors above.', 'err');
+  }
+  
+  btn.disabled = false;
+  btn.textContent = '▶ Run Again';
+}
+
+// Auto-fill token from URL param ?token=
+(function() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('token')) document.getElementById('apiToken').value = p.get('token');
+})();
+</script>
