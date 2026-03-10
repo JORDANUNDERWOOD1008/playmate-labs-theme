@@ -24,7 +24,7 @@
 
       {%- form 'customer', id: 'section-email-capture-form' -%}
         <input type="hidden" name="contact[tags]" value="newsletter,lead-magnet">
-        <div class="email-capture-form">
+        <div class="email-capture-form" style="display:flex;flex-direction:column;gap:0.875rem;max-width:520px;">
           <input type="email"
                  name="contact[email]"
                  placeholder="{{ section.settings.email_placeholder | default: 'Your email address' }}"
@@ -38,9 +38,11 @@
                    class="form-input{% if section.settings.dark_bg %} form-input-dark{% endif %}"
                    autocomplete="tel">
           {%- endif -%}
-          <button type="submit" class="btn btn-gold btn-lg" style="margin-top:1.25rem;">
-            {{ section.settings.cta_text | default: 'Unlock Free Experience' }}
-          </button>
+          <div style="margin-top:0.75rem;">
+            <button type="submit" class="btn btn-gold btn-lg" style="width:100%;max-width:320px;">
+              {{ section.settings.cta_text | default: 'Unlock Free Experience' }}
+            </button>
+          </div>
         </div>
         <p style="font-size:0.75rem;color:{% if section.settings.dark_bg %}rgba(245,239,230,0.35){% else %}var(--text-muted){% endif %};margin-top:0.75rem;">
           {{ section.settings.disclaimer | default: 'No spam. Unsubscribe anytime.' }}
