@@ -1,7 +1,8 @@
 <style>
   /* Remove body padding — hero handles its own top offset */
   body { padding-top: 0 !important; }
-  /* Hero background matches home-page hero: espresso/burgundy dark gradient */
+
+  /* ── Hero: espresso/burgundy dark gradient, matching home page ── */
   .exp-page-hero {
     background: linear-gradient(135deg, #1A0A06 0%, #2D1020 50%, #1A0A06 100%);
     color: var(--cream);
@@ -12,7 +13,6 @@
     align-items: center;
     padding: calc(var(--nav-height, 72px) + var(--bar-height, 38px) + 3rem) 0 5rem;
   }
-  /* Subtle warm radial glow, matching home hero */
   .exp-page-hero::before {
     content: '';
     position: absolute;
@@ -23,6 +23,83 @@
     pointer-events: none;
   }
   .exp-page-hero .container { position: relative; z-index: 1; }
+
+  /* ── Timeline + Form section: same dark background ── */
+  .exp-page-dark {
+    background: linear-gradient(160deg, #1A0A06 0%, #2D1020 55%, #3D1A2E 100%);
+    color: var(--cream);
+    position: relative;
+  }
+  /* Eyebrow and headings inherit cream on dark backgrounds */
+  .exp-page-dark .section-eyebrow { color: var(--gold) !important; }
+  .exp-page-dark h2 { color: var(--cream) !important; }
+  /* Day timeline items on dark bg */
+  .exp-page-dark .day-circle {
+    background: var(--gold);
+    color: var(--espresso);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(201,169,110,0.35);
+  }
+  .exp-page-dark .day-label { color: var(--gold-light); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.125rem; }
+  .exp-page-dark .day-title { color: var(--cream); font-family: var(--font-serif); font-size:1.125rem; margin-bottom:0.375rem; }
+  .exp-page-dark .day-desc  { color: rgba(245,239,230,0.65); font-size:0.875rem; line-height:1.55; }
+  /* Vertical connector line between day items */
+  .exp-page-dark .day-item {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 1rem;
+    padding-bottom: 1.75rem;
+    position: relative;
+  }
+  .exp-page-dark .day-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 1.25rem;
+    top: 2.5rem;
+    width: 2px;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(201,169,110,0.4), rgba(201,169,110,0.05));
+  }
+  .exp-page-dark .day-timeline { display: flex; flex-direction: column; }
+  /* Section divider gold on dark */
+  .exp-page-dark .section-divider { background: var(--gold) !important; margin: 1.25rem 0; }
+
+  /* ── Social Proof (bg-dark) testimonial text overrides ── */
+  .bg-dark .testimonial-card {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.08);
+  }
+  .bg-dark .testimonial-quote {
+    color: rgba(245,239,230,0.82);
+  }
+  .bg-dark .testimonial-quote::before {
+    color: var(--gold);
+  }
+  .bg-dark .testimonial-name {
+    color: var(--cream);
+  }
+  .bg-dark .testimonial-detail {
+    color: var(--gold-light, rgba(201,169,110,0.75));
+  }
+  .bg-dark .testimonial-avatar {
+    background: rgba(201,169,110,0.18);
+    color: var(--gold);
+  }
+  .bg-dark .star-rating {
+    color: var(--gold);
+    font-size: 0.9rem;
+  }
+  /* Section headings on bg-dark */
+  .bg-dark .section-eyebrow { color: var(--gold-light) !important; }
+  .bg-dark h2.heading-xl, .bg-dark .heading-xl { color: var(--cream) !important; }
 </style>
 
 <!-- HERO -->
@@ -44,7 +121,7 @@
 </section>
 
 <!-- TIMELINE + FORM -->
-<section class="section bg-ivory">
+<section class="section exp-page-dark">
   <div class="container">
     <div class="experience-inner">
       <!-- Timeline -->
