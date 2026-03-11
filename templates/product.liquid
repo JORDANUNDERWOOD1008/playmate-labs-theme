@@ -152,6 +152,19 @@
   /* ── Related products ── */
   .product-related { background: white; }
 
+  /* ── Related products grid ── */
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 640px) {
+    .related-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.875rem;
+    }
+  }
+
   /* ── Responsive ── */
   @media (max-width: 900px) { .product-grid { grid-template-columns: 1fr !important; gap: 2rem; } .product-gallery { position: static; } }
   @media (max-width: 640px) { .product-includes-grid { grid-template-columns: 1fr !important; } .product-reviews-grid { grid-template-columns: 1fr !important; } .product-trust { grid-template-columns: repeat(2,1fr) !important; } }
@@ -532,7 +545,7 @@
       <span class="section-eyebrow">You Might Also Love</span>
       <h2 class="heading-lg">Complete your ritual</h2>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;" class="related-grid">
+    <div class="related-grid">
       {%- assign related_collection = collections['ritual-add-ons'] | default: collections['all'] -%}
       {%- for related in related_collection.products limit: 4 -%}
         {%- unless related.id == product.id -%}
