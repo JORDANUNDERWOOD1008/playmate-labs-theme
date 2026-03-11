@@ -90,55 +90,7 @@
 
       </div>{%- comment -%}/.hero-text{%- endcomment -%}
 
-      {%- comment -%} RIGHT: Desktop product visual (hidden on mobile) {%- endcomment -%}
-      <div class="hero-visual animate-fadeIn animate-delay-2">
-        <div class="hero-product-card">
-          <div class="hero-product-img">
-            {%- if section.settings.hero_product != blank -%}
-              {%- assign hero_product = all_products[section.settings.hero_product] -%}
-              {%- if hero_product.featured_image -%}
-                <img src="{{ hero_product.featured_image | image_url: width: 600 }}"
-                     alt="{{ hero_product.title | escape }}"
-                     width="600" height="600"
-                     loading="eager">
-              {%- else -%}
-                <div class="img-placeholder hero-product-img">
-                  <div class="hero-product-scene">
-                    <div class="candle-glow"></div>
-                    <span class="hero-product-emoji">🌹</span>
-                  </div>
-                </div>
-              {%- endif -%}
-            {%- else -%}
-              <div class="img-placeholder" style="height:100%;">
-                <div class="hero-product-scene">
-                  <div class="candle-glow"></div>
-                  <span class="hero-product-emoji">🌹</span>
-                </div>
-              </div>
-            {%- endif -%}
-          </div>
-          <div class="hero-product-label">
-            <span class="badge badge-gold">{{ section.settings.hero_product_badge | default: 'Latest Drop' }}</span>
-            <p>{{ section.settings.hero_product_name | default: 'The Velvet Hour Kit' }}</p>
-            <p class="hero-product-price">{{ section.settings.hero_product_price | default: '£68' }}</p>
-          </div>
-        </div>
-        <div class="hero-float-badge hero-float-1">
-          <span>🔥</span>
-          <div>
-            <p style="font-size:0.7rem;font-weight:700;">{{ section.settings.badge_1_line1 | default: '12 sold' }}</p>
-            <p style="font-size:0.6rem;opacity:0.7;">{{ section.settings.badge_1_line2 | default: 'last 24 hours' }}</p>
-          </div>
-        </div>
-        <div class="hero-float-badge hero-float-2">
-          <span>⏰</span>
-          <div>
-            <p style="font-size:0.7rem;font-weight:700;">{{ section.settings.badge_2_line1 | default: 'Limited' }}</p>
-            <p style="font-size:0.6rem;opacity:0.7;">{{ section.settings.badge_2_line2 | default: 'Only 47 left' }}</p>
-          </div>
-        </div>
-      </div>
+
 
     </div>
   </div>
@@ -354,53 +306,7 @@
     },
     {
       "type": "header",
-      "content": "Desktop Product Visual"
-    },
-    {
-      "type": "product",
-      "id": "hero_product",
-      "label": "Featured product (uses image if available)"
-    },
-    {
-      "type": "text",
-      "id": "hero_product_badge",
-      "label": "Product badge label",
-      "default": "Latest Drop"
-    },
-    {
-      "type": "text",
-      "id": "hero_product_name",
-      "label": "Product name override"
-    },
-    {
-      "type": "text",
-      "id": "hero_product_price",
-      "label": "Product price override",
-      "default": "£68"
-    },
-    {
-      "type": "text",
-      "id": "badge_1_line1",
-      "label": "Float badge 1 — line 1",
-      "default": "12 sold"
-    },
-    {
-      "type": "text",
-      "id": "badge_1_line2",
-      "label": "Float badge 1 — line 2",
-      "default": "last 24 hours"
-    },
-    {
-      "type": "text",
-      "id": "badge_2_line1",
-      "label": "Float badge 2 — line 1",
-      "default": "Limited"
-    },
-    {
-      "type": "text",
-      "id": "badge_2_line2",
-      "label": "Float badge 2 — line 2",
-      "default": "Only 47 left"
+      "content": "Schema End"
     }
   ],
   "presets": [
