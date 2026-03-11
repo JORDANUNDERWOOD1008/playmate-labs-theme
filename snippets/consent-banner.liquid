@@ -1,0 +1,145 @@
+{% comment %}
+  PLAYMATE LABS — Cookie Consent Banner
+  File: snippets/consent-banner.liquid
+  Implements: UK PECR/GDPR compliance, Google Consent Mode v2
+{% endcomment %}
+
+<style>
+  .pl-consent-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;opacity:0;transition:opacity .3s;pointer-events:none}
+  .pl-consent-overlay.active{opacity:1;pointer-events:auto}
+  .pl-consent{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#fff;box-shadow:0 -4px 24px rgba(0,0,0,.12);transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+  .pl-consent.active{transform:translateY(0)}
+  .pl-consent-inner{max-width:960px;margin:0 auto;padding:1.5rem 2rem}
+  .pl-consent h3{font-family:Georgia,'Times New Roman',serif;font-size:1.125rem;color:#1a1a1a;margin:0 0 .5rem}
+  .pl-consent p{font-size:.875rem;color:#555;line-height:1.5;margin:0 0 1rem}
+  .pl-consent a{color:#6B1E3A;text-decoration:underline}
+  .pl-consent-actions{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+  .pl-consent-btn{padding:.625rem 1.5rem;border-radius:6px;font-size:.875rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+  .pl-consent-btn--accept{background:#6B1E3A;color:#fff}
+  .pl-consent-btn--accept:hover{background:#551832}
+  .pl-consent-btn--reject{background:transparent;color:#555;border:1px solid #ccc}
+  .pl-consent-btn--reject:hover{border-color:#999;color:#333}
+  .pl-consent-btn--settings{background:transparent;color:#6B1E3A;padding:.625rem .5rem;font-size:.8125rem}
+  .pl-consent-detail{display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid #eee}
+  .pl-consent-detail.open{display:block}
+  .pl-consent-toggle{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0}
+  .pl-consent-toggle label{font-size:.875rem;color:#333}
+  .pl-consent-toggle small{font-size:.75rem;color:#888;display:block;margin-top:.125rem}
+  .pl-consent-switch{position:relative;width:44px;height:24px;flex-shrink:0}
+  .pl-consent-switch input{opacity:0;width:0;height:0}
+  .pl-consent-switch .slider{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.3s}
+  .pl-consent-switch .slider:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+  .pl-consent-switch input:checked+.slider{background:#6B1E3A}
+  .pl-consent-switch input:checked+.slider:before{transform:translateX(20px)}
+  .pl-consent-switch input:disabled+.slider{opacity:.6;cursor:default}
+  @media(max-width:600px){.pl-consent-inner{padding:1.25rem 1rem}.pl-consent-actions{flex-direction:column}.pl-consent-btn{width:100%;text-align:center}}
+</style>
+
+<div class="pl-consent-overlay" id="pl-consent-overlay"></div>
+<div class="pl-consent" id="pl-consent-banner" role="dialog" aria-label="Cookie consent">
+  <div class="pl-consent-inner">
+    <h3>We value your privacy</h3>
+    <p>We use cookies to improve your experience, analyse site traffic, and personalise content. You can accept all cookies, reject non-essential ones, or customise your preferences. <a href="/pages/privacy">Privacy Policy</a></p>
+    <div class="pl-consent-actions">
+      <button class="pl-consent-btn pl-consent-btn--accept" id="pl-consent-accept">Accept all</button>
+      <button class="pl-consent-btn pl-consent-btn--reject" id="pl-consent-reject">Reject non-essential</button>
+      <button class="pl-consent-btn pl-consent-btn--settings" id="pl-consent-toggle-detail">Cookie settings</button>
+    </div>
+    <div class="pl-consent-detail" id="pl-consent-detail">
+      <div class="pl-consent-toggle">
+        <div>
+          <label>Necessary</label>
+          <small>Required for the site to function. Cannot be disabled.</small>
+        </div>
+        <label class="pl-consent-switch"><input type="checkbox" checked disabled><span class="slider"></span></label>
+      </div>
+      <div class="pl-consent-toggle">
+        <div>
+          <label for="pl-analytics">Analytics</label>
+          <small>Help us understand how visitors use our site (Google Analytics).</small>
+        </div>
+        <label class="pl-consent-switch"><input type="checkbox" id="pl-analytics" checked><span class="slider"></span></label>
+      </div>
+      <div class="pl-consent-toggle">
+        <div>
+          <label for="pl-marketing">Marketing</label>
+          <small>Used for personalised ads and email tracking (TikTok, Klaviyo, Meta).</small>
+        </div>
+        <label class="pl-consent-switch"><input type="checkbox" id="pl-marketing" checked><span class="slider"></span></label>
+      </div>
+      <div style="margin-top:1rem">
+        <button class="pl-consent-btn pl-consent-btn--accept" id="pl-consent-save">Save preferences</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var COOKIE='pl_consent';
+  var EXPIRY=365;
+
+  function getCookie(n){var m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null}
+  function setCookie(n,v,d){var e=new Date();e.setTime(e.getTime()+d*864e5);document.cookie=n+'='+v+';expires='+e.toUTCString()+';path=/;SameSite=Lax'}
+
+  function updateConsent(analytics,marketing){
+    if(typeof gtag==='function'){
+      gtag('consent','update',{
+        'analytics_storage':analytics?'granted':'denied',
+        'ad_storage':marketing?'granted':'denied',
+        'ad_user_data':marketing?'granted':'denied',
+        'ad_personalization':marketing?'granted':'denied'
+      });
+    }
+    // Dispatch event for other scripts to listen to
+    window.dispatchEvent(new CustomEvent('pl:consent',{detail:{analytics:analytics,marketing:marketing}}));
+  }
+
+  function hideBanner(){
+    document.getElementById('pl-consent-banner').classList.remove('active');
+    document.getElementById('pl-consent-overlay').classList.remove('active');
+  }
+
+  function showBanner(){
+    document.getElementById('pl-consent-banner').classList.add('active');
+    document.getElementById('pl-consent-overlay').classList.add('active');
+  }
+
+  function saveAndHide(analytics,marketing){
+    setCookie(COOKIE,JSON.stringify({a:analytics,m:marketing,t:Date.now()}),EXPIRY);
+    updateConsent(analytics,marketing);
+    hideBanner();
+  }
+
+  // Check existing consent
+  var existing=getCookie(COOKIE);
+  if(existing){
+    try{
+      var c=JSON.parse(decodeURIComponent(existing));
+      updateConsent(c.a,c.m);
+    }catch(e){showBanner();}
+  }else{
+    // No consent yet — show banner after short delay
+    setTimeout(showBanner,800);
+  }
+
+  // Accept all
+  document.getElementById('pl-consent-accept').addEventListener('click',function(){saveAndHide(true,true)});
+
+  // Reject non-essential
+  document.getElementById('pl-consent-reject').addEventListener('click',function(){saveAndHide(false,false)});
+
+  // Toggle detail panel
+  document.getElementById('pl-consent-toggle-detail').addEventListener('click',function(){
+    document.getElementById('pl-consent-detail').classList.toggle('open');
+    this.textContent=document.getElementById('pl-consent-detail').classList.contains('open')?'Hide settings':'Cookie settings';
+  });
+
+  // Save custom preferences
+  document.getElementById('pl-consent-save').addEventListener('click',function(){
+    var a=document.getElementById('pl-analytics').checked;
+    var m=document.getElementById('pl-marketing').checked;
+    saveAndHide(a,m);
+  });
+})();
+</script>
