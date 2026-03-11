@@ -78,6 +78,7 @@
   flex: 1;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   padding-top: calc(var(--nav-height, 72px) + 3rem);
   padding-bottom: 6rem;
   position: relative;
@@ -90,10 +91,11 @@
   grid-template-columns: 1fr;
   gap: 0;
   align-items: flex-start;
-  /* Shift copy right ~20% so product is fully unobstructed */
-  max-width: 42%;
-  margin-left: 8%;
-  margin-right: auto;
+  /* Override global .container centering — left-align copy, right half clear for product photo */
+  max-width: 48%;
+  margin-left: 4% !important;
+  margin-right: auto !important;
+  padding-left: 0;
 }
 
 .hero-eyebrow {
