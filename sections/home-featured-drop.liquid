@@ -97,55 +97,277 @@
       </div>
 
       <h3 class="drop-title text-cream">{{ section.settings.drop_tagline | default: 'A ritual for modern romance.' }}</h3>
-      <p class="drop-desc">{{ section.settings.drop_desc | default: 'The Velvet Hour is built around the science of sensory intimacy — dark, rich flavour, warm amber light, and conversation prompts that feel like foreplay for your relationship.' }}</p>
 
-      {%- if section.settings.drop_includes != blank -%}
-      <div class="drop-includes">
-        <h4 class="label" style="color:var(--gold);margin-bottom:1rem;">What's Inside</h4>
-        <ul class="drop-includes-list">
-          {%- assign includes = section.settings.drop_includes | split: '|' -%}
-          {%- for item in includes -%}
-            <li>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5">
-                <path d="M20 6L9 17l-5-5"/>
-              </svg>
-              {{ item | strip }}
-            </li>
-          {%- endfor -%}
-        </ul>
-      </div>
-      {%- endif -%}
+      {%- comment -%} ── STATE WRAPPER (stacks default + waitlist for fade transition) ── {%- endcomment -%}
+      <div class="drop-states-wrap">
 
-      <div class="drop-cta-row">
-        <div class="drop-price-block">
-          {%- if drop_product != blank -%}
-            <p class="drop-price text-cream">{{ drop_product.price | money }}</p>
-            {%- if drop_product.metafields.custom.subscription_price -%}
-              <p style="font-size:0.8rem;color:rgba(245,239,230,0.45);">or {{ drop_product.metafields.custom.subscription_price }}/mo with Drop subscription</p>
-            {%- endif -%}
-          {%- else -%}
-            <p class="drop-price text-cream">{{ section.settings.drop_price | default: '£68' }}</p>
-          {%- endif -%}
+      {%- comment -%} ── DEFAULT STATE: description + CTA ── {%- endcomment -%}
+      <div class="drop-default-state" id="drop-default-state">
+
+        <p class="drop-desc">{{ section.settings.drop_desc | default: 'The Velvet Hour is built around the science of sensory intimacy — dark, rich flavour, warm amber light, and conversation prompts that feel like foreplay for your relationship.' }}</p>
+
+        {%- if section.settings.drop_includes != blank -%}
+        <div class="drop-includes">
+          <h4 class="label" style="color:var(--gold);margin-bottom:1rem;">What's Inside</h4>
+          <ul class="drop-includes-list">
+            {%- assign includes = section.settings.drop_includes | split: '|' -%}
+            {%- for item in includes -%}
+              <li>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5">
+                  <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                {{ item | strip }}
+              </li>
+            {%- endfor -%}
+          </ul>
         </div>
-        <a href="{{ section.settings.cta_url | default: drop_product.url | default: '/collections/monthly-drops' }}" class="btn btn-gold btn-lg">
-          {{ section.settings.cta_text | default: 'Shop This Drop' }}
-        </a>
-      </div>
+        {%- endif -%}
 
-      {%- if section.settings.urgency_text != blank -%}
-      <div class="drop-urgency">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)" stroke="none">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-        </svg>
-        <span style="font-size:0.8125rem;color:rgba(245,239,230,0.65);">
-          {{ section.settings.urgency_text }}
-        </span>
-      </div>
-      {%- endif -%}
+        <div class="drop-cta-row">
+          <div class="drop-price-block">
+            {%- if drop_product != blank -%}
+              <p class="drop-price text-cream">{{ drop_product.price | money }}</p>
+              {%- if drop_product.metafields.custom.subscription_price -%}
+                <p style="font-size:0.8rem;color:rgba(245,239,230,0.45);">or {{ drop_product.metafields.custom.subscription_price }}/mo with Drop subscription</p>
+              {%- endif -%}
+            {%- else -%}
+              <p class="drop-price text-cream">{{ section.settings.drop_price | default: '£68' }}</p>
+            {%- endif -%}
+          </div>
+          <div class="drop-cta-buttons">
+            <a href="{{ section.settings.cta_url | default: drop_product.url | default: '/collections/monthly-drops' }}" class="btn btn-gold btn-lg">
+              {{ section.settings.cta_text | default: 'Shop This Drop' }}
+            </a>
+            {%- if section.settings.show_waitlist != false -%}
+            <button type="button" class="btn btn-waitlist-trigger btn-lg" id="drop-waitlist-trigger" aria-expanded="false">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              {{ section.settings.waitlist_trigger_text | default: 'Notify Me' }}
+            </button>
+            {%- endif -%}
+          </div>
+        </div>
+
+        {%- if section.settings.urgency_text != blank -%}
+        <div class="drop-urgency">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--gold)" stroke="none">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+          </svg>
+          <span style="font-size:0.8125rem;color:rgba(245,239,230,0.65);">
+            {{ section.settings.urgency_text }}
+          </span>
+        </div>
+        {%- endif -%}
+
+      </div><!-- /.drop-default-state -->
+
+      {%- comment -%} ── WAITLIST STATE: replaces description with signup form ── {%- endcomment -%}
+      <div class="drop-waitlist-state" id="drop-waitlist-state" aria-hidden="true">
+
+        {%- comment -%} Success screen — shown after submission {%- endcomment -%}
+        <div class="drop-waitlist-success" id="drop-waitlist-success" aria-hidden="true">
+          <div class="drop-waitlist-success-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <h4 class="drop-waitlist-success-title text-cream">You're on the list!</h4>
+          <p class="drop-waitlist-success-msg">We'll let you know the moment this drop becomes available.</p>
+          <button type="button" class="btn btn-waitlist-back btn-sm" id="drop-waitlist-back-success">
+            ← Back to drop
+          </button>
+        </div>
+
+        {%- comment -%} Form screen {%- endcomment -%}
+        <div class="drop-waitlist-form-wrap" id="drop-waitlist-form-wrap">
+
+          <form class="drop-waitlist-form" id="drop-waitlist-form" novalidate>
+
+            {%- comment -%} Email field {%- endcomment -%}
+            <div class="drop-waitlist-field">
+              <input
+                type="email"
+                id="drop-waitlist-email"
+                name="email"
+                class="form-input form-input-dark drop-waitlist-input"
+                placeholder="{{ section.settings.waitlist_email_placeholder | default: 'Enter your email' }}"
+                autocomplete="email"
+                required
+              >
+            </div>
+
+            {%- comment -%} Phone notification checkbox {%- endcomment -%}
+            <label class="drop-waitlist-checkbox-label" for="drop-waitlist-phone-toggle">
+              <span class="drop-waitlist-checkbox-box" id="drop-waitlist-checkbox-visual" aria-hidden="true">
+                <svg class="drop-waitlist-check-icon" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="var(--espresso)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="2 6 5 9 10 3"/>
+                </svg>
+              </span>
+              <input
+                type="checkbox"
+                id="drop-waitlist-phone-toggle"
+                name="phone_notify"
+                class="drop-waitlist-checkbox-input"
+              >
+              <span class="drop-waitlist-checkbox-text">Get phone notification</span>
+            </label>
+
+            {%- comment -%} Phone field — revealed when checkbox ticked {%- endcomment -%}
+            <div class="drop-waitlist-phone-wrap" id="drop-waitlist-phone-wrap" aria-hidden="true">
+              <div class="drop-waitlist-field">
+                <input
+                  type="tel"
+                  id="drop-waitlist-phone"
+                  name="phone"
+                  class="form-input form-input-dark drop-waitlist-input"
+                  placeholder="{{ section.settings.waitlist_phone_placeholder | default: 'Enter your phone number' }}"
+                  autocomplete="tel"
+                >
+              </div>
+            </div>
+
+            {%- comment -%} CTA button {%- endcomment -%}
+            <button type="submit" class="btn btn-primary btn-lg drop-waitlist-submit" id="drop-waitlist-submit">
+              <span class="drop-waitlist-submit-label">{{ section.settings.waitlist_cta_text | default: 'Join Waitlist' }}</span>
+              <span class="drop-waitlist-submit-loading" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="drop-waitlist-spinner">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+              </span>
+            </button>
+
+            {%- comment -%} Microcopy {%- endcomment -%}
+            <p class="drop-waitlist-microcopy">{{ section.settings.waitlist_microcopy | default: 'Be the first to know when this drop becomes available.' }}</p>
+
+          </form>
+
+          <button type="button" class="btn btn-waitlist-back btn-sm" id="drop-waitlist-back">
+            ← Back to drop
+          </button>
+
+        </div><!-- /.drop-waitlist-form-wrap -->
+
+      </div><!-- /.drop-waitlist-state -->
+
+      </div><!-- /.drop-states-wrap -->
 
     </div><!-- /.featured-drop__content -->
   </div><!-- /.container -->
 </section>
+
+<script>
+(function() {
+  'use strict';
+
+  function initDropWaitlist() {
+    var trigger       = document.getElementById('drop-waitlist-trigger');
+    var defaultState  = document.getElementById('drop-default-state');
+    var waitlistState = document.getElementById('drop-waitlist-state');
+    var backBtn       = document.getElementById('drop-waitlist-back');
+    var backSuccessBtn= document.getElementById('drop-waitlist-back-success');
+    var form          = document.getElementById('drop-waitlist-form');
+    var submitBtn     = document.getElementById('drop-waitlist-submit');
+    var phoneToggle   = document.getElementById('drop-waitlist-phone-toggle');
+    var phoneWrap     = document.getElementById('drop-waitlist-phone-wrap');
+    var checkboxBox   = document.getElementById('drop-waitlist-checkbox-visual');
+    var successScreen = document.getElementById('drop-waitlist-success');
+    var formWrap      = document.getElementById('drop-waitlist-form-wrap');
+
+    if (!trigger || !defaultState || !waitlistState) return;
+
+    /* ── Open waitlist ── */
+    function openWaitlist() {
+      defaultState.classList.add('is-hidden');
+      waitlistState.setAttribute('aria-hidden', 'false');
+      trigger.setAttribute('aria-expanded', 'true');
+      setTimeout(function() {
+        var emailInput = document.getElementById('drop-waitlist-email');
+        if (emailInput) emailInput.focus();
+      }, 360);
+    }
+
+    /* ── Close waitlist ── */
+    function closeWaitlist() {
+      waitlistState.setAttribute('aria-hidden', 'true');
+      defaultState.classList.remove('is-hidden');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+
+    /* ── Phone checkbox ── */
+    function togglePhone() {
+      var checked = phoneToggle.checked;
+      checkboxBox.classList.toggle('is-checked', checked);
+      phoneWrap.classList.toggle('is-open', checked);
+      phoneWrap.setAttribute('aria-hidden', checked ? 'false' : 'true');
+      if (checked) {
+        setTimeout(function() {
+          var phoneInput = document.getElementById('drop-waitlist-phone');
+          if (phoneInput) phoneInput.focus();
+        }, 340);
+      }
+    }
+
+    /* ── Form submission ── */
+    function handleSubmit(e) {
+      e.preventDefault();
+      var emailInput = document.getElementById('drop-waitlist-email');
+      var email = emailInput ? emailInput.value.trim() : '';
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (emailInput) {
+          emailInput.style.borderColor = 'rgba(220,80,80,0.7)';
+          emailInput.focus();
+          setTimeout(function() { emailInput.style.borderColor = ''; }, 2000);
+        }
+        return;
+      }
+
+      submitBtn.classList.add('is-loading');
+      submitBtn.disabled = true;
+
+      /* Replace this timeout with a real fetch/POST to your endpoint */
+      setTimeout(function() {
+        submitBtn.classList.remove('is-loading');
+        submitBtn.disabled = false;
+        if (formWrap)      formWrap.setAttribute('aria-hidden', 'true');
+        if (successScreen) successScreen.setAttribute('aria-hidden', 'false');
+      }, 1200);
+    }
+
+    /* ── Reset form & return to default state ── */
+    function resetAndClose() {
+      if (successScreen) successScreen.setAttribute('aria-hidden', 'true');
+      if (formWrap)      formWrap.setAttribute('aria-hidden', 'false');
+      if (form)          form.reset();
+      if (checkboxBox)   checkboxBox.classList.remove('is-checked');
+      if (phoneWrap)     { phoneWrap.classList.remove('is-open'); phoneWrap.setAttribute('aria-hidden', 'true'); }
+      closeWaitlist();
+    }
+
+    /* ── Bind events ── */
+    trigger.addEventListener('click', openWaitlist);
+    if (backBtn)        backBtn.addEventListener('click', closeWaitlist);
+    if (backSuccessBtn) backSuccessBtn.addEventListener('click', resetAndClose);
+    if (phoneToggle)    phoneToggle.addEventListener('change', togglePhone);
+    if (form)           form.addEventListener('submit', handleSubmit);
+
+    /* Click on custom checkbox box forwards to real hidden input */
+    if (checkboxBox) {
+      checkboxBox.addEventListener('click', function() {
+        phoneToggle.checked = !phoneToggle.checked;
+        togglePhone();
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDropWaitlist);
+  } else {
+    initDropWaitlist();
+  }
+})();
+</script>
 {%- endif -%}
 
 {% schema %}
@@ -259,6 +481,47 @@
       "id": "urgency_text",
       "label": "Urgency message",
       "default": "47 kits remaining. Drop closes January 31st."
+    },
+    {
+      "type": "header",
+      "content": "Waitlist / Notify Me"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_waitlist",
+      "label": "Show 'Notify Me' button",
+      "default": true,
+      "info": "Enables the waitlist signup button alongside the main CTA."
+    },
+    {
+      "type": "text",
+      "id": "waitlist_trigger_text",
+      "label": "Notify Me button label",
+      "default": "Notify Me"
+    },
+    {
+      "type": "text",
+      "id": "waitlist_cta_text",
+      "label": "Join Waitlist button label",
+      "default": "Join Waitlist"
+    },
+    {
+      "type": "text",
+      "id": "waitlist_email_placeholder",
+      "label": "Email field placeholder",
+      "default": "Enter your email"
+    },
+    {
+      "type": "text",
+      "id": "waitlist_phone_placeholder",
+      "label": "Phone field placeholder",
+      "default": "Enter your phone number"
+    },
+    {
+      "type": "text",
+      "id": "waitlist_microcopy",
+      "label": "Microcopy below button",
+      "default": "Be the first to know when this drop becomes available."
     }
   ],
   "presets": [
