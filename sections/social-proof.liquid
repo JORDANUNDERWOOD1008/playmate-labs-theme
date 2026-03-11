@@ -46,28 +46,7 @@
       </div>
     </div>
 
-    <!-- UGC Grid -->
-    <div class="ugc-grid" style="margin-top:var(--space-xl);">
-      {%- for i in (1..6) -%}
-      <div class="ugc-item" style="aspect-ratio:1;border-radius:8px;overflow:hidden;">
-        <div class="img-placeholder" style="height:100%;">
-          <span style="font-size:1.5rem;position:relative;z-index:1;">
-            {%- case i -%}
-              {%- when 1 -%}🌹
-              {%- when 2 -%}🕯️
-              {%- when 3 -%}🍫
-              {%- when 4 -%}🥂
-              {%- when 5 -%}🃏
-              {%- when 6 -%}💌
-            {%- endcase -%}
-          </span>
-        </div>
-      </div>
-      {%- endfor -%}
-    </div>
-    <p class="text-center" style="margin-top:1rem;font-size:0.8125rem;color:var(--text-muted);">
-      Tag <a href="#" style="color:var(--burgundy);font-weight:600;">#PlaymateLabs</a> to be featured
-    </p>
+
   </div>
 </section>
 {%- endif -%}
