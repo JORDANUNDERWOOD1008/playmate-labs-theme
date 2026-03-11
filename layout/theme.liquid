@@ -5,6 +5,34 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#6B1E3A">
+
+  {%- comment -%} ═══ GOOGLE CONSENT MODE v2 — must be FIRST script ═══ {%- endcomment -%}
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+      'analytics_storage': 'denied',
+      'ad_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'functionality_storage': 'granted',
+      'security_storage': 'granted',
+      'wait_for_update': 500
+    });
+  </script>
+
+  {%- comment -%} ═══ DATA LAYER ═══ {%- endcomment -%}
+  {% render 'datalayer' %}
+
+  {%- comment -%} ═══ GOOGLE TAG MANAGER — head ═══
+       Replace GTM-XXXXXXX with your container ID
+       Create at: https://tagmanager.google.com
+  {%- endcomment -%}
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
   <link rel="canonical" href="{{ canonical_url }}">
 
   {%- if settings.favicon != blank -%}
@@ -439,6 +467,9 @@
 
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}--{{ template.suffix }}{% endif %}">
 
+  {%- comment -%} Google Tag Manager — noscript fallback {%- endcomment -%}
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
   <a class="skip-to-content-link button visually-hidden" href="#MainContent">
     {{ 'accessibility.skip_to_text' | t }}
   </a>
@@ -476,7 +507,8 @@
   <script src="{{ 'main.js' | asset_url }}" defer></script>
   <script src="{{ 'cart-api.js' | asset_url }}" defer></script>
 
-
+  {%- comment -%} Cookie Consent Banner {%- endcomment -%}
+  {% render 'consent-banner' %}
 
 </body>
 </html>
