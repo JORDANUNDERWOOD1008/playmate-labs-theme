@@ -1076,7 +1076,7 @@
      511x1024 image: 55% drops buttons well into the bottom dark band. */
   .hero-copy-bottom {
     display: block;
-    padding: 55% 1.25rem 0;
+    padding: 65% 1.25rem 0;
     padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   }
 
