@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 {% comment %}
   PLAYMATE LABS — MONTHLY DROPS PAGE  v3
   File: templates/page.drops.liquid
@@ -354,11 +355,23 @@
   setInterval(update, 1000);
 })();
 </script>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Drops Page",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "header",
       "content": "🖼️ Images"
@@ -523,10 +536,20 @@
       "label": "Hero gradient end",
       "default": "#2D1020"
     },
-
-    {"type": "header", "content": "🔗 Button URLs (editable in customiser)"},
-    {"type": "url", "id": "url_experience", "label": "Experience Page"},
-    {"type": "url", "id": "url_monthly_drops", "label": "Shop Drops"}
+    {
+      "type": "header",
+      "content": "🔗 Button URLs (editable in customiser)"
+    },
+    {
+      "type": "url",
+      "id": "url_experience",
+      "label": "Experience Page"
+    },
+    {
+      "type": "url",
+      "id": "url_monthly_drops",
+      "label": "Shop Drops"
+    }
   ]
 }
 {% endschema %}
