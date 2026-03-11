@@ -153,7 +153,7 @@
 {%- comment -%} Search Bar (slide-down) {%- endcomment -%}
 <div class="search-bar" id="search-bar" aria-hidden="true">
   <div class="container">
-    {%- form 'search' -%}
+    <form action="/search" method="get">
       <input type="search" name="q" placeholder="Search products, drops, rituals…" class="search-input" aria-label="Search">
       <button type="submit" class="btn btn-primary btn-sm">Search</button>
       <button type="button" id="search-close" class="nav-icon-btn" aria-label="Close search">
@@ -161,7 +161,7 @@
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
       </button>
-    {%- endform -%}
+    </form>
   </div>
 </div>
 

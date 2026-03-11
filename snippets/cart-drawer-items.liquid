@@ -18,10 +18,13 @@
 <div class="cart-drawer-body" id="cart-body">
   {%- if cart.item_count == 0 -%}
     <div class="cart-empty">
-      <div style="font-size:3rem;margin-bottom:1rem;">🛒</div>
+      <div style="font-size:3rem;margin-bottom:1rem;">✨</div>
       <p style="font-family:var(--font-serif);font-size:1.125rem;margin-bottom:0.5rem;">Your cart is empty</p>
-      <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1.5rem;">Add some products to get started</p>
-      <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary btn-sm">
+      <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1.5rem;">Not sure where to start? Try our free 5-day experience first.</p>
+      <a href="/pages/5-day-experience" class="btn btn-primary btn-sm" style="margin-bottom:0.75rem;">
+        Start Free Experience
+      </a>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn-ghost btn-sm">
         Browse Shop
       </a>
     </div>
@@ -101,6 +104,11 @@
     </svg>
     Checkout Securely
   </a>
+<div style="display:flex;justify-content:center;gap:1rem;margin-top:0.75rem;font-size:0.6875rem;color:var(--text-muted);">
+  <span>🔒 Secure Checkout</span>
+  <span>🚚 Free over £60</span>
+  <span>↩️ 30-Day Returns</span>
+</div>
 
   {%- comment -%} Cross-sells {%- endcomment -%}
   {%- assign cross_sell_collection = collections['ritual-add-ons'] -%}
