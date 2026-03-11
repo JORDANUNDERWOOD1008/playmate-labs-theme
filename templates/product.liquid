@@ -696,3 +696,10 @@ window.playmatelabsVariants = {{ product.variants | json }};
 
 {%- comment -%} Product structured data removed — Shopify auto-generates Product schema with aggregateRating via content_for_header. Duplicate removed to avoid schema conflicts. {%- endcomment -%}
 
+{%- comment -%} ══ PRODUCT PAGE BANNER ══
+     Mirrors the "Rituals worth staying in for" header from the homepage.
+     Fully customisable background image + text via Shopify Theme Editor.
+     Add this section in the editor: Customise → Product pages → Add section → "Product Page Banner"
+{%- endcomment -%}
+{% section 'product-page-banner' %}
+
