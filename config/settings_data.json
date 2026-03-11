@@ -167,6 +167,26 @@
           "footer_newsletter_btn": "Subscribe",
           "footer_bottom_menu": ""
         }
+      },
+      "product-page-banner": {
+        "type": "product-page-banner",
+        "settings": {
+          "section_hidden": false,
+          "eyebrow": "The Collection",
+          "heading": "Rituals worth staying in for.",
+          "show_divider": true,
+          "subheading": "",
+          "bg_image": "shopify://shop_images/lksdlkdsl.png",
+          "bg_position": "center center",
+          "bg_colour": "#faf8f5",
+          "overlay_colour": "15,5,5",
+          "overlay_opacity": 0,
+          "text_colour_eyebrow": "#c9a96e",
+          "text_colour_heading": "#f5efe6",
+          "text_colour_subheading": "#f5efe6",
+          "padding_top": 60,
+          "padding_bottom": 60
+        }
       }
     },
     "content_for_index": []
