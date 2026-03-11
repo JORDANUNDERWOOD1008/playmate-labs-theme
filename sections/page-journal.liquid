@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 {% assign journal_hero_img = section.settings.journal_hero_image %}
 {% comment %}
   PLAYMATE LABS — JOURNAL PAGE v4
@@ -313,11 +314,23 @@
     });
   }
 </script>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Journal Page",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "header",
       "content": "🖼️ Images"

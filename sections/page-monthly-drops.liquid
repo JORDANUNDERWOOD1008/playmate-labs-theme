@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 {% assign mdrop_hero_img = section.settings.mdrop_hero_image %}
 
 {%- assign _mdrop_main_img = section.settings.mdrop_main_image -%}
@@ -247,11 +248,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Monthly Drops Page",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "header",
       "content": "🖼️ Images"

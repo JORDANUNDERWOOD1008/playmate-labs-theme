@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 {%- assign _stockists_map_img = section.settings.stockists_map_image -%}
 {% assign stockists_hero_img = section.settings.stockists_hero_image %}
 {% comment %}
@@ -189,11 +190,23 @@ function filterStockists() {
   });
 }
 </script>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Stockists Page",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "header",
       "content": "🖼️ Images"
@@ -232,9 +245,15 @@ function filterStockists() {
       "label": "Hero subtext",
       "default": "Find Playmate Labs products in selected retailers across the UK."
     },
-
-    {"type": "header", "content": "🔗 Button URLs (editable in customiser)"},
-    {"type": "url", "id": "url_stockists", "label": "Stockists Page"}
+    {
+      "type": "header",
+      "content": "🔗 Button URLs (editable in customiser)"
+    },
+    {
+      "type": "url",
+      "id": "url_stockists",
+      "label": "Stockists Page"
+    }
   ]
 }
 {% endschema %}

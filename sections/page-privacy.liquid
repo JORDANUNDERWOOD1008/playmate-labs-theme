@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 {% comment %}
   PLAYMATE LABS — PRIVACY POLICY PAGE
   File: templates/page.privacy.liquid
@@ -155,11 +156,23 @@
 .legal-table th { background:var(--cream-off); font-weight:600; }
 @media(max-width:768px) { .legal-layout { grid-template-columns:1fr; } .legal-toc { position:static; } }
 </style>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Privacy Policy",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "header",
       "content": "📝 Content"
