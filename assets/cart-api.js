@@ -102,9 +102,12 @@ const PLCartDrawer = {
 
   open() {
     if (!this.drawer) return;
-    this.drawer.classList.add('open');
-    this.overlay?.classList.add('visible');
-    document.body.style.overflow = 'hidden';
+    /* Always refresh from Shopify before opening so content is never stale */
+    this.refresh().then(() => {
+      this.drawer.classList.add('open');
+      this.overlay?.classList.add('visible');
+      document.body.style.overflow = 'hidden';
+    });
   },
 
   close() {
@@ -432,14 +435,19 @@ const PLToast = {
 /* ─────────────────────────────────────────────
    BOOT
    ───────────────────────────────────────────── */
+
+/* Expose PLCartDrawer on window IMMEDIATELY so main.js CartDrawer.open()
+   can delegate to it even if main.js DOMContentLoaded fires first */
+window.PLCartDrawer = PLCartDrawer;
+
 document.addEventListener('DOMContentLoaded', () => {
   PLCartDrawer.init();
   PLProductPage.init();
 
-  /* Neutralise main.js cart-open listener conflict:
-     Override the old CartDrawer.open() to delegate to PLCartDrawer */
+  /* Ensure main.js CartDrawer is fully neutered — belt-and-braces */
   if (window.CartDrawer) {
-    window.CartDrawer.open  = () => PLCartDrawer.open();
-    window.CartDrawer.close = () => PLCartDrawer.close();
+    window.CartDrawer.open   = () => PLCartDrawer.open();
+    window.CartDrawer.close  = () => PLCartDrawer.close();
+    window.CartDrawer.render = () => {};
   }
 });

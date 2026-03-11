@@ -69,83 +69,46 @@ const Cart = {
 //   CART DRAWER
 // ============================================
 
+/**
+ * CartDrawer in main.js is a legacy localStorage-based drawer.
+ * On Shopify it is fully replaced by PLCartDrawer in cart-api.js.
+ * This stub keeps any references alive without touching the DOM.
+ */
 const CartDrawer = {
   el: null,
   overlay: null,
 
   init() {
+    /* Intentionally no-op — PLCartDrawer in cart-api.js owns all cart rendering.
+       We do NOT call render() here; doing so would overwrite the Shopify cart
+       with an empty localStorage-based view. */
     this.el = $('#cart-drawer');
     this.overlay = $('#cart-overlay');
-    if (!this.el) return;
-
-    this.overlay?.addEventListener('click', () => this.close());
-    $('#cart-close')?.addEventListener('click', () => this.close());
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') this.close(); });
-    this.render();
   },
 
   open() {
-    this.render();
-    this.el?.classList.add('open');
-    this.overlay?.classList.add('visible');
-    document.body.style.overflow = 'hidden';
+    /* Delegate entirely to PLCartDrawer if available */
+    if (window.PLCartDrawer) {
+      window.PLCartDrawer.open();
+    } else {
+      this.el?.classList.add('open');
+      this.overlay?.classList.add('visible');
+      document.body.style.overflow = 'hidden';
+    }
   },
 
   close() {
-    this.el?.classList.remove('open');
-    this.overlay?.classList.remove('visible');
-    document.body.style.overflow = '';
+    if (window.PLCartDrawer) {
+      window.PLCartDrawer.close();
+    } else {
+      this.el?.classList.remove('open');
+      this.overlay?.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
   },
 
-  render() {
-    const body = $('#cart-body');
-    const footer = $('#cart-footer');
-    if (!body) return;
-
-    if (Cart.items.length === 0) {
-      body.innerHTML = `
-        <div class="cart-empty">
-          <div style="font-size:2.5rem;">🛒</div>
-          <p style="font-family:var(--font-serif);font-size:1.125rem;">Your cart is empty</p>
-          <p style="font-size:0.875rem;color:var(--text-muted);">Add some products to get started</p>
-          <a href="shop.html" class="btn btn-primary btn-sm" onclick="CartDrawer.close()">Browse Shop</a>
-        </div>`;
-      if (footer) footer.style.display = 'none';
-      return;
-    }
-
-    if (footer) footer.style.display = 'block';
-    body.innerHTML = Cart.items.map(item => `
-      <div class="cart-item">
-        <div class="cart-item-img img-placeholder" style="width:80px;height:80px;border-radius:8px;flex-shrink:0;">
-          <span style="font-size:1.5rem;">${item.icon || '🌹'}</span>
-        </div>
-        <div>
-          <p style="font-weight:500;font-size:0.9rem;margin-bottom:0.25rem;">${item.name}</p>
-          <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;">${item.variant || ''}</p>
-          <div class="qty-selector" style="width:fit-content;transform:scale(0.85);transform-origin:left;">
-            <button class="qty-btn" onclick="Cart.updateQty('${item.id}', ${item.qty - 1})">−</button>
-            <span class="qty-value">${item.qty}</span>
-            <button class="qty-btn" onclick="Cart.updateQty('${item.id}', ${item.qty + 1})">+</button>
-          </div>
-        </div>
-        <div style="text-align:right;">
-          <p style="font-weight:600;font-size:0.9rem;">£${(item.price * item.qty).toFixed(2)}</p>
-          <button onclick="Cart.remove('${item.id}')" style="margin-top:0.5rem;font-size:0.75rem;color:var(--text-light);text-decoration:underline;">Remove</button>
-        </div>
-      </div>`).join('');
-
-    if (footer) {
-      footer.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
-          <span style="font-size:0.875rem;color:var(--text-muted);">Subtotal</span>
-          <span style="font-weight:600;font-size:1.125rem;">£${Cart.total.toFixed(2)}</span>
-        </div>
-        <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;text-align:center;">Shipping calculated at checkout</p>
-        <a href="checkout.html" class="btn btn-primary w-full" style="width:100%;justify-content:center;" onclick="CartDrawer.close()">Checkout — £${Cart.total.toFixed(2)}</a>
-        <button onclick="CartDrawer.close()" style="width:100%;text-align:center;margin-top:0.75rem;font-size:0.8125rem;color:var(--text-muted);text-decoration:underline;">Continue Shopping</button>`;
-    }
-  }
+  /* render() disabled — PLCartDrawer uses Section Rendering API instead */
+  render() {}
 };
 
 // ============================================
