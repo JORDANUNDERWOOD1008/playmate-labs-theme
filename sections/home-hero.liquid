@@ -2,26 +2,54 @@
 {% comment %}
   PLAYMATE LABS — HOMEPAGE HERO SECTION
   File: sections/home-hero.liquid
+  Mobile:  tall product photo fills full viewport; copy pinned top, CTAs pinned bottom
+  Desktop: landscape product photo as right-side visual; text on left
 {% endcomment %}
 
 {{ 'home.css' | asset_url | stylesheet_tag }}
 
 <section class="hero-section" id="hero">
-  <div class="hero-bg">
+
+  {%- comment -%} ── BACKGROUND LAYERS ── {%- endcomment -%}
+  <div class="hero-bg" aria-hidden="true">
+    {%- comment -%} Desktop bg: landscape photo or fallback gradient {%- endcomment -%}
+    <div class="hero-bg-desktop">
+      {%- if section.settings.hero_bg_image != blank -%}
+        <div class="hero-bg-img" style="background-image:url('{{ section.settings.hero_bg_image | image_url: width: 2400 }}');"></div>
+      {%- else -%}
+        <img class="hero-bg-img-desktop"
+             src="{{ 'hero-desktop-product.jpg' | asset_url }}"
+             alt="" width="1800" loading="eager" fetchpriority="high">
+      {%- endif -%}
+    </div>
+    {%- comment -%} Mobile bg: tall portrait photo fills viewport {%- endcomment -%}
+    <div class="hero-bg-mobile">
+      {%- if section.settings.mobile_hero_image != blank -%}
+        <img class="hero-bg-img-mobile"
+             src="{{ section.settings.mobile_hero_image | image_url: width: 900 }}"
+             alt="" width="900" loading="eager" fetchpriority="high">
+      {%- else -%}
+        <img class="hero-bg-img-mobile"
+             src="{{ 'hero-mobile-product-tall.jpg' | asset_url }}"
+             alt="" width="900" loading="eager" fetchpriority="high">
+      {%- endif -%}
+    </div>
+    {%- comment -%} Gradient overlays {%- endcomment -%}
     <div class="hero-gradient"></div>
-    {%- if section.settings.hero_bg_image != blank -%}
-      <div class="hero-bg-img" style="background-image:url('{{ section.settings.hero_bg_image | image_url: width: 1800 }}');"></div>
-    {%- endif -%}
     <div class="hero-particle hero-particle-1"></div>
     <div class="hero-particle hero-particle-2"></div>
     <div class="hero-particle hero-particle-3"></div>
   </div>
+
+  {%- comment -%} ── CONTENT ── {%- endcomment -%}
   <div class="hero-content-wrap">
     <div class="container hero-inner">
-      <div class="hero-text animate-fadeInUp">
+
+      {%- comment -%} LEFT / TOP: All text copy {%- endcomment -%}
+      <div class="hero-text">
 
         {%- comment -%} TOP COPY — eyebrow, headline, description {%- endcomment -%}
-        <div class="hero-copy-top">
+        <div class="hero-copy-top animate-fadeInUp">
           <p class="hero-eyebrow animate-fadeInUp animate-delay-1">
             {{ section.settings.eyebrow | default: 'A new culture of connection' }}
           </p>
@@ -33,22 +61,9 @@
           </p>
         </div>
 
-        {%- comment -%} MOBILE PRODUCT IMAGE — sits between copy and CTAs on mobile only {%- endcomment -%}
-        <div class="hero-mobile-product-img animate-fadeIn animate-delay-3">
-          {%- if section.settings.mobile_hero_image != blank -%}
-            <img src="{{ section.settings.mobile_hero_image | image_url: width: 900 }}"
-                 alt="{{ section.settings.hero_product_name | default: 'The Velvet Hour Kit' }}"
-                 width="900" loading="eager">
-          {%- else -%}
-            <img src="{{ 'hero-mobile-product.jpg' | asset_url }}"
-                 alt="The Velvet Hour Kit — Playmate Labs"
-                 width="900" loading="eager">
-          {%- endif -%}
-        </div>
-
         {%- comment -%} BOTTOM COPY — buttons + trust {%- endcomment -%}
-        <div class="hero-copy-bottom">
-          <div class="hero-actions animate-fadeInUp animate-delay-4">
+        <div class="hero-copy-bottom animate-fadeInUp animate-delay-4">
+          <div class="hero-actions">
             <button type="button" class="btn btn-gold btn-xl" id="heroExpBtn"
                     onclick="document.getElementById('expSignupModal').classList.add('exp-modal--open')">
               {{ section.settings.cta_primary_text | default: 'Start the 5-Day Experience' }}
@@ -73,9 +88,9 @@
           </div>
         </div>
 
-      </div>
+      </div>{%- comment -%}/.hero-text{%- endcomment -%}
 
-      {%- comment -%} Hero Product Visual {%- endcomment -%}
+      {%- comment -%} RIGHT: Desktop product visual (hidden on mobile) {%- endcomment -%}
       <div class="hero-visual animate-fadeIn animate-delay-2">
         <div class="hero-product-card">
           <div class="hero-product-img">
@@ -124,9 +139,9 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
-  {%- comment -%} Mobile corner decoration — hidden on desktop {%- endcomment -%}
 
   <div class="hero-scroll-hint">
     <div class="scroll-dot"></div>
@@ -242,7 +257,6 @@
 
 <script>
 (function(){
-  // Close on Escape key
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape') {
       document.getElementById('expSignupModal').classList.remove('exp-modal--open');
@@ -269,14 +283,22 @@
       "info": "Tick to hide this section from the live site. Untick to show it again."
     },
     {
+      "type": "header",
+      "content": "Background Images"
+    },
+    {
       "type": "image_picker",
       "id": "hero_bg_image",
-      "label": "Background image (optional)"
+      "label": "Desktop background image (landscape, optional override)"
     },
     {
       "type": "image_picker",
       "id": "mobile_hero_image",
-      "label": "Mobile product image (replaces default chocolate box photo)"
+      "label": "Mobile background image (portrait, optional override)"
+    },
+    {
+      "type": "header",
+      "content": "Copy"
     },
     {
       "type": "text",
@@ -287,7 +309,7 @@
     {
       "type": "richtext",
       "id": "headline",
-      "label": "Headline (supports <em> for italic)",
+      "label": "Headline (supports em for italic)",
       "default": "<p>Rewriting how <em>couples</em> do date night.</p>"
     },
     {
@@ -332,7 +354,7 @@
     },
     {
       "type": "header",
-      "content": "Product Visual"
+      "content": "Desktop Product Visual"
     },
     {
       "type": "product",
