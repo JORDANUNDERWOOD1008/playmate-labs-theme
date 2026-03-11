@@ -82,8 +82,6 @@
   padding-bottom: 6rem;
   position: relative;
   z-index: 2;
-  /* left-align content over the dark left scrim */
-  justify-content: flex-start;
 }
 
 .hero-inner {
@@ -91,8 +89,9 @@
   grid-template-columns: 1fr;
   gap: 0;
   align-items: flex-start;
-  /* Pin text to left half — right side shows the product photo unobstructed */
-  max-width: 52%;
+  /* Pin copy to the left 50% so product photo shows on right */
+  max-width: 50%;
+  margin-right: auto;
 }
 
 .hero-eyebrow {
@@ -995,18 +994,17 @@
   .hero-bg-desktop { display: none; }
   .hero-bg-mobile   { display: block; }
 
-  /* Mobile gradient: strong top for headline, clear middle to show product,
-     strong bottom for CTA buttons */
+  /* Mobile gradient: strong top third covers text, gentle fade over product,
+     solid bottom quarter covers buttons */
   .hero-gradient {
     background:
       linear-gradient(
         180deg,
-        rgba(8,2,4,0.78) 0%,
-        rgba(8,2,4,0.45) 18%,
-        rgba(8,2,4,0.0)  35%,
-        rgba(8,2,4,0.0)  58%,
-        rgba(8,2,4,0.70) 76%,
-        rgba(8,2,4,0.95) 100%
+        rgba(8,2,4,0.82) 0%,
+        rgba(8,2,4,0.60) 28%,
+        rgba(8,2,4,0.20) 50%,
+        rgba(8,2,4,0.55) 74%,
+        rgba(8,2,4,0.90) 100%
       );
     z-index: 1;
   }
@@ -1014,59 +1012,51 @@
   /* Section: slightly taller than 100vh to give top/bottom content room,
      and respect iPhone Dynamic Island / home indicator safe areas */
   .hero-section {
-    min-height: 120svh;
-    min-height: 120vh;
+    min-height: 100svh;
+    min-height: 100vh;
     background: #0c0408;
   }
 
-  /* Content wrap: full height flex, use all available vertical space */
+  /* Content wrap: simple top-padded container */
   .hero-content-wrap {
     flex: 1;
     display: flex;
-    align-items: stretch;
-    padding-top: 0;
-    padding-bottom: 0;
+    align-items: flex-start;
+    padding-top: calc(var(--nav-height, 64px) + var(--bar-height, 38px) + 2rem);
+    padding-bottom: max(3rem, env(safe-area-inset-bottom, 0px) + 2rem);
     position: relative;
     z-index: 2;
+    justify-content: center;
   }
 
-  /* Container fills full height */
+  /* Container: normal flow */
   .hero-content-wrap > .container {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+    display: block;
   }
 
-  /* Hero inner: full-height flex column, space-between pins copy top and bottom.
-     Top padding clears the Dynamic Island; bottom uses env() for home indicator */
+  /* Hero inner: simple column, centred text */
   .hero-inner {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
     text-align: center;
-    flex: 1;
-    grid-template-columns: 1fr;
-    padding-top: max(3rem, env(safe-area-inset-top, 0px) + 1.5rem);
-    padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 0px) + 1.5rem);
+    max-width: 100%;
     gap: 0;
   }
 
-  /* hero-text inherits full height stretch */
+  /* hero-text: normal column */
   .hero-text {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
-    flex: 1;
     width: 100%;
     gap: 0;
   }
 
-  /* TOP zone: eyebrow + headline + description */
   .hero-copy-top {
     width: 100%;
-    padding: 0 0.25rem;
+    padding: 0 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .hero-eyebrow {
@@ -1088,11 +1078,9 @@
     color: rgba(245,239,230,0.82);
   }
 
-  /* BOTTOM zone: buttons + trust — pinned to bottom via space-between */
   .hero-copy-bottom {
     width: 100%;
-    padding: 0 0.25rem;
-    /* Extra bottom breathing room on notched phones */
+    padding: 0 1rem;
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
@@ -1119,7 +1107,7 @@
   }
 
   /* Hide desktop-only elements */
-  .hero-visual     { display: none; }
+  .hero-visual      { display: none; }
   .hero-scroll-hint { display: none; }
 
   .value-strip-inner {
