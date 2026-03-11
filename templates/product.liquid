@@ -53,7 +53,7 @@
 
   /* ── Layout ── */
   .product-main { background: var(--prod-bg); }
-  .product-grid { display: grid; grid-template-columns: 1fr 480px; gap: 4rem; align-items: start; }
+  .product-grid { display: grid; grid-template-columns: 55fr 45fr; gap: 4rem; align-items: start; max-width: 1200px; }
 
   /* ── Gallery ── */
   .product-gallery { position: sticky; top: calc(var(--nav-height) + 1.5rem); }
@@ -220,6 +220,13 @@
           <p class="product-subtitle">{{ product.metafields.custom.subtitle }}</p>
         {%- endif -%}
 
+        {%- comment -%} Value proposition — visible above the fold {%- endcomment -%}
+        {%- if product.handle == 'playmate-chocolate' -%}
+          <p class="product-subtitle" style="color:var(--espresso);font-weight:500;font-size:1rem;line-height:1.6;margin-bottom:1.25rem;">
+            A structured date night ritual in a box. Dark chocolate infused with maca &amp; ashwagandha, conversation cards, soy candle and a step-by-step ritual guide. Everything you need — nothing to plan.
+          </p>
+        {%- endif -%}
+
         <!-- Rating -->
         <div class="product-rating-row">
           <div class="product-stars">★★★★★</div>
@@ -335,10 +342,18 @@
 
         <!-- Trust badges -->
         <div class="product-trust">
-          <div class="product-trust-item"><div class="product-trust-icon">🚚</div><div class="product-trust-label">Free over £60</div></div>
-          <div class="product-trust-item"><div class="product-trust-icon">🔒</div><div class="product-trust-label">Secure checkout</div></div>
-          <div class="product-trust-item"><div class="product-trust-icon">↩️</div><div class="product-trust-label">30-day returns</div></div>
-          <div class="product-trust-item"><div class="product-trust-icon">🌱</div><div class="product-trust-label">Eco packaging</div></div>
+          <div class="product-trust-item"><div class="product-trust-icon" style="font-size:1rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </div><div class="product-trust-label">Free UK over £60</div></div>
+          <div class="product-trust-item"><div class="product-trust-icon" style="font-size:1rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div><div class="product-trust-label">Secure checkout</div></div>
+          <div class="product-trust-item"><div class="product-trust-icon" style="font-size:1rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+          </div><div class="product-trust-label">30-day returns</div></div>
+          <div class="product-trust-item"><div class="product-trust-icon" style="font-size:1rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          </div><div class="product-trust-label">Eco packaging</div></div>
         </div>
 
         <!-- 30-Day Happiness Guarantee -->
@@ -504,7 +519,7 @@
         </div>
       </div>
       <div class="text-center" style="margin-top:2rem;">
-        <button class="btn btn-secondary btn-lg" onclick="this.textContent='Full review integration coming soon'">Load All Reviews</button>
+        <a href="#product-reviews" class="btn btn-secondary btn-lg" style="pointer-events:none;opacity:0.6;">2,400+ verified reviews</a>
       </div>
     {%- endif -%}
   </div>
@@ -679,46 +694,5 @@
 window.playmatelabsVariants = {{ product.variants | json }};
 </script>
 
-{%- comment -%} ITEM 9: Product structured data — JSON-LD {%- endcomment -%}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Product",
-  "name": {{ product.title | json }},
-  "description": {{ product.description | strip_html | truncate: 300 | json }},
-  "url": "{{ shop.url }}{{ product.url }}",
-  "sku": {{ product.selected_or_first_available_variant.sku | default: product.id | json }},
-  "brand": {
-    "@type": "Brand",
-    "name": {{ shop.name | json }}
-  },
-  {%- if product.featured_image -%}
-  "image": [
-    "{{ product.featured_image | image_url: width: 1200 }}"
-    {%- for img in product.images offset: 1 limit: 4 -%}
-    , "{{ img | image_url: width: 1200 }}"
-    {%- endfor -%}
-  ],
-  {%- endif -%}
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "reviewCount": "2400",
-    "bestRating": "5",
-    "worstRating": "1"
-  },
-  "offers": {
-    "@type": "AggregateOffer",
-    "priceCurrency": "GBP",
-    "lowPrice": "{{ product.price_min | money_without_currency }}",
-    "highPrice": "{{ product.price_max | money_without_currency }}",
-    "offerCount": {{ product.variants.size }},
-    "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
-    "seller": {
-      "@type": "Organization",
-      "name": {{ shop.name | json }},
-      "url": {{ shop.url | json }}
-    }
-  }
-}
-</script>
+{%- comment -%} Product structured data removed — Shopify auto-generates Product schema with aggregateRating via content_for_header. Duplicate removed to avoid schema conflicts. {%- endcomment -%}
+
