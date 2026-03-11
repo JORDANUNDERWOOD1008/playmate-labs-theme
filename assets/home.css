@@ -1072,11 +1072,11 @@
     margin-bottom: 0;
   }
 
-  /* SPACER: % of image height pushes buttons to bottom third of image.
-     511x1024 image: 40% of section height ≈ where the lower dark band starts. */
+  /* SPACER: % of section height pushes buttons lower so product is visible.
+     511x1024 image: 55% drops buttons well into the bottom dark band. */
   .hero-copy-bottom {
     display: block;
-    padding: 40% 1.25rem 0;
+    padding: 55% 1.25rem 0;
     padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   }
 
