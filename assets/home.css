@@ -1036,11 +1036,12 @@
     z-index: 1;
   }
 
-  /* Section fills full viewport — prevent any gap at bottom */
+  /* Section: slightly taller than 100vh to give top/bottom content room,
+     and respect iPhone Dynamic Island / home indicator safe areas */
   .hero-section {
-    min-height: 100svh;
-    min-height: 100vh;
-    background: #0c0408; /* fallback while image loads */
+    min-height: 110svh;
+    min-height: 110vh;
+    background: #0c0408;
   }
 
   /* Content wrap: full height flex, use all available vertical space */
@@ -1061,7 +1062,8 @@
     flex: 1;
   }
 
-  /* Hero inner: full-height flex column, space-between pins copy top and bottom */
+  /* Hero inner: full-height flex column, space-between pins copy top and bottom.
+     Top padding clears the Dynamic Island; bottom uses env() for home indicator */
   .hero-inner {
     display: flex;
     flex-direction: column;
@@ -1070,8 +1072,8 @@
     text-align: center;
     flex: 1;
     grid-template-columns: 1fr;
-    padding-top: 2rem;
-    padding-bottom: 2.5rem;
+    padding-top: max(3rem, env(safe-area-inset-top, 0px) + 1.5rem);
+    padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 0px) + 1.5rem);
     gap: 0;
   }
 
@@ -1115,6 +1117,8 @@
   .hero-copy-bottom {
     width: 100%;
     padding: 0 0.25rem;
+    /* Extra bottom breathing room on notched phones */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .hero-actions {
