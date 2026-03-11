@@ -1,0 +1,238 @@
+{% comment %}
+  PLAYMATE LABS — PRODUCT PAGE BANNER SECTION
+  File: sections/product-page-banner.liquid
+  Mirrors the "Rituals worth staying in for" header style from the homepage.
+  Background image is fully customisable via the theme editor.
+  No product grid — blank canvas below the heading.
+{% endcomment %}
+
+{%- if section.settings.section_hidden == false -%}
+
+<section class="product-page-banner"
+  id="product-page-banner-{{ section.id }}"
+  {%- if section.settings.bg_image != blank -%}
+    style="background-image: url('{{ section.settings.bg_image | image_url: width: 2400 }}'); background-size: cover; background-position: {{ section.settings.bg_position | default: 'center center' }}; background-repeat: no-repeat;"
+  {%- endif -%}
+>
+
+  {%- comment -%} Optional overlay so text stays readable over a photo {%- endcomment -%}
+  {%- if section.settings.bg_image != blank and section.settings.overlay_opacity > 0 -%}
+    <div class="ppb-overlay" style="background: rgba({{ section.settings.overlay_colour | default: '15,5,5' }}, {{ section.settings.overlay_opacity | divided_by: 100.0 }});"></div>
+  {%- endif -%}
+
+  <div class="container ppb-inner">
+    <div class="section-header reveal">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+      {%- endif -%}
+      <h2 class="heading-xl ppb-heading">{{ section.settings.heading | default: 'The Collection' }}</h2>
+      {%- if section.settings.show_divider -%}
+        <div class="section-divider"></div>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="ppb-subheading">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+
+</section>
+
+<style>
+  .product-page-banner {
+    position: relative;
+    background-color: {{ section.settings.bg_colour | default: 'var(--warm-white, #FAF8F5)' }};
+    padding: {{ section.settings.padding_top | default: 60 }}px 0 {{ section.settings.padding_bottom | default: 60 }}px;
+    overflow: hidden;
+  }
+
+  .ppb-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .product-page-banner .ppb-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Inherit the exact section-header / heading-xl / section-eyebrow / section-divider
+     styles from global.css — only override colour when a bg image is active */
+  {%- if section.settings.bg_image != blank -%}
+  #product-page-banner-{{ section.id }} .section-eyebrow {
+    color: {{ section.settings.text_colour_eyebrow | default: 'var(--gold)' }};
+  }
+  #product-page-banner-{{ section.id }} .ppb-heading {
+    color: {{ section.settings.text_colour_heading | default: 'var(--cream)' }};
+  }
+  #product-page-banner-{{ section.id }} .ppb-subheading {
+    color: {{ section.settings.text_colour_subheading | default: 'rgba(245,239,230,0.75)' }};
+  }
+  {%- endif -%}
+
+  .ppb-subheading {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+    max-width: 560px;
+    margin: 0 auto;
+    margin-top: 0.75rem;
+  }
+</style>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Product Page Banner",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide from the live site."
+    },
+    {
+      "type": "header",
+      "content": "📝 Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow (small label above heading)",
+      "default": "The Collection"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Rituals worth staying in for."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show gold divider line",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading (optional)"
+    },
+    {
+      "type": "header",
+      "content": "🖼️ Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background image",
+      "info": "Leave blank for a flat colour background."
+    },
+    {
+      "type": "select",
+      "id": "bg_position",
+      "label": "Image position",
+      "options": [
+        { "value": "center center", "label": "Centre" },
+        { "value": "center top",    "label": "Top" },
+        { "value": "center bottom", "label": "Bottom" },
+        { "value": "left center",   "label": "Left" },
+        { "value": "right center",  "label": "Right" }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "color",
+      "id": "bg_colour",
+      "label": "Background colour (no image)",
+      "default": "#FAF8F5"
+    },
+    {
+      "type": "header",
+      "content": "🔲 Overlay (when image is set)"
+    },
+    {
+      "type": "text",
+      "id": "overlay_colour",
+      "label": "Overlay colour (R,G,B)",
+      "default": "15,5,5",
+      "info": "Enter as R,G,B values e.g. 15,5,5 for near-black."
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "default": 0,
+      "unit": "%",
+      "info": "Set to 0 for no overlay. Increase to darken the image for text legibility."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Text colours (when image is set)"
+    },
+    {
+      "type": "color",
+      "id": "text_colour_eyebrow",
+      "label": "Eyebrow colour",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "text_colour_heading",
+      "label": "Heading colour",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "text_colour_subheading",
+      "label": "Subheading colour",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "header",
+      "content": "↕️ Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Page Banner",
+      "settings": {
+        "eyebrow": "The Collection",
+        "heading": "Rituals worth staying in for.",
+        "show_divider": true
+      }
+    }
+  ]
+}
+{% endschema %}
