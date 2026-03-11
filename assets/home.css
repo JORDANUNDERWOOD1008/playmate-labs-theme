@@ -1004,33 +1004,37 @@
     background:
       linear-gradient(
         180deg,
-        rgba(8,2,4,0.82) 0%,
-        rgba(8,2,4,0.60) 28%,
-        rgba(8,2,4,0.20) 50%,
-        rgba(8,2,4,0.55) 74%,
-        rgba(8,2,4,0.90) 100%
+        rgba(8,2,4,0.85) 0%,
+        rgba(8,2,4,0.55) 22%,
+        rgba(8,2,4,0.10) 45%,
+        rgba(8,2,4,0.10) 62%,
+        rgba(8,2,4,0.70) 80%,
+        rgba(8,2,4,0.92) 100%
       );
     z-index: 1;
   }
 
-  /* Section: slightly taller than 100vh to give top/bottom content room,
-     and respect iPhone Dynamic Island / home indicator safe areas */
+  /* ── MOBILE HERO: section is the scroll container.
+     overflow:hidden clips the absolute bg so it NEVER scrolls
+     separately from the content — fixes iOS "parallax" effect. ── */
   .hero-section {
-    min-height: 100svh;
-    min-height: 100vh;
+    min-height: 135vw;        /* tall enough to show full product photo */
+    min-height: max(135vw, 100svh);
     background: #0c0408;
-    /* Kill iOS Safari parallax rubber-band on background */
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
+    overflow: hidden;          /* clips bg image — kills parallax */
+    position: relative;        /* stacking context for absolute children */
+    display: flex;
+    flex-direction: column;
   }
-  /* Prevent the bg layer from scrolling separately on iOS */
+
+  /* bg-mobile: absolute inside the section — scrolls WITH the page content */
   .hero-bg-mobile {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    position: absolute;
+    inset: 0;
     z-index: 0;
   }
 
-  /* Content wrap: stretch full height so inner can use space-between */
+  /* Content wrap: fills section height, no padding override */
   .hero-content-wrap {
     flex: 1;
     display: flex;
@@ -1042,15 +1046,16 @@
     justify-content: center;
   }
 
-  /* Container: full height flex column */
+  /* Container: full-height flex column */
   .hero-content-wrap > .container {
     display: flex;
     flex-direction: column;
     flex: 1;
   }
 
-  /* Hero inner: space-between pins copy-top to top, copy-bottom to bottom.
-     Product photo shows through the gap in the middle. */
+  /* Hero inner: space-between splits top-copy and bottom-copy.
+     Generous top padding pushes headline high above the product.
+     Bottom padding clears the iPhone home indicator. */
   .hero-inner {
     display: flex;
     flex-direction: column;
@@ -1060,11 +1065,11 @@
     flex: 1;
     max-width: 100%;
     gap: 0;
-    padding-top: calc(var(--nav-height, 64px) + var(--bar-height, 38px) + 1.5rem);
-    padding-bottom: max(2rem, env(safe-area-inset-bottom, 0px) + 1.5rem);
+    padding-top: calc(var(--nav-height, 64px) + var(--bar-height, 38px) + 2rem);
+    padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 0px) + 1.5rem);
   }
 
-  /* hero-text: also space-between so top/bottom zones split apart */
+  /* hero-text: fills remaining height, splits top/bottom zones */
   .hero-text {
     display: flex;
     flex-direction: column;
@@ -1075,7 +1080,7 @@
     gap: 0;
   }
 
-  /* TOP zone: eyebrow + headline + description */
+  /* TOP zone — eyebrow + headline + description, sits near the top */
   .hero-copy-top {
     width: 100%;
     padding: 0 1.25rem;
@@ -1098,10 +1103,10 @@
     margin: 0 auto;
     max-width: 300px;
     color: rgba(245,239,230,0.82);
-    margin-bottom: 0; /* no bottom gap — product shows in middle */
+    margin-bottom: 0;
   }
 
-  /* BOTTOM zone: buttons + trust — pinned to bottom */
+  /* BOTTOM zone — buttons + trust, pinned to bottom */
   .hero-copy-bottom {
     width: 100%;
     padding: 0 1.25rem;
