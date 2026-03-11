@@ -35,6 +35,12 @@
           id="popup-phone"
           placeholder="Phone number (for SMS drops)"
           autocomplete="tel">
+        <select class="form-input form-input-dark" id="popup-who" style="cursor:pointer;">
+          <option value="couple" selected>A couple looking for novelty</option>
+          <option value="dating">Dating / exploring</option>
+          <option value="gift">Buying as a gift</option>
+          <option value="single">Single / curious</option>
+        </select>
         <button type="button" class="btn btn-gold btn-lg" id="popup-submit-btn" style="width:100%;justify-content:center;">
           {{ settings.newsletter_popup_cta | default: 'Unlock Free Experience' }}
         </button>
@@ -59,7 +65,7 @@
   var KLAVIYO_LIST_ID = {{ settings.klaviyo_popup_list_id | default: '' | json }};
   var KLAVIYO_PUBLIC_KEY = {{ settings.klaviyo_public_api_key | default: '' | json }};
 
-  function subscribeKlaviyo(email, phone) {
+  function subscribeKlaviyo(email, phone, who) {
     if (!KLAVIYO_LIST_ID || !KLAVIYO_PUBLIC_KEY) return false;
 
     var payload = {
@@ -71,7 +77,8 @@
           custom_source: "Popup — Playmate Labs",
           properties: {
             source: "newsletter_popup",
-            phone_number: phone || null
+            phone_number: phone || null,
+            who_are_you: who || null
           }
         }
       }
@@ -90,17 +97,17 @@
         showSuccess();
       } else {
         // Fall back to Shopify customer form submit
-        submitShopifyForm(email, phone);
+        submitShopifyForm(email, phone, who);
       }
     })
     .catch(function() {
-      submitShopifyForm(email, phone);
+      submitShopifyForm(email, phone, who);
     });
 
     return true;
   }
 
-  function submitShopifyForm(email, phone) {
+  function submitShopifyForm(email, phone, who) {
     var f = document.createElement('form');
     f.method = 'POST';
     f.action = '/contact';
@@ -108,7 +115,8 @@
     f.innerHTML = '<input name="form_type" value="customer">'
       + '<input name="contact[email]" value="' + escHtml(email) + '">'
       + '<input name="contact[tags]" value="newsletter,popup-signup">'
-      + (phone ? '<input name="contact[phone]" value="' + escHtml(phone) + '">' : '');
+      + (phone ? '<input name="contact[phone]" value="' + escHtml(phone) + '">' : '')
+      + (who ? '<input name="contact[note]" value="who_are_you:' + escHtml(who) + '">' : '');
     document.body.appendChild(f);
     f.submit();
   }
@@ -147,18 +155,20 @@
       btn.addEventListener('click', function() {
         var emailEl = document.getElementById('popup-email');
         var phoneEl = document.getElementById('popup-phone');
+        var whoEl = document.getElementById('popup-who');
         var email = emailEl ? emailEl.value.trim() : '';
         var phone = phoneEl ? phoneEl.value.trim() : '';
+        var who = whoEl ? whoEl.value : '';
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
           emailEl && emailEl.focus();
           return;
         }
         btn.disabled = true;
         btn.textContent = '…';
-        var handled = subscribeKlaviyo(email, phone);
+        var handled = subscribeKlaviyo(email, phone, who);
         if (!handled) {
           // No Klaviyo keys — use Shopify form
-          submitShopifyForm(email, phone);
+          submitShopifyForm(email, phone, who);
         }
       });
     }
