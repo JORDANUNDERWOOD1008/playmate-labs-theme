@@ -127,7 +127,7 @@
             <p class="drop-price text-cream">{{ section.settings.drop_price | default: '£68' }}</p>
           {%- endif -%}
         </div>
-        <a href="{{ drop_product.url | default: '/collections/monthly-drops' }}" class="btn btn-gold btn-lg">
+        <a href="{{ section.settings.cta_url | default: drop_product.url | default: '/collections/monthly-drops' }}" class="btn btn-gold btn-lg">
           {{ section.settings.cta_text | default: 'Shop This Drop' }}
         </a>
       </div>
@@ -247,6 +247,12 @@
       "id": "cta_text",
       "label": "CTA button text",
       "default": "Shop This Drop"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA button link (overrides product URL)",
+      "info": "Leave blank to use the linked product's URL. Enter a custom URL to override (e.g. /products/massage-candle)."
     },
     {
       "type": "text",
