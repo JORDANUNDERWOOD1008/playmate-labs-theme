@@ -63,13 +63,8 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  /* Desktop: only a slim left scrim so copy is readable; rest of photo fully visible */
-  background:
-    linear-gradient(90deg,
-      rgba(0,0,0,0.65) 0%,
-      rgba(0,0,0,0.40) 30%,
-      rgba(0,0,0,0.00) 55%
-    );
+  /* Desktop: NO overlay — photo fully visible. Mobile overrides this below. */
+  background: none;
 }
 
 .hero-particle,

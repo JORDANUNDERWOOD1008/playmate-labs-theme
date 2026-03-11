@@ -12,15 +12,11 @@
 
   {%- comment -%} ── BACKGROUND LAYERS ── {%- endcomment -%}
   <div class="hero-bg" aria-hidden="true">
-    {%- comment -%} Desktop bg: landscape photo or fallback gradient {%- endcomment -%}
+    {%- comment -%} Desktop bg: always use the hardcoded landscape photo {%- endcomment -%}
     <div class="hero-bg-desktop">
-      {%- if section.settings.hero_bg_image != blank -%}
-        <div class="hero-bg-img" style="background-image:url('{{ section.settings.hero_bg_image | image_url: width: 2400 }}');"></div>
-      {%- else -%}
-        <img class="hero-bg-img-desktop"
-             src="{{ 'hero-desktop-product.jpg' | asset_url }}"
-             alt="" width="1800" loading="eager" fetchpriority="high">
-      {%- endif -%}
+      <img class="hero-bg-img-desktop"
+           src="{{ 'hero-desktop-product.jpg' | asset_url }}"
+           alt="" width="1800" loading="eager" fetchpriority="high">
     </div>
     {%- comment -%} Mobile bg: tall portrait photo fills viewport {%- endcomment -%}
     <div class="hero-bg-mobile">
@@ -34,11 +30,8 @@
              alt="" width="900" loading="eager" fetchpriority="high">
       {%- endif -%}
     </div>
-    {%- comment -%} Gradient overlays {%- endcomment -%}
+    {%- comment -%} Gradient overlay (mobile only — desktop uses none) {%- endcomment -%}
     <div class="hero-gradient"></div>
-    <div class="hero-particle hero-particle-1"></div>
-    <div class="hero-particle hero-particle-2"></div>
-    <div class="hero-particle hero-particle-3"></div>
   </div>
 
   {%- comment -%} ── CONTENT ── {%- endcomment -%}
