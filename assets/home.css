@@ -6,12 +6,14 @@
    HERO SECTION
    ============================================ */
 .hero-section {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  /* Desktop: exact aspect ratio of hero-desktop-product.jpg (1024x683) */
   position: relative;
   overflow: hidden;
-  background: #0c0408; /* fallback while photo loads */
+  background: #0c0408;
+  width: 100%;
+  aspect-ratio: 1024 / 683;
+  display: flex;
+  flex-direction: column;
 }
 
 .hero-bg {
@@ -1012,18 +1014,17 @@
     z-index: 1;
   }
 
-  /* SECTION: plain block, natural height from content + padding.
-     overflow:hidden keeps the bg image clipped to the section — no parallax, no overlap. */
+  /* SECTION: exact aspect ratio of hero-mobile-product-xtall.jpg (511x1024).
+     The section is always exactly as tall as the image — no gaps, no overlap. */
   .hero-section {
     display: block;
-    min-height: 0;
+    width: 100%;
+    aspect-ratio: 511 / 1024;
     height: auto;
+    min-height: 0;
     overflow: hidden;
     position: relative;
     background: #0c0408;
-    /* Top pad clears nav + announcement bar. Bottom pad pushes section edge below buttons. */
-    padding-top: calc(var(--nav-height, 64px) + var(--bar-height, 38px) + 2.5rem);
-    padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 0px) + 1.5rem);
   }
 
   /* BG IMAGE: absolute, taller than section so product photo is centred vertically */
@@ -1053,10 +1054,11 @@
   .hero-inner  { display: block; text-align: center; max-width: 100%; }
   .hero-text   { display: block; width: 100%; }
 
-  /* TOP COPY: eyebrow + headline + description */
+  /* TOP COPY: eyebrow + headline + description
+     padding-top pushes text down ~15% from top of image */
   .hero-copy-top {
     display: block;
-    padding: 0 1.25rem 1.25rem;
+    padding: 15% 1.25rem 1.25rem;
   }
   .hero-eyebrow { justify-content: center; margin-bottom: 0.5rem; }
   .hero-eyebrow::before { display: none; }
@@ -1070,11 +1072,12 @@
     margin-bottom: 0;
   }
 
-  /* SPACER: vw-based gap that shows the product photo between copy and buttons.
-     On a 390px iPhone 16: 38vw ≈ 148px — enough to see the chocolate box. */
+  /* SPACER: % of image height pushes buttons to bottom third of image.
+     511x1024 image: 40% of section height ≈ where the lower dark band starts. */
   .hero-copy-bottom {
     display: block;
-    padding: 38vw 1.25rem 0;
+    padding: 40% 1.25rem 0;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   }
 
   .hero-actions {
