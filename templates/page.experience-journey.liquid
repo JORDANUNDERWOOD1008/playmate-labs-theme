@@ -1,0 +1,41 @@
+{% comment %}
+  PLAYMATE LABS — 5-Day Journey Template
+  File: templates/page.experience-journey.liquid
+  URL: /pages/experience-journey  or  /pages/5-day-journey
+  
+  Full-page SPA — hides site header/footer for immersive experience
+{% endcomment %}
+
+<style>
+  /* Hide site header, footer, announcement bar for full immersive experience */
+  header.site-header,
+  .site-header,
+  #shopify-section-header,
+  #shopify-section-announcement-bar,
+  .announcement-bar,
+  footer.site-footer,
+  .site-footer,
+  #shopify-section-footer,
+  .cookie-banner,
+  .back-to-top,
+  .breadcrumb,
+  .page-header {
+    display: none !important;
+  }
+  
+  body {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow-x: hidden;
+    background: #1A0A06;
+  }
+  
+  main.content-for-layout,
+  .content-for-layout,
+  #MainContent {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+</style>
+
+{% section 'experience-journey' %}

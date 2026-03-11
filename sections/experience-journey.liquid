@@ -1,0 +1,1565 @@
+{% comment %}
+  PLAYMATE LABS — 5-DAY VIRTUAL SENSORY EXPERIENCE (INTERACTIVE JOURNEY)
+  File: sections/experience-journey.liquid
+  Template: page.experience-journey
+  
+  This is the full interactive 9-screen SPA journey:
+    Screen 1: Lead capture landing
+    Screen 2: Onboarding form (multi-step)
+    Screen 3: Welcome / success state
+    Screen 4–8: Day 1–5 experience pages
+    Screen 9: Completion page
+  
+  Integrates with existing experience.css and global theme styles.
+  Does NOT duplicate: header, footer, hero section, lead form already on /pages/5-day-experience
+{% endcomment %}
+
+{{ 'experience-journey.css' | asset_url | stylesheet_tag }}
+
+<div class="ej-root" id="ej-root" data-screen="1">
+
+  <!-- ══════════════════════════════════
+       PROGRESS BAR (top of viewport)
+  ══════════════════════════════════ -->
+  <div class="ej-progress-bar" id="ej-progress-bar">
+    <div class="ej-progress-fill" id="ej-progress-fill" style="width:0%"></div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       NAV
+  ══════════════════════════════════ -->
+  <nav class="ej-nav" id="ej-nav">
+    <a class="ej-nav-logo" href="{{ routes.root_url }}">
+      Playmate<span>.</span>
+    </a>
+    <div class="ej-nav-steps" id="ej-nav-steps" style="display:none;">
+      <div class="ej-nav-step" data-step="1"></div>
+      <div class="ej-nav-step" data-step="2"></div>
+      <div class="ej-nav-step" data-step="3"></div>
+      <div class="ej-nav-step" data-step="4"></div>
+      <div class="ej-nav-step" data-step="5"></div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════
+       SCREEN 1: LEAD CAPTURE LANDING
+  ══════════════════════════════════ -->
+  <div class="ej-screen ej-active" id="ej-screen-1">
+    <div class="ej-bg ej-bg-dark">
+      <div class="ej-orb ej-orb-1"></div>
+      <div class="ej-orb ej-orb-2"></div>
+      <div class="ej-orb ej-orb-3"></div>
+    </div>
+
+    <div class="ej-content ej-content-center">
+      
+      <!-- Tag -->
+      <div class="ej-tag" style="margin-bottom:1.75rem;">
+        <span>✦</span>
+        <span>{{ section.settings.s1_tag | default: 'Free Virtual Experience' }}</span>
+      </div>
+
+      <!-- Headline -->
+      <h1 class="ej-headline" style="text-align:center;">
+        {{ section.settings.s1_headline_1 | default: 'Unlock a Free' }}<br>
+        <em>{{ section.settings.s1_headline_em | default: '5-Day Virtual' }}</em><br>
+        {{ section.settings.s1_headline_2 | default: 'Sensory Experience' }}
+      </h1>
+
+      <!-- Divider -->
+      <div class="ej-divider" style="margin:1.5rem auto;"></div>
+
+      <!-- Sub -->
+      <p class="ej-body" style="text-align:center;max-width:520px;margin-bottom:0.5rem;">
+        {{ section.settings.s1_subheadline | default: 'Five beautifully designed prompts, games and rituals to make date night feel new again.' }}
+      </p>
+      <p class="ej-body-sm" style="text-align:center;max-width:440px;margin-bottom:2.5rem;">
+        {{ section.settings.s1_support | default: 'Delivered through a beautifully guided digital journey — with exclusive access to events, drops and rewards.' }}
+      </p>
+
+      <!-- CTA -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;width:100%;max-width:380px;">
+        <button class="ej-btn ej-btn-gold ej-btn-lg ej-btn-block" onclick="ejGoTo(2)">
+          <span>✦</span>
+          <span>{{ section.settings.s1_cta | default: 'Start Free' }}</span>
+        </button>
+        <p class="ej-body-sm" style="text-align:center;">
+          {{ section.settings.s1_footnote | default: 'No credit card. No commitment. Just 5 beautiful days.' }}
+        </p>
+      </div>
+
+      <!-- Social proof -->
+      <div class="ej-social-strip" style="justify-content:center;margin-top:2rem;">
+        <div class="ej-avatars">
+          <div class="ej-avatar">R+T</div>
+          <div class="ej-avatar">D+M</div>
+          <div class="ej-avatar">L</div>
+          <div class="ej-avatar">J+A</div>
+        </div>
+        <div>
+          <div class="ej-stars">★★★★★</div>
+          <p class="ej-body-sm" style="margin:0;">{{ section.settings.s1_social | default: '14,000+ couples started this week' }}</p>
+        </div>
+      </div>
+
+      <!-- 5 Day Preview Strip -->
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:3rem;width:100%;">
+        {%- assign day_names_s1 = 'Curiosity,Play,Sensory,Adventure,Invitation' | split: ',' -%}
+        {%- assign day_icons_s1 = '🌹,🎮,✨,🌙,🏆' | split: ',' -%}
+        {%- for i in (1..5) -%}
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.375rem;opacity:0.85;">
+            <div style="width:40px;height:40px;border-radius:50%;background:rgba(201,169,110,0.12);border:1px solid rgba(201,169,110,0.25);display:flex;align-items:center;justify-content:center;font-size:1.125rem;">
+              {{ day_icons_s1[forloop.index0] }}
+            </div>
+            <span style="font-size:0.6875rem;color:rgba(245,239,230,0.45);text-transform:uppercase;letter-spacing:0.08em;">Day {{ i }}</span>
+            <span style="font-size:0.8125rem;color:rgba(245,239,230,0.7);font-family:'Playfair Display',serif;font-style:italic;">{{ day_names_s1[forloop.index0] }}</span>
+          </div>
+        {%- endfor -%}
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       SCREEN 2: ONBOARDING FORM
+  ══════════════════════════════════ -->
+  <div class="ej-screen" id="ej-screen-2">
+    <div class="ej-bg ej-bg-dark">
+      <div class="ej-orb ej-orb-1" style="animation-delay:2s;"></div>
+      <div class="ej-orb ej-orb-2" style="animation-delay:5s;"></div>
+    </div>
+
+    <div class="ej-content ej-pt-nav" style="display:flex;flex-direction:column;justify-content:center;min-height:100vh;">
+
+      <!-- Step Dots -->
+      <div class="ej-step-indicator" id="ej-form-steps">
+        <div class="ej-step-dot ej-active" id="ej-fdot-1"></div>
+        <div class="ej-step-dot" id="ej-fdot-2"></div>
+        <div class="ej-step-dot" id="ej-fdot-3"></div>
+      </div>
+
+      <!-- FORM STEP 1: Name + Email + Phone -->
+      <div id="ej-fstep-1" class="ej-onboard-card" style="animation:ejSlideIn 0.5s cubic-bezier(0.16,1,0.3,1) both;">
+        <div class="ej-eyebrow">Step 1 of 3</div>
+        <h2 class="ej-headline ej-headline-sm">Let's personalise<br><em>your experience</em></h2>
+        <p class="ej-body-sm" style="margin-bottom:1.75rem;">Your journey starts here. We'll use these to deliver your daily prompts.</p>
+
+        <div class="ej-form-group">
+          <label class="ej-label">First name *</label>
+          <input class="ej-input" type="text" id="ej-name" placeholder="Your first name" autocomplete="given-name">
+        </div>
+        <div class="ej-form-group">
+          <label class="ej-label">Email address *</label>
+          <input class="ej-input" type="email" id="ej-email" placeholder="your@email.com" autocomplete="email">
+        </div>
+        <div class="ej-form-group" style="margin-bottom:1.5rem;">
+          <label class="ej-label">Phone number <span style="opacity:0.4;">(optional — for SMS drop alerts)</span></label>
+          <input class="ej-input" type="tel" id="ej-phone" placeholder="+44 7700 000000" autocomplete="tel">
+        </div>
+
+        <button class="ej-btn ej-btn-primary ej-btn-lg ej-btn-block" onclick="ejFormStep(2)">
+          Continue
+          <span class="ej-btn-icon">→</span>
+        </button>
+        <p class="ej-microcopy">No spam. We only send the good stuff.</p>
+      </div>
+
+      <!-- FORM STEP 2: City + Status -->
+      <div id="ej-fstep-2" class="ej-onboard-card" style="display:none;">
+        <div class="ej-eyebrow">Step 2 of 3</div>
+        <h2 class="ej-headline ej-headline-sm">A little more<br><em>about you</em></h2>
+        <p class="ej-body-sm" style="margin-bottom:1.75rem;">Helps us match you with local events and the right experience.</p>
+
+        <div class="ej-form-group">
+          <label class="ej-label">Your city *</label>
+          <input class="ej-input" type="text" id="ej-city" placeholder="London, Manchester, New York..." autocomplete="address-level2">
+        </div>
+
+        <div class="ej-form-group" style="margin-bottom:1.5rem;">
+          <label class="ej-label">I'm joining as...</label>
+          <select class="ej-input ej-select" id="ej-status">
+            <option value="">Select (optional)</option>
+            <option value="couple">A couple looking for novelty</option>
+            <option value="dating">Dating and exploring</option>
+            <option value="gift">Sending as a gift</option>
+            <option value="curious">Single and curious</option>
+          </select>
+        </div>
+
+        <button class="ej-btn ej-btn-primary ej-btn-lg ej-btn-block" onclick="ejFormStep(3)">
+          Continue
+          <span class="ej-btn-icon">→</span>
+        </button>
+        <button class="ej-btn ej-btn-ghost ej-btn-sm" style="width:100%;margin-top:0.75rem;" onclick="ejFormStep(1)">← Back</button>
+      </div>
+
+      <!-- FORM STEP 3: Interests + CTA -->
+      <div id="ej-fstep-3" class="ej-onboard-card" style="display:none;">
+        <div class="ej-eyebrow">Step 3 of 3</div>
+        <h2 class="ej-headline ej-headline-sm">What excites<br><em>you most?</em></h2>
+        <p class="ej-body-sm" style="margin-bottom:1.25rem;">Select all that apply — we'll tailor the experience.</p>
+
+        <div class="ej-form-group">
+          <label class="ej-label">Date night vibes</label>
+          <div class="ej-checkbox-group" id="ej-interests">
+            <span class="ej-pill-check" data-val="playful" onclick="ejTogglePill(this)">🎮 Playful & fun</span>
+            <span class="ej-pill-check" data-val="sensory" onclick="ejTogglePill(this)">✨ Sensory rituals</span>
+            <span class="ej-pill-check" data-val="intimate" onclick="ejTogglePill(this)">🌹 Intimate connection</span>
+            <span class="ej-pill-check" data-val="adventure" onclick="ejTogglePill(this)">🌙 Adventure & novelty</span>
+            <span class="ej-pill-check" data-val="dining" onclick="ejTogglePill(this)">🍷 Wine & dining</span>
+            <span class="ej-pill-check" data-val="creative" onclick="ejTogglePill(this)">🎨 Creative experiences</span>
+          </div>
+        </div>
+
+        <div class="ej-form-group" style="margin:1.25rem 0;">
+          <label class="ej-label">I'd also love to receive:</label>
+          <div class="ej-checkbox-group" id="ej-comms">
+            <span class="ej-pill-check ej-active" data-val="events" onclick="ejTogglePill(this)">🎟️ Event invites</span>
+            <span class="ej-pill-check ej-active" data-val="drops" onclick="ejTogglePill(this)">📦 Early drop access</span>
+            <span class="ej-pill-check" data-val="community" onclick="ejTogglePill(this)">👥 Community news</span>
+          </div>
+        </div>
+
+        <button class="ej-btn ej-btn-gold ej-btn-lg ej-btn-block" onclick="ejSubmitForm()">
+          <span>✦</span>
+          <span>Unlock My Experience</span>
+        </button>
+        <button class="ej-btn ej-btn-ghost ej-btn-sm" style="width:100%;margin-top:0.75rem;" onclick="ejFormStep(2)">← Back</button>
+        <p class="ej-microcopy">By signing up you agree to our privacy policy. You can unsubscribe anytime.</p>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       SCREEN 3: WELCOME / SUCCESS
+  ══════════════════════════════════ -->
+  <div class="ej-screen" id="ej-screen-3">
+    <div class="ej-bg ej-bg-dark">
+      <div class="ej-orb ej-orb-1"></div>
+      <div class="ej-orb ej-orb-2" style="animation-delay:3s;"></div>
+    </div>
+
+    <div class="ej-content ej-content-center" style="padding-top:100px;">
+
+      <div class="ej-success-icon">🌹</div>
+
+      <div class="ej-tag" style="margin-bottom:1.5rem;">
+        <span>✓</span>
+        <span>You're In</span>
+      </div>
+
+      <h1 class="ej-headline ej-headline-md" style="text-align:center;">
+        Welcome to the<br>
+        <em>Playmate world</em>
+      </h1>
+
+      <p class="ej-body" style="text-align:center;max-width:460px;">
+        Your 5-day journey begins now, <span id="ej-welcome-name" style="color:var(--ej-gold-light);font-family:'Playfair Display',serif;font-style:italic;"></span>.
+        We've sent you a confirmation email — check your inbox.
+      </p>
+
+      <div class="ej-hr" style="width:100%;max-width:400px;"></div>
+
+      <!-- Journey preview -->
+      <div class="ej-journey-preview" style="width:100%;max-width:480px;">
+        {%- assign ej_day_themes = 'Curiosity,Play,Sensory,Adventure,Invitation' | split: ',' -%}
+        {%- assign ej_day_teases = 'Rediscover each other through questions you&#39;ve never asked.,A competitive sensory challenge with forfeits and rewards.,A guided ritual using things already in your home.,A secret date night prompt that breaks your normal pattern.,Your personal welcome into the Playmate world.' | split: ',' -%}
+        {%- assign ej_day_icons2 = '🌹,🎮,✨,🌙,🏆' | split: ',' -%}
+        {%- for i in (1..5) -%}
+          <div class="ej-journey-item">
+            <div class="ej-journey-num">{{ i }}</div>
+            <div style="flex:1;">
+              <div class="ej-journey-label">{{ ej_day_icons2[forloop.index0] }} Day {{ i }}: {{ ej_day_themes[forloop.index0] }}</div>
+              <div class="ej-journey-theme">{{ ej_day_teases[forloop.index0] }}</div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:0.75rem;width:100%;max-width:400px;margin-top:2rem;">
+        <button class="ej-btn ej-btn-gold ej-btn-lg ej-btn-block" onclick="ejGoToDay(1)">
+          <span>🌹</span>
+          <span>Begin Day 1 Now</span>
+        </button>
+        <div style="display:flex;gap:0.75rem;">
+          <a href="{{ section.settings.shop_url | default: '/collections/all' }}" class="ej-btn ej-btn-ghost ej-btn-sm" style="flex:1;text-align:center;">
+            Shop Drops
+          </a>
+          <a href="{{ section.settings.events_url | default: '/pages/events' }}" class="ej-btn ej-btn-ghost ej-btn-sm" style="flex:1;text-align:center;">
+            Browse Events
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       SCREEN 4: DAY 1 — CURIOSITY
+  ══════════════════════════════════ -->
+  <div class="ej-screen" id="ej-screen-day1">
+    <div class="ej-bg ej-bg-day1">
+      <div class="ej-orb ej-orb-1" style="background:radial-gradient(circle,rgba(201,169,110,0.1) 0%,transparent 70%);"></div>
+      <div class="ej-orb ej-orb-2" style="animation-delay:4s;"></div>
+    </div>
+
+    <div class="ej-content ej-pt-nav">
+
+      <!-- Day progress -->
+      <div class="ej-day-progress" style="margin-top:1rem;">
+        {%- for i in (1..5) -%}
+          <div class="ej-day-step {% if i == 1 %}ej-current{% endif %}" id="ej-dstep-{{ i }}-day1">
+            <div class="ej-day-step-dot">{{ i }}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <!-- Day badge -->
+      <div class="ej-day-badge">
+        <span class="ej-day-badge-icon">🌹</span>
+        Day 1 &nbsp;·&nbsp; Curiosity
+      </div>
+
+      <!-- Headline -->
+      <h1 class="ej-headline ej-headline-md">
+        {{ section.settings.d1_headline | default: 'What do you' }}<br>
+        <em>{{ section.settings.d1_italic | default: 'really want' }}</em><br>
+        {{ section.settings.d1_headline2 | default: 'to know?' }}
+      </h1>
+
+      <p class="ej-body">
+        {{ section.settings.d1_intro | default: 'Ten questions that cut through the familiar. Deceptively simple, surprisingly revealing. Pick your favourite — or work through them all.' }}
+      </p>
+
+      <!-- Prompt Cards -->
+      <div class="ej-prompt-grid" id="ej-d1-prompts">
+        {%- assign d1_prompts = "What's a version of yourself your partner has never seen?,What would you do differently if you knew they couldn't judge you?,Name one thing you've always wanted to try but never said aloud.,What does intimacy actually mean to you — right now in this stage of life?,If tonight had a soundtrack, what would it be and why?,Describe the best date you've ever had without naming where it was.,What's something small your partner does that you actually love?,If you had 48 hours together with no plans — what would you hope happened?,What do you want more of in this relationship?,What's something you've been meaning to say?" | split: ',' -%}
+        {%- for prompt in d1_prompts -%}
+          <div class="ej-prompt-card" onclick="ejSelectPrompt(this)">
+            <div class="ej-prompt-number">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</div>
+            <div class="ej-prompt-text">{{ prompt }}</div>
+            <span class="ej-prompt-heart">♡</span>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <!-- Journal -->
+      <div class="ej-journal" style="margin-top:2rem;">
+        <div class="ej-journal-label">✎ Your Reflection</div>
+        <textarea id="ej-d1-journal" placeholder="Type your thoughts here... only you can see this."></textarea>
+        <div class="ej-journal-actions">
+          <button class="ej-shuffle-btn" onclick="ejSaveJournal('d1')">
+            ♡ Save
+          </button>
+        </div>
+      </div>
+
+      <!-- Soft CTA -->
+      <div class="ej-product-cta" style="margin-top:2rem;">
+        <div class="ej-product-eyebrow">✦ Playmate Drops</div>
+        <div class="ej-product-name">The Conversation Kit</div>
+        <div class="ej-product-price">Perfectly matched to tonight's prompts</div>
+        <a href="{{ section.settings.shop_url | default: '/collections/all' }}" class="ej-btn ej-btn-outline-gold ej-btn-sm">
+          Explore the Drop →
+        </a>
+      </div>
+
+      <div style="height:5rem;"></div>
+    </div>
+
+    <!-- Sticky CTA -->
+    <div class="ej-sticky-cta">
+      <button class="ej-btn ej-btn-ghost ej-btn-sm" onclick="ejGoToDay(null, -1)" style="flex:0 0 auto;padding:0.875rem 1.25rem;">←</button>
+      <button class="ej-btn ej-btn-primary ej-btn-block" onclick="ejGoToDay(2)">
+        Come back tomorrow: Day 2 →
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       SCREEN 5: DAY 2 — PLAY
+  ══════════════════════════════════ -->
+  <div class="ej-screen" id="ej-screen-day2">
+    <div class="ej-bg ej-bg-day2">
+      <div class="ej-orb ej-orb-1" style="background:radial-gradient(circle,rgba(30,60,107,0.2) 0%,transparent 70%);"></div>
+      <div class="ej-orb ej-orb-2" style="background:radial-gradient(circle,rgba(107,30,58,0.25) 0%,transparent 70%);animation-delay:4s;"></div>
+    </div>
+
+    <div class="ej-content ej-pt-nav">
+
+      <!-- Day progress -->
+      <div class="ej-day-progress" style="margin-top:1rem;">
+        {%- for i in (1..5) -%}
+          <div class="ej-day-step {% if i <= 1 %}ej-done{% elsif i == 2 %}ej-current{% endif %}">
+            <div class="ej-day-step-dot">{% if i <= 1 %}✓{% else %}{{ i }}{% endif %}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="ej-day-badge">
+        <span class="ej-day-badge-icon">🎮</span>
+        Day 2 &nbsp;·&nbsp; Play
+      </div>
+
+      <h1 class="ej-headline ej-headline-md">
+        {{ section.settings.d2_headline | default: 'Game' }}<br>
+        <em>{{ section.settings.d2_italic | default: 'on.' }}</em>
+      </h1>
+
+      <p class="ej-body">
+        {{ section.settings.d2_intro | default: 'A competitive sensory challenge. Who actually knows who? Scored live. With forfeits. Prepare to be surprised by how wrong you are — and how good that feels.' }}
+      </p>
+
+      <!-- Roulette Card -->
+      <div class="ej-roulette-wrap">
+        <div class="ej-roulette-card" id="ej-roulette">
+          <span class="ej-game-icon" id="ej-roulette-icon">🎮</span>
+          <p class="ej-roulette-quote" id="ej-roulette-text">
+            "Name your partner's three favourite physical sensations. Go."
+          </p>
+          <button class="ej-shuffle-btn" onclick="ejShuffle()" id="ej-shuffle-btn">
+            <span>⟳</span> New challenge
+          </button>
+        </div>
+      </div>
+
+      <!-- Game action cards -->
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--ej-cream);margin:2rem 0 1rem;">The Games</h3>
+      <div style="display:grid;gap:0.875rem;" id="ej-game-cards">
+        <div class="ej-game-card" style="padding:1.5rem;text-align:left;display:flex;gap:1rem;align-items:flex-start;">
+          <div style="font-size:1.75rem;flex-shrink:0;">🎯</div>
+          <div>
+            <div class="ej-game-title" style="font-size:1.0625rem;margin-bottom:0.375rem;">Guess the answer</div>
+            <div class="ej-game-challenge">Partner predicts your answer on each question. Wrong answer = forfeit.</div>
+          </div>
+        </div>
+        <div class="ej-game-card" style="padding:1.5rem;text-align:left;display:flex;gap:1rem;align-items:flex-start;">
+          <div style="font-size:1.75rem;flex-shrink:0;">🃏</div>
+          <div>
+            <div class="ej-game-title" style="font-size:1.0625rem;margin-bottom:0.375rem;">Truth or reveal</div>
+            <div class="ej-game-challenge">One card. One truth. No chickening out.</div>
+          </div>
+        </div>
+        <div class="ej-game-card" style="padding:1.5rem;text-align:left;display:flex;gap:1rem;align-items:flex-start;">
+          <div style="font-size:1.75rem;flex-shrink:0;">🎲</div>
+          <div>
+            <div class="ej-game-title" style="font-size:1.0625rem;margin-bottom:0.375rem;">Sensory roulette</div>
+            <div class="ej-game-challenge">Spin and receive a random sensory challenge for right now.</div>
+          </div>
+        </div>
+        <div class="ej-game-card" style="padding:1.5rem;text-align:left;display:flex;gap:1rem;align-items:flex-start;">
+          <div style="font-size:1.75rem;flex-shrink:0;">👁️</div>
+          <div>
+            <div class="ej-game-title" style="font-size:1.0625rem;margin-bottom:0.375rem;">The 30-second stare</div>
+            <div class="ej-game-challenge">No phones. No talking. Just each other for 30 seconds. See what happens.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Journal -->
+      <div class="ej-journal" style="margin-top:2rem;">
+        <div class="ej-journal-label">✎ Rate tonight's game</div>
+        <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;" id="ej-d2-stars">
+          {%- for i in (1..5) -%}
+            <button onclick="ejRate(this,{{ i }})" style="font-size:1.5rem;background:none;border:none;cursor:pointer;opacity:0.4;transition:all 0.2s;color:var(--ej-gold);padding:0.25rem;">★</button>
+          {%- endfor -%}
+        </div>
+        <textarea id="ej-d2-journal" placeholder="What surprised you most about tonight?" style="min-height:70px;"></textarea>
+      </div>
+
+      <div style="height:5rem;"></div>
+    </div>
+
+    <div class="ej-sticky-cta">
+      <button class="ej-btn ej-btn-ghost ej-btn-sm" onclick="ejGoToDay(1)" style="flex:0 0 auto;padding:0.875rem 1.25rem;">←</button>
+      <button class="ej-btn ej-btn-primary ej-btn-block" onclick="ejGoToDay(3)">
+        Day 3: Sensory →
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       SCREEN 6: DAY 3 — SENSORY
+  ══════════════════════════════════ -->
+  <div class="ej-screen" id="ej-screen-day3">
+    <div class="ej-bg ej-bg-day3">
+      <div class="ej-orb ej-orb-1" style="background:radial-gradient(circle,rgba(201,140,80,0.15) 0%,transparent 70%);"></div>
+      <div class="ej-orb ej-orb-2" style="background:radial-gradient(circle,rgba(107,30,58,0.3) 0%,transparent 70%);animation-delay:4s;"></div>
+    </div>
+
+    <div class="ej-content ej-pt-nav">
+
+      <!-- Day progress -->
+      <div class="ej-day-progress" style="margin-top:1rem;">
+        {%- for i in (1..5) -%}
+          <div class="ej-day-step {% if i <= 2 %}ej-done{% elsif i == 3 %}ej-current{% endif %}">
+            <div class="ej-day-step-dot">{% if i <= 2 %}✓{% else %}{{ i }}{% endif %}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="ej-day-badge">
+        <span class="ej-day-badge-icon">✨</span>
+        Day 3 &nbsp;·&nbsp; Sensory
+      </div>
+
+      <h1 class="ej-headline ej-headline-md">
+        {{ section.settings.d3_headline | default: 'Feel' }}<br>
+        <em>{{ section.settings.d3_italic | default: 'everything.' }}</em>
+      </h1>
+
+      <p class="ej-body">
+        {{ section.settings.d3_intro | default: 'A guided 20-minute ritual using things already in your home. Touch, taste, scent and sound — experienced completely differently when done together with intention.' }}
+      </p>
+
+      <!-- Sensory mood selector -->
+      <div class="ej-eyebrow" style="margin-bottom:0.875rem;">Choose your sensory mood</div>
+      <div class="ej-sensory-strip" id="ej-mood-strip">
+        <div class="ej-sensory-pill ej-active" onclick="ejSelectMood(this,'candlelight')">
+          <span class="ej-sensory-emoji">🕯️</span>
+          <span class="ej-sensory-label">Candlelight</span>
+        </div>
+        <div class="ej-sensory-pill" onclick="ejSelectMood(this,'touch')">
+          <span class="ej-sensory-emoji">👐</span>
+          <span class="ej-sensory-label">Touch</span>
+        </div>
+        <div class="ej-sensory-pill" onclick="ejSelectMood(this,'taste')">
+          <span class="ej-sensory-emoji">🍷</span>
+          <span class="ej-sensory-label">Taste</span>
+        </div>
+        <div class="ej-sensory-pill" onclick="ejSelectMood(this,'scent')">
+          <span class="ej-sensory-emoji">🌸</span>
+          <span class="ej-sensory-label">Scent</span>
+        </div>
+        <div class="ej-sensory-pill" onclick="ejSelectMood(this,'sound')">
+          <span class="ej-sensory-emoji">🎵</span>
+          <span class="ej-sensory-label">Sound</span>
+        </div>
+      </div>
+
+      <!-- Sensory ritual -->
+      <div class="ej-card ej-card-gold" style="margin-top:1.75rem;" id="ej-sensory-ritual">
+        <div class="ej-eyebrow">Tonight's Ritual</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.375rem;color:var(--ej-cream);margin-bottom:0.875rem;" id="ej-ritual-title">The Candlelight Ritual</h3>
+        <div id="ej-ritual-steps" style="display:grid;gap:0.875rem;">
+          <div style="display:flex;gap:0.875rem;align-items:flex-start;">
+            <div style="width:24px;height:24px;border-radius:50%;background:rgba(201,169,110,0.2);border:1px solid var(--ej-border-gold);display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:var(--ej-gold);flex-shrink:0;font-weight:600;">1</div>
+            <p class="ej-body-sm" style="margin:0;padding-top:0.25rem;">Dim every light in the room. Place a single candle between you.</p>
+          </div>
+          <div style="display:flex;gap:0.875rem;align-items:flex-start;">
+            <div style="width:24px;height:24px;border-radius:50%;background:rgba(201,169,110,0.2);border:1px solid var(--ej-border-gold);display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:var(--ej-gold);flex-shrink:0;font-weight:600;">2</div>
+            <p class="ej-body-sm" style="margin:0;padding-top:0.25rem;">No screens for 20 minutes. One drink each. Start the Playmate Candlelight playlist.</p>
+          </div>
+          <div style="display:flex;gap:0.875rem;align-items:flex-start;">
+            <div style="width:24px;height:24px;border-radius:50%;background:rgba(201,169,110,0.2);border:1px solid var(--ej-border-gold);display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:var(--ej-gold);flex-shrink:0;font-weight:600;">3</div>
+            <p class="ej-body-sm" style="margin:0;padding-top:0.25rem;">One person touches the other's hand for 60 seconds. No speaking. Notice everything.</p>
+          </div>
+          <div style="display:flex;gap:0.875rem;align-items:flex-start;">
+            <div style="width:24px;height:24px;border-radius:50%;background:rgba(201,169,110,0.2);border:1px solid var(--ej-border-gold);display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:var(--ej-gold);flex-shrink:0;font-weight:600;">4</div>
+            <p class="ej-body-sm" style="margin:0;padding-top:0.25rem;">Take turns: what are three things you can sense right now that you love?</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Bridge (strongest commerce moment) -->
+      <div class="ej-product-cta" style="margin-top:2rem;">
+        <div class="ej-product-eyebrow">✦ Take This Further</div>
+        <div class="ej-product-name">{{ section.settings.d3_product_name | default: 'The Velvet Hour Kit' }}</div>
+        <p class="ej-body-sm" style="margin-bottom:1rem;">{{ section.settings.d3_product_desc | default: 'Our bestselling sensory ritual kit — everything you need for tonight, beautifully packaged. Candles, cards, oils and a curated ritual guide.' }}</p>
+        <a href="{{ section.settings.d3_product_url | default: '/collections/all' }}" class="ej-btn ej-btn-gold ej-btn-sm">
+          Shop The Kit →
+        </a>
+      </div>
+
+      <div style="height:5rem;"></div>
+    </div>
+
+    <div class="ej-sticky-cta">
+      <button class="ej-btn ej-btn-ghost ej-btn-sm" onclick="ejGoToDay(2)" style="flex:0 0 auto;padding:0.875rem 1.25rem;">←</button>
+      <button class="ej-btn ej-btn-primary ej-btn-block" onclick="ejGoToDay(4)">
+        Day 4: Adventure →
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       SCREEN 7: DAY 4 — ADVENTURE
+  ══════════════════════════════════ -->
+  <div class="ej-screen" id="ej-screen-day4">
+    <div class="ej-bg ej-bg-day4">
+      <div class="ej-orb ej-orb-1" style="background:radial-gradient(circle,rgba(30,107,60,0.15) 0%,transparent 70%);"></div>
+      <div class="ej-orb ej-orb-2" style="animation-delay:3s;"></div>
+    </div>
+
+    <div class="ej-content ej-pt-nav">
+
+      <!-- Day progress -->
+      <div class="ej-day-progress" style="margin-top:1rem;">
+        {%- for i in (1..5) -%}
+          <div class="ej-day-step {% if i <= 3 %}ej-done{% elsif i == 4 %}ej-current{% endif %}">
+            <div class="ej-day-step-dot">{% if i <= 3 %}✓{% else %}{{ i }}{% endif %}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="ej-day-badge">
+        <span class="ej-day-badge-icon">🌙</span>
+        Day 4 &nbsp;·&nbsp; Adventure
+      </div>
+
+      <h1 class="ej-headline ej-headline-md">
+        {{ section.settings.d4_headline | default: 'Break the' }}<br>
+        <em>{{ section.settings.d4_italic | default: 'pattern.' }}</em>
+      </h1>
+
+      <p class="ej-body">
+        {{ section.settings.d4_intro | default: 'The best nights happen when no one planned them. Tonight, one of you commits before you know the plan. Read the instruction only once you&#39;ve both said yes.' }}
+      </p>
+
+      <!-- Sealed challenge card -->
+      <div class="ej-game-card" style="text-align:center;" id="ej-adventure-card">
+        <div id="ej-adv-locked" style="padding:1rem 0;">
+          <span style="font-size:3rem;display:block;margin-bottom:1rem;">🔐</span>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.375rem;color:var(--ej-cream);margin-bottom:0.75rem;">Tonight's Secret Prompt</h3>
+          <p class="ej-body-sm" style="margin-bottom:1.5rem;max-width:300px;margin-left:auto;margin-right:auto;">Both commit to doing it before you reveal what it is. Only then, unlock.</p>
+          <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+            <button class="ej-btn ej-btn-ghost ej-btn-sm" id="ej-adv-p1" onclick="ejAdventureCommit(1)">
+              <span id="ej-adv-p1-icon">○</span> I'm in
+            </button>
+            <button class="ej-btn ej-btn-ghost ej-btn-sm" id="ej-adv-p2" onclick="ejAdventureCommit(2)">
+              <span id="ej-adv-p2-icon">○</span> I'm in too
+            </button>
+          </div>
+        </div>
+        <div id="ej-adv-unlocked" style="display:none;padding:1rem 0;">
+          <span style="font-size:2.5rem;display:block;margin-bottom:1rem;">🌙</span>
+          <p style="font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--ej-cream);font-style:italic;line-height:1.55;margin-bottom:1rem;">
+            "Go somewhere neither of you has been before. It can be a street, a bar, a bench in a park — as long as it's new to both of you. You have until midnight."
+          </p>
+          <div class="ej-tag" style="margin:0 auto 1rem;display:inline-flex;">
+            🕐 Leave within the next 2 hours
+          </div>
+        </div>
+      </div>
+
+      <!-- Choice cards -->
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.125rem;color:var(--ej-cream);margin:2rem 0 1rem;">Or choose your adventure level:</h3>
+      <div class="ej-choice-grid" id="ej-adventure-choices">
+        <div class="ej-choice-card" onclick="ejSelectChoice(this)">
+          <div class="ej-choice-icon">🏠</div>
+          <div class="ej-choice-body">
+            <div class="ej-choice-title">In-home adventure</div>
+            <div class="ej-choice-desc">A rearranged space. Different lighting. Same people, different world.</div>
+          </div>
+        </div>
+        <div class="ej-choice-card" onclick="ejSelectChoice(this)">
+          <div class="ej-choice-icon">🌆</div>
+          <div class="ej-choice-body">
+            <div class="ej-choice-title">Urban explorer</div>
+            <div class="ej-choice-desc">Find one new place nearby. Walk there. No googling until you arrive.</div>
+          </div>
+        </div>
+        <div class="ej-choice-card" onclick="ejSelectChoice(this)">
+          <div class="ej-choice-icon">🎲</div>
+          <div class="ej-choice-body">
+            <div class="ej-choice-title">Completely random</div>
+            <div class="ej-choice-desc">Let fate decide. Flip a coin at every junction. End up somewhere unexpected.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event CTA -->
+      <div class="ej-event-card" style="margin-top:2rem;cursor:pointer;" onclick="window.location='{{ section.settings.events_url | default: '/pages/events' }}'">
+        <div class="ej-event-date">
+          <div class="ej-event-month">MAR</div>
+          <div class="ej-event-day">22</div>
+        </div>
+        <div class="ej-event-info">
+          <div class="ej-event-title">Playmate IRL: The Sensory Evening</div>
+          <div class="ej-event-meta">London · Limited spots · £65pp</div>
+          <div style="margin-top:0.625rem;">
+            <a href="{{ section.settings.events_url | default: '/pages/events' }}" class="ej-btn ej-btn-outline-gold ej-btn-sm">Browse Events →</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:5rem;"></div>
+    </div>
+
+    <div class="ej-sticky-cta">
+      <button class="ej-btn ej-btn-ghost ej-btn-sm" onclick="ejGoToDay(3)" style="flex:0 0 auto;padding:0.875rem 1.25rem;">←</button>
+      <button class="ej-btn ej-btn-primary ej-btn-block" onclick="ejGoToDay(5)">
+        Day 5: The Invitation →
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       SCREEN 8: DAY 5 — INVITATION
+  ══════════════════════════════════ -->
+  <div class="ej-screen" id="ej-screen-day5">
+    <div class="ej-bg ej-bg-day5">
+      <div class="ej-orb ej-orb-1" style="background:radial-gradient(circle,rgba(201,169,110,0.18) 0%,transparent 70%);"></div>
+      <div class="ej-orb ej-orb-2" style="animation-delay:2s;"></div>
+    </div>
+
+    <div class="ej-content ej-pt-nav">
+
+      <!-- Day progress -->
+      <div class="ej-day-progress" style="margin-top:1rem;">
+        {%- for i in (1..5) -%}
+          <div class="ej-day-step {% if i <= 4 %}ej-done{% elsif i == 5 %}ej-current{% endif %}">
+            <div class="ej-day-step-dot">{% if i <= 4 %}✓{% else %}{{ i }}{% endif %}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="ej-day-badge">
+        <span class="ej-day-badge-icon">🏆</span>
+        Day 5 &nbsp;·&nbsp; Invitation
+      </div>
+
+      <h1 class="ej-headline ej-headline-md">
+        {{ section.settings.d5_headline | default: 'This is' }}<br>
+        <em>{{ section.settings.d5_italic | default: 'just the beginning.' }}</em>
+      </h1>
+
+      <p class="ej-body">
+        {{ section.settings.d5_intro | default: 'You&#39;ve spent 5 days making date night feel new. Now we want to take you somewhere deeper. Welcome to the Playmate world.' }}
+      </p>
+
+      <!-- Celebration card -->
+      <div class="ej-card ej-card-gold" style="text-align:center;padding:2.5rem 2rem;margin-bottom:2rem;">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">🌹</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.375rem;color:var(--ej-cream);margin-bottom:0.75rem;">Your reflection prompt</h3>
+        <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.0625rem;color:rgba(245,239,230,0.85);line-height:1.6;margin-bottom:1.5rem;">
+          "Write one sentence about this week. Read it aloud to each other."
+        </p>
+        <textarea class="ej-input" style="background:rgba(0,0,0,0.15);border-color:rgba(255,255,255,0.08);font-family:'Playfair Display',serif;font-style:italic;min-height:70px;border-radius:10px;margin-bottom:1rem;" placeholder="Your sentence about this week..."></textarea>
+      </div>
+
+      <!-- Enter the Playmate world -->
+      <div class="ej-eyebrow">Enter the Playmate World</div>
+      <div class="ej-cta-cluster" style="margin-bottom:1.5rem;">
+        <div class="ej-cta-item" onclick="window.location='{{ section.settings.drops_url | default: '/pages/monthly-drops' }}'">
+          <div class="ej-cta-item-icon">📦</div>
+          <div class="ej-cta-item-body">
+            <div class="ej-cta-item-title">Monthly Date Night Drops</div>
+            <div class="ej-cta-item-desc">A curated kit delivered every month. New rituals, new play, new connection.</div>
+          </div>
+          <div class="ej-cta-item-arrow">→</div>
+        </div>
+        <div class="ej-cta-item" onclick="window.location='{{ section.settings.events_url | default: '/pages/events' }}'">
+          <div class="ej-cta-item-icon">🎟️</div>
+          <div class="ej-cta-item-body">
+            <div class="ej-cta-item-title">Playmate IRL Events</div>
+            <div class="ej-cta-item-desc">Immersive sensory evenings in your city. Real people. Real connection.</div>
+          </div>
+          <div class="ej-cta-item-arrow">→</div>
+        </div>
+        <div class="ej-cta-item" onclick="window.location='{{ section.settings.community_url | default: '/pages/community' }}'">
+          <div class="ej-cta-item-icon">👥</div>
+          <div class="ej-cta-item-body">
+            <div class="ej-cta-item-title">Join the Community</div>
+            <div class="ej-cta-item-desc">Couples, rituals, stories and rewards. Your people are already in here.</div>
+          </div>
+          <div class="ej-cta-item-arrow">→</div>
+        </div>
+        <div class="ej-cta-item" onclick="window.location='{{ section.settings.shop_url | default: '/collections/all' }}'">
+          <div class="ej-cta-item-icon">🛍️</div>
+          <div class="ej-cta-item-body">
+            <div class="ej-cta-item-title">Shop the Latest Drop</div>
+            <div class="ej-cta-item-desc">Sensory kits, ritual products and exclusive bundles for couples.</div>
+          </div>
+          <div class="ej-cta-item-arrow">→</div>
+        </div>
+      </div>
+
+      <!-- Exclusive offer -->
+      <div class="ej-product-cta" style="text-align:center;">
+        <div class="ej-product-eyebrow">✦ Exclusive Day 5 Offer</div>
+        <div class="ej-product-name" style="font-size:1.375rem;">20% off your first drop</div>
+        <p class="ej-body-sm" style="margin-bottom:1.25rem;">Because you completed the journey. Use at checkout.</p>
+        <div style="background:rgba(0,0,0,0.2);border:1px dashed rgba(201,169,110,0.4);border-radius:8px;padding:0.875rem;margin-bottom:1.25rem;">
+          <span style="font-family:'Playfair Display',serif;font-size:1.375rem;color:var(--ej-gold-light);letter-spacing:0.1em;">PLAYMATE20</span>
+        </div>
+        <a href="{{ section.settings.shop_url | default: '/collections/all' }}" class="ej-btn ej-btn-gold ej-btn-lg" style="min-width:200px;">
+          Shop Now →
+        </a>
+      </div>
+
+      <div style="height:5rem;"></div>
+    </div>
+
+    <div class="ej-sticky-cta">
+      <button class="ej-btn ej-btn-ghost ej-btn-sm" onclick="ejGoToDay(4)" style="flex:0 0 auto;padding:0.875rem 1.25rem;">←</button>
+      <button class="ej-btn ej-btn-gold ej-btn-block" onclick="ejGoTo(9)">
+        Complete the Journey ✦
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       SCREEN 9: COMPLETION PAGE
+  ══════════════════════════════════ -->
+  <div class="ej-screen" id="ej-screen-9">
+    <div class="ej-bg ej-bg-day5">
+      <div class="ej-orb ej-orb-1"></div>
+      <div class="ej-orb ej-orb-2" style="animation-delay:3s;"></div>
+    </div>
+
+    <!-- Confetti -->
+    <div class="ej-confetti-wrap" id="ej-confetti"></div>
+
+    <div class="ej-content ej-content-center" style="padding-top:100px;">
+
+      <div class="ej-completion-icon">🏆</div>
+
+      <div class="ej-tag" style="margin-bottom:1.5rem;">
+        <span>✦</span>
+        <span>Journey Complete</span>
+      </div>
+
+      <h1 class="ej-headline ej-headline-md" style="text-align:center;">
+        You did it,<br>
+        <em id="ej-comp-name">beautiful humans.</em>
+      </h1>
+
+      <p class="ej-body" style="text-align:center;max-width:480px;">
+        Five days. Five moments of genuine connection. This is what Playmate was built for — and this is only the beginning.
+      </p>
+
+      <div class="ej-hr" style="width:100%;max-width:400px;"></div>
+
+      <!-- What's next -->
+      <div class="ej-eyebrow" style="margin-bottom:1rem;">What's Next for You</div>
+
+      <div style="display:grid;gap:0.75rem;width:100%;max-width:500px;margin-bottom:2.5rem;">
+        <a href="{{ section.settings.drops_url | default: '/pages/monthly-drops' }}" class="ej-cta-item" style="text-decoration:none;">
+          <div class="ej-cta-item-icon">📦</div>
+          <div class="ej-cta-item-body">
+            <div class="ej-cta-item-title">The Monthly Drop</div>
+            <div class="ej-cta-item-desc">A new ritual kit every month. Limited editions. Always beautiful.</div>
+          </div>
+          <div class="ej-cta-item-arrow">→</div>
+        </a>
+        <a href="{{ section.settings.events_url | default: '/pages/events' }}" class="ej-cta-item" style="text-decoration:none;">
+          <div class="ej-cta-item-icon">🎟️</div>
+          <div class="ej-cta-item-body">
+            <div class="ej-cta-item-title">Playmate Events</div>
+            <div class="ej-cta-item-desc">Experience this in real life. Sensory evenings coming to your city.</div>
+          </div>
+          <div class="ej-cta-item-arrow">→</div>
+        </a>
+        <a href="{{ section.settings.shop_url | default: '/collections/all' }}" class="ej-cta-item" style="text-decoration:none;">
+          <div class="ej-cta-item-icon">🛍️</div>
+          <div class="ej-cta-item-body">
+            <div class="ej-cta-item-title">Shop with PLAYMATE20</div>
+            <div class="ej-cta-item-desc">20% off your first order. You've earned it.</div>
+          </div>
+          <div class="ej-cta-item-arrow">→</div>
+        </a>
+      </div>
+
+      <!-- Brand statement -->
+      <div class="ej-card ej-card-dark" style="text-align:center;max-width:480px;width:100%;padding:2.5rem 2rem;">
+        <div class="ej-petal" style="display:block;margin-bottom:1.25rem;">🌹</div>
+        <p style="font-family:'Playfair Display',serif;font-size:1.125rem;color:var(--ej-cream);font-style:italic;line-height:1.65;margin-bottom:0;">
+          "Playmate isn't a product. It's a practice.<br>
+          A commitment to showing up for each other<br>
+          in the spaces between the ordinary."
+        </p>
+        <div class="ej-divider" style="margin:1.25rem auto;"></div>
+        <p class="ej-body-sm" style="text-align:center;margin:0;">— The Playmate Labs Team</p>
+      </div>
+
+      <!-- Restart or share -->
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;margin-top:2rem;">
+        <button class="ej-btn ej-btn-ghost ej-btn-sm" onclick="ejRestart()">
+          ↺ Start again
+        </button>
+        <button class="ej-btn ej-btn-outline-gold ej-btn-sm" onclick="ejShare()">
+          ↗ Share this experience
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /.ej-root -->
+
+
+<!-- ══════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+
+  // ── State ──
+  var state = {
+    screen: 1,
+    formStep: 1,
+    name: '',
+    email: '',
+    phone: '',
+    city: '',
+    status: '',
+    interests: [],
+    comms: [],
+    currentDay: 0,
+    d1Saved: false,
+    d2Stars: 0,
+    moodSelected: 'candlelight',
+    adventureCommit: [false, false]
+  };
+
+  // Screen → progress % map
+  var progressMap = { 1:0, 2:12, 3:25, 4:35, 5:50, 6:65, 7:80, 8:90, 9:100 };
+
+  // Day screen map
+  var dayScreenMap = { 1:4, 2:5, 3:6, 4:7, 5:8 };
+  var screenIds = ['ej-screen-1','ej-screen-2','ej-screen-3','ej-screen-day1','ej-screen-day2','ej-screen-day3','ej-screen-day4','ej-screen-day5','ej-screen-9'];
+
+  // ── Core navigation ──
+  window.ejGoTo = function(n) {
+    var screens = document.querySelectorAll('.ej-screen');
+    screens.forEach(function(s){ s.classList.remove('ej-active'); });
+
+    var target = document.getElementById(screenIds[n - 1]);
+    if (target) {
+      target.classList.add('ej-active');
+      target.scrollIntoView({ behavior: 'auto', block: 'start' });
+      window.scrollTo(0, 0);
+    }
+
+    state.screen = n;
+    updateProgress(n);
+    updateNavSteps(n);
+    updateNavVisibility(n);
+  };
+
+  window.ejGoToDay = function(day, delta) {
+    if (day == null && delta) {
+      // Back from first day
+      ejGoTo(3);
+      return;
+    }
+    if (day < 1 || day > 5) return;
+    var screenNum = dayScreenMap[day];
+    ejGoTo(screenNum);
+    state.currentDay = day;
+    persistState();
+  };
+
+  function updateProgress(n) {
+    var pct = progressMap[n] || 0;
+    var fill = document.getElementById('ej-progress-fill');
+    if (fill) fill.style.width = pct + '%';
+  }
+
+  function updateNavSteps(n) {
+    var steps = document.getElementById('ej-nav-steps');
+    if (!steps) return;
+    if (n >= 4 && n <= 8) {
+      steps.style.display = 'flex';
+      var day = n - 3;
+      var dots = steps.querySelectorAll('.ej-nav-step');
+      dots.forEach(function(d, i) {
+        d.classList.remove('ej-step-done', 'ej-step-active');
+        if (i + 1 < day) d.classList.add('ej-step-done');
+        if (i + 1 === day) d.classList.add('ej-step-active');
+      });
+    } else {
+      steps.style.display = 'none';
+    }
+  }
+
+  function updateNavVisibility(n) {
+    var nav = document.getElementById('ej-nav');
+    if (!nav) return;
+    if (n === 1) {
+      nav.style.display = 'none';
+    } else {
+      nav.style.display = 'flex';
+    }
+  }
+
+  // ── Form navigation ──
+  window.ejFormStep = function(step) {
+    if (step === 2) {
+      var name = document.getElementById('ej-name');
+      var email = document.getElementById('ej-email');
+      if (!name || !name.value.trim()) { ejShake(name); return; }
+      if (!email || !email.value.trim() || !ejIsEmail(email.value)) { ejShake(email); return; }
+      state.name = name.value.trim();
+      state.email = email.value.trim();
+      state.phone = (document.getElementById('ej-phone') || {}).value || '';
+    }
+    if (step === 3) {
+      var city = document.getElementById('ej-city');
+      if (!city || !city.value.trim()) { ejShake(city); return; }
+      state.city = city.value.trim();
+      state.status = (document.getElementById('ej-status') || {}).value || '';
+    }
+    state.formStep = step;
+    ['ej-fstep-1','ej-fstep-2','ej-fstep-3'].forEach(function(id, i) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.style.display = (i + 1 === step) ? 'block' : 'none';
+        if (i + 1 === step) el.style.animation = 'ejSlideIn 0.45s cubic-bezier(0.16,1,0.3,1) both';
+      }
+    });
+    // Update step dots
+    ['ej-fdot-1','ej-fdot-2','ej-fdot-3'].forEach(function(id, i) {
+      var dot = document.getElementById(id);
+      if (!dot) return;
+      dot.classList.remove('ej-active','ej-done');
+      if (i + 1 < step) dot.classList.add('ej-done');
+      if (i + 1 === step) dot.classList.add('ej-active');
+    });
+    window.scrollTo(0,0);
+  };
+
+  // ── Form submit ──
+  window.ejSubmitForm = function() {
+    state.interests = Array.from(document.querySelectorAll('#ej-interests .ej-active')).map(function(el){ return el.dataset.val; });
+    state.comms = Array.from(document.querySelectorAll('#ej-comms .ej-active')).map(function(el){ return el.dataset.val; });
+    persistState();
+    ejSubmitKlaviyo();
+    ejGoTo(3);
+    var nameEl = document.getElementById('ej-welcome-name');
+    var compEl = document.getElementById('ej-comp-name');
+    if (nameEl) nameEl.textContent = state.name;
+    if (compEl && state.name) compEl.textContent = state.name + '.';
+  };
+
+  function ejSubmitKlaviyo() {
+    var pk = {{ section.settings.klaviyo_public_api_key | default: '' | json }};
+    var lid = {{ section.settings.klaviyo_journey_list_id | default: '' | json }};
+    if (!pk || !lid || !state.email) return;
+    var payload = {
+      data: {
+        type: 'subscription',
+        attributes: {
+          list_id: lid,
+          email: state.email,
+          custom_source: '5-Day Journey — Playmate Labs',
+          properties: {
+            first_name: state.name,
+            phone: state.phone,
+            city: state.city,
+            status: state.status,
+            interests: state.interests.join(','),
+            comms: state.comms.join(','),
+            source: '5_day_journey_interactive'
+          }
+        }
+      }
+    };
+    fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + pk, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'revision': '2023-10-15' },
+      body: JSON.stringify(payload)
+    }).catch(function(){});
+  }
+
+  // ── Toggle pills ──
+  window.ejTogglePill = function(el) {
+    el.classList.toggle('ej-active');
+  };
+
+  // ── Prompt selection ──
+  window.ejSelectPrompt = function(card) {
+    var wasSelected = card.classList.contains('ej-selected');
+    card.classList.toggle('ej-selected');
+    if (!wasSelected) {
+      try { sessionStorage.setItem('ej_fav_prompt', card.querySelector('.ej-prompt-text').textContent); } catch(e) {}
+    }
+  };
+
+  // ── Journal save ──
+  window.ejSaveJournal = function(day) {
+    var ta = document.getElementById('ej-' + day + '-journal');
+    if (!ta || !ta.value.trim()) return;
+    try { sessionStorage.setItem('ej_journal_' + day, ta.value.trim()); } catch(e) {}
+    var btn = event && event.target ? event.target : null;
+    if (btn) { btn.textContent = '✓ Saved'; setTimeout(function(){ btn.textContent = '♡ Save'; }, 2000); }
+  };
+
+  // ── Star rating ──
+  window.ejRate = function(btn, val) {
+    state.d2Stars = val;
+    var stars = document.querySelectorAll('#ej-d2-stars button');
+    stars.forEach(function(s, i) {
+      s.style.opacity = (i < val) ? '1' : '0.3';
+    });
+  };
+
+  // ── Shuffle / roulette ──
+  var d2Challenges = [
+    "Name your partner's three favourite physical sensations. Go.",
+    "Take turns: what's one thing your partner does that you genuinely find attractive?",
+    "Without words, show how you feel about this person right now.",
+    "What's something you've never admitted you find sexy?",
+    "If our relationship was a film, what genre would it be — and who would play us?",
+    "Describe your partner using only weather words.",
+    "What's something you want to do together that you've been too shy to suggest?",
+    "If you could change one small thing about our routine, what would it be?",
+    "Name something your partner taught you about yourself.",
+    "What does intimacy mean to you right now, at this moment?"
+  ];
+  var d2Icons = ['🎯','🃏','🎲','👁️','💭','🌊','✨','🔥','🌹','💫'];
+  var d2idx = 0;
+
+  window.ejShuffle = function() {
+    var card = document.getElementById('ej-roulette');
+    var text = document.getElementById('ej-roulette-text');
+    var icon = document.getElementById('ej-roulette-icon');
+    if (!card || !text || !icon) return;
+    card.classList.add('ej-flip');
+    setTimeout(function() {
+      d2idx = (d2idx + 1) % d2Challenges.length;
+      text.textContent = '"' + d2Challenges[d2idx] + '"';
+      icon.textContent = d2Icons[d2idx];
+      card.classList.remove('ej-flip');
+    }, 200);
+  };
+
+  // ── Sensory mood ──
+  var moodData = {
+    candlelight: {
+      title: 'The Candlelight Ritual',
+      steps: ['Dim every light in the room. Place a single candle between you.','No screens for 20 minutes. One drink each. Start the Playmate Candlelight playlist.','One person touches the other\'s hand for 60 seconds. No speaking. Notice everything.','Take turns: what are three things you can sense right now that you love?']
+    },
+    touch: {
+      title: 'The Touch Ritual',
+      steps: ['Sit facing each other. Close your eyes.','One person traces the outline of the other\'s face — very slowly.','Swap. Notice what you feel, not just physically.','What did you notice that surprised you?']
+    },
+    taste: {
+      title: 'The Taste Ritual',
+      steps: ['Prepare three things to taste — ideally contrasting: sweet, bitter, rich.','Feed each other. No hands. Eyes closed.','Describe what you taste without naming the food.','What\'s a flavour that reminds you of your partner?']
+    },
+    scent: {
+      title: 'The Scent Ritual',
+      steps: ['Find three things in your home that have a distinct scent.','Blindfold one partner. Hold each scent beneath their nose.','They describe the memory or feeling it evokes — without naming it.','Swap. Then share what surprised you about each other\'s associations.']
+    },
+    sound: {
+      title: 'The Sound Ritual',
+      steps: ['Create a playlist of 5 songs — each one that means something to you.','Listen to them in silence together.','After each song, share one memory or feeling it triggers.','End with: what\'s one song that will always remind you of us?']
+    }
+  };
+
+  window.ejSelectMood = function(pill, mood) {
+    document.querySelectorAll('.ej-sensory-pill').forEach(function(p){ p.classList.remove('ej-active'); });
+    pill.classList.add('ej-active');
+    state.moodSelected = mood;
+    var data = moodData[mood];
+    if (!data) return;
+    var titleEl = document.getElementById('ej-ritual-title');
+    var stepsEl = document.getElementById('ej-ritual-steps');
+    if (titleEl) titleEl.textContent = data.title;
+    if (stepsEl) {
+      stepsEl.innerHTML = data.steps.map(function(step, i) {
+        return '<div style="display:flex;gap:0.875rem;align-items:flex-start;">'
+          + '<div style="width:24px;height:24px;border-radius:50%;background:rgba(201,169,110,0.2);border:1px solid rgba(201,169,110,0.25);display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:var(--ej-gold);flex-shrink:0;font-weight:600;">' + (i+1) + '</div>'
+          + '<p style="font-size:0.875rem;color:rgba(245,239,230,0.7);line-height:1.6;margin:0;padding-top:0.25rem;">' + step + '</p>'
+          + '</div>';
+      }).join('');
+    }
+  };
+
+  // ── Adventure commit ──
+  var adventureCommits = [false, false];
+  window.ejAdventureCommit = function(num) {
+    adventureCommits[num - 1] = true;
+    var iconEl = document.getElementById('ej-adv-p' + num + '-icon');
+    var btnEl = document.getElementById('ej-adv-p' + num);
+    if (iconEl) iconEl.textContent = '✓';
+    if (btnEl) {
+      btnEl.style.borderColor = 'rgba(201,169,110,0.6)';
+      btnEl.style.color = 'var(--ej-gold-light)';
+    }
+    if (adventureCommits[0] && adventureCommits[1]) {
+      setTimeout(function() {
+        var locked = document.getElementById('ej-adv-locked');
+        var unlocked = document.getElementById('ej-adv-unlocked');
+        if (locked) locked.style.display = 'none';
+        if (unlocked) unlocked.style.display = 'block';
+      }, 600);
+    }
+  };
+
+  // ── Choice selection ──
+  window.ejSelectChoice = function(card) {
+    document.querySelectorAll('#ej-adventure-choices .ej-choice-card').forEach(function(c){ c.classList.remove('ej-selected'); });
+    card.classList.add('ej-selected');
+  };
+
+  // ── Completion confetti ──
+  function ejFireConfetti() {
+    var wrap = document.getElementById('ej-confetti');
+    if (!wrap) return;
+    var colors = ['#C9A96E','#E2C98A','#6B1E3A','#F5EFE6','#4A1228'];
+    for (var i = 0; i < 60; i++) {
+      (function() {
+        var piece = document.createElement('div');
+        piece.className = 'ej-confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+        piece.style.animationDuration = (1.5 + Math.random() * 2.5) + 's';
+        piece.style.animationDelay = Math.random() * 1 + 's';
+        wrap.appendChild(piece);
+        setTimeout(function(){ if (piece.parentNode) piece.parentNode.removeChild(piece); }, 5000);
+      })();
+    }
+  }
+
+  // ── Share ──
+  window.ejShare = function() {
+    var url = window.location.href;
+    var text = 'Just completed the Playmate Labs 5-Day Virtual Sensory Experience. Five days that genuinely changed our date nights. Try it free:';
+    if (navigator.share) {
+      navigator.share({ title: 'Playmate Labs — 5-Day Experience', text: text, url: url });
+    } else {
+      navigator.clipboard && navigator.clipboard.writeText(url).then(function(){
+        alert('Link copied! Share it with someone who needs better date nights.');
+      });
+    }
+  };
+
+  // ── Restart ──
+  window.ejRestart = function() {
+    state.screen = 1;
+    state.currentDay = 0;
+    ejGoTo(1);
+  };
+
+  // ── Helpers ──
+  function ejIsEmail(e) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+  }
+
+  function ejShake(el) {
+    if (!el) return;
+    el.style.animation = 'none';
+    el.style.borderColor = '#C9A96E';
+    el.focus();
+    setTimeout(function(){ el.style.borderColor = ''; }, 1500);
+  }
+
+  function persistState() {
+    try {
+      sessionStorage.setItem('ej_state', JSON.stringify({
+        name: state.name,
+        email: state.email,
+        city: state.city,
+        currentDay: state.currentDay
+      }));
+    } catch(e) {}
+  }
+
+  function restoreState() {
+    try {
+      var s = sessionStorage.getItem('ej_state');
+      if (s) {
+        var d = JSON.parse(s);
+        if (d.name) {
+          state.name = d.name;
+          var nameEl = document.getElementById('ej-welcome-name');
+          var compEl = document.getElementById('ej-comp-name');
+          if (nameEl) nameEl.textContent = d.name;
+          if (compEl) compEl.textContent = d.name + '.';
+        }
+      }
+    } catch(e) {}
+  }
+
+  // ── Init ──
+  document.addEventListener('DOMContentLoaded', function() {
+    restoreState();
+    updateNavVisibility(1);
+    updateProgress(1);
+
+    // Trigger confetti when screen 9 becomes active
+    var obs = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (m.target.id === 'ej-screen-9' && m.target.classList.contains('ej-active')) {
+          setTimeout(ejFireConfetti, 400);
+        }
+      });
+    });
+    var s9 = document.getElementById('ej-screen-9');
+    if (s9) obs.observe(s9, { attributes: true, attributeFilter: ['class'] });
+
+    // Handle URL hash for deep linking to days
+    var hash = window.location.hash;
+    if (hash === '#day1') ejGoToDay(1);
+    else if (hash === '#day2') ejGoToDay(2);
+    else if (hash === '#day3') ejGoToDay(3);
+    else if (hash === '#day4') ejGoToDay(4);
+    else if (hash === '#day5') ejGoToDay(5);
+    else if (hash === '#complete') ejGoTo(9);
+    else if (hash === '#join') ejGoTo(2);
+  });
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "5-Day Journey",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🔑 Klaviyo Integration"
+    },
+    {
+      "type": "text",
+      "id": "klaviyo_public_api_key",
+      "label": "Klaviyo Public API Key"
+    },
+    {
+      "type": "text",
+      "id": "klaviyo_journey_list_id",
+      "label": "Journey List ID",
+      "info": "The Klaviyo list to subscribe journey signups to (separate from the landing page list)"
+    },
+    {
+      "type": "header",
+      "content": "🔗 Internal Links"
+    },
+    {
+      "type": "url",
+      "id": "shop_url",
+      "label": "Shop / Collection URL",
+      "info": "Default: /collections/all"
+    },
+    {
+      "type": "url",
+      "id": "events_url",
+      "label": "Events Page URL",
+      "info": "Default: /pages/events"
+    },
+    {
+      "type": "url",
+      "id": "drops_url",
+      "label": "Monthly Drops URL",
+      "info": "Default: /pages/monthly-drops"
+    },
+    {
+      "type": "url",
+      "id": "community_url",
+      "label": "Community Page URL",
+      "info": "Default: /pages/community"
+    },
+    {
+      "type": "header",
+      "content": "📄 Screen 1 — Landing"
+    },
+    {
+      "type": "text",
+      "id": "s1_tag",
+      "label": "Tag text",
+      "default": "Free Virtual Experience"
+    },
+    {
+      "type": "text",
+      "id": "s1_headline_1",
+      "label": "Headline line 1",
+      "default": "Unlock a Free"
+    },
+    {
+      "type": "text",
+      "id": "s1_headline_em",
+      "label": "Headline italic",
+      "default": "5-Day Virtual"
+    },
+    {
+      "type": "text",
+      "id": "s1_headline_2",
+      "label": "Headline line 3",
+      "default": "Sensory Experience"
+    },
+    {
+      "type": "textarea",
+      "id": "s1_subheadline",
+      "label": "Subheadline",
+      "default": "Five beautifully designed prompts, games and rituals to make date night feel new again."
+    },
+    {
+      "type": "textarea",
+      "id": "s1_support",
+      "label": "Supporting text",
+      "default": "Delivered through a beautifully guided digital journey — with exclusive access to events, drops and rewards."
+    },
+    {
+      "type": "text",
+      "id": "s1_cta",
+      "label": "CTA button",
+      "default": "Start Free"
+    },
+    {
+      "type": "text",
+      "id": "s1_footnote",
+      "label": "Footnote text",
+      "default": "No credit card. No commitment. Just 5 beautiful days."
+    },
+    {
+      "type": "text",
+      "id": "s1_social",
+      "label": "Social proof text",
+      "default": "14,000+ couples started this week"
+    },
+    {
+      "type": "header",
+      "content": "📅 Day 1 — Curiosity"
+    },
+    {
+      "type": "text",
+      "id": "d1_headline",
+      "label": "Headline line 1",
+      "default": "What do you"
+    },
+    {
+      "type": "text",
+      "id": "d1_italic",
+      "label": "Headline italic",
+      "default": "really want"
+    },
+    {
+      "type": "text",
+      "id": "d1_headline2",
+      "label": "Headline line 3",
+      "default": "to know?"
+    },
+    {
+      "type": "textarea",
+      "id": "d1_intro",
+      "label": "Intro text",
+      "default": "Ten questions that cut through the familiar. Deceptively simple, surprisingly revealing. Pick your favourite — or work through them all."
+    },
+    {
+      "type": "header",
+      "content": "📅 Day 2 — Play"
+    },
+    {
+      "type": "text",
+      "id": "d2_headline",
+      "label": "Headline",
+      "default": "Game"
+    },
+    {
+      "type": "text",
+      "id": "d2_italic",
+      "label": "Italic word",
+      "default": "on."
+    },
+    {
+      "type": "textarea",
+      "id": "d2_intro",
+      "label": "Intro text",
+      "default": "A competitive sensory challenge. Who actually knows who? Scored live. With forfeits. Prepare to be surprised by how wrong you are — and how good that feels."
+    },
+    {
+      "type": "header",
+      "content": "📅 Day 3 — Sensory"
+    },
+    {
+      "type": "text",
+      "id": "d3_headline",
+      "label": "Headline",
+      "default": "Feel"
+    },
+    {
+      "type": "text",
+      "id": "d3_italic",
+      "label": "Italic",
+      "default": "everything."
+    },
+    {
+      "type": "textarea",
+      "id": "d3_intro",
+      "label": "Intro text",
+      "default": "A guided 20-minute ritual using things already in your home. Touch, taste, scent and sound — experienced completely differently when done together with intention."
+    },
+    {
+      "type": "text",
+      "id": "d3_product_name",
+      "label": "Product CTA name",
+      "default": "The Velvet Hour Kit"
+    },
+    {
+      "type": "textarea",
+      "id": "d3_product_desc",
+      "label": "Product CTA description",
+      "default": "Our bestselling sensory ritual kit — everything you need for tonight, beautifully packaged."
+    },
+    {
+      "type": "url",
+      "id": "d3_product_url",
+      "label": "Product URL"
+    },
+    {
+      "type": "header",
+      "content": "📅 Day 4 — Adventure"
+    },
+    {
+      "type": "text",
+      "id": "d4_headline",
+      "label": "Headline",
+      "default": "Break the"
+    },
+    {
+      "type": "text",
+      "id": "d4_italic",
+      "label": "Italic",
+      "default": "pattern."
+    },
+    {
+      "type": "textarea",
+      "id": "d4_intro",
+      "label": "Intro text",
+      "default": "The best nights happen when no one planned them. Tonight, one of you commits before you know the plan."
+    },
+    {
+      "type": "header",
+      "content": "📅 Day 5 — Invitation"
+    },
+    {
+      "type": "text",
+      "id": "d5_headline",
+      "label": "Headline",
+      "default": "This is"
+    },
+    {
+      "type": "text",
+      "id": "d5_italic",
+      "label": "Italic",
+      "default": "just the beginning."
+    },
+    {
+      "type": "textarea",
+      "id": "d5_intro",
+      "label": "Intro text",
+      "default": "You've spent 5 days making date night feel new. Now we want to take you somewhere deeper. Welcome to the Playmate world."
+    }
+  ],
+  "presets": [
+    {
+      "name": "5-Day Journey",
+      "category": "Playmate Labs"
+    }
+  ]
+}
+{% endschema %}
