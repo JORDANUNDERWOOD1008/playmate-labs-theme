@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 {% comment %}
   PLAYMATE LABS — 5-DAY VIRTUAL SENSORY EXPERIENCE (INTERACTIVE JOURNEY)
   File: sections/experience-journey.liquid
@@ -1315,11 +1316,23 @@
 
 })();
 </script>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "5-Day Journey",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "header",
       "content": "🔑 Klaviyo Integration"
