@@ -994,109 +994,73 @@
 }
 
 @media (max-width: 768px) {
-  /* Switch background layers: portrait photo on mobile */
+  /* ── BG LAYERS ── */
   .hero-bg-desktop { display: none; }
-  .hero-bg-mobile   { display: block; }
+  .hero-bg-mobile  { display: block; }
 
-  /* Mobile gradient: strong top third covers text, gentle fade over product,
-     solid bottom quarter covers buttons */
+  /* Gradient: dark top band (covers copy), clear window (shows product), dark bottom band (covers buttons) */
   .hero-gradient {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(8,2,4,0.85) 0%,
-        rgba(8,2,4,0.55) 22%,
-        rgba(8,2,4,0.10) 45%,
-        rgba(8,2,4,0.10) 62%,
-        rgba(8,2,4,0.70) 80%,
-        rgba(8,2,4,0.92) 100%
-      );
+    background: linear-gradient(
+      180deg,
+      rgba(8,2,4,0.88) 0%,
+      rgba(8,2,4,0.55) 20%,
+      rgba(8,2,4,0.06) 40%,
+      rgba(8,2,4,0.06) 62%,
+      rgba(8,2,4,0.70) 80%,
+      rgba(8,2,4,0.94) 100%
+    );
     z-index: 1;
   }
 
-  /* ── MOBILE HERO: section is the scroll container.
-     overflow:hidden clips the absolute bg so it NEVER scrolls
-     separately from the content — fixes iOS "parallax" effect. ── */
+  /* SECTION: plain block, natural height from content + padding.
+     overflow:hidden keeps the bg image clipped to the section — no parallax, no overlap. */
   .hero-section {
-    min-height: 135vw;        /* tall enough to show full product photo */
-    min-height: max(135vw, 100svh);
-    background: #0c0408;
-    overflow: hidden;          /* clips bg image — kills parallax */
-    position: relative;        /* stacking context for absolute children */
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* bg-mobile: absolute inside the section — scrolls WITH the page content */
-  .hero-bg-mobile {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-  }
-
-  /* Content wrap: fills section height, no padding override */
-  .hero-content-wrap {
-    flex: 1;
-    display: flex;
-    align-items: stretch;
-    padding-top: 0;
-    padding-bottom: 0;
+    display: block;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
     position: relative;
-    z-index: 2;
-    justify-content: center;
-  }
-
-  /* Container: full-height flex column */
-  .hero-content-wrap > .container {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-
-  /* Hero inner: space-between splits top-copy and bottom-copy.
-     Generous top padding pushes headline high above the product.
-     Bottom padding clears the iPhone home indicator. */
-  .hero-inner {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    text-align: center;
-    flex: 1;
-    max-width: 100%;
-    gap: 0;
-    padding-top: calc(var(--nav-height, 64px) + var(--bar-height, 38px) + 2rem);
+    background: #0c0408;
+    /* Top pad clears nav + announcement bar. Bottom pad pushes section edge below buttons. */
+    padding-top: calc(var(--nav-height, 64px) + var(--bar-height, 38px) + 2.5rem);
     padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 0px) + 1.5rem);
   }
 
-  /* hero-text: fills remaining height, splits top/bottom zones */
-  .hero-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    flex: 1;
+  /* BG IMAGE: absolute, taller than section so product photo is centred vertically */
+  .hero-bg-mobile {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 100%;
+    z-index: 0;
+  }
+  .hero-bg-img-mobile {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    gap: 0;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
   }
 
-  /* TOP zone — eyebrow + headline + description, sits near the top */
+  /* CONTENT: plain block, sits in normal document flow on top of bg */
+  .hero-content-wrap {
+    display: block;
+    position: relative;
+    z-index: 2;
+    padding: 0;
+  }
+  .hero-content-wrap > .container { display: block; }
+  .hero-inner  { display: block; text-align: center; max-width: 100%; }
+  .hero-text   { display: block; width: 100%; }
+
+  /* TOP COPY: eyebrow + headline + description */
   .hero-copy-top {
-    width: 100%;
-    padding: 0 1.25rem;
+    display: block;
+    padding: 0 1.25rem 1.25rem;
   }
-
-  .hero-eyebrow {
-    justify-content: center;
-    margin-bottom: 0.5rem;
-  }
+  .hero-eyebrow { justify-content: center; margin-bottom: 0.5rem; }
   .hero-eyebrow::before { display: none; }
-
-  .hero-headline {
-    font-size: clamp(2.2rem, 9vw, 3.2rem);
-    margin-bottom: 0.75rem;
-  }
-
+  .hero-headline { font-size: clamp(2.2rem, 9vw, 3.2rem); margin-bottom: 0.75rem; }
   .hero-sub {
     font-size: 0.9375rem;
     line-height: 1.6;
@@ -1106,11 +1070,11 @@
     margin-bottom: 0;
   }
 
-  /* BOTTOM zone — buttons + trust, pinned to bottom */
+  /* SPACER: vw-based gap that shows the product photo between copy and buttons.
+     On a 390px iPhone 16: 38vw ≈ 148px — enough to see the chocolate box. */
   .hero-copy-bottom {
-    width: 100%;
-    padding: 0 1.25rem;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    display: block;
+    padding: 38vw 1.25rem 0;
   }
 
   .hero-actions {
@@ -1121,13 +1085,11 @@
     margin-bottom: 1rem;
     justify-content: center;
   }
-
   .hero-actions .btn {
     width: 100%;
     max-width: 300px;
     justify-content: center;
   }
-
   .hero-trust {
     justify-content: center;
     flex-wrap: wrap;
@@ -1138,7 +1100,6 @@
   /* Hide desktop-only elements */
   .hero-visual      { display: none; }
   .hero-scroll-hint { display: none; }
-
   .value-strip-inner {
     justify-content: flex-start;
     padding: 0 1rem;
