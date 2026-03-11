@@ -137,7 +137,7 @@
     // Auto-close after 3s
     setTimeout(function() {
       var popup = document.getElementById('newsletter-popup');
-      if (popup) popup.classList.remove('open');
+      if (popup) popup.classList.remove('visible');
     }, 3000);
   }
 
@@ -175,4 +175,30 @@
   });
 })();
 </script>
+{%- comment -%} Exit Intent Popup — Discount Offer {%- endcomment -%}
+<div class="newsletter-popup" id="exit-intent-popup" role="dialog" aria-label="Special offer" aria-modal="true">
+  <div class="newsletter-popup-overlay" id="exit-popup-overlay"></div>
+  <div class="newsletter-popup-inner" style="max-width:420px;">
+    <button class="newsletter-popup-close" id="exit-popup-close" aria-label="Close">✕</button>
+    <p class="label" style="color:var(--gold);margin-bottom:0.5rem;">Before You Go</p>
+    <h2 style="font-family:var(--font-serif);font-size:1.5rem;margin-bottom:0.75rem;color:var(--cream);">
+      Take 10% Off Your First Order
+    </h2>
+    <p style="font-size:0.875rem;color:rgba(245,239,230,0.65);margin-bottom:1.25rem;">
+      Use code <strong style="color:var(--gold);letter-spacing:0.05em;">FIRSTDATE</strong> at checkout.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+      <a href="/collections/all" class="btn btn-gold btn-lg" style="width:100%;justify-content:center;text-decoration:none;" onclick="try{localStorage.setItem('pl_popup_subscribed','1')}catch(e){}">
+        Shop Now — 10% Off
+      </a>
+      <button type="button" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;opacity:0.6;" onclick="document.getElementById('exit-intent-popup').classList.remove('visible');document.body.style.overflow='';try{localStorage.setItem('pl_exit_dismissed',String(Date.now()))}catch(e){}">
+        No thanks
+      </button>
+    </div>
+    <p style="font-size:0.6875rem;color:rgba(245,239,230,0.3);margin-top:1rem;">
+      Valid on your first order. Cannot be combined with other offers.
+    </p>
+  </div>
+</div>
+
 {%- endif -%}
