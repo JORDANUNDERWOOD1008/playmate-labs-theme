@@ -38,23 +38,38 @@
         </div>
       </div>
 
-      {%- comment -%} Link columns from settings {%- endcomment -%}
-      {%- for i in (1..3) -%}
-        {%- assign col_menu_key = 'footer_menu_' | append: i -%}
-        {%- assign col_heading_key = 'footer_heading_' | append: i -%}
-        {%- assign col_menu = section.settings[col_menu_key] -%}
-        {%- assign col_heading = section.settings[col_heading_key] -%}
-        {%- if col_menu != blank -%}
-          <div class="footer-col">
-            <h4>{{ col_heading }}</h4>
-            <ul>
-              {%- for link in linklists[col_menu].links -%}
-                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-              {%- endfor -%}
-            </ul>
-          </div>
-        {%- endif -%}
-      {%- endfor -%}
+      {%- comment -%} Shop Column {%- endcomment -%}
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="/collections/all">All Products</a></li>
+          <li><a href="/products/playmate-chocolate">The Velvet Hour</a></li>
+          <li><a href="/pages/monthly-drops">Monthly Drops</a></li>
+          <li><a href="/pages/gifts">Gifts</a></li>
+        </ul>
+      </div>
+
+      {%- comment -%} Explore Column {%- endcomment -%}
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="/pages/about">About Playmate Labs</a></li>
+          <li><a href="/pages/jordan-underwood">Jordan Underwood</a></li>
+          <li><a href="/blogs/the-playmate-journal">The Journal</a></li>
+          <li><a href="/pages/events">Events</a></li>
+          <li><a href="/pages/5-day-experience">5-Day Experience</a></li>
+        </ul>
+      </div>
+
+      {%- comment -%} Help Column {%- endcomment -%}
+      <div class="footer-col">
+        <h4>Help</h4>
+        <ul>
+          <li><a href="/pages/faq">FAQ</a></li>
+          <li><a href="/pages/contact-1">Contact Us</a></li>
+          <li><a href="/pages/stockists">Stockists</a></li>
+        </ul>
+      </div>
 
     </div>
 
@@ -225,3 +240,4 @@
   ]
 }
 {% endschema %}
+
