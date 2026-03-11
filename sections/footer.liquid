@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 {% comment %}
   PLAYMATE LABS — FOOTER SECTION
   File: sections/footer.liquid
@@ -151,11 +152,23 @@
     </div>
   </div>
 </footer>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Footer",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "image_picker",
       "id": "footer_logo",
@@ -240,4 +253,3 @@
   ]
 }
 {% endschema %}
-

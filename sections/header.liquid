@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 {% comment %}
   PLAYMATE LABS — HEADER SECTION
   File: sections/header.liquid
@@ -164,12 +165,24 @@
     </form>
   </div>
 </div>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Header",
   "class": "playmate-header-section",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "image_picker",
       "id": "logo",
@@ -209,10 +222,20 @@
       "label": "Show 'Unlock Free Experience' CTA in nav",
       "default": true
     },
-
-    {"type": "header", "content": "🔗 Button URLs (editable in customiser)"},
-    {"type": "url", "id": "url_experience", "label": "Experience Page (Nav CTA)"},
-    {"type": "url", "id": "url_monthly_drops", "label": "Monthly Drops (Mobile Menu)"}
+    {
+      "type": "header",
+      "content": "🔗 Button URLs (editable in customiser)"
+    },
+    {
+      "type": "url",
+      "id": "url_experience",
+      "label": "Experience Page (Nav CTA)"
+    },
+    {
+      "type": "url",
+      "id": "url_monthly_drops",
+      "label": "Monthly Drops (Mobile Menu)"
+    }
   ]
 }
 {% endschema %}
