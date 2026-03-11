@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 <!-- HERO SECTION -->
 <section class="hero-section" id="hero">
   <div class="hero-bg">
@@ -79,24 +80,98 @@
     <div class="scroll-dot"></div>
   </div>
 </section>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Hero",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "A new culture of connection" },
-    { "type": "text", "id": "headline_line1", "label": "Headline Line 1", "default": "Rewriting how" },
-    { "type": "text", "id": "headline_italic", "label": "Italic Word", "default": "couples" },
-    { "type": "text", "id": "headline_line2", "label": "Headline Line 2", "default": "do date night." },
-    { "type": "textarea", "id": "subheadline", "label": "Subheadline", "default": "Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships." },
-    { "type": "text", "id": "cta_primary", "label": "Primary CTA", "default": "Start the 5-Day Experience" },
-    { "type": "url", "id": "cta_primary_url", "label": "Primary CTA URL" },
-    { "type": "text", "id": "cta_secondary", "label": "Secondary CTA", "default": "Shop the Latest Drop" },
-    { "type": "url", "id": "cta_secondary_url", "label": "Secondary CTA URL" },
-    { "type": "image_picker", "id": "bg_image", "label": "Background Image (optional)" },
-    { "type": "text", "id": "drop_name", "label": "Drop Name", "default": "The Velvet Hour Kit" },
-    { "type": "text", "id": "drop_price", "label": "Drop Price", "default": "£68" }
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "A new culture of connection"
+    },
+    {
+      "type": "text",
+      "id": "headline_line1",
+      "label": "Headline Line 1",
+      "default": "Rewriting how"
+    },
+    {
+      "type": "text",
+      "id": "headline_italic",
+      "label": "Italic Word",
+      "default": "couples"
+    },
+    {
+      "type": "text",
+      "id": "headline_line2",
+      "label": "Headline Line 2",
+      "default": "do date night."
+    },
+    {
+      "type": "textarea",
+      "id": "subheadline",
+      "label": "Subheadline",
+      "default": "Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships."
+    },
+    {
+      "type": "text",
+      "id": "cta_primary",
+      "label": "Primary CTA",
+      "default": "Start the 5-Day Experience"
+    },
+    {
+      "type": "url",
+      "id": "cta_primary_url",
+      "label": "Primary CTA URL"
+    },
+    {
+      "type": "text",
+      "id": "cta_secondary",
+      "label": "Secondary CTA",
+      "default": "Shop the Latest Drop"
+    },
+    {
+      "type": "url",
+      "id": "cta_secondary_url",
+      "label": "Secondary CTA URL"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background Image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "drop_name",
+      "label": "Drop Name",
+      "default": "The Velvet Hour Kit"
+    },
+    {
+      "type": "text",
+      "id": "drop_price",
+      "label": "Drop Price",
+      "default": "£68"
+    }
   ],
-  "presets": [{ "name": "Hero", "category": "Hero" }]
+  "presets": [
+    {
+      "name": "Hero",
+      "category": "Hero"
+    }
+  ]
 }
 {% endschema %}

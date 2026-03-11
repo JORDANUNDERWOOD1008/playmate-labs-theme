@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 <!-- HOW IT WORKS -->
 <section class="section how-it-works" id="how-it-works">
   <div class="container">
@@ -66,11 +67,29 @@
     </div>
   </div>
 </section>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "How It Works",
-  "settings": [],
-  "presets": [{ "name": "How It Works", "category": "Content" }]
+  "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    }
+  ],
+  "presets": [
+    {
+      "name": "How It Works",
+      "category": "Content"
+    }
+  ]
 }
 {% endschema %}

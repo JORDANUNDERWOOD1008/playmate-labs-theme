@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 <!-- SOCIAL PROOF / TESTIMONIALS -->
 <section class="section social-proof" id="social-proof">
   <div class="container">
@@ -69,11 +70,29 @@
     </p>
   </div>
 </section>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Social Proof",
-  "settings": [],
-  "presets": [{ "name": "Social Proof", "category": "Content" }]
+  "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Social Proof",
+      "category": "Content"
+    }
+  ]
 }
 {% endschema %}

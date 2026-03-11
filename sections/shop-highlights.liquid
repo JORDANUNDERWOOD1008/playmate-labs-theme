@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 <!-- SHOP HIGHLIGHTS -->
 <section class="section" id="shop-highlights">
   <div class="container">
@@ -171,13 +172,35 @@
   font-family: var(--font-sans);
 }
 </style>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Shop Highlights",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Designed to make date night feel new again." }
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Designed to make date night feel new again."
+    }
   ],
-  "presets": [{ "name": "Shop Highlights", "category": "Featured" }]
+  "presets": [
+    {
+      "name": "Shop Highlights",
+      "category": "Featured"
+    }
+  ]
 }
 {% endschema %}

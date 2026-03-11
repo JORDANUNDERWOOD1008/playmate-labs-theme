@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 {% comment %}
   PLAYMATE LABS — HOME FEATURED DROP SECTION
   File: sections/home-featured-drop.liquid
@@ -145,11 +146,23 @@
     </div><!-- /.featured-drop__content -->
   </div><!-- /.container -->
 </section>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Featured Drop",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "header",
       "content": "Background Images"

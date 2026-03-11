@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 {% comment %}
   PLAYMATE LABS — HOME PRODUCT GRID SECTION
   File: sections/home-product-grid.liquid
@@ -45,6 +46,7 @@
     </div>
   </div>
 </section>
+{%- endif -%}
 
 {% schema %}
 {
@@ -70,6 +72,17 @@
     }
   ],
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "text",
       "id": "eyebrow",
@@ -112,10 +125,34 @@
     {
       "name": "Product Grid",
       "blocks": [
-        { "type": "category", "settings": { "label": "Consumables", "filter_value": "consumables" } },
-        { "type": "category", "settings": { "label": "Date Night Kits", "filter_value": "date-night-kits" } },
-        { "type": "category", "settings": { "label": "Games", "filter_value": "games" } },
-        { "type": "category", "settings": { "label": "Gifts", "filter_value": "gifts" } }
+        {
+          "type": "category",
+          "settings": {
+            "label": "Consumables",
+            "filter_value": "consumables"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "label": "Date Night Kits",
+            "filter_value": "date-night-kits"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "label": "Games",
+            "filter_value": "games"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "label": "Gifts",
+            "filter_value": "gifts"
+          }
+        }
       ]
     }
   ]
