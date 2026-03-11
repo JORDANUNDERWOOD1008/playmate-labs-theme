@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 <!-- EVENTS PREVIEW -->
 <section class="section bg-ivory" id="events-preview">
   <div class="container">
@@ -333,12 +334,24 @@
   }
 })();
 </script>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Events Preview",
   "tag": "section",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "text",
       "id": "eyebrow",
@@ -460,8 +473,14 @@
           "id": "badge_style",
           "label": "Date badge & button style",
           "options": [
-            { "value": "burgundy", "label": "Burgundy (default)" },
-            { "value": "gold",     "label": "Gold (flagship)" }
+            {
+              "value": "burgundy",
+              "label": "Burgundy (default)"
+            },
+            {
+              "value": "gold",
+              "label": "Gold (flagship)"
+            }
           ],
           "default": "burgundy"
         },
@@ -515,7 +534,7 @@
             "image_url": "https://sspark.genspark.ai/cfimages?u1=p%2FinsJjEJ5%2FYeAqggmV7vKz%2Bd2dGccjBP2purg4YHqquGh2KL1%2FttwqXqScey6iNkuKJGcoztjn9HoEJ%2BjBmWym1u4E8Gjmj%2BusMwzs1CZIIL6cRrBrBK%2F22%2BZzlR1vCYaYV%2FIy9yi1MMmKdIkvhiHlZ6w7ewXYE9dXO8jJSobteAdSZ%2Bg%3D%3D&u2=2IG%2FnpZ5SS3rrW1p&width=800",
             "fallback_emoji": "🏃",
             "badge_style": "burgundy",
-            "cta_label": "Join",
+            "cta_label": "Join"
           }
         },
         {
@@ -532,7 +551,7 @@
             "image_url": "https://sspark.genspark.ai/cfimages?u1=LMNbgRlH0e2UhtQZrXwMJeGXv9F%2BKQ9S5ka0%2F03umtlyIu8GZWkYM8TKTu3IsrqOqJFp66ExJK5VnGqIhf73sIrfyrInt43XAZc5oJh99YW6xFbTV5pgUHZRGnk7uuKsuCA%3D&u2=1yFfxoEgnTAHk%2Blb&width=800",
             "fallback_emoji": "🎾",
             "badge_style": "burgundy",
-            "cta_label": "RSVP",
+            "cta_label": "RSVP"
           }
         },
         {
@@ -549,7 +568,7 @@
             "image_url": "https://sspark.genspark.ai/cfimages?u1=qM3g5oUs9%2BFXIyYckCW9tznYuuPq6U%2BeUKTMmREz1HcwHwwJatXPKkvYbZqRJSoqV5%2B7GahRuzIvKdCheQWJ4DMVGI6fudUQ%2FDd%2FRptCbFmgo5KRSkqoIIiAlQB3jxCnJWs5ccJSpeDH7s6Rm5BkWCqGBZtPyt96Oyjk2HImASE9qJ2Tm1km90L7%2FNKCwpe0%2BU9X&u2=JQjbJBMQh43COReB&width=800",
             "fallback_emoji": "🥾",
             "badge_style": "burgundy",
-            "cta_label": "Join",
+            "cta_label": "Join"
           }
         },
         {
@@ -566,7 +585,7 @@
             "image_url": "https://sspark.genspark.ai/cfimages?u1=WIHc8QbYMsIHlfP3F43Cf4x1v4PWR3eS0Vvz2GQ3TxDDunCrZ5TT0THmF7p8OVwH2HfSmsLvlTUc0Tjn8P1uWMpuPvV1TdNp3bPgPMQmqxpjt%2B57oPEVrsoXIdWrd%2FfeJ1f%2Fy7Stgn8GD5s2y7A%3D%3D&u2=BwoAvciSKJoQ0lRY&width=800",
             "fallback_emoji": "🎭",
             "badge_style": "gold",
-            "cta_label": "Get Tickets",
+            "cta_label": "Get Tickets"
           }
         }
       ]
