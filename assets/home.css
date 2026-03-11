@@ -90,8 +90,9 @@
   grid-template-columns: 1fr;
   gap: 0;
   align-items: flex-start;
-  /* Pin copy to the left 50% so product photo shows on right */
-  max-width: 50%;
+  /* Shift copy right ~20% so product is fully unobstructed */
+  max-width: 42%;
+  margin-left: 8%;
   margin-right: auto;
 }
 
