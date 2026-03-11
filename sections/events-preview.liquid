@@ -1,167 +1,243 @@
 <!-- EVENTS PREVIEW -->
 <section class="section bg-ivory" id="events-preview">
   <div class="container">
+
     <div class="section-header reveal">
-      <span class="section-eyebrow">Upcoming Experiences</span>
-      <h2 class="heading-xl">Experiences worth<br>dressing up for.</h2>
+      <span class="section-eyebrow">{{ section.settings.eyebrow | default: 'Upcoming Experiences' }}</span>
+      <h2 class="heading-xl">{{ section.settings.heading | default: 'Experiences worth dressing up for.' }}</h2>
       <div class="section-divider"></div>
-      <p style="color:var(--text-muted);max-width:480px;margin:0 auto;">IRL events, sensory pop-ups and couples experiences across the UK — and beyond.</p>
+      <p style="color:var(--text-muted);max-width:480px;margin:0 auto;">{{ section.settings.subheading | default: 'IRL events, sensory pop-ups and couples experiences across the UK — and beyond.' }}</p>
     </div>
 
-    <!-- Carousel viewport (mobile) / plain grid (desktop) -->
     <div class="events-carousel-viewport" id="eventsViewport" role="region" aria-label="Events carousel">
       <div class="events-preview-grid" id="eventsTrack">
 
-        <!-- Event 1 -->
-        <div class="event-card reveal" data-delay="0">
-          <div class="event-card-img">
-            <img
-              src="https://sspark.genspark.ai/cfimages?u1=ZXbSe4DsiBsIdQWxUv8Nm0ZVRE3lJZePb6l8AuMyPmB0EYgkeseLnhc9CYxTr%2FmWsDvzP8faWpgeuH4bI2Rlj5qb%2Bx3nhdaFtG4NR7HMliJvaPrSVUDWk3lUpnoNPvviVPHYotoV%2FU%2BzsToWG6IVQDHRXhkWAV71m6HaMY62%2F%2BfhtdJ7gzQmi9Of8JuQcDW2&u2=LDq4mUygxZGYiiWs&width=2560"
-              alt="Elegant Candlelit Dinner"
-              loading="lazy"
-              style="width:100%;height:200px;object-fit:cover;display:block;border-radius:var(--radius-md) var(--radius-md) 0 0;"
-            >
-            <!-- Coming Soon Badge -->
-            <div class="coming-soon-badge">Coming Soon</div>
-            <div class="event-date-badge">
-              <span class="day">14</span>
-              <span class="month">Feb</span>
-            </div>
-          </div>
-          <div class="event-card-body">
-            <div class="event-card-meta">
-              <span class="event-card-city"><i class="fas fa-map-marker-alt" style="font-size:0.6rem;"></i> London</span>
-              <span class="event-card-type">Couples Dinner</span>
-            </div>
-            <h3 class="event-card-title">The Velvet Valentine's Experience</h3>
-            <p class="event-card-desc">An intimate sensory dinner for two in a candlelit, curated space. 7 courses. One memorable evening.</p>
-            <div class="event-card-footer">
-              <span class="event-price">From £140/couple</span>
-              <a href="/pages/events" class="btn btn-sm btn-secondary">RSVP</a>
-            </div>
-          </div>
-        </div>
+        {%- for block in section.blocks -%}
+          {%- assign coming_soon = block.settings.coming_soon -%}
+          <div class="event-card reveal" data-delay="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+            <div class="event-card-img">
 
-        <!-- Event 2 -->
-        <div class="event-card reveal" data-delay="1">
-          <div class="event-card-img">
-            <img
-              src="https://sspark.genspark.ai/cfimages?u1=94cY2fBbwLAPB9yCeQZFD50KrmuFE2f9AovsYF7WUmep0L1vPXcA%2BTrZzccBBxhI5h3iNsMEbykiMwinlvKFq%2BDuddG%2BxqNaFePR0YcHeRBilfD1yun37shru5fKYK8a6yxOM5EDpsmWgOgmqDstnOJgHnybm2SEvINR3p7PAk4Ad7bVgAgrz6zOZ03PaA%3D%3D&u2=ZNv0VSuEhFcP%2Brjs&width=2560"
-              alt="Elegant Social Night"
-              loading="lazy"
-              style="width:100%;height:200px;object-fit:cover;display:block;border-radius:var(--radius-md) var(--radius-md) 0 0;"
-            >
-            <!-- Coming Soon Badge -->
-            <div class="coming-soon-badge">Coming Soon</div>
-            <div class="event-date-badge">
-              <span class="day">02</span>
-              <span class="month">Mar</span>
-            </div>
-          </div>
-          <div class="event-card-body">
-            <div class="event-card-meta">
-              <span class="event-card-city"><i class="fas fa-map-marker-alt" style="font-size:0.6rem;"></i> Manchester</span>
-              <span class="event-card-type">Social Event</span>
-            </div>
-            <h3 class="event-card-title">Singles &amp; Mingling — The Playmate Night</h3>
-            <p class="event-card-desc">Not a speed date. Not a bar night. Something entirely new — for people who take fun seriously.</p>
-            <div class="event-card-footer">
-              <span class="event-price">£35/person</span>
-              <a href="/pages/events" class="btn btn-sm btn-secondary">RSVP</a>
-            </div>
-          </div>
-        </div>
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 800 | image_tag:
+                  loading: 'lazy',
+                  alt: block.settings.title,
+                  style: 'width:100%;height:220px;object-fit:cover;display:block;'
+                }}
+              {%- elsif block.settings.image_url != blank -%}
+                <img
+                  src="{{ block.settings.image_url }}"
+                  alt="{{ block.settings.title }}"
+                  loading="lazy"
+                  style="width:100%;height:220px;object-fit:cover;display:block;"
+                  onerror="this.parentNode.querySelector('.ep-fallback').style.display='flex';this.style.display='none';"
+                >
+              {%- endif -%}
 
-        <!-- Event 3 -->
-        <div class="event-card reveal" data-delay="2">
-          <div class="event-card-img">
-            <img
-              src="https://sspark.genspark.ai/cfimages?u1=WIHc8QbYMsIHlfP3F43Cf4x1v4PWR3eS0Vvz2GQ3TxDDunCrZ5TT0THmF7p8OVwH2HfSmsLvlTUc0Tjn8P1uWMpuPvV1TdNp3bPgPMQmqxpjt%2B57oPEVrsoXIdWrd%2FfeJ1f%2Fy7Stgn8GD5s2y7A%3D%3D&u2=BwoAvciSKJoQ0lRY&width=2560"
-              alt="Immersive Luxury Event"
-              loading="lazy"
-              style="width:100%;height:200px;object-fit:cover;display:block;border-radius:var(--radius-md) var(--radius-md) 0 0;"
-            >
-            <!-- Coming Soon Badge -->
-            <div class="coming-soon-badge coming-soon-badge--gold">Coming Soon</div>
-            <div class="event-date-badge" style="background:var(--gold);">
-              <span class="day" style="color:var(--espresso);">20</span>
-              <span class="month" style="color:var(--espresso);">Apr</span>
+              <!-- Fallback gradient -->
+              <div class="ep-fallback" style="display:none;height:220px;background:linear-gradient(135deg,#3D1020,#6B1E3A);align-items:center;justify-content:center;flex-direction:column;gap:8px;">
+                <span style="font-size:2.5rem;">{{ block.settings.fallback_emoji | default: '✦' }}</span>
+                <span style="color:rgba(245,239,230,0.45);font-family:var(--font-serif);font-size:0.85rem;">{{ block.settings.event_type }}</span>
+              </div>
+
+              {%- if coming_soon -%}
+                <div class="coming-soon-badge {% if block.settings.badge_style == 'gold' %}coming-soon-badge--gold{% endif %}">Coming Soon</div>
+              {%- endif -%}
+
+              <div class="event-date-badge {% if block.settings.badge_style == 'gold' %}event-date-badge--gold{% endif %}">
+                <span class="day">{{ block.settings.date_day }}</span>
+                <span class="month">{{ block.settings.date_month }}</span>
+              </div>
+            </div>
+
+            <div class="event-card-body">
+              <div class="event-card-meta">
+                <span class="event-card-city"><i class="fas fa-map-marker-alt" style="font-size:0.6rem;margin-right:3px;"></i>{{ block.settings.city }}</span>
+                <span class="event-card-type">{{ block.settings.event_type }}</span>
+              </div>
+              <h3 class="event-card-title">{{ block.settings.title }}</h3>
+              <p class="event-card-desc">{{ block.settings.description }}</p>
+              <div class="event-card-footer">
+                <span class="event-price">{{ block.settings.price }}</span>
+                {%- if coming_soon -%}
+                  <button
+                    class="btn btn-sm btn-notify ep-notify-btn"
+                    data-event="{{ block.settings.title | escape }}"
+                    aria-pressed="false"
+                  >
+                    <span class="ep-notify-label">Notify Me</span>
+                    <span class="ep-notify-icon">🔔</span>
+                  </button>
+                {%- else -%}
+                  <a href="{{ block.settings.rsvp_url | default: '/pages/events' }}" class="btn btn-sm {% if block.settings.badge_style == 'gold' %}btn-primary{% else %}btn-secondary{% endif %}">
+                    {{ block.settings.cta_label | default: 'RSVP' }}
+                  </a>
+                {%- endif -%}
+              </div>
             </div>
           </div>
-          <div class="event-card-body">
-            <div class="event-card-meta">
-              <span class="event-card-city"><i class="fas fa-map-marker-alt" style="font-size:0.6rem;"></i> London</span>
-              <span class="event-card-type">Flagship Event</span>
-            </div>
-            <h3 class="event-card-title">The Annual Playmate Gathering</h3>
-            <p class="event-card-desc">Our signature event. One night. 300 couples. An immersive sensory world built for connection.</p>
-            <div class="event-card-footer">
-              <span class="event-price">From £85/couple</span>
-              <a href="/pages/events" class="btn btn-sm btn-primary">Get Tickets</a>
-            </div>
-          </div>
-        </div>
+        {%- endfor -%}
 
-      </div><!-- /events-preview-grid -->
-    </div><!-- /events-carousel-viewport -->
+      </div>
+    </div>
 
-    <!-- Dot indicators (mobile only) -->
+    <!-- Dot indicators -->
     <div class="events-dots" id="eventsDots" aria-hidden="true">
-      <span class="events-dot events-dot--active"></span>
-      <span class="events-dot"></span>
-      <span class="events-dot"></span>
+      {%- for block in section.blocks -%}
+        <span class="events-dot {% if forloop.first %}events-dot--active{% endif %}"></span>
+      {%- endfor -%}
     </div>
 
     <div class="text-center reveal" style="margin-top:var(--space-xl);">
-      <a href="/pages/events" class="btn btn-secondary btn-lg">View All Events</a>
+      <a href="{{ section.settings.view_all_url | default: '/pages/events' }}" class="btn btn-secondary btn-lg">
+        {{ section.settings.view_all_label | default: 'View All Events' }}
+      </a>
     </div>
+
   </div>
 </section>
 
+<!-- ── Notify Me Toast ── -->
+<div class="ep-toast" id="epToast" role="status" aria-live="polite">
+  <span class="ep-toast-icon">🔔</span>
+  <span class="ep-toast-msg">You're on the list!</span>
+</div>
+
 <style>
-  /* Coming Soon Badge */
+  /* ── Card image wrapper ── */
   .event-card-img {
     position: relative;
     overflow: hidden;
   }
+  .event-card-img img,
+  .event-card-img .ep-fallback {
+    border-radius: 0;
+  }
+  .event-card-img img {
+    transition: transform 0.45s ease;
+  }
+  .event-card:hover .event-card-img img {
+    transform: scale(1.05);
+  }
 
+  /* ── Coming Soon Badge ── */
   .coming-soon-badge {
     position: absolute;
     top: 12px;
     left: 12px;
-    background: rgba(90, 20, 50, 0.92);
+    background: rgba(90, 20, 50, 0.90);
     color: #F5EFE6;
     font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.65rem;
+    font-size: 0.60rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    padding: 4px 10px;
+    padding: 5px 11px;
     border-radius: 20px;
-    border: 1px solid rgba(245, 220, 180, 0.35);
-    backdrop-filter: blur(4px);
+    border: 1px solid rgba(245,220,180,0.30);
+    backdrop-filter: blur(6px);
     z-index: 10;
     pointer-events: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.28);
   }
-
   .coming-soon-badge--gold {
-    background: rgba(180, 140, 60, 0.92);
+    background: rgba(201,168,76,0.95);
     color: #1a0a05;
-    border-color: rgba(245, 220, 120, 0.5);
+    border-color: rgba(245,220,120,0.55);
   }
 
-  /* Ensure image covers properly */
-  .event-card-img img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
+  /* ── Date Badge ── */
+  .event-date-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--burgundy, #5a1432);
+    color: var(--ivory, #F5EFE6);
+    border-radius: 6px;
+    padding: 5px 10px;
+    text-align: center;
+    z-index: 10;
+    min-width: 44px;
+  }
+  .event-date-badge--gold {
+    background: var(--gold, #C9A84C);
+    color: var(--espresso, #1a0a05);
+  }
+  .event-date-badge .day {
     display: block;
-    transition: transform 0.4s ease;
+    font-family: var(--font-serif, 'Cormorant Garamond', serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .event-date-badge .month {
+    display: block;
+    font-size: 0.60rem;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    margin-top: 2px;
+    opacity: 0.85;
   }
 
-  .event-card:hover .event-card-img img {
-    transform: scale(1.04);
+  /* ── Notify Me Button ── */
+  .ep-notify-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: var(--burgundy, #5a1432);
+    border: 1.5px solid var(--burgundy, #5a1432);
+    border-radius: 50px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+  }
+  .ep-notify-btn:hover,
+  .ep-notify-btn[aria-pressed="true"] {
+    background: var(--burgundy, #5a1432);
+    color: var(--ivory, #F5EFE6);
+  }
+  .ep-notify-btn[aria-pressed="true"] .ep-notify-label::after {
+    content: "d!";
+  }
+  .ep-notify-btn[aria-pressed="true"] .ep-notify-label {
+    /* replaces "Notify Me" text via JS */
+  }
+  .ep-notify-icon {
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  /* ── Toast ── */
+  .ep-toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--espresso, #1a0a05);
+    color: var(--ivory, #F5EFE6);
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 12px 22px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 9999;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  }
+  .ep-toast.ep-toast--show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 </style>
 
@@ -169,6 +245,30 @@
 (function () {
   'use strict';
 
+  /* ── Notify Me buttons ── */
+  document.querySelectorAll('.ep-notify-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var pressed = btn.getAttribute('aria-pressed') === 'true';
+      if (!pressed) {
+        btn.setAttribute('aria-pressed', 'true');
+        btn.querySelector('.ep-notify-label').textContent = 'Noted!';
+        showToast('You\'re on the list for "' + btn.dataset.event + '"');
+      } else {
+        btn.setAttribute('aria-pressed', 'false');
+        btn.querySelector('.ep-notify-label').textContent = 'Notify Me';
+      }
+    });
+  });
+
+  function showToast(msg) {
+    var toast = document.getElementById('epToast');
+    if (!toast) return;
+    toast.querySelector('.ep-toast-msg').textContent = msg;
+    toast.classList.add('ep-toast--show');
+    setTimeout(function () { toast.classList.remove('ep-toast--show'); }, 3200);
+  }
+
+  /* ── Carousel (mobile) ── */
   function initEventsCarousel() {
     var viewport = document.getElementById('eventsViewport');
     var track    = document.getElementById('eventsTrack');
@@ -183,70 +283,46 @@
     var startX     = 0;
     var startOffset = 0;
     var dragging   = false;
-    var CARD_GAP   = 16; // 1rem
+    var CARD_GAP   = 16;
 
     function cardWidth() {
       return cards[0] ? cards[0].offsetWidth : window.innerWidth * 0.82;
     }
-
     function applyTransform(x, animate) {
-      track.style.transition = animate
-        ? 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)'
-        : 'none';
-      track.style.transform = 'translateX(' + x + 'px)';
+      track.style.transition = animate ? 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)' : 'none';
+      track.style.transform  = 'translateX(' + x + 'px)';
     }
-
     function snapTo(idx) {
       idx = Math.max(0, Math.min(totalCards - 1, idx));
       currentIdx = idx;
       offsetX    = -(idx * (cardWidth() + CARD_GAP));
       applyTransform(offsetX, true);
-      updateDots(idx);
-    }
-
-    function updateDots(idx) {
-      if (!dotsWrap) return;
-      dotsWrap.querySelectorAll('.events-dot').forEach(function (d, i) {
+      if (dotsWrap) dotsWrap.querySelectorAll('.events-dot').forEach(function (d, i) {
         d.classList.toggle('events-dot--active', i === idx);
       });
     }
-
-    function onStart(x) {
-      dragging     = true;
-      startX       = x;
-      startOffset  = offsetX;
-      track.style.transition = 'none';
-    }
-
+    function onStart(x) { dragging = true; startX = x; startOffset = offsetX; track.style.transition = 'none'; }
     function onMove(x) {
       if (!dragging) return;
-      var delta = x - startX;
-      var next  = startOffset + delta;
-      var max   = -((totalCards - 1) * (cardWidth() + CARD_GAP));
+      var delta = x - startX, next = startOffset + delta;
+      var max = -((totalCards - 1) * (cardWidth() + CARD_GAP));
       if (next > 0)   next = next * 0.25;
       if (next < max) next = max + (next - max) * 0.25;
-      offsetX = next;
-      applyTransform(offsetX, false);
+      offsetX = next; applyTransform(offsetX, false);
     }
-
     function onEnd(x) {
-      if (!dragging) return;
-      dragging = false;
-      var delta     = x - startX;
-      var threshold = cardWidth() * 0.2;
+      if (!dragging) return; dragging = false;
+      var delta = x - startX, threshold = cardWidth() * 0.2;
       if      (delta < -threshold) snapTo(currentIdx + 1);
       else if (delta >  threshold) snapTo(currentIdx - 1);
       else                          snapTo(currentIdx);
     }
-
-    viewport.addEventListener('touchstart', function (e) { onStart(e.touches[0].clientX); }, { passive: true });
-    viewport.addEventListener('touchmove',  function (e) { onMove(e.touches[0].clientX);  }, { passive: true });
-    viewport.addEventListener('touchend',   function (e) { onEnd(e.changedTouches[0].clientX); }, { passive: true });
-
-    viewport.addEventListener('mousedown', function (e) { onStart(e.clientX); e.preventDefault(); });
-    document.addEventListener('mousemove', function (e) { onMove(e.clientX); });
-    document.addEventListener('mouseup',   function (e) { onEnd(e.clientX); });
-
+    viewport.addEventListener('touchstart', function (e) { onStart(e.touches[0].clientX); },        { passive: true });
+    viewport.addEventListener('touchmove',  function (e) { onMove(e.touches[0].clientX); },         { passive: true });
+    viewport.addEventListener('touchend',   function (e) { onEnd(e.changedTouches[0].clientX); },   { passive: true });
+    viewport.addEventListener('mousedown',  function (e) { onStart(e.clientX); e.preventDefault(); });
+    document.addEventListener('mousemove',  function (e) { onMove(e.clientX); });
+    document.addEventListener('mouseup',    function (e) { onEnd(e.clientX); });
     snapTo(0);
   }
 
@@ -261,7 +337,240 @@
 {% schema %}
 {
   "name": "Events Preview",
-  "settings": [],
-  "presets": [{ "name": "Events Preview", "category": "Content" }]
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Upcoming Experiences"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section heading",
+      "default": "Experiences worth dressing up for."
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Section subheading",
+      "default": "IRL events, sensory pop-ups and couples experiences across the UK — and beyond."
+    },
+    {
+      "type": "url",
+      "id": "view_all_url",
+      "label": "View All button URL",
+      "info": "Path to your events page"
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "View All button label",
+      "default": "View All Events"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "event",
+      "name": "Event Card",
+      "settings": [
+        {
+          "type": "header",
+          "content": "📅 Event Details"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Event title",
+          "default": "New Event"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Short description",
+          "default": "A short description of the event."
+        },
+        {
+          "type": "text",
+          "id": "city",
+          "label": "City",
+          "default": "London"
+        },
+        {
+          "type": "text",
+          "id": "event_type",
+          "label": "Event type label",
+          "default": "Experience"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price / from price",
+          "default": "From £45/person"
+        },
+        {
+          "type": "text",
+          "id": "date_day",
+          "label": "Date — day (e.g. 14)",
+          "default": "01"
+        },
+        {
+          "type": "text",
+          "id": "date_month",
+          "label": "Date — month (e.g. Feb)",
+          "default": "Jun"
+        },
+        {
+          "type": "header",
+          "content": "🔔 Coming Soon"
+        },
+        {
+          "type": "checkbox",
+          "id": "coming_soon",
+          "label": "Mark as Coming Soon (shows Notify Me instead of RSVP)",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "🖼️ Thumbnail Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Upload image (uses your Shopify Files)"
+        },
+        {
+          "type": "url",
+          "id": "image_url",
+          "label": "Or paste an image URL"
+        },
+        {
+          "type": "text",
+          "id": "fallback_emoji",
+          "label": "Fallback emoji (if no image loads)",
+          "default": "✦"
+        },
+        {
+          "type": "header",
+          "content": "🎨 Style & CTA"
+        },
+        {
+          "type": "select",
+          "id": "badge_style",
+          "label": "Date badge & button style",
+          "options": [
+            { "value": "burgundy", "label": "Burgundy (default)" },
+            { "value": "gold",     "label": "Gold (flagship)" }
+          ],
+          "default": "burgundy"
+        },
+        {
+          "type": "text",
+          "id": "cta_label",
+          "label": "CTA button label (when not Coming Soon)",
+          "default": "RSVP"
+        },
+        {
+          "type": "url",
+          "id": "rsvp_url",
+          "label": "CTA button URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Events Preview",
+      "category": "Content",
+      "blocks": [
+        {
+          "type": "event",
+          "settings": {
+            "title": "The Velvet Valentine's Experience",
+            "description": "An intimate sensory dinner for two in a candlelit, curated space. 7 courses. One memorable evening.",
+            "city": "London",
+            "event_type": "Couples Dinner",
+            "price": "From £140/couple",
+            "date_day": "14",
+            "date_month": "Feb",
+            "coming_soon": false,
+            "image_url": "https://sspark.genspark.ai/cfimages?u1=aWZX0o%2FDoMkbR6nyi0vgUGTHlw%2BZB2YvrQMMoOuVD0E0xCB24FZPPbCLI1alAgfq3HwB6XMQUTYDWOgZirF9389Jwdki%2BK%2FYJ%2FLggow7Igat5g%3D%3D&u2=KUl%2BOV5VAGUxnurx&width=800",
+            "fallback_emoji": "🌹",
+            "badge_style": "burgundy",
+            "cta_label": "RSVP"
+          }
+        },
+        {
+          "type": "event",
+          "settings": {
+            "title": "Playmate Run Club — Morning 5K",
+            "description": "Start your week right. A social 5K through the city with the Playmate community. All paces welcome. Coffee after.",
+            "city": "London",
+            "event_type": "Run Club",
+            "price": "Free — Members",
+            "date_day": "12",
+            "date_month": "Apr",
+            "coming_soon": true,
+            "image_url": "https://sspark.genspark.ai/cfimages?u1=p%2FinsJjEJ5%2FYeAqggmV7vKz%2Bd2dGccjBP2purg4YHqquGh2KL1%2FttwqXqScey6iNkuKJGcoztjn9HoEJ%2BjBmWym1u4E8Gjmj%2BusMwzs1CZIIL6cRrBrBK%2F22%2BZzlR1vCYaYV%2FIy9yi1MMmKdIkvhiHlZ6w7ewXYE9dXO8jJSobteAdSZ%2Bg%3D%3D&u2=2IG%2FnpZ5SS3rrW1p&width=800",
+            "fallback_emoji": "🏃",
+            "badge_style": "burgundy",
+            "cta_label": "Join",
+          }
+        },
+        {
+          "type": "event",
+          "settings": {
+            "title": "Padel &amp; Prosecco — Mixed Doubles",
+            "description": "Mixed doubles padel tournament followed by prosecco and networking. No experience needed — just good vibes.",
+            "city": "Manchester",
+            "event_type": "Padel Social",
+            "price": "£28/person",
+            "date_day": "03",
+            "date_month": "May",
+            "coming_soon": true,
+            "image_url": "https://sspark.genspark.ai/cfimages?u1=LMNbgRlH0e2UhtQZrXwMJeGXv9F%2BKQ9S5ka0%2F03umtlyIu8GZWkYM8TKTu3IsrqOqJFp66ExJK5VnGqIhf73sIrfyrInt43XAZc5oJh99YW6xFbTV5pgUHZRGnk7uuKsuCA%3D&u2=1yFfxoEgnTAHk%2Blb&width=800",
+            "fallback_emoji": "🎾",
+            "badge_style": "burgundy",
+            "cta_label": "RSVP",
+          }
+        },
+        {
+          "type": "event",
+          "settings": {
+            "title": "Peak District Day Hike",
+            "description": "A guided group hike through the Peak District — 10 miles of rolling hills, great company and a pub lunch at the end.",
+            "city": "Peak District",
+            "event_type": "Outdoor Hike",
+            "price": "£22/person",
+            "date_day": "17",
+            "date_month": "May",
+            "coming_soon": true,
+            "image_url": "https://sspark.genspark.ai/cfimages?u1=qM3g5oUs9%2BFXIyYckCW9tznYuuPq6U%2BeUKTMmREz1HcwHwwJatXPKkvYbZqRJSoqV5%2B7GahRuzIvKdCheQWJ4DMVGI6fudUQ%2FDd%2FRptCbFmgo5KRSkqoIIiAlQB3jxCnJWs5ccJSpeDH7s6Rm5BkWCqGBZtPyt96Oyjk2HImASE9qJ2Tm1km90L7%2FNKCwpe0%2BU9X&u2=JQjbJBMQh43COReB&width=800",
+            "fallback_emoji": "🥾",
+            "badge_style": "burgundy",
+            "cta_label": "Join",
+          }
+        },
+        {
+          "type": "event",
+          "settings": {
+            "title": "The Annual Playmate Gathering",
+            "description": "Our signature event. One night. 300 couples. An immersive sensory world built for connection.",
+            "city": "London",
+            "event_type": "Flagship Event",
+            "price": "From £85/couple",
+            "date_day": "20",
+            "date_month": "Jun",
+            "coming_soon": true,
+            "image_url": "https://sspark.genspark.ai/cfimages?u1=WIHc8QbYMsIHlfP3F43Cf4x1v4PWR3eS0Vvz2GQ3TxDDunCrZ5TT0THmF7p8OVwH2HfSmsLvlTUc0Tjn8P1uWMpuPvV1TdNp3bPgPMQmqxpjt%2B57oPEVrsoXIdWrd%2FfeJ1f%2Fy7Stgn8GD5s2y7A%3D%3D&u2=BwoAvciSKJoQ0lRY&width=800",
+            "fallback_emoji": "🎭",
+            "badge_style": "gold",
+            "cta_label": "Get Tickets",
+          }
+        }
+      ]
+    }
+  ]
 }
 {% endschema %}
