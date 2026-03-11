@@ -38,6 +38,7 @@
       "header": {
         "type": "header",
         "settings": {
+          "section_hidden": false,
           "logo_width": 120,
           "dark_style": true,
           "menu": "main-menu",
@@ -50,29 +51,23 @@
       "home-hero": {
         "type": "home-hero",
         "settings": {
-          "hero_bg_image": "shopify://shop_images/jnjnjnj.png",
+          "section_hidden": false,
+          "hero_bg_image": "shopify://shop_images/e1d31333-e441-4339-8029-7069140cc257_1.png",
           "eyebrow": "A new culture of connection",
           "headline": "<p>Rewriting how <em>couples</em> do date night.</p>",
-          "subheadline": "Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships.",
+          "subheadline": "Novel intimate sensory experiences, monthly date night rituals for modern relationships.",
           "cta_primary_text": "Start the 5-Day Experience",
           "cta_primary_url": "",
           "cta_secondary_text": "Shop the Latest Drop",
           "cta_secondary_url": "shopify://collections/frontpage",
           "trust_rating": "4.9 / 5 — 2,400+ couples",
-          "trust_shipping": "Free shipping over £60",
-          "hero_product": "massage-candle",
-          "hero_product_badge": "Latest Drop",
-          "hero_product_name": "",
-          "hero_product_price": "£68",
-          "badge_1_line1": "12 sold",
-          "badge_1_line2": "last 24 hours",
-          "badge_2_line1": "Limited",
-          "badge_2_line2": "Only 47 left"
+          "trust_shipping": "Free shipping over £60"
         }
       },
       "home-featured-drop": {
         "type": "home-featured-drop",
         "settings": {
+          "section_hidden": false,
           "eyebrow": "This Month's Drop",
           "heading": "The Velvet Hour",
           "subheading": "An evening ritual for two. Dark chocolate, warm amber candlelight and a game that turns conversation into connection.",
@@ -90,6 +85,7 @@
       "home-product-grid": {
         "type": "home-product-grid",
         "settings": {
+          "section_hidden": false,
           "eyebrow": "The Collection",
           "heading": "Rituals worth dressing up for.",
           "collection": "",
@@ -100,23 +96,32 @@
       },
       "value-strip": {
         "type": "value-strip",
-        "settings": {}
+        "settings": {
+          "section_hidden": false
+        }
       },
       "how-it-works": {
         "type": "how-it-works",
-        "settings": {}
+        "settings": {
+          "section_hidden": false
+        }
       },
       "social-proof": {
         "type": "social-proof",
-        "settings": {}
+        "settings": {
+          "section_hidden": false
+        }
       },
       "experience-cta": {
         "type": "experience-cta",
-        "settings": {}
+        "settings": {
+          "section_hidden": false
+        }
       },
       "events-preview": {
         "type": "events-preview",
         "settings": {
+          "section_hidden": false,
           "eyebrow": "Upcoming Experiences",
           "heading": "Experiences worth dressing up for.",
           "subheading": "IRL events, sensory pop-ups and couples experiences across the UK — and beyond.",
@@ -126,7 +131,9 @@
       },
       "journal-preview": {
         "type": "journal-preview",
-        "settings": {}
+        "settings": {
+          "section_hidden": false
+        }
       },
       "email-capture": {
         "type": "email-capture",
@@ -147,6 +154,7 @@
       "footer": {
         "type": "footer",
         "settings": {
+          "section_hidden": false,
           "footer_tagline": "Rewriting how couples do date night. Novel sensory products, monthly drops, immersive events and digital rituals for modern relationships.",
           "footer_heading_1": "Shop",
           "footer_menu_1": "",
