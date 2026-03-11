@@ -969,10 +969,81 @@
   }
 }
 
+/* ── Mobile product image (between copy + CTAs) ── */
+.hero-mobile-product-img {
+  display: none; /* hidden on desktop */
+}
+
+/* ── Mobile copy layout dividers ── */
+.hero-copy-top,
+.hero-copy-bottom {
+  width: 100%;
+}
+
 @media (max-width: 768px) {
+  /* Swap gradient background for a dark wine base — the product photo
+     carries the visual weight so we keep bg minimal */
+  .hero-gradient {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(26,10,6,0.72) 0%,
+        rgba(26,10,6,0.30) 38%,
+        rgba(26,10,6,0.10) 55%,
+        rgba(26,10,6,0.45) 72%,
+        rgba(26,10,6,0.88) 100%
+      );
+  }
+
   .hero-inner {
     grid-template-columns: 1fr;
     text-align: center;
+    padding-top: 0;
+    gap: 0;
+  }
+
+  /* Stack order: copy-top → product image → copy-bottom */
+  .hero-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 0;
+  }
+
+  .hero-copy-top {
+    padding-bottom: 0;
+    z-index: 2;
+    position: relative;
+  }
+
+  /* Full-bleed product image between description and buttons */
+  .hero-mobile-product-img {
+    display: block;
+    width: calc(100% + 2rem); /* break out of container padding */
+    margin-left: -1rem;
+    margin-right: -1rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
+    /* Fade bottom edge into bg so CTAs sit naturally below */
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 65%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 0%, black 65%, transparent 100%);
+  }
+
+  .hero-mobile-product-img img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  .hero-copy-bottom {
+    position: relative;
+    z-index: 2;
+    padding-top: 1.5rem;
+    width: 100%;
   }
 
   .hero-eyebrow {
@@ -981,7 +1052,10 @@
 
   .hero-eyebrow::before { display: none; }
 
-  .hero-sub { margin: 0 auto 2.5rem; }
+  .hero-sub {
+    margin: 0 auto 0;
+    max-width: 340px;
+  }
 
   .hero-actions {
     justify-content: center;
@@ -996,8 +1070,8 @@
   .hero-visual { display: none; }
 
   .hero-content-wrap {
-    padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 2rem);
-    padding-bottom: 4rem;
+    padding-top: calc(var(--nav-height) + var(--bar-height, 38px) + 1.5rem);
+    padding-bottom: 3.5rem;
   }
 
   .value-strip-inner {
@@ -1398,26 +1472,8 @@
 }
 
 /* ============================================
-   HERO — MOBILE CORNER DECORATION
-   Desktop: hidden entirely
-   Mobile (≤768px): PNG spans full hero width/height
-   positioned so corner elements sit in the corners
+   HERO — MOBILE CORNER DECORATION (deprecated — replaced by hero-mobile-product-img)
    ============================================ */
 .hero-mobile-deco {
-  display: none; /* hidden on desktop */
-}
-
-@media (max-width: 768px) {
-  .hero-mobile-deco {
-    display: block;
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
-    pointer-events: none;
-    z-index: 0; /* behind all text and CTAs */
-    opacity: 1;
-  }
+  display: none;
 }

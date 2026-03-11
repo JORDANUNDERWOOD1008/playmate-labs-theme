@@ -19,38 +19,60 @@
   <div class="hero-content-wrap">
     <div class="container hero-inner">
       <div class="hero-text animate-fadeInUp">
-        <p class="hero-eyebrow animate-fadeInUp animate-delay-1">
-          {{ section.settings.eyebrow | default: 'A new culture of connection' }}
-        </p>
-        <h1 class="hero-headline animate-fadeInUp animate-delay-2">
-          {{ section.settings.headline | default: 'Rewriting how <em>couples</em> do date night.' }}
-        </h1>
-        <p class="hero-sub animate-fadeInUp animate-delay-3">
-          {{ section.settings.subheadline | default: 'Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships.' }}
-        </p>
-        <div class="hero-actions animate-fadeInUp animate-delay-4">
-          <button type="button" class="btn btn-gold btn-xl" id="heroExpBtn"
-                  onclick="document.getElementById('expSignupModal').classList.add('exp-modal--open')">
-            {{ section.settings.cta_primary_text | default: 'Start the 5-Day Experience' }}
-          </button>
-          <a href="{{ section.settings.cta_secondary_url | default: '/collections/monthly-drops' }}"
-             class="btn btn-ghost btn-xl">
-            {{ section.settings.cta_secondary_text | default: 'Shop the Latest Drop' }}
-          </a>
+
+        {%- comment -%} TOP COPY — eyebrow, headline, description {%- endcomment -%}
+        <div class="hero-copy-top">
+          <p class="hero-eyebrow animate-fadeInUp animate-delay-1">
+            {{ section.settings.eyebrow | default: 'A new culture of connection' }}
+          </p>
+          <h1 class="hero-headline animate-fadeInUp animate-delay-2">
+            {{ section.settings.headline | default: 'Rewriting how <em>couples</em> do date night.' }}
+          </h1>
+          <p class="hero-sub animate-fadeInUp animate-delay-3">
+            {{ section.settings.subheadline | default: 'Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships.' }}
+          </p>
         </div>
-        <div class="hero-trust animate-fadeInUp animate-delay-5">
-          <div class="hero-trust-item">
-            <div class="star-rating">★★★★★</div>
-            <span>{{ section.settings.trust_rating | default: '4.9 / 5 — 2,400+ couples' }}</span>
+
+        {%- comment -%} MOBILE PRODUCT IMAGE — sits between copy and CTAs on mobile only {%- endcomment -%}
+        <div class="hero-mobile-product-img animate-fadeIn animate-delay-3">
+          {%- if section.settings.mobile_hero_image != blank -%}
+            <img src="{{ section.settings.mobile_hero_image | image_url: width: 900 }}"
+                 alt="{{ section.settings.hero_product_name | default: 'The Velvet Hour Kit' }}"
+                 width="900" loading="eager">
+          {%- else -%}
+            <img src="{{ 'hero-mobile-product.jpg' | asset_url }}"
+                 alt="The Velvet Hour Kit — Playmate Labs"
+                 width="900" loading="eager">
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} BOTTOM COPY — buttons + trust {%- endcomment -%}
+        <div class="hero-copy-bottom">
+          <div class="hero-actions animate-fadeInUp animate-delay-4">
+            <button type="button" class="btn btn-gold btn-xl" id="heroExpBtn"
+                    onclick="document.getElementById('expSignupModal').classList.add('exp-modal--open')">
+              {{ section.settings.cta_primary_text | default: 'Start the 5-Day Experience' }}
+            </button>
+            <a href="{{ section.settings.cta_secondary_url | default: '/collections/monthly-drops' }}"
+               class="btn btn-ghost btn-xl">
+              {{ section.settings.cta_secondary_text | default: 'Shop the Latest Drop' }}
+            </a>
           </div>
-          <span class="hero-trust-dot">·</span>
-          <div class="hero-trust-item">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
-              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-            </svg>
-            <span>{{ section.settings.trust_shipping | default: 'Free shipping over £60' }}</span>
+          <div class="hero-trust animate-fadeInUp animate-delay-5">
+            <div class="hero-trust-item">
+              <div class="star-rating">★★★★★</div>
+              <span>{{ section.settings.trust_rating | default: '4.9 / 5 — 2,400+ couples' }}</span>
+            </div>
+            <span class="hero-trust-dot">·</span>
+            <div class="hero-trust-item">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+              </svg>
+              <span>{{ section.settings.trust_shipping | default: 'Free shipping over £60' }}</span>
+            </div>
           </div>
         </div>
+
       </div>
 
       {%- comment -%} Hero Product Visual {%- endcomment -%}
@@ -104,13 +126,7 @@
       </div>
     </div>
   </div>
-  <!-- Mobile corner decoration — hidden on desktop -->
-  <img src="{{ 'hero-mobile-overlay.png' | asset_url }}"
-       alt=""
-       class="hero-mobile-deco"
-       aria-hidden="true"
-       draggable="false"
-       loading="eager">
+  {%- comment -%} Mobile corner decoration — hidden on desktop {%- endcomment -%}
 
   <div class="hero-scroll-hint">
     <div class="scroll-dot"></div>
@@ -256,6 +272,11 @@
       "type": "image_picker",
       "id": "hero_bg_image",
       "label": "Background image (optional)"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_hero_image",
+      "label": "Mobile product image (replaces default chocolate box photo)"
     },
     {
       "type": "text",
