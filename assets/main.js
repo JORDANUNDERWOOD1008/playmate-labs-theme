@@ -261,13 +261,52 @@ const NewsletterPopup = {
     const popup = $('#newsletter-popup');
     if (!popup) return;
 
-    const shown = sessionStorage.getItem('pl_newsletter_shown');
-    if (!shown) {
-      setTimeout(() => this.show(), 12000);
+    // Never show if already subscribed
+    try {
+      if (localStorage.getItem('pl_popup_subscribed')) return;
+    } catch(e) {}
+
+    // 14-day cooldown after dismiss
+    try {
+      var dismissed = localStorage.getItem('pl_popup_dismissed');
+      if (dismissed && (Date.now() - parseInt(dismissed)) < 14 * 24 * 60 * 60 * 1000) return;
+    } catch(e) {}
+
+    // Trigger: 30s delay OR 50% scroll (whichever first)
+    var triggered = false;
+    var triggerOnce = () => {
+      if (triggered) return;
+      triggered = true;
+      this.show();
+    };
+
+    setTimeout(triggerOnce, 30000);
+
+    var scrollHandler = () => {
+      var scrollPct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      if (scrollPct >= 0.5) {
+        triggerOnce();
+        window.removeEventListener('scroll', scrollHandler);
+      }
+    };
+    window.addEventListener('scroll', scrollHandler, { passive: true });
+
+    // Exit intent (desktop only) — fires separate discount popup if main was dismissed
+    if (window.innerWidth > 768) {
+      document.addEventListener('mouseout', (e) => {
+        if (e.clientY <= 0 && !triggered) {
+          triggerOnce();
+        } else if (e.clientY <= 0 && triggered) {
+          this.showExitIntent();
+        }
+      });
     }
 
+    // Event listeners
     $('#newsletter-popup-close')?.addEventListener('click', () => this.hide());
     $('#newsletter-popup-overlay')?.addEventListener('click', () => this.hide());
+    $('#exit-popup-close')?.addEventListener('click', () => this.hideExit());
+    $('#exit-popup-overlay')?.addEventListener('click', () => this.hideExit());
 
     $('#newsletter-popup-form')?.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -276,19 +315,53 @@ const NewsletterPopup = {
   },
 
   show() {
-    $('#newsletter-popup')?.classList.add('visible');
+    var popup = $('#newsletter-popup');
+    if (!popup) return;
+    popup.classList.add('visible');
     document.body.style.overflow = 'hidden';
-    sessionStorage.setItem('pl_newsletter_shown', '1');
   },
 
   hide() {
-    $('#newsletter-popup')?.classList.remove('visible');
+    var popup = $('#newsletter-popup');
+    if (!popup) return;
+    popup.classList.remove('visible');
     document.body.style.overflow = '';
+    try { localStorage.setItem('pl_popup_dismissed', String(Date.now())); } catch(e) {}
+  },
+
+  showExitIntent() {
+    // Only show if main popup was dismissed and exit popup not shown this session
+    try {
+      if (localStorage.getItem('pl_popup_subscribed')) return;
+      if (sessionStorage.getItem('pl_exit_shown')) return;
+      var dismissed = localStorage.getItem('pl_popup_dismissed');
+      if (!dismissed) return;
+      // Don't show exit popup if dismissed less than 5 seconds ago (just closed main)
+      if (Date.now() - parseInt(dismissed) < 5000) return;
+      // 7-day cooldown for exit popup
+      var exitDismissed = localStorage.getItem('pl_exit_dismissed');
+      if (exitDismissed && (Date.now() - parseInt(exitDismissed)) < 7 * 24 * 60 * 60 * 1000) return;
+    } catch(e) { return; }
+
+    var exitPopup = $('#exit-intent-popup');
+    if (!exitPopup) return;
+    exitPopup.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    try { sessionStorage.setItem('pl_exit_shown', '1'); } catch(e) {}
+  },
+
+  hideExit() {
+    var exitPopup = $('#exit-intent-popup');
+    if (!exitPopup) return;
+    exitPopup.classList.remove('visible');
+    document.body.style.overflow = '';
+    try { localStorage.setItem('pl_exit_dismissed', String(Date.now())); } catch(e) {}
   },
 
   submit(form) {
     const email = form.querySelector('[name="email"]')?.value;
     const phone = form.querySelector('[name="phone"]')?.value;
+    try { localStorage.setItem('pl_popup_subscribed', '1'); } catch(e) {}
     showToast('Welcome to Playmate Labs! Check your inbox.', 'success');
     this.hide();
   }
