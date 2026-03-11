@@ -1,0 +1,41 @@
+{% comment %}
+  PLAYMATE LABS — Data Layer
+  File: snippets/datalayer.liquid
+  Pushes page-level data for GTM consumption
+{% endcomment %}
+
+<script>
+window.dataLayer = window.dataLayer || [];
+dataLayer.push({
+  'page_type': '{{ template.name }}',
+  {%- if template.suffix %}'page_template': '{{ template.suffix }}',{% endif %}
+  {%- if template == 'product' %}
+  'product_title': {{ product.title | json }},
+  'product_handle': '{{ product.handle }}',
+  'product_price': '{{ product.price | money_without_currency | strip }}',
+  'product_sku': {{ product.selected_or_first_available_variant.sku | json }},
+  'product_available': {{ product.available }},
+  'product_type': {{ product.type | json }},
+  {%- endif %}
+  {%- if template contains 'article' %}
+  'article_title': {{ article.title | json }},
+  'article_handle': '{{ article.handle }}',
+  'article_author': 'Jordan Underwood',
+  'article_published': '{{ article.published_at | date: "%Y-%m-%d" }}',
+  'article_blog': {{ blog.title | json }},
+  'article_word_count': {{ article.content | strip_html | split: ' ' | size }},
+  {%- endif %}
+  {%- if template == 'collection' %}
+  'collection_title': {{ collection.title | json }},
+  'collection_handle': '{{ collection.handle }}',
+  {%- endif %}
+  {%- if customer %}
+  'customer_logged_in': true,
+  'customer_order_count': {{ customer.orders_count }},
+  'customer_type': {% if customer.orders_count > 0 %}'returning'{% else %}'new'{% endif %},
+  {%- else %}
+  'customer_logged_in': false,
+  {%- endif %}
+  'shop_currency': '{{ cart.currency.iso_code }}'
+});
+</script>
