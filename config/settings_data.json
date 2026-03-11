@@ -181,9 +181,9 @@
           "bg_colour": "#faf8f5",
           "overlay_colour": "15,5,5",
           "overlay_opacity": 0,
-          "text_colour_eyebrow": "#c9a96e",
-          "text_colour_heading": "#f5efe6",
-          "text_colour_subheading": "#f5efe6",
+          "text_colour_eyebrow": "#6b1e3a",
+          "text_colour_heading": "#1a0a06",
+          "text_colour_subheading": "#c9a96e",
           "padding_top": 60,
           "padding_bottom": 60
         }
