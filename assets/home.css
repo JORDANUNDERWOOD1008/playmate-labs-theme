@@ -57,13 +57,13 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  /* Desktop: dark left scrim only — right side completely clear */
+  /* Desktop: dark left scrim — covers left 50%, right half fully clear */
   background:
     linear-gradient(90deg,
-      rgba(8,2,2,0.88) 0%,
-      rgba(8,2,2,0.70) 30%,
-      rgba(8,2,2,0.25) 48%,
-      rgba(8,2,2,0.00) 55%
+      rgba(8,2,2,0.92) 0%,
+      rgba(8,2,2,0.85) 25%,
+      rgba(8,2,2,0.50) 44%,
+      rgba(8,2,2,0.00) 52%
     );
 }
 
@@ -82,14 +82,17 @@
   padding-bottom: 6rem;
   position: relative;
   z-index: 2;
+  /* left-align content over the dark left scrim */
+  justify-content: flex-start;
 }
 
 .hero-inner {
   display: grid;
-  grid-template-columns: 1fr;  /* single column — photo is the bg, no product card */
+  grid-template-columns: 1fr;
   gap: 0;
-  align-items: center;
-  max-width: 640px; /* keep text from stretching edge-to-edge on wide screens */
+  align-items: flex-start;
+  /* Pin text to left half — right side shows the product photo unobstructed */
+  max-width: 52%;
 }
 
 .hero-eyebrow {
