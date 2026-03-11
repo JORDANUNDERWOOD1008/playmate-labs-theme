@@ -22,16 +22,13 @@
 
     <!-- Category Filter Pills -->
     <div class="journal-filters" id="journal-filters">
-      <button class="filter-btn active" data-group="journal" data-filter="all">All</button>
-      {%- for tag in blog.all_tags -%}
-        <button class="filter-btn" data-group="journal" data-filter="{{ tag | handleize }}">{{ tag }}</button>
-      {%- else -%}
-        <button class="filter-btn" data-group="journal" data-filter="relationship">Relationship Culture</button>
-        <button class="filter-btn" data-group="journal" data-filter="rituals">Sensory Rituals</button>
-        <button class="filter-btn" data-group="journal" data-filter="date-ideas">Date Ideas</button>
-        <button class="filter-btn" data-group="journal" data-filter="events">Event Recaps</button>
-        <button class="filter-btn" data-group="journal" data-filter="experiments">Experiments</button>
-      {%- endfor -%}
+      <a href="{{ blog.url }}" class="filter-btn{% unless current_tags %} active{% endunless %}">All</a>
+      <a href="{{ blog.url }}/tagged/date-night" class="filter-btn{% if current_tags contains 'date night' %} active{% endif %}">Date Night</a>
+      <a href="{{ blog.url }}/tagged/relationships" class="filter-btn{% if current_tags contains 'relationships' %} active{% endif %}">Relationships</a>
+      <a href="{{ blog.url }}/tagged/intimacy" class="filter-btn{% if current_tags contains 'intimacy' %} active{% endif %}">Intimacy</a>
+      <a href="{{ blog.url }}/tagged/aphrodisiac-chocolate" class="filter-btn{% if current_tags contains 'aphrodisiac chocolate' %} active{% endif %}">Aphrodisiac Chocolate</a>
+      <a href="{{ blog.url }}/tagged/science" class="filter-btn{% if current_tags contains 'science' %} active{% endif %}">Science</a>
+      <a href="{{ blog.url }}/tagged/sensory" class="filter-btn{% if current_tags contains 'sensory' %} active{% endif %}">Sensory</a>
     </div>
   </div>
 </section>
@@ -158,3 +155,4 @@
 {%- endif -%}
 
 {%- endpaginate -%}
+
