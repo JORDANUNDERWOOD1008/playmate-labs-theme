@@ -57,17 +57,25 @@
     z-index: 1;
   }
 
-  /* Inherit the exact section-header / heading-xl / section-eyebrow / section-divider
-     styles from global.css — only override colour when a bg image is active */
+  /* ── No-image state: match reference screenshot exactly ──
+     Eyebrow: burgundy (via global .section-eyebrow)
+     Heading: dark espresso
+     Divider: gold (via global .section-divider) */
+  #product-page-banner-{{ section.id }} .ppb-heading {
+    color: var(--espresso, #1A0A0A);
+    font-weight: 500;
+  }
+
+  /* ── Image state: allow custom colours set in editor ── */
   {%- if section.settings.bg_image != blank -%}
   #product-page-banner-{{ section.id }} .section-eyebrow {
-    color: {{ section.settings.text_colour_eyebrow | default: 'var(--gold)' }};
+    color: {{ section.settings.text_colour_eyebrow | default: '#C9A96E' }};
   }
   #product-page-banner-{{ section.id }} .ppb-heading {
-    color: {{ section.settings.text_colour_heading | default: 'var(--cream)' }};
+    color: {{ section.settings.text_colour_heading | default: '#1A0A0A' }};
   }
   #product-page-banner-{{ section.id }} .ppb-subheading {
-    color: {{ section.settings.text_colour_subheading | default: 'rgba(245,239,230,0.75)' }};
+    color: {{ section.settings.text_colour_subheading | default: 'rgba(26,10,10,0.7)' }};
   }
   {%- endif -%}
 
@@ -210,7 +218,7 @@
       "min": 20,
       "max": 160,
       "step": 4,
-      "default": 60,
+      "default": 76,
       "unit": "px"
     },
     {
@@ -220,7 +228,7 @@
       "min": 20,
       "max": 160,
       "step": 4,
-      "default": 60,
+      "default": 76,
       "unit": "px"
     }
   ],
