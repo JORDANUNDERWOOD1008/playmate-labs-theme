@@ -15,10 +15,14 @@
         <!-- Event 1 -->
         <div class="event-card reveal" data-delay="0">
           <div class="event-card-img">
-            <div class="img-placeholder" style="height:200px;flex-direction:column;gap:0.5rem;">
-              <span style="font-size:2.5rem;position:relative;z-index:1;">🌹</span>
-              <span style="font-family:var(--font-serif);font-size:0.9rem;color:rgba(245,239,230,0.4);position:relative;z-index:1;">Sensory Dinner</span>
-            </div>
+            <img
+              src="https://sspark.genspark.ai/cfimages?u1=ZXbSe4DsiBsIdQWxUv8Nm0ZVRE3lJZePb6l8AuMyPmB0EYgkeseLnhc9CYxTr%2FmWsDvzP8faWpgeuH4bI2Rlj5qb%2Bx3nhdaFtG4NR7HMliJvaPrSVUDWk3lUpnoNPvviVPHYotoV%2FU%2BzsToWG6IVQDHRXhkWAV71m6HaMY62%2F%2BfhtdJ7gzQmi9Of8JuQcDW2&u2=LDq4mUygxZGYiiWs&width=2560"
+              alt="Elegant Candlelit Dinner"
+              loading="lazy"
+              style="width:100%;height:200px;object-fit:cover;display:block;border-radius:var(--radius-md) var(--radius-md) 0 0;"
+            >
+            <!-- Coming Soon Badge -->
+            <div class="coming-soon-badge">Coming Soon</div>
             <div class="event-date-badge">
               <span class="day">14</span>
               <span class="month">Feb</span>
@@ -41,10 +45,14 @@
         <!-- Event 2 -->
         <div class="event-card reveal" data-delay="1">
           <div class="event-card-img">
-            <div class="img-placeholder" style="height:200px;flex-direction:column;gap:0.5rem;background:linear-gradient(135deg,#2C1810,#6B1E3A);">
-              <span style="font-size:2.5rem;position:relative;z-index:1;">🥂</span>
-              <span style="font-family:var(--font-serif);font-size:0.9rem;color:rgba(245,239,230,0.4);position:relative;z-index:1;">Social Night</span>
-            </div>
+            <img
+              src="https://sspark.genspark.ai/cfimages?u1=94cY2fBbwLAPB9yCeQZFD50KrmuFE2f9AovsYF7WUmep0L1vPXcA%2BTrZzccBBxhI5h3iNsMEbykiMwinlvKFq%2BDuddG%2BxqNaFePR0YcHeRBilfD1yun37shru5fKYK8a6yxOM5EDpsmWgOgmqDstnOJgHnybm2SEvINR3p7PAk4Ad7bVgAgrz6zOZ03PaA%3D%3D&u2=ZNv0VSuEhFcP%2Brjs&width=2560"
+              alt="Elegant Social Night"
+              loading="lazy"
+              style="width:100%;height:200px;object-fit:cover;display:block;border-radius:var(--radius-md) var(--radius-md) 0 0;"
+            >
+            <!-- Coming Soon Badge -->
+            <div class="coming-soon-badge">Coming Soon</div>
             <div class="event-date-badge">
               <span class="day">02</span>
               <span class="month">Mar</span>
@@ -67,10 +75,14 @@
         <!-- Event 3 -->
         <div class="event-card reveal" data-delay="2">
           <div class="event-card-img">
-            <div class="img-placeholder" style="height:200px;flex-direction:column;gap:0.5rem;background:linear-gradient(135deg,#4A2E22,#2C1810);">
-              <span style="font-size:2.5rem;position:relative;z-index:1;">🎭</span>
-              <span style="font-family:var(--font-serif);font-size:0.9rem;color:rgba(245,239,230,0.4);position:relative;z-index:1;">Immersive</span>
-            </div>
+            <img
+              src="https://sspark.genspark.ai/cfimages?u1=WIHc8QbYMsIHlfP3F43Cf4x1v4PWR3eS0Vvz2GQ3TxDDunCrZ5TT0THmF7p8OVwH2HfSmsLvlTUc0Tjn8P1uWMpuPvV1TdNp3bPgPMQmqxpjt%2B57oPEVrsoXIdWrd%2FfeJ1f%2Fy7Stgn8GD5s2y7A%3D%3D&u2=BwoAvciSKJoQ0lRY&width=2560"
+              alt="Immersive Luxury Event"
+              loading="lazy"
+              style="width:100%;height:200px;object-fit:cover;display:block;border-radius:var(--radius-md) var(--radius-md) 0 0;"
+            >
+            <!-- Coming Soon Badge -->
+            <div class="coming-soon-badge coming-soon-badge--gold">Coming Soon</div>
             <div class="event-date-badge" style="background:var(--gold);">
               <span class="day" style="color:var(--espresso);">20</span>
               <span class="month" style="color:var(--espresso);">Apr</span>
@@ -105,6 +117,53 @@
     </div>
   </div>
 </section>
+
+<style>
+  /* Coming Soon Badge */
+  .event-card-img {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .coming-soon-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(90, 20, 50, 0.92);
+    color: #F5EFE6;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(245, 220, 180, 0.35);
+    backdrop-filter: blur(4px);
+    z-index: 10;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+
+  .coming-soon-badge--gold {
+    background: rgba(180, 140, 60, 0.92);
+    color: #1a0a05;
+    border-color: rgba(245, 220, 120, 0.5);
+  }
+
+  /* Ensure image covers properly */
+  .event-card-img img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  .event-card:hover .event-card-img img {
+    transform: scale(1.04);
+  }
+</style>
 
 <script>
 (function () {
