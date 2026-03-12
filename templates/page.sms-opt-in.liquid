@@ -1,0 +1,92 @@
+{% comment %}
+  PLAYMATE LABS — SMS Opt-in Page
+  File: templates/page.sms-opt-in.liquid
+  URL: /pages/sms-opt-in
+  Purpose: Standalone SMS consent collection for subscribers 
+  who skipped phone on popup but want drop alerts
+{% endcomment %}
+
+<section style="min-height:70vh;display:flex;align-items:center;background:var(--espresso);color:var(--cream);padding:4rem 1rem;">
+  <div class="container" style="max-width:480px;margin:0 auto;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:1.25rem;">📲</div>
+    <h1 style="font-family:var(--font-serif);font-size:clamp(1.75rem,4vw,2.25rem);margin-bottom:0.75rem;line-height:1.2;">
+      Get a text when drops go live
+    </h1>
+    <p style="font-size:0.9375rem;color:rgba(245,239,230,0.65);margin-bottom:2rem;line-height:1.6;">
+      We only text for drops and event releases — never more than twice a month. 
+      Some drops sell out within the hour. A text is the fastest way to make sure you don't miss it.
+    </p>
+
+    <div id="sms-form-fields" style="display:flex;flex-direction:column;gap:0.75rem;max-width:360px;margin:0 auto;">
+      <input type="email" id="sms-email" placeholder="Your email address" 
+        class="form-input form-input-dark" required autocomplete="email"
+        style="text-align:center;">
+      <input type="tel" id="sms-phone" placeholder="Your phone number" 
+        class="form-input form-input-dark" required autocomplete="tel"
+        style="text-align:center;">
+      <button type="button" id="sms-submit" class="btn btn-gold btn-lg" 
+        style="width:100%;justify-content:center;margin-top:0.5rem;">
+        Notify Me on Drops
+      </button>
+    </div>
+
+    <div id="sms-success" style="display:none;margin-top:1rem;">
+      <span style="font-size:1.5rem;display:block;margin-bottom:0.5rem;">✓</span>
+      <p style="color:var(--gold);font-size:0.9375rem;">You're on the list. We'll text you the moment the next drop goes live.</p>
+    </div>
+
+    <p style="font-size:0.6875rem;color:rgba(245,239,230,0.3);margin-top:1.5rem;">
+      By entering your number you consent to receive SMS from Playmate Labs. Max 2 texts/month. Reply STOP to opt out.
+    </p>
+  </div>
+</section>
+
+<script>
+(function(){
+  var PUBLIC_KEY = {{ settings.klaviyo_public_api_key | default: '' | json }};
+  var SMS_LIST = {{ settings.klaviyo_sms_list_id | default: '' | json }};
+  var EMAIL_LIST = {{ settings.klaviyo_popup_list_id | default: '' | json }};
+
+  document.getElementById('sms-submit').addEventListener('click', function(){
+    var email = document.getElementById('sms-email').value.trim();
+    var phone = document.getElementById('sms-phone').value.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      document.getElementById('sms-email').focus(); return;
+    }
+    if (!phone || phone.length < 8) {
+      document.getElementById('sms-phone').focus(); return;
+    }
+    this.disabled = true;
+    this.textContent = '…';
+
+    var headers = {'Content-Type':'application/json','revision':'2023-10-15'};
+    var endpoint = 'https://a.klaviyo.com/client/subscriptions/?company_id=' + PUBLIC_KEY;
+
+    // Subscribe to SMS list
+    fetch(endpoint, {
+      method:'POST', headers: headers,
+      body: JSON.stringify({data:{type:'subscription',attributes:{
+        list_id: SMS_LIST, phone_number: phone, email: email,
+        custom_source: 'SMS Opt-in Page — Playmate Labs'
+      }}})
+    }).then(function(r){
+      if (r.ok || r.status === 202) {
+        // Also add to email list if not already there
+        fetch(endpoint, {
+          method:'POST', headers: headers,
+          body: JSON.stringify({data:{type:'subscription',attributes:{
+            list_id: EMAIL_LIST, email: email, phone_number: phone,
+            custom_source: 'SMS Opt-in Page — Playmate Labs',
+            properties: {interest_product_drop: true}
+          }}})
+        }).catch(function(){});
+        document.getElementById('sms-form-fields').style.display = 'none';
+        document.getElementById('sms-success').style.display = 'block';
+      }
+    }).catch(function(){
+      document.getElementById('sms-submit').disabled = false;
+      document.getElementById('sms-submit').textContent = 'Notify Me on Drops';
+    });
+  });
+})();
+</script>
