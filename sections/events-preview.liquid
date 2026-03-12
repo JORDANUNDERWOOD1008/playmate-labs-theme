@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 <!-- EVENTS PREVIEW -->
 <section class="section bg-ivory" id="events-preview">
   <div class="container">
@@ -60,14 +61,19 @@
                 <span class="event-price">{{ block.settings.price }}</span>
                 {%- if coming_soon -%}
                   <button
-                    class="btn btn-sm btn-notify ep-notify-btn"
+                    class="ep-notify-btn"
                     data-event="{{ block.settings.title | escape }}"
                     data-city="{{ block.settings.city | escape }}"
-                    data-date="{{ block.settings.date_day }} {{ block.settings.date_month }}"
                     aria-haspopup="dialog"
+                    aria-pressed="false"
                   >
+                    <svg class="ep-notify-bell" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink:0;">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <svg class="ep-notify-check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;display:none;">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
                     <span class="ep-notify-label">Notify Me</span>
-                    <span class="ep-notify-icon">🔔</span>
                   </button>
                 {%- else -%}
                   <a href="{{ block.settings.rsvp_url | default: '/pages/events' }}" class="btn btn-sm {% if block.settings.badge_style == 'gold' %}btn-primary{% else %}btn-secondary{% endif %}">
@@ -90,137 +96,163 @@
     </div>
 
     <div class="text-center reveal" style="margin-top:var(--space-xl);">
-      <a href="{{ section.settings.view_all_url | default: '/pages/events' }}" class="btn btn-secondary btn-lg">
-        {{ section.settings.view_all_label | default: 'View All Events' }}
-      </a>
+      <!-- View all + waitlist CTA row -->
+      <div class="ep-footer-actions">
+        <a href="{{ section.settings.view_all_url | default: '/pages/events' }}" class="btn btn-secondary btn-lg">
+          {{ section.settings.view_all_label | default: 'View All Events' }}
+        </a>
+        <button
+          type="button"
+          class="ep-waitlist-toggle-btn"
+          id="ep-waitlist-open-main"
+          aria-haspopup="dialog"
+          aria-controls="ep-waitlist-modal"
+          aria-pressed="false"
+        >
+          <svg class="ep-wtb-bell" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <svg class="ep-wtb-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;display:none;">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span class="ep-wtb-label">{{ section.settings.waitlist_cta_label | default: 'Waiting List' }}</span>
+        </button>
+      </div>
     </div>
 
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════
-     WAITLIST MODAL OVERLAY
-     Shared across all "Coming Soon" event cards
-     Opened by clicking any Notify Me button
-══════════════════════════════════════════════════ -->
-<div class="ep-waitlist-overlay" id="epWaitlistOverlay" role="dialog" aria-modal="true" aria-labelledby="epWaitlistTitle" aria-hidden="true">
-  <div class="ep-waitlist-modal">
+<!-- ═══════════════════════════════════════════════════════════
+     EVENTS WAITLIST MODAL
+     Lives here so it inherits the section's design context
+════════════════════════════════════════════════════════════ -->
+<div
+  class="ep-modal-backdrop"
+  id="ep-waitlist-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="ep-modal-title"
+  aria-hidden="true"
+  tabindex="-1"
+>
+  <div class="ep-modal" role="document">
 
     <!-- Close button -->
-    <button class="ep-waitlist-close" id="epWaitlistClose" aria-label="Close waitlist">
+    <button type="button" class="ep-modal-close" id="ep-modal-close" aria-label="Close waitlist signup">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
     </button>
 
-    <!-- ── SUCCESS SCREEN ── -->
-    <div class="ep-waitlist-success" id="epWaitlistSuccess" aria-hidden="true">
-      <div class="ep-waitlist-success-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold, #C9A84C)" stroke-width="2">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-        </svg>
-      </div>
-      <h4 class="ep-waitlist-success-title">You're on the list!</h4>
-      <p class="ep-waitlist-success-event" id="epSuccessEventName"></p>
-      <p class="ep-waitlist-success-msg">We'll let you know the moment this event goes live. Watch your inbox.</p>
-      <button type="button" class="btn btn-waitlist-back btn-sm" id="epWaitlistBackSuccess">
-        ← Back to events
-      </button>
-    </div>
+    <!-- ── Modal inner scroll wrapper ── -->
+    <div class="ep-modal-inner">
 
-    <!-- ── FORM SCREEN ── -->
-    <div class="ep-waitlist-form-wrap" id="epWaitlistFormWrap">
-
-      <!-- Header -->
-      <div class="ep-waitlist-header">
-        <span class="ep-waitlist-eyebrow">{{ section.settings.waitlist_eyebrow | default: 'Join the Waitlist' }}</span>
-        <h3 class="ep-waitlist-title" id="epWaitlistTitle">
-          <span id="epWaitlistEventName">Event Name</span>
-        </h3>
-        <p class="ep-waitlist-meta" id="epWaitlistMeta"></p>
+      <!-- ── Modal header: ivory bg matching the events section ── -->
+      <div class="ep-modal-header">
+        <span class="section-eyebrow ep-modal-eyebrow">{{ section.settings.modal_eyebrow | default: 'Upcoming Experiences' }}</span>
+        <h2 class="ep-modal-title" id="ep-modal-title">
+          {{ section.settings.modal_heading | default: 'Experiences worth staying in for.' }}
+        </h2>
+        <div class="ep-modal-divider"></div>
+        <p class="ep-modal-intro" id="ep-modal-intro-text">
+          {{ section.settings.modal_intro | default: 'Be the first to know about our upcoming events, pop-ups and immersive experiences.' }}
+        </p>
       </div>
 
-      <form class="ep-waitlist-form" id="epWaitlistForm" novalidate>
+      <!-- ── State wrapper ── -->
+      <div class="ep-modal-body">
 
-        <!-- Email -->
-        <div class="ep-waitlist-field">
-          <label for="epWaitlistEmail" class="ep-waitlist-label">Email address</label>
-          <input
-            type="email"
-            id="epWaitlistEmail"
-            name="email"
-            class="ep-waitlist-input"
-            placeholder="{{ section.settings.waitlist_email_placeholder | default: 'Enter your email' }}"
-            autocomplete="email"
-            required
-          >
-        </div>
+        <!-- FORM STATE -->
+        <div class="ep-modal-form-state" id="ep-modal-form-state">
 
-        <!-- Phone toggle checkbox -->
-        <label class="ep-waitlist-checkbox-label" for="epWaitlistPhoneToggle">
-          <span class="ep-waitlist-checkbox-box" id="epWaitlistCheckboxVisual" aria-hidden="true">
-            <svg class="ep-waitlist-check-icon" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="var(--espresso, #1a0a05)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="2 6 5 9 10 3"/>
+          <form class="ep-waitlist-form" id="ep-waitlist-form" novalidate>
+
+            <!-- Email -->
+            <div class="ep-field">
+              <input
+                type="email"
+                id="ep-wl-email"
+                name="email"
+                class="ep-input"
+                placeholder="{{ section.settings.modal_email_placeholder | default: 'Enter your email' }}"
+                autocomplete="email"
+                required
+              >
+            </div>
+
+            <!-- Checkbox: phone notification -->
+            <label class="ep-checkbox-label" for="ep-wl-phone-toggle">
+              <span class="ep-checkbox-box" id="ep-checkbox-box" aria-hidden="true">
+                <svg class="ep-check-icon" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="2 6 5 9 10 3"/>
+                </svg>
+              </span>
+              <input
+                type="checkbox"
+                id="ep-wl-phone-toggle"
+                name="phone_notify"
+                class="ep-checkbox-input"
+              >
+              <span class="ep-checkbox-text">Get phone notification</span>
+            </label>
+
+            <!-- Phone number — revealed when checkbox ticked -->
+            <div class="ep-phone-wrap" id="ep-phone-wrap" aria-hidden="true">
+              <div class="ep-field">
+                <input
+                  type="tel"
+                  id="ep-wl-phone"
+                  name="phone"
+                  class="ep-input"
+                  placeholder="Enter your phone number"
+                  autocomplete="tel"
+                >
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn btn-primary btn-lg ep-wl-submit" id="ep-wl-submit">
+              <span class="ep-wl-submit-label">{{ section.settings.modal_cta_text | default: 'Join Event Waitlist' }}</span>
+              <span class="ep-wl-submit-loading" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="ep-spinner">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+              </span>
+            </button>
+
+            <!-- Microcopy -->
+            <p class="ep-wl-microcopy">{{ section.settings.modal_microcopy | default: "You'll be the first to hear about Playmate Labs events, pop-ups and immersive experiences." }}</p>
+
+          </form>
+
+        </div><!-- /.ep-modal-form-state -->
+
+        <!-- SUCCESS STATE -->
+        <div class="ep-modal-success-state" id="ep-modal-success-state" aria-hidden="true">
+          <div class="ep-success-icon-wrap">
+            <div class="ep-success-ring" aria-hidden="true"></div>
+            <svg class="ep-success-check" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold,#C9A96E)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
             </svg>
-          </span>
-          <input
-            type="checkbox"
-            id="epWaitlistPhoneToggle"
-            name="phone_notify"
-            class="ep-waitlist-checkbox-input"
-          >
-          <span class="ep-waitlist-checkbox-text">Also notify me by phone</span>
-        </label>
-
-        <!-- Phone field — revealed when checkbox ticked -->
-        <div class="ep-waitlist-phone-wrap" id="epWaitlistPhoneWrap" aria-hidden="true">
-          <div class="ep-waitlist-field">
-            <label for="epWaitlistPhone" class="ep-waitlist-label">Phone number</label>
-            <input
-              type="tel"
-              id="epWaitlistPhone"
-              name="phone"
-              class="ep-waitlist-input"
-              placeholder="{{ section.settings.waitlist_phone_placeholder | default: 'Enter your phone number' }}"
-              autocomplete="tel"
-            >
           </div>
-        </div>
+          <h3 class="ep-success-title">You're on the list.</h3>
+          <p class="ep-success-msg">We'll let you know when the next experience opens.</p>
+          <button type="button" class="btn btn-secondary btn-sm ep-modal-close-btn" id="ep-success-close">
+            Close
+          </button>
+        </div><!-- /.ep-modal-success-state -->
 
-        <!-- Submit -->
-        <button type="submit" class="btn btn-primary btn-lg ep-waitlist-submit" id="epWaitlistSubmit">
-          <span class="ep-waitlist-submit-label">{{ section.settings.waitlist_cta_text | default: 'Join Waitlist' }}</span>
-          <span class="ep-waitlist-submit-loading" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="ep-waitlist-spinner">
-              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-            </svg>
-          </span>
-        </button>
+      </div><!-- /.ep-modal-body -->
+    </div><!-- /.ep-modal-inner -->
+  </div><!-- /.ep-modal -->
+</div><!-- /.ep-modal-backdrop -->
 
-        <!-- Microcopy -->
-        <p class="ep-waitlist-microcopy">{{ section.settings.waitlist_microcopy | default: 'No spam. Just early access when the event goes live.' }}</p>
-
-      </form>
-
-      <button type="button" class="btn btn-waitlist-back btn-sm" id="epWaitlistBack">
-        ← Back to events
-      </button>
-
-    </div><!-- /.ep-waitlist-form-wrap -->
-
-  </div><!-- /.ep-waitlist-modal -->
-</div><!-- /.ep-waitlist-overlay -->
-
-<!-- ── Toast (fallback) ── -->
-<div class="ep-toast" id="epToast" role="status" aria-live="polite">
-  <span class="ep-toast-icon">🔔</span>
-  <span class="ep-toast-msg">You're on the list!</span>
-</div>
 
 <style>
-  /* ══════════════════════════════════════
-     CARD STYLES
-  ══════════════════════════════════════ */
+  /* ════════════════════════════════════════════════
+     EVENT CARDS — local styles
+  ════════════════════════════════════════════════ */
   .event-card-img {
     position: relative;
     overflow: hidden;
@@ -236,14 +268,13 @@
     transform: scale(1.05);
   }
 
-  /* ── Coming Soon Badge ── */
+  /* Coming Soon Badge */
   .coming-soon-badge {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    background: rgba(90, 20, 50, 0.90);
+    top: 12px; left: 12px;
+    background: rgba(90,20,50,0.90);
     color: #F5EFE6;
-    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-family: var(--font-sans,'Inter',sans-serif);
     font-size: 0.60rem;
     font-weight: 700;
     letter-spacing: 0.14em;
@@ -262,13 +293,12 @@
     border-color: rgba(245,220,120,0.55);
   }
 
-  /* ── Date Badge ── */
+  /* Date Badge */
   .event-date-badge {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    background: var(--burgundy, #5a1432);
-    color: var(--ivory, #F5EFE6);
+    top: 12px; right: 12px;
+    background: var(--burgundy,#5a1432);
+    color: var(--ivory,#F5EFE6);
     border-radius: 6px;
     padding: 5px 10px;
     text-align: center;
@@ -276,12 +306,12 @@
     min-width: 44px;
   }
   .event-date-badge--gold {
-    background: var(--gold, #C9A84C);
-    color: var(--espresso, #1a0a05);
+    background: var(--gold,#C9A84C);
+    color: var(--espresso,#1a0a05);
   }
   .event-date-badge .day {
     display: block;
-    font-family: var(--font-serif, 'Cormorant Garamond', serif);
+    font-family: var(--font-serif,'Cormorant Garamond',serif);
     font-size: 1.35rem;
     font-weight: 600;
     line-height: 1;
@@ -296,14 +326,14 @@
     opacity: 0.85;
   }
 
-  /* ── Notify Me Button ── */
+  /* ── Notify Me — ghost toggle button (per card) ── */
   .ep-notify-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     background: transparent;
-    color: var(--burgundy, #5a1432);
-    border: 1.5px solid var(--burgundy, #5a1432);
+    color: var(--burgundy, #6B1E3A);
+    border: 1.5px solid var(--burgundy, #6B1E3A);
     border-radius: 50px;
     font-size: 0.65rem;
     font-weight: 700;
@@ -311,335 +341,387 @@
     text-transform: uppercase;
     padding: 7px 14px;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
     font-family: var(--font-sans, 'Inter', sans-serif);
+    white-space: nowrap;
   }
   .ep-notify-btn:hover {
-    background: var(--burgundy, #5a1432);
-    color: var(--ivory, #F5EFE6);
+    background: rgba(107,30,58,0.06);
   }
-  .ep-notify-icon {
-    font-size: 0.75rem;
-    line-height: 1;
+  /* Active/pressed state — filled */
+  .ep-notify-btn[aria-pressed="true"] {
+    background: var(--burgundy, #6B1E3A);
+    color: var(--ivory, #F5EFE6);
+    border-color: var(--burgundy, #6B1E3A);
+  }
+  .ep-notify-btn[aria-pressed="true"] .ep-notify-bell { display: none; }
+  .ep-notify-btn[aria-pressed="true"] .ep-notify-check { display: inline-block !important; }
+
+  /* ── Waiting List — ghost toggle button (footer) ── */
+  .ep-waitlist-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: var(--burgundy, #6B1E3A);
+    border: 1.5px solid var(--burgundy, #6B1E3A);
+    border-radius: var(--radius-full, 9999px);
+    padding: 0.875rem 2rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    white-space: nowrap;
+  }
+  .ep-waitlist-toggle-btn:hover {
+    background: rgba(107,30,58,0.06);
+  }
+  /* Active/pressed state — filled burgundy */
+  .ep-waitlist-toggle-btn[aria-pressed="true"] {
+    background: var(--burgundy, #6B1E3A);
+    color: var(--cream, #F5EFE6);
+    border-color: var(--burgundy, #6B1E3A);
+  }
+  .ep-waitlist-toggle-btn[aria-pressed="true"] .ep-wtb-bell  { display: none !important; }
+  .ep-waitlist-toggle-btn[aria-pressed="true"] .ep-wtb-check { display: inline-block !important; }
+  .ep-waitlist-toggle-btn[aria-pressed="true"] .ep-wtb-label::after { content: 'd'; }
+
+  /* Footer actions row */
+  .ep-footer-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
-  /* ══════════════════════════════════════
-     WAITLIST OVERLAY & MODAL
-  ══════════════════════════════════════ */
-  .ep-waitlist-overlay {
+  /* ════════════════════════════════════════════════
+     MODAL BACKDROP
+  ════════════════════════════════════════════════ */
+  .ep-modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(10, 3, 5, 0.75);
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+
+    /* Dim + blur the page behind */
+    background: rgba(15, 5, 10, 0.72);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+
+    /* Hidden by default */
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
   }
-  .ep-waitlist-overlay.is-open {
+  .ep-modal-backdrop.is-open {
     opacity: 1;
-    pointer-events: all;
+    pointer-events: auto;
   }
 
-  .ep-waitlist-modal {
-    background: var(--espresso, #1a0a05);
-    border: 1px solid rgba(201,168,76,0.25);
-    border-radius: 16px;
-    padding: 40px 36px 36px;
-    width: 100%;
-    max-width: 420px;
+  /* ════════════════════════════════════════════════
+     MODAL CARD — mirrors event card aesthetic
+  ════════════════════════════════════════════════ */
+  .ep-modal {
     position: relative;
-    transform: translateY(20px) scale(0.97);
-    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
-    max-height: 90vh;
-    overflow-y: auto;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90svh;
+    background: var(--warm-white, #FEFCF8);
+    border-radius: var(--radius-xl, 24px);
+    overflow: hidden;
+    box-shadow:
+      0 32px 80px rgba(15,5,10,0.55),
+      0 0 0 1px rgba(201,169,110,0.12);
+
+    /* Entry animation */
+    transform: translateY(28px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.34,1.26,0.64,1), opacity 0.3s ease;
+    opacity: 0;
   }
-  .ep-waitlist-overlay.is-open .ep-waitlist-modal {
+  .ep-modal-backdrop.is-open .ep-modal {
     transform: translateY(0) scale(1);
+    opacity: 1;
   }
 
-  /* Close button */
-  .ep-waitlist-close {
+  /* ── Close button: dark on ivory bg ── */
+  .ep-modal-close {
     position: absolute;
-    top: 14px;
-    right: 16px;
-    background: rgba(245,239,230,0.08);
-    border: none;
-    border-radius: 50%;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 10;
     width: 32px;
     height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-light, rgba(90,74,58,0.18));
+    background: var(--ivory, #FAF7F2);
+    color: var(--text-mid, #5A4A3A);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: rgba(245,239,230,0.55);
-    transition: background 0.2s, color 0.2s;
-    padding: 0;
-    flex-shrink: 0;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
   }
-  .ep-waitlist-close:hover {
-    background: rgba(245,239,230,0.15);
-    color: var(--ivory, #F5EFE6);
+  .ep-modal-close:hover {
+    background: var(--warm-white, #FEFCF8);
+    border-color: var(--burgundy, #6B1E3A);
+    color: var(--burgundy, #6B1E3A);
+    transform: scale(1.08);
   }
 
-  /* Header */
-  .ep-waitlist-header {
-    margin-bottom: 24px;
+  /* ── Modal header: ivory — mirrors the section header ── */
+  .ep-modal-header {
+    padding: 2.25rem 2rem 0 2rem;
+    background: transparent;
+    text-align: center;
   }
-  .ep-waitlist-eyebrow {
-    display: block;
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.62rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--gold, #C9A84C);
-    margin-bottom: 8px;
+  .ep-modal-eyebrow {
+    /* inherits .section-eyebrow — burgundy, uppercase */
+    display: block !important;
+    margin-bottom: 0.75rem !important;
   }
-  .ep-waitlist-title {
-    font-family: var(--font-serif, 'Cormorant Garamond', serif);
-    font-size: 1.65rem;
-    font-weight: 600;
-    color: var(--ivory, #F5EFE6);
+  .ep-modal-title {
+    font-family: var(--font-serif, Georgia, serif);
+    font-size: clamp(1.4rem, 3.5vw, 1.85rem);
+    font-weight: 500;
+    color: var(--text-dark, #1A1A1A);
     line-height: 1.2;
-    margin: 0 0 6px;
+    margin: 0 0 1rem;
   }
-  .ep-waitlist-meta {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.78rem;
-    color: rgba(245,239,230,0.45);
-    margin: 0;
+  .ep-modal-divider {
+    width: 40px;
+    height: 1.5px;
+    background: var(--gold, #C9A96E);
+    margin: 0 auto 1rem;
   }
-
-  /* Form fields */
-  .ep-waitlist-label {
-    display: block;
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.70rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: rgba(245,239,230,0.55);
-    margin-bottom: 6px;
-  }
-  .ep-waitlist-field {
-    margin-bottom: 14px;
-  }
-  .ep-waitlist-input {
-    width: 100%;
-    background: rgba(245,239,230,0.06);
-    border: 1px solid rgba(245,239,230,0.18);
-    border-radius: 8px;
-    padding: 12px 14px;
-    color: var(--ivory, #F5EFE6);
-    font-family: var(--font-sans, 'Inter', sans-serif);
+  .ep-modal-intro {
     font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.2s;
-    box-sizing: border-box;
-  }
-  .ep-waitlist-input:focus {
-    border-color: rgba(201,168,76,0.6);
-  }
-  .ep-waitlist-input::placeholder {
-    color: rgba(245,239,230,0.3);
+    color: var(--text-mid, #5A4A3A);
+    line-height: 1.65;
+    margin: 0 auto 0;
+    max-width: 340px;
   }
 
-  /* Checkbox */
-  .ep-waitlist-checkbox-label {
+  /* ── Body ── */
+  .ep-modal-inner {
+    overflow-y: auto;
+    max-height: 90svh;
+    overscroll-behavior: contain;
+  }
+  .ep-modal-body {
+    padding: 1.5rem 2rem 2rem;
+  }
+
+  /* ── Form ── */
+  .ep-waitlist-form {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+  .ep-field { width: 100%; }
+  .ep-input {
+    width: 100%;
+    padding: 0.875rem 1.125rem;
+    background: rgba(255,255,255,0.9);
+    border: 1.5px solid var(--border-light, rgba(90,74,58,0.18));
+    border-radius: var(--radius-md, 8px);
+    font-size: 0.9375rem;
+    color: var(--text-dark, #1A1A1A);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  .ep-input::placeholder { color: var(--text-light, #8A7A6A); }
+  .ep-input:focus {
+    border-color: var(--burgundy, #6B1E3A);
+    box-shadow: 0 0 0 3px rgba(107,30,58,0.10);
+    background: #fff;
+  }
+
+  /* Select wrapper */
+  .ep-select-wrap {
+    position: relative;
+  }
+  .ep-select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 2.5rem;
     cursor: pointer;
-    margin-bottom: 14px;
+  }
+  .ep-select-arrow {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--text-mid, #5A4A3A);
+  }
+
+  /* ── Custom checkbox ── */
+  .ep-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    cursor: pointer;
     user-select: none;
   }
-  .ep-waitlist-checkbox-box {
-    width: 18px;
-    height: 18px;
-    border: 1.5px solid rgba(245,239,230,0.3);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(245,239,230,0.05);
-    flex-shrink: 0;
-    transition: background 0.2s, border-color 0.2s;
-  }
-  .ep-waitlist-checkbox-box.is-checked {
-    background: var(--gold, #C9A84C);
-    border-color: var(--gold, #C9A84C);
-  }
-  .ep-waitlist-check-icon {
-    opacity: 0;
-    transition: opacity 0.15s;
-  }
-  .ep-waitlist-checkbox-box.is-checked .ep-waitlist-check-icon {
-    opacity: 1;
-  }
-  .ep-waitlist-checkbox-input {
+  .ep-checkbox-input {
     position: absolute;
     opacity: 0;
+    width: 0; height: 0;
     pointer-events: none;
-    width: 1px;
-    height: 1px;
   }
-  .ep-waitlist-checkbox-text {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.82rem;
-    color: rgba(245,239,230,0.65);
-  }
-
-  /* Phone reveal */
-  .ep-waitlist-phone-wrap {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-  .ep-waitlist-phone-wrap.is-open {
-    max-height: 100px;
-  }
-
-  /* Submit button */
-  .ep-waitlist-submit {
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 12px;
-  }
-  .ep-waitlist-submit-loading {
-    display: none;
-    position: absolute;
-    inset: 0;
+  .ep-checkbox-box {
+    display: flex;
     align-items: center;
     justify-content: center;
-    background: inherit;
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid rgba(107,30,58,0.35);
+    background: transparent;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    cursor: pointer;
   }
-  .ep-waitlist-submit.is-loading .ep-waitlist-submit-label {
-    visibility: hidden;
+  .ep-checkbox-label:hover .ep-checkbox-box {
+    border-color: var(--burgundy, #6B1E3A);
   }
-  .ep-waitlist-submit.is-loading .ep-waitlist-submit-loading {
-    display: flex;
+  .ep-checkbox-box.is-checked {
+    background: var(--burgundy, #6B1E3A);
+    border-color: var(--burgundy, #6B1E3A);
   }
-  @keyframes ep-spin {
-    to { transform: rotate(360deg); }
-  }
-  .ep-waitlist-spinner {
-    animation: ep-spin 0.8s linear infinite;
+  .ep-check-icon { display: none; }
+  .ep-checkbox-box.is-checked .ep-check-icon { display: block; }
+  .ep-checkbox-text {
+    font-size: 0.875rem;
+    color: var(--text-mid, #5A4A3A);
+    line-height: 1.5;
   }
 
-  /* Microcopy */
-  .ep-waitlist-microcopy {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.72rem;
-    color: rgba(245,239,230,0.35);
+  /* ── Phone slide reveal ── */
+  .ep-phone-wrap {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.32s ease, opacity 0.28s ease, margin-top 0.28s ease;
+    margin-top: 0;
+  }
+  .ep-phone-wrap.is-open {
+    max-height: 80px;
+    opacity: 1;
+    margin-top: 0;
+  }
+
+  /* ── Submit ── */
+  .ep-wl-submit {
+    width: 100%;
+    justify-content: center;
+  }
+  .ep-wl-submit-loading { display: none; align-items: center; }
+  .ep-wl-submit.is-loading .ep-wl-submit-label { display: none; }
+  .ep-wl-submit.is-loading .ep-wl-submit-loading { display: flex; }
+  @keyframes ep-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .ep-spinner { animation: ep-spin 0.9s linear infinite; }
+
+  /* ── Microcopy ── */
+  .ep-wl-microcopy {
+    font-size: 0.775rem;
+    color: var(--text-light, #8A7A6A);
     text-align: center;
+    line-height: 1.55;
     margin: 0;
   }
 
-  /* Back button */
-  .btn-waitlist-back {
-    display: block;
-    width: 100%;
-    margin-top: 14px;
-    background: transparent;
-    border: none;
-    color: rgba(245,239,230,0.4);
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.75rem;
-    cursor: pointer;
+  /* ── Success state ── */
+  .ep-modal-form-state,
+  .ep-modal-success-state {
+    transition: opacity 0.3s ease;
+  }
+  .ep-modal-success-state[aria-hidden="true"] { display: none; }
+  .ep-modal-success-state[aria-hidden="false"] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    padding: 6px;
-    transition: color 0.2s;
+    gap: 0.75rem;
+    padding: 1rem 0;
   }
-  .btn-waitlist-back:hover {
-    color: rgba(245,239,230,0.75);
-  }
-
-  /* ── Success screen ── */
-  .ep-waitlist-success {
-    text-align: center;
-    padding: 10px 0;
-  }
-  .ep-waitlist-success[aria-hidden="true"] {
-    display: none;
-  }
-  .ep-waitlist-success-icon {
-    width: 64px;
-    height: 64px;
-    background: rgba(201,168,76,0.10);
-    border: 1px solid rgba(201,168,76,0.30);
-    border-radius: 50%;
+  .ep-success-icon-wrap {
+    position: relative;
+    width: 72px; height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px;
+    margin-bottom: 0.5rem;
   }
-  .ep-waitlist-success-title {
-    font-family: var(--font-serif, 'Cormorant Garamond', serif);
-    font-size: 1.65rem;
-    font-weight: 600;
-    color: var(--ivory, #F5EFE6);
-    margin: 0 0 8px;
-  }
-  .ep-waitlist-success-event {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.8rem;
-    color: var(--gold, #C9A84C);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin: 0 0 10px;
-  }
-  .ep-waitlist-success-msg {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.88rem;
-    color: rgba(245,239,230,0.55);
-    margin: 0 0 24px;
-    line-height: 1.55;
-  }
-
-  /* ── Form wrap hidden state ── */
-  .ep-waitlist-form-wrap[aria-hidden="true"] {
-    display: none;
-  }
-
-  /* ── Toast ── */
-  .ep-toast {
-    position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--espresso, #1a0a05);
-    color: var(--ivory, #F5EFE6);
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 12px 22px;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  .ep-success-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--gold, #C9A96E);
     opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 9999;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    animation: ep-ring-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) 0.1s forwards;
   }
-  .ep-toast.ep-toast--show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+  @keyframes ep-ring-pop {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
   }
+  .ep-success-check {
+    opacity: 0;
+    animation: ep-check-pop 0.4s ease 0.4s forwards;
+  }
+  @keyframes ep-check-pop {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .ep-success-title {
+    font-family: var(--font-serif,'Cormorant Garamond',serif);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-dark, #1A1A1A);
+    margin: 0;
+  }
+  .ep-success-msg {
+    font-size: 0.9375rem;
+    color: var(--text-mid, #5A4A3A);
+    line-height: 1.6;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  .ep-modal-close-btn { margin-top: 0.5rem; }
 
-  /* ── Body scroll lock ── */
-  body.ep-no-scroll {
-    overflow: hidden;
+  /* ── Mobile ── */
+  @media (max-width: 540px) {
+    .ep-modal {
+      max-width: 100%;
+      border-radius: var(--radius-lg, 16px) var(--radius-lg, 16px) 0 0;
+      max-height: 92svh;
+    }
+    .ep-modal-backdrop {
+      align-items: flex-end;
+      padding: 0;
+    }
+    .ep-modal-header { padding: 1.75rem 1.5rem 1.5rem; }
+    .ep-modal-body   { padding: 1.5rem 1.5rem 2rem; }
+    .ep-footer-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+    .ep-footer-actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
   }
 </style>
 
@@ -647,162 +729,216 @@
 (function () {
   'use strict';
 
-  /* ══════════════════════════════════════
-     WAITLIST MODAL
-  ══════════════════════════════════════ */
-  var overlay        = document.getElementById('epWaitlistOverlay');
-  var closeBtn       = document.getElementById('epWaitlistClose');
-  var formWrap       = document.getElementById('epWaitlistFormWrap');
-  var successScreen  = document.getElementById('epWaitlistSuccess');
-  var form           = document.getElementById('epWaitlistForm');
-  var submitBtn      = document.getElementById('epWaitlistSubmit');
-  var emailInput     = document.getElementById('epWaitlistEmail');
-  var phoneToggle    = document.getElementById('epWaitlistPhoneToggle');
-  var phoneWrap      = document.getElementById('epWaitlistPhoneWrap');
-  var checkboxBox    = document.getElementById('epWaitlistCheckboxVisual');
-  var backBtn        = document.getElementById('epWaitlistBack');
-  var backSuccessBtn = document.getElementById('epWaitlistBackSuccess');
-  var eventNameEl    = document.getElementById('epWaitlistEventName');
-  var eventMetaEl    = document.getElementById('epWaitlistMeta');
-  var successEventEl = document.getElementById('epSuccessEventName');
+  /* ── Helpers ── */
+  var backdrop   = document.getElementById('ep-waitlist-modal');
+  var modalEl    = backdrop ? backdrop.querySelector('.ep-modal') : null;
+  var closeBtn   = document.getElementById('ep-modal-close');
+  var form       = document.getElementById('ep-waitlist-form');
+  var submitBtn  = document.getElementById('ep-wl-submit');
+  var checkbox   = document.getElementById('ep-wl-phone-toggle');
+  var checkBox   = document.getElementById('ep-checkbox-box');
+  var locWrap    = document.getElementById('ep-phone-wrap');
+  var formState  = document.getElementById('ep-modal-form-state');
+  var successState = document.getElementById('ep-modal-success-state');
+  var successCloseBtn = document.getElementById('ep-success-close');
 
-  if (!overlay) return;
+  /* ── Track previously focused element for focus restoration ── */
+  var lastFocused = null;
 
-  /* ── Open modal & populate with event data ── */
-  function openModal(eventName, city, date) {
-    if (eventNameEl) eventNameEl.textContent = eventName;
-    if (eventMetaEl) eventMetaEl.textContent = (city ? city : '') + (date ? ' · ' + date : '');
+  /* ── Open modal ── */
+  function openModal(eventName) {
+    if (!backdrop) return;
+    lastFocused = document.activeElement;
 
-    /* Reset to form screen */
-    if (successScreen) successScreen.setAttribute('aria-hidden', 'true');
-    if (formWrap)      formWrap.setAttribute('aria-hidden', 'false');
-    if (form)          form.reset();
-    if (checkboxBox)   checkboxBox.classList.remove('is-checked');
-    if (phoneWrap)     { phoneWrap.classList.remove('is-open'); phoneWrap.setAttribute('aria-hidden', 'true'); }
-    if (submitBtn)     { submitBtn.classList.remove('is-loading'); submitBtn.disabled = false; }
+    /* Pre-fill event context in intro text */
+    var intro = document.getElementById('ep-modal-intro-text');
+    if (intro && eventName) {
+      intro.textContent = 'Be the first to know when \u201c' + eventName + '\u201d and upcoming experiences open for booking.';
+    } else if (intro) {
+      intro.textContent = intro.dataset.default || intro.textContent;
+    }
 
-    overlay.setAttribute('aria-hidden', 'false');
-    overlay.classList.add('is-open');
-    document.body.classList.add('ep-no-scroll');
+    backdrop.setAttribute('aria-hidden', 'false');
+    backdrop.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
 
+    /* Focus first interactive element after transition */
     setTimeout(function () {
+      var emailInput = document.getElementById('ep-wl-email');
       if (emailInput) emailInput.focus();
-    }, 360);
+    }, 350);
   }
 
   /* ── Close modal ── */
   function closeModal() {
-    overlay.classList.remove('is-open');
-    overlay.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('ep-no-scroll');
+    if (!backdrop) return;
+    backdrop.classList.remove('is-open');
+    document.body.style.overflow = '';
+    setTimeout(function () {
+      backdrop.setAttribute('aria-hidden', 'true');
+      /* Restore focus */
+      if (lastFocused && lastFocused.focus) lastFocused.focus();
+    }, 310);
   }
 
-  /* ── Phone checkbox toggle ── */
-  function togglePhone() {
-    var checked = phoneToggle.checked;
-    checkboxBox.classList.toggle('is-checked', checked);
-    phoneWrap.classList.toggle('is-open', checked);
-    phoneWrap.setAttribute('aria-hidden', checked ? 'false' : 'true');
+  /* ── Active toggle button reference ── */
+  var activeToggleBtn = null;
+
+  /* ── Reset form to initial state ── */
+  function resetModal() {
+    if (form)         form.reset();
+    if (checkBox)     checkBox.classList.remove('is-checked');
+    if (locWrap)      locWrap.classList.remove('is-open');
+    if (formState)    formState.style.display = '';
+    if (successState) successState.setAttribute('aria-hidden', 'true');
+    if (checkbox)     checkbox.checked = false;
+  }
+
+  /* ── Checkbox toggle (phone reveal) ── */
+  function syncCheckbox() {
+    var checked = checkbox ? checkbox.checked : false;
+    if (checkBox) checkBox.classList.toggle('is-checked', checked);
+    if (locWrap)  locWrap.classList.toggle('is-open', checked);
+    if (locWrap)  locWrap.setAttribute('aria-hidden', checked ? 'false' : 'true');
     if (checked) {
-      setTimeout(function () {
-        var phoneInput = document.getElementById('epWaitlistPhone');
-        if (phoneInput) phoneInput.focus();
-      }, 320);
+      setTimeout(function() {
+        var ph = document.getElementById('ep-wl-phone');
+        if (ph) ph.focus();
+      }, 340);
     }
   }
 
   /* ── Form submit ── */
   function handleSubmit(e) {
     e.preventDefault();
+    var emailInput = document.getElementById('ep-wl-email');
     var email = emailInput ? emailInput.value.trim() : '';
 
+    /* Validate email */
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       if (emailInput) {
-        emailInput.style.borderColor = 'rgba(220,80,80,0.7)';
+        emailInput.style.borderColor = 'rgba(200,60,60,0.7)';
         emailInput.focus();
-        setTimeout(function () { emailInput.style.borderColor = ''; }, 2000);
+        setTimeout(function () { emailInput.style.borderColor = ''; }, 2200);
       }
       return;
     }
 
+    /* Loading */
     submitBtn.classList.add('is-loading');
     submitBtn.disabled = true;
 
-    /* ── POST to Shopify Customer Email capture or your custom endpoint ──
-       Replace the setTimeout below with a real fetch() call to your endpoint.
-       Example:
-         fetch('/contact', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ email: email, tags: ['waitlist', eventNameEl.textContent] })
-         });
-    ── */
+    /* Replace with real API call / Klaviyo / Mailchimp endpoint */
     setTimeout(function () {
       submitBtn.classList.remove('is-loading');
       submitBtn.disabled = false;
-
-      var name = eventNameEl ? eventNameEl.textContent : 'this event';
-      if (successEventEl) successEventEl.textContent = name;
-      if (formWrap)       formWrap.setAttribute('aria-hidden', 'true');
-      if (successScreen)  successScreen.setAttribute('aria-hidden', 'false');
-
-      showToast('You\'re on the list for "' + name + '"');
-    }, 1300);
+      /* Show success */
+      if (formState)    formState.style.display = 'none';
+      if (successState) successState.setAttribute('aria-hidden', 'false');
+      /* Mark the trigger button as active (joined) */
+      if (activeToggleBtn) setToggleActive(activeToggleBtn);
+      /* Auto-close after 4 s */
+      setTimeout(closeModal, 4000);
+    }, 1200);
   }
 
-  /* ── Toast ── */
-  function showToast(msg) {
-    var toast = document.getElementById('epToast');
-    if (!toast) return;
-    toast.querySelector('.ep-toast-msg').textContent = msg;
-    toast.classList.add('ep-toast--show');
-    setTimeout(function () { toast.classList.remove('ep-toast--show'); }, 3500);
-  }
-
-  /* ── Bind Notify Me buttons ── */
-  document.querySelectorAll('.ep-notify-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var name = btn.dataset.event  || 'This Event';
-      var city = btn.dataset.city   || '';
-      var date = btn.dataset.date   || '';
-      openModal(name, city, date);
-    });
-  });
-
-  /* ── Close button ── */
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-
-  /* ── Back buttons ── */
-  if (backBtn)        backBtn.addEventListener('click', closeModal);
-  if (backSuccessBtn) backSuccessBtn.addEventListener('click', closeModal);
-
-  /* ── Click outside modal ── */
-  overlay.addEventListener('click', function (e) {
-    if (e.target === overlay) closeModal();
-  });
-
-  /* ── Escape key ── */
-  document.addEventListener('keydown', function (e) {
-    if ((e.key === 'Escape' || e.keyCode === 27) && overlay.classList.contains('is-open')) {
-      closeModal();
+  /* ── Set toggle button to active state ── */
+  function setToggleActive(btn) {
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', 'true');
+    var label = btn.querySelector('.ep-notify-label, .ep-wtb-label');
+    if (label) {
+      label.dataset.original = label.dataset.original || label.textContent.trim();
+      if (btn.classList.contains('ep-notify-btn')) label.textContent = 'On the list';
     }
-  });
-
-  /* ── Phone toggle ── */
-  if (phoneToggle) phoneToggle.addEventListener('change', togglePhone);
-  if (checkboxBox) {
-    checkboxBox.addEventListener('click', function () {
-      phoneToggle.checked = !phoneToggle.checked;
-      togglePhone();
-    });
   }
 
-  /* ── Form ── */
-  if (form) form.addEventListener('submit', handleSubmit);
+  /* ── Reset toggle button to inactive ── */
+  function resetToggleBtn(btn) {
+    if (!btn) return;
+    btn.setAttribute('aria-pressed', 'false');
+    var label = btn.querySelector('.ep-notify-label, .ep-wtb-label');
+    if (label && label.dataset.original) label.textContent = label.dataset.original;
+  }
 
-  /* ══════════════════════════════════════
-     CAROUSEL (mobile)
-  ══════════════════════════════════════ */
+  /* ── Init ── */
+  function init() {
+    if (!backdrop) return;
+
+    resetModal();
+
+    /* Section-level "Waiting List" toggle button */
+    var mainOpenBtn = document.getElementById('ep-waitlist-open-main');
+    if (mainOpenBtn) {
+      mainOpenBtn.addEventListener('click', function () {
+        activeToggleBtn = mainOpenBtn;
+        openModal(null);
+      });
+    }
+
+    /* Per-card "Notify Me" toggle buttons */
+    document.querySelectorAll('.ep-notify-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        activeToggleBtn = btn;
+        openModal(btn.dataset.event || null);
+      });
+    });
+
+    /* Close triggers */
+    if (closeBtn) closeBtn.addEventListener('click', function () {
+      closeModal();
+      /* If closed without submitting, keep button unpressed */
+    });
+    if (successCloseBtn) successCloseBtn.addEventListener('click', function () {
+      closeModal();
+      setTimeout(resetModal, 320);
+    });
+
+    /* Backdrop click to close */
+    backdrop.addEventListener('click', function (e) {
+      if (e.target === backdrop) closeModal();
+    });
+
+    /* Escape key */
+    document.addEventListener('keydown', function (e) {
+      if ((e.key === 'Escape' || e.key === 'Esc') && backdrop.classList.contains('is-open')) {
+        closeModal();
+      }
+    });
+
+    /* Focus trap */
+    backdrop.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab' || !backdrop.classList.contains('is-open')) return;
+      var focusable = backdrop.querySelectorAll(
+        'button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])'
+      );
+      var first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    });
+
+    /* Checkbox / phone reveal */
+    if (checkbox) checkbox.addEventListener('change', syncCheckbox);
+    if (checkBox) {
+      checkBox.addEventListener('click', function () {
+        if (checkbox) { checkbox.checked = !checkbox.checked; syncCheckbox(); }
+      });
+    }
+
+    /* Form */
+    if (form) form.addEventListener('submit', handleSubmit);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  /* ── Carousel (mobile) ── */
   function initEventsCarousel() {
     var viewport = document.getElementById('eventsViewport');
     var track    = document.getElementById('eventsTrack');
@@ -810,14 +946,14 @@
     if (!viewport || !track) return;
     if (window.innerWidth > 768) return;
 
-    var cards      = track.querySelectorAll('.event-card');
-    var totalCards = cards.length;
-    var currentIdx = 0;
-    var offsetX    = 0;
-    var startX     = 0;
+    var cards       = track.querySelectorAll('.event-card');
+    var totalCards  = cards.length;
+    var currentIdx  = 0;
+    var offsetX     = 0;
+    var startX      = 0;
     var startOffset = 0;
-    var dragging   = false;
-    var CARD_GAP   = 16;
+    var dragging    = false;
+    var CARD_GAP    = 16;
 
     function cardWidth() {
       return cards[0] ? cards[0].offsetWidth : window.innerWidth * 0.82;
@@ -851,9 +987,9 @@
       else if (delta >  threshold) snapTo(currentIdx - 1);
       else                          snapTo(currentIdx);
     }
-    viewport.addEventListener('touchstart', function (e) { onStart(e.touches[0].clientX); },        { passive: true });
-    viewport.addEventListener('touchmove',  function (e) { onMove(e.touches[0].clientX); },         { passive: true });
-    viewport.addEventListener('touchend',   function (e) { onEnd(e.changedTouches[0].clientX); },   { passive: true });
+    viewport.addEventListener('touchstart', function (e) { onStart(e.touches[0].clientX); },       { passive: true });
+    viewport.addEventListener('touchmove',  function (e) { onMove(e.touches[0].clientX); },        { passive: true });
+    viewport.addEventListener('touchend',   function (e) { onEnd(e.changedTouches[0].clientX); },  { passive: true });
     viewport.addEventListener('mousedown',  function (e) { onStart(e.clientX); e.preventDefault(); });
     document.addEventListener('mousemove',  function (e) { onMove(e.clientX); });
     document.addEventListener('mouseup',    function (e) { onEnd(e.clientX); });
@@ -868,11 +1004,24 @@
 })();
 </script>
 
+{%- endif -%}
+
 {% schema %}
 {
   "name": "Events Preview",
   "tag": "section",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "text",
       "id": "eyebrow",
@@ -909,33 +1058,45 @@
     },
     {
       "type": "text",
-      "id": "waitlist_eyebrow",
-      "label": "Modal eyebrow label",
-      "default": "Join the Waitlist"
+      "id": "waitlist_cta_label",
+      "label": "Waitlist button label",
+      "default": "Join Waitlist for Events"
     },
     {
       "type": "text",
-      "id": "waitlist_email_placeholder",
-      "label": "Email field placeholder",
+      "id": "modal_eyebrow",
+      "label": "Modal eyebrow",
+      "default": "Upcoming Experiences"
+    },
+    {
+      "type": "text",
+      "id": "modal_heading",
+      "label": "Modal heading",
+      "default": "Upcoming Playmate Labs Experiences"
+    },
+    {
+      "type": "textarea",
+      "id": "modal_intro",
+      "label": "Modal intro text",
+      "default": "Be the first to know about our upcoming events, pop-ups and immersive experiences."
+    },
+    {
+      "type": "text",
+      "id": "modal_email_placeholder",
+      "label": "Email placeholder",
       "default": "Enter your email"
     },
     {
       "type": "text",
-      "id": "waitlist_phone_placeholder",
-      "label": "Phone field placeholder",
-      "default": "Enter your phone number"
+      "id": "modal_cta_text",
+      "label": "Modal CTA button text",
+      "default": "Join Event Waitlist"
     },
     {
-      "type": "text",
-      "id": "waitlist_cta_text",
-      "label": "Submit button label",
-      "default": "Join Waitlist"
-    },
-    {
-      "type": "text",
-      "id": "waitlist_microcopy",
+      "type": "textarea",
+      "id": "modal_microcopy",
       "label": "Microcopy below button",
-      "default": "No spam. Just early access when the event goes live."
+      "default": "You'll be the first to hear about Playmate Labs events, pop-ups and immersive experiences."
     }
   ],
   "blocks": [
@@ -1080,7 +1241,7 @@
             "date_day": "12",
             "date_month": "Apr",
             "coming_soon": true,
-            "image_url": "https://sspark.genspark.ai/cfimages?u1=gKe%2BeyoFNfDorWFvQ8bp7IAzAnVvte%2B3MIuWzNPAzd6PdyXU0fFsAw13xYNC00IdQMQ%2FhuAY6g7Z3GDbBbuoBKZQowLsURNw7pEj%2B0dUsCXbcGXCc8GdyYmGkAq8c1JSxP%2FJIKXvB%2F1oTOp%2B6DkjxOyiSPRzSLnrAhDTeCYWThmo9YhV2yezraB9G9k1vv%2FeuQ%3D%3D&u2=r7qGuCeOVsZQDauZ&width=800",
+            "image_url": "https://sspark.genspark.ai/cfimages?u1=p%2FinsJjEJ5%2FYeAqggmV7vKz%2Bd2dGccjBP2purg4YHqquGh2KL1%2FttwqXqScey6iNkuKJGcoztjn9HoEJ%2BjBmWym1u4E8Gjmj%2BusMwzs1CZIIL6cRrBrBK%2F22%2BZzlR1vCYaYV%2FIy9yi1MMmKdIkvhiHlZ6w7ewXYE9dXO8jJSobteAdSZ%2Bg%3D%3D&u2=2IG%2FnpZ5SS3rrW1p&width=800",
             "fallback_emoji": "🏃",
             "badge_style": "burgundy",
             "cta_label": "Join"
