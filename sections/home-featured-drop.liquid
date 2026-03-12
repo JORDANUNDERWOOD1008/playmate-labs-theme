@@ -275,6 +275,7 @@
     var checkboxBox   = document.getElementById('drop-waitlist-checkbox-visual');
     var successScreen = document.getElementById('drop-waitlist-success');
     var formWrap      = document.getElementById('drop-waitlist-form-wrap');
+    var priceBlock    = document.querySelector('.drop-price-block');
 
     if (!trigger || !defaultState || !waitlistState) return;
 
@@ -283,6 +284,7 @@
       defaultState.classList.add('is-hidden');
       waitlistState.setAttribute('aria-hidden', 'false');
       trigger.setAttribute('aria-expanded', 'true');
+      if (priceBlock) priceBlock.style.display = 'none';
       setTimeout(function() {
         var emailInput = document.getElementById('drop-waitlist-email');
         if (emailInput) emailInput.focus();
@@ -294,6 +296,7 @@
       waitlistState.setAttribute('aria-hidden', 'true');
       defaultState.classList.remove('is-hidden');
       trigger.setAttribute('aria-expanded', 'false');
+      if (priceBlock) priceBlock.style.display = '';
     }
 
     /* ── Phone checkbox ── */
