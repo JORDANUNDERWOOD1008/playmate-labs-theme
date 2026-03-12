@@ -65,6 +65,8 @@
   var KLAVIYO_LIST_ID = {{ settings.klaviyo_popup_list_id | default: '' | json }};
   var KLAVIYO_PUBLIC_KEY = {{ settings.klaviyo_public_api_key | default: '' | json }};
 
+  var KLAVIYO_SMS_LIST_ID = {{ settings.klaviyo_sms_list_id | default: '' | json }};
+
   function subscribeKlaviyo(email, phone, who) {
     if (!KLAVIYO_LIST_ID || !KLAVIYO_PUBLIC_KEY) return false;
 
@@ -77,12 +79,16 @@
           custom_source: "Popup — Playmate Labs",
           properties: {
             source: "newsletter_popup",
-            phone_number: phone || null,
             who_are_you: who || null
           }
         }
       }
     };
+
+    // If phone provided, include it on the email subscription for profile enrichment
+    if (phone) {
+      payload.data.attributes.phone_number = phone;
+    }
 
     fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + KLAVIYO_PUBLIC_KEY, {
       method: 'POST',
@@ -94,9 +100,12 @@
     })
     .then(function(res) {
       if (res.ok || res.status === 202) {
+        // If phone was provided, also subscribe to SMS list
+        if (phone && KLAVIYO_SMS_LIST_ID) {
+          subscribeSMS(email, phone);
+        }
         showSuccess();
       } else {
-        // Fall back to Shopify customer form submit
         submitShopifyForm(email, phone, who);
       }
     })
@@ -105,6 +114,28 @@
     });
 
     return true;
+  }
+
+  function subscribeSMS(email, phone) {
+    var smsPayload = {
+      data: {
+        type: "subscription",
+        attributes: {
+          list_id: KLAVIYO_SMS_LIST_ID,
+          phone_number: phone,
+          email: email,
+          custom_source: "Popup SMS Opt-in — Playmate Labs"
+        }
+      }
+    };
+    fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + KLAVIYO_PUBLIC_KEY, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'revision': '2023-10-15'
+      },
+      body: JSON.stringify(smsPayload)
+    }).catch(function() { /* SMS subscription is best-effort */ });
   }
 
   function submitShopifyForm(email, phone, who) {
