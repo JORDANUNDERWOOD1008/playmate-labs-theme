@@ -1,3 +1,4 @@
+{%- if section.settings.section_hidden == false -%}
 
 {%- assign _exp_sp1 = section.settings.exp_social_proof_image_1 -%}
 {%- assign _exp_sp2 = section.settings.exp_social_proof_image_2 -%}
@@ -195,8 +196,8 @@
 <!-- ===== KLAVIYO EXPERIENCE FORM JS ===== -->
 <script>
 (function() {
-  var KLAVIYO_LIST_ID = {{ section.settings.klaviyo_experience_list_id | default: '' | json }};
-  var KLAVIYO_PUBLIC_KEY = {{ section.settings.klaviyo_public_api_key | default: '' | json }};
+  var KLAVIYO_LIST_ID = {{ section.settings.klaviyo_experience_list_id | default: '' | json }} || {{ settings.klaviyo_popup_list_id | default: '' | json }};
+  var KLAVIYO_PUBLIC_KEY = {{ section.settings.klaviyo_public_api_key | default: '' | json }} || {{ settings.klaviyo_public_api_key | default: '' | json }};
 
   window.expKlaviyoSubmit = function(formNum) {
     var emailEl = document.getElementById('exp-email-' + formNum);
@@ -282,11 +283,23 @@
     <p style="font-size:0.8125rem;color:var(--text-muted);margin-top:1rem;">{{ section.settings.exp_fence_footnote | default: 'No credit card. No commitment. Just 5 days.' }}</p>
   </div>
 </section>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "5-Day Experience",
   "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Section Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_hidden",
+      "label": "Hide this section",
+      "default": false,
+      "info": "Tick to hide this section from the live site. Untick to show it again."
+    },
     {
       "type": "header",
       "content": "🖼️ Images"
