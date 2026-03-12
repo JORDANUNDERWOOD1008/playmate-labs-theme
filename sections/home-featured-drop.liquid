@@ -135,9 +135,11 @@
             {%- endif -%}
           </div>
           <div class="drop-cta-buttons">
+            {%- unless section.settings.hide_shop_cta == true -%}
             <a href="{{ section.settings.cta_url | default: drop_product.url | default: '/collections/monthly-drops' }}" class="btn btn-gold btn-lg">
               {{ section.settings.cta_text | default: 'Shop This Drop' }}
             </a>
+            {%- endunless -%}
             {%- if section.settings.show_waitlist != false -%}
             <button type="button" class="btn btn-waitlist-trigger btn-lg" id="drop-waitlist-trigger" aria-expanded="false">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
@@ -475,6 +477,13 @@
       "id": "cta_url",
       "label": "CTA button link (overrides product URL)",
       "info": "Leave blank to use the linked product's URL. Enter a custom URL to override (e.g. /products/massage-candle)."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_shop_cta",
+      "label": "Hide 'Shop This Drop' button",
+      "default": false,
+      "info": "Tick to hide the gold Shop button — useful when the Notify Me / waitlist button is the primary CTA."
     },
     {
       "type": "text",
