@@ -128,16 +128,20 @@
       "events-preview": {
         "type": "events-preview",
         "settings": {
+          "section_hidden": false,
           "eyebrow": "Upcoming Experiences",
           "heading": "Experiences worth dressing up for.",
           "subheading": "IRL events, sensory pop-ups and couples experiences across the UK — and beyond.",
           "view_all_url": "",
           "view_all_label": "",
-          "waitlist_eyebrow": "Join the Waitlist",
-          "waitlist_email_placeholder": "Enter your email",
-          "waitlist_phone_placeholder": "Enter your phone number",
-          "waitlist_cta_text": "Join Waitlist",
-          "waitlist_microcopy": "No spam. Just early access when the event goes live."
+          "hide_view_all": true,
+          "waitlist_cta_label": "Join Waitlist for Events",
+          "modal_eyebrow": "Upcoming Experiences",
+          "modal_heading": "Upcoming Playmate Labs Experiences",
+          "modal_intro": "Be the first to know about our upcoming events, pop-ups and immersive experiences.",
+          "modal_email_placeholder": "Enter your email",
+          "modal_cta_text": "Join Event Waitlist",
+          "modal_microcopy": "You'll be the first to hear about Playmate Labs events, pop-ups and immersive experiences."
         }
       },
       "journal-preview": {
