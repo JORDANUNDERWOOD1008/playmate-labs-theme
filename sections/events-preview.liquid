@@ -98,9 +98,11 @@
     <div class="text-center reveal" style="margin-top:var(--space-xl);">
       <!-- View all + waitlist CTA row -->
       <div class="ep-footer-actions">
+        {%- unless section.settings.hide_view_all -%}
         <a href="{{ section.settings.view_all_url | default: '/pages/events' }}" class="btn btn-secondary btn-lg">
           {{ section.settings.view_all_label | default: 'View All Events' }}
         </a>
+        {%- endunless -%}
         <button
           type="button"
           class="ep-waitlist-toggle-btn"
@@ -1051,6 +1053,13 @@
       "id": "view_all_label",
       "label": "View All button label",
       "default": "View All Events"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_view_all",
+      "label": "Hide 'View All Events' button",
+      "default": false,
+      "info": "Tick to show only the waitlist button in the footer."
     },
     {
       "type": "header",
