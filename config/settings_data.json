@@ -79,7 +79,7 @@
           "drop_price": "£68",
           "cta_text": "",
           "cta_url": "",
-          "hide_shop_cta": true,
+          "hide_shop_cta": false,
           "urgency_text": "47 kits remaining. Drop closes January 31st.",
           "show_waitlist": true,
           "waitlist_trigger_text": "Notify Me",
