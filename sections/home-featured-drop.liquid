@@ -124,7 +124,8 @@
         {%- endif -%}
 
         <div class="drop-cta-row">
-          <div class="drop-price-block">
+          {%- unless section.settings.hide_shop_cta == true -%}
+          <div class="drop-price-block" id="drop-price-block">
             {%- if drop_product != blank -%}
               <p class="drop-price text-cream">{{ drop_product.price | money }}</p>
               {%- if drop_product.metafields.custom.subscription_price -%}
@@ -134,6 +135,7 @@
               <p class="drop-price text-cream">{{ section.settings.drop_price | default: '£68' }}</p>
             {%- endif -%}
           </div>
+          {%- endunless -%}
           <div class="drop-cta-buttons">
             {%- unless section.settings.hide_shop_cta == true -%}
             <a href="{{ section.settings.cta_url | default: drop_product.url | default: '/collections/monthly-drops' }}" class="btn btn-gold btn-lg">
@@ -275,8 +277,6 @@
     var checkboxBox   = document.getElementById('drop-waitlist-checkbox-visual');
     var successScreen = document.getElementById('drop-waitlist-success');
     var formWrap      = document.getElementById('drop-waitlist-form-wrap');
-    var priceBlock    = document.querySelector('.drop-price-block');
-
     if (!trigger || !defaultState || !waitlistState) return;
 
     /* ── Open waitlist ── */
@@ -284,7 +284,7 @@
       defaultState.classList.add('is-hidden');
       waitlistState.setAttribute('aria-hidden', 'false');
       trigger.setAttribute('aria-expanded', 'true');
-      if (priceBlock) priceBlock.style.display = 'none';
+
       setTimeout(function() {
         var emailInput = document.getElementById('drop-waitlist-email');
         if (emailInput) emailInput.focus();
@@ -296,7 +296,6 @@
       waitlistState.setAttribute('aria-hidden', 'true');
       defaultState.classList.remove('is-hidden');
       trigger.setAttribute('aria-expanded', 'false');
-      if (priceBlock) priceBlock.style.display = '';
     }
 
     /* ── Phone checkbox ── */
