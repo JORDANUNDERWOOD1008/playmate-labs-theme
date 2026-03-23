@@ -11,7 +11,20 @@
   "sections": {
     "main": {
       "type": "main-product",
-      "settings": {}
+      "settings": {
+        "pcb_enabled": true,
+        "pcb_surcharge_display": "4.99",
+        "pcb_surcharge_pence": 499,
+        "pcb_variant_id": "56527296692604",
+        "pcb_toggle_label": "Customise your box",
+        "pcb_toggle_sub": "Add a personal message & photo",
+        "pcb_message_label": "Your personal message",
+        "pcb_message_placeholder": "Write something meaningful…",
+        "pcb_message_hint": "Printed on a card inside your box.",
+        "pcb_message_max": 200,
+        "pcb_upload_label": "Upload a photo or file",
+        "pcb_upload_hint": "Drop a photo here or click to browse"
+      }
     },
     "product-page-banner": {
       "type": "product-page-banner",
