@@ -1,395 +1,873 @@
 {% comment %}
-  PLAYMATE LABS — CUSTOMISATION ORDERS ADMIN VIEW v2
+  PLAYMATE LABS — CUSTOMISATION ORDERS ADMIN VIEW v3
   File: templates/page.customisation-orders.liquid
 
   URL: /pages/customisation-orders
   Purpose: Ops / fulfilment team view of all customised box orders.
 
-  Data source: This page loads order data via the /admin/api/... endpoint
-  using a server-side fetch via a Shopify App Proxy route OR the
-  built-in export script (scripts/export-customisation-orders.js).
+  Data sources (in order of priority):
+  1. Live: shop.metafields.customiser.orders_json (populated by sync script or webhook)
+  2. Upload: Shopify Admin CSV export (drag-drop or paste)
+  3. Manual: Paste JSON from API or export script
 
-  IMPORTANT: To see live orders, run the export script server-side:
-    node scripts/export-customisation-orders.js
-  This generates customisation-orders.csv for print-on-demand fulfilment.
-
-  Security: Protect this page by:
-  1. Going to Shopify Admin → Online Store → Pages → Customisation Orders
-  2. Set visibility to "Hidden" — only accessible via direct link
-  3. Add a URL-based password via the query param ?key=YOUR_SECRET
+  Security: Protect this page via:
+    Shopify Admin → Online Store → Pages → Customisation Orders → Visibility: Hidden
+    Share the URL only with ops/fulfilment team
 {% endcomment %}
 
 {{ 'global.css' | asset_url | stylesheet_tag }}
 
+{%- assign meta_orders = shop.metafields.customiser.orders_json -%}
+{%- assign has_live_data = false -%}
+{%- if meta_orders != blank and meta_orders != nil -%}
+  {%- assign has_live_data = true -%}
+{%- endif -%}
+
 <style>
+  /* ── Base ── */
+  *, *::before, *::after { box-sizing: border-box; }
   .pcb-admin-wrap {
-    max-width: 1200px; margin: 48px auto; padding: 0 24px 80px;
+    max-width: 1280px; margin: 0 auto; padding: 36px 24px 100px;
     font-family: var(--font-sans, 'Inter', sans-serif);
   }
-  .pcb-admin-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border-light, rgba(90,20,50,0.12)); }
-  .pcb-admin-title { font-family: var(--font-serif, 'Cormorant Garamond', serif); font-size: 2rem; font-weight: 600; color: var(--espresso, #1a0a05); margin-bottom: 6px; }
-  .pcb-admin-sub { font-size: 0.85rem; color: var(--text-muted, rgba(26,10,5,0.5)); }
 
-  .pcb-admin-stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
-  .pcb-stat-card { flex: 1; min-width: 140px; background: var(--ivory, #F5EFE6); border: 1px solid var(--border-light, rgba(90,20,50,0.12)); border-radius: 10px; padding: 16px 20px; }
-  .pcb-stat-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted, rgba(26,10,5,0.5)); margin-bottom: 6px; }
-  .pcb-stat-value { font-family: var(--font-serif, 'Cormorant Garamond', serif); font-size: 1.8rem; font-weight: 600; color: var(--espresso, #1a0a05); line-height: 1; }
-  .pcb-stat-value.gold { color: var(--gold, #C9A84C); }
+  /* ── Header ── */
+  .pcb-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid rgba(90,20,50,.12); }
+  .pcb-title { font-family: var(--font-serif, 'Cormorant Garamond', serif); font-size: 2rem; font-weight: 600; color: #1a0a05; margin: 0 0 4px; }
+  .pcb-sub   { font-size: .8rem; color: rgba(26,10,5,.5); margin: 0; }
+  .pcb-live-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .pcb-live-badge.live { background: rgba(0,160,80,.1); color: #007a3d; border: 1px solid rgba(0,160,80,.25); }
+  .pcb-live-badge.cached { background: rgba(201,168,76,.1); color: #7a5c10; border: 1px solid rgba(201,168,76,.3); }
+  .pcb-live-badge.empty  { background: rgba(90,20,50,.06); color: rgba(90,20,50,.5); border: 1px solid rgba(90,20,50,.15); }
 
-  .pcb-toolbar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-  .pcb-filter-input { flex: 1; min-width: 200px; padding: 10px 14px; border: 1.5px solid var(--border-light, rgba(90,20,50,0.15)); border-radius: 8px; font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
-  .pcb-filter-input:focus { border-color: var(--burgundy, #5a1432); }
-  .pcb-btn { padding: 10px 20px; border: none; border-radius: 8px; font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
-  .pcb-btn-dark { background: var(--espresso, #1a0a05); color: var(--ivory, #F5EFE6); }
+  /* ── Stats ── */
+  .pcb-stats { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 28px; }
+  .pcb-stat { flex: 1; min-width: 130px; background: #F5EFE6; border: 1px solid rgba(90,20,50,.1); border-radius: 10px; padding: 14px 18px; }
+  .pcb-stat-label { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(26,10,5,.45); margin-bottom: 6px; }
+  .pcb-stat-value { font-family: var(--font-serif, 'Cormorant Garamond', serif); font-size: 1.75rem; font-weight: 600; color: #1a0a05; line-height: 1; }
+  .pcb-stat-value.gold { color: #C9A84C; }
+
+  /* ── Toolbar ── */
+  .pcb-toolbar { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
+  .pcb-search { flex: 1; min-width: 220px; padding: 10px 14px; border: 1.5px solid rgba(90,20,50,.15); border-radius: 8px; font-size: .85rem; font-family: inherit; outline: none; transition: border-color .2s; }
+  .pcb-search:focus { border-color: #5a1432; }
+  .pcb-select { padding: 10px 12px; border: 1.5px solid rgba(90,20,50,.15); border-radius: 8px; font-size: .8rem; font-family: inherit; outline: none; background: white; cursor: pointer; }
+  .pcb-btn { padding: 10px 18px; border: none; border-radius: 8px; font-family: inherit; font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; transition: all .2s; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+  .pcb-btn-dark    { background: #1a0a05; color: #F5EFE6; }
   .pcb-btn-dark:hover { background: #2d1408; }
-  .pcb-btn-outline { background: transparent; color: var(--espresso, #1a0a05); border: 1.5px solid var(--border-light, rgba(90,20,50,0.25)); }
-  .pcb-btn-outline:hover { background: var(--ivory, #F5EFE6); }
+  .pcb-btn-green   { background: #007a3d; color: white; }
+  .pcb-btn-green:hover { background: #005c2e; }
+  .pcb-btn-outline { background: transparent; color: #1a0a05; border: 1.5px solid rgba(90,20,50,.2); }
+  .pcb-btn-outline:hover { background: #F5EFE6; }
+  .pcb-btn:disabled { opacity: .5; cursor: default; }
 
-  .pcb-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border-light, rgba(90,20,50,0.12)); margin-bottom: 24px; }
-  .pcb-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; background: #fff; }
-  .pcb-table th { background: var(--espresso, #1a0a05); color: var(--ivory, #F5EFE6); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 14px; text-align: left; white-space: nowrap; }
-  .pcb-table td { padding: 12px 14px; border-bottom: 1px solid var(--border-light, rgba(90,20,50,0.08)); vertical-align: top; color: var(--espresso, #1a0a05); }
+  /* ── Upload zone ── */
+  .pcb-upload-strip { background: rgba(201,168,76,.06); border: 1.5px dashed rgba(201,168,76,.4); border-radius: 10px; padding: 18px 20px; margin-bottom: 22px; display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
+  .pcb-upload-strip.drag-over { background: rgba(201,168,76,.14); border-color: #C9A84C; }
+  .pcb-upload-icon { font-size: 1.6rem; flex-shrink: 0; }
+  .pcb-upload-text { flex: 1; min-width: 200px; }
+  .pcb-upload-text strong { font-size: .88rem; color: #1a0a05; display: block; margin-bottom: 3px; }
+  .pcb-upload-text small { font-size: .75rem; color: rgba(26,10,5,.5); line-height: 1.4; display: block; }
+  .pcb-upload-text a { color: #5a1432; font-weight: 600; }
+  #pcb-file-input { display: none; }
+
+  /* ── Info panel ── */
+  .pcb-info { background: rgba(201,168,76,.07); border: 1px solid rgba(201,168,76,.22); border-radius: 9px; padding: 14px 18px; margin-bottom: 22px; font-size: .8rem; color: rgba(26,10,5,.65); line-height: 1.6; }
+  .pcb-info strong { color: #1a0a05; }
+  .pcb-info code { background: rgba(90,20,50,.07); padding: 1px 5px; border-radius: 3px; font-size: .85em; font-family: monospace; }
+  .pcb-info details summary { cursor: pointer; font-weight: 600; color: #5a1432; margin-bottom: 6px; }
+
+  /* ── Table ── */
+  .pcb-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid rgba(90,20,50,.1); margin-bottom: 20px; }
+  .pcb-table { width: 100%; border-collapse: collapse; font-size: .8rem; background: #fff; }
+  .pcb-table th { background: #1a0a05; color: #F5EFE6; font-size: .62rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 11px 14px; text-align: left; white-space: nowrap; cursor: pointer; user-select: none; }
+  .pcb-table th:hover { background: #2d1408; }
+  .pcb-table th .sort-arrow { opacity: .4; margin-left: 4px; }
+  .pcb-table th.sorted .sort-arrow { opacity: 1; }
+  .pcb-table td { padding: 11px 14px; border-bottom: 1px solid rgba(90,20,50,.07); vertical-align: top; color: #1a0a05; }
   .pcb-table tr:last-child td { border-bottom: none; }
-  .pcb-table tr:hover td { background: rgba(245,239,230,0.5); }
-  .pcb-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-  .pcb-badge-yes { background: rgba(201,168,76,0.18); color: #7a5c10; border: 1px solid rgba(201,168,76,0.4); }
-  .pcb-badge-no  { background: rgba(90,20,50,0.08); color: rgba(90,20,50,0.6); border: 1px solid rgba(90,20,50,0.15); }
-  .pcb-msg-text { max-width: 200px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--text-muted, rgba(26,10,5,0.6)); font-style: italic; font-size: 0.78rem; }
-  .pcb-file-chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3); border-radius: 6px; padding: 3px 8px; font-size: 0.72rem; font-weight: 600; color: var(--espresso, #1a0a05); cursor: pointer; transition: background 0.2s; }
-  .pcb-file-chip:hover { background: rgba(201,168,76,0.2); }
-  .pcb-empty { text-align: center; padding: 60px 24px; color: var(--text-muted, rgba(26,10,5,0.4)); }
-  .pcb-loading { text-align: center; padding: 40px; color: var(--text-muted, rgba(26,10,5,0.4)); }
+  .pcb-table tr:hover td { background: rgba(245,239,230,.5); }
+  .pcb-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: .62rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+  .pcb-badge-yes { background: rgba(201,168,76,.16); color: #7a5c10; border: 1px solid rgba(201,168,76,.35); }
+  .pcb-msg  { max-width: 180px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: rgba(26,10,5,.6); font-style: italic; font-size: .75rem; }
+  .pcb-file { display: inline-flex; align-items: center; gap: 5px; background: rgba(201,168,76,.09); border: 1px solid rgba(201,168,76,.28); border-radius: 5px; padding: 2px 7px; font-size: .7rem; font-weight: 600; }
+  .pcb-muted { color: rgba(26,10,5,.22); }
+  .pcb-empty { text-align: center; padding: 50px 20px; color: rgba(26,10,5,.35); font-size: .85rem; }
+  .pcb-loading { text-align: center; padding: 40px; }
+  .pcb-spinner { display: inline-block; width: 24px; height: 24px; border: 2.5px solid rgba(90,20,50,.15); border-top-color: #5a1432; border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .pcb-info-box { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; font-size: 0.82rem; color: rgba(26,10,5,0.65); line-height: 1.55; }
-  .pcb-info-box strong { color: var(--espresso, #1a0a05); }
-  .pcb-info-box code { background: rgba(90,20,50,0.08); padding: 1px 5px; border-radius: 3px; font-size: 0.8em; }
-
-  .pcb-setup-box { background: #fff; border: 1.5px solid rgba(90,20,50,0.15); border-radius: 10px; padding: 20px 24px; margin-bottom: 28px; }
-  .pcb-setup-title { font-size: 0.88rem; font-weight: 700; color: var(--espresso, #1a0a05); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .pcb-setup-steps { font-size: 0.82rem; color: rgba(26,10,5,0.7); line-height: 1.8; }
-  .pcb-setup-steps li { margin-bottom: 4px; }
-  .pcb-setup-steps code { background: rgba(90,20,50,0.06); padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 0.85em; }
-
-  /* Image lightbox */
-  .pcb-lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; }
+  /* ── Lightbox ── */
+  .pcb-lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 9999; align-items: center; justify-content: center; }
   .pcb-lightbox.open { display: flex; }
-  .pcb-lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 8px; }
-  .pcb-lightbox-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 1.5rem; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .pcb-lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .pcb-lb-close { position: absolute; top: 18px; right: 18px; background: rgba(255,255,255,.12); border: none; color: white; font-size: 1.4rem; cursor: pointer; width: 38px; height: 38px; border-radius: 50%; }
 
-  @media (max-width: 640px) { .pcb-admin-title { font-size: 1.5rem; } .pcb-stat-value { font-size: 1.4rem; } }
+  /* ── Paste modal ── */
+  .pcb-modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 999; align-items: center; justify-content: center; }
+  .pcb-modal-bg.open { display: flex; }
+  .pcb-modal { background: #fff; border-radius: 12px; padding: 24px; max-width: 580px; width: 95%; max-height: 85vh; overflow-y: auto; }
+  .pcb-modal h3 { font-size: .95rem; font-weight: 700; margin: 0 0 10px; color: #1a0a05; }
+  .pcb-modal textarea { width: 100%; height: 180px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: monospace; font-size: .78rem; resize: vertical; }
+
+  /* ── Pagination ── */
+  .pcb-pagination { display: flex; align-items: center; gap: 8px; justify-content: center; margin-top: 16px; }
+  .pcb-page-btn { padding: 6px 12px; border: 1px solid rgba(90,20,50,.2); border-radius: 6px; background: white; cursor: pointer; font-size: .78rem; }
+  .pcb-page-btn:hover { background: #F5EFE6; }
+  .pcb-page-btn.active { background: #1a0a05; color: #F5EFE6; border-color: #1a0a05; }
+  .pcb-page-info { font-size: .75rem; color: rgba(26,10,5,.5); }
+
+  /* ── Toast ── */
+  .pcb-toast { position: fixed; bottom: 24px; right: 24px; background: #1a0a05; color: #F5EFE6; padding: 12px 20px; border-radius: 8px; font-size: .82rem; font-weight: 600; z-index: 99999; transform: translateY(80px); opacity: 0; transition: all .3s; pointer-events: none; }
+  .pcb-toast.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 600px) {
+    .pcb-title { font-size: 1.5rem; }
+    .pcb-stat-value { font-size: 1.4rem; }
+    .pcb-toolbar { flex-direction: column; }
+    .pcb-search, .pcb-select { width: 100%; }
+  }
 </style>
 
-<div class="pcb-admin-wrap">
+<div class="pcb-admin-wrap" id="pcb-root">
 
-  <div class="pcb-admin-header">
-    <h1 class="pcb-admin-title">📦 Customisation Orders</h1>
-    <p class="pcb-admin-sub">All orders where customers selected "Customise your box" — message, file, surcharge, and print-on-demand data.</p>
-  </div>
-
-  <div class="pcb-info-box">
-    <strong>How data is captured:</strong> When a customer enables "Customise your box" and adds to cart,
-    the message and file name are stored as <strong>line item properties</strong> on both the main product
-    and the £4.99 add-on line item. These are visible in <strong>Shopify Admin → Orders</strong> on every order.
-    Cart attributes <code>_pcb_message</code>, <code>_pcb_file_name</code>, and <code>_pcb_file_data_1/2/3</code>
-    also hold the data for retrieval. Use <strong>Export CSV</strong> below for print-on-demand fulfilment.
-  </div>
-
-  <div class="pcb-setup-box" id="pcb-setup-box">
-    <div class="pcb-setup-title">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold,#C9A84C)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-      How to export your customisation orders
+  <!-- Header -->
+  <div class="pcb-header">
+    <div>
+      <h1 class="pcb-title">📦 Customisation Orders</h1>
+      <p class="pcb-sub">Print-on-demand fulfilment dashboard — messages, photos &amp; surcharge data.</p>
     </div>
-    <ol class="pcb-setup-steps">
-      <li><strong>Shopify Admin CSV (recommended):</strong> Go to <strong>Orders → Export</strong>, filter by "Box Customisation" product, export as CSV. Line item properties (Message, _file_name) are included in the export columns.</li>
-      <li><strong>Automated script:</strong> Run <code>node scripts/export-customisation-orders.js</code> — requires a token with <code>read_orders</code> scope. Generates <code>customisation-orders-YYYY-MM-DD.csv</code> directly.</li>
-      <li><strong>This page (live view):</strong> Paste a valid orders JSON response below to populate the table, or click "Load from Shopify Admin" if your browser is logged into the admin.</li>
-    </ol>
-  </div>
-
-  <div class="pcb-admin-stats" id="pcb-stats">
-    <div class="pcb-stat-card">
-      <div class="pcb-stat-label">Customised orders</div>
-      <div class="pcb-stat-value" id="stat-total">0</div>
-    </div>
-    <div class="pcb-stat-card">
-      <div class="pcb-stat-label">Surcharge revenue</div>
-      <div class="pcb-stat-value gold" id="stat-revenue">£0.00</div>
-    </div>
-    <div class="pcb-stat-card">
-      <div class="pcb-stat-label">With file uploads</div>
-      <div class="pcb-stat-value" id="stat-files">0</div>
-    </div>
-    <div class="pcb-stat-card">
-      <div class="pcb-stat-label">With messages</div>
-      <div class="pcb-stat-value" id="stat-messages">0</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      {%- if has_live_data -%}
+        <span class="pcb-live-badge live">
+          <span style="width:7px;height:7px;border-radius:50%;background:#007a3d;display:inline-block;"></span>
+          Live data
+        </span>
+      {%- else -%}
+        <span class="pcb-live-badge empty">
+          <span style="width:7px;height:7px;border-radius:50%;background:rgba(90,20,50,.4);display:inline-block;"></span>
+          No live data yet
+        </span>
+      {%- endif -%}
+      <button class="pcb-btn pcb-btn-dark" id="pcb-export-btn">⬇ Export CSV</button>
     </div>
   </div>
 
-  <div class="pcb-toolbar">
-    <input type="text" class="pcb-filter-input" id="pcb-filter-input" placeholder="Search by order, customer, product or message…">
-    <button class="pcb-btn pcb-btn-dark" id="pcb-export-btn">⬇ Export CSV</button>
-    <button class="pcb-btn pcb-btn-outline" id="pcb-load-btn">↻ Load from Admin</button>
+  <!-- Stats -->
+  <div class="pcb-stats">
+    <div class="pcb-stat"><div class="pcb-stat-label">Customised orders</div><div class="pcb-stat-value" id="stat-total">—</div></div>
+    <div class="pcb-stat"><div class="pcb-stat-label">Surcharge revenue</div><div class="pcb-stat-value gold" id="stat-revenue">—</div></div>
+    <div class="pcb-stat"><div class="pcb-stat-label">With messages</div><div class="pcb-stat-value" id="stat-msgs">—</div></div>
+    <div class="pcb-stat"><div class="pcb-stat-label">With file uploads</div><div class="pcb-stat-value" id="stat-files">—</div></div>
+  </div>
+
+  <!-- Upload strip -->
+  <div class="pcb-upload-strip" id="pcb-drop-zone">
+    <div class="pcb-upload-icon">📂</div>
+    <div class="pcb-upload-text">
+      <strong>Upload Shopify Orders CSV <em>or</em> drag &amp; drop here</strong>
+      <small>
+        Export from <a href="https://admin.shopify.com/store/playmatelabs/orders" target="_blank">Shopify Admin → Orders → Export</a>
+        (filter by SKU <code>PM-BOX-CUSTOM-499</code> or tag <code>customisation</code>).
+        The CSV <em>Lineitem properties</em> column contains the message &amp; file name.
+      </small>
+    </div>
+    <label for="pcb-file-input" class="pcb-btn pcb-btn-outline" style="cursor:pointer;">📤 Upload CSV</label>
+    <input type="file" id="pcb-file-input" accept=".csv,text/csv">
     <button class="pcb-btn pcb-btn-outline" id="pcb-paste-btn">📋 Paste JSON</button>
+    <button class="pcb-btn pcb-btn-outline" id="pcb-refresh-btn">↻ Refresh live</button>
   </div>
 
+  <!-- Info panel -->
+  <div class="pcb-info">
+    <details>
+      <summary>ℹ️ How to get live order data</summary>
+      <br>
+      <strong>Option 1 — Sync script (recommended):</strong> Run from your terminal:<br>
+      <code>node scripts/export-customisation-orders.js --sync --csv</code><br>
+      This fetches orders via the Admin API and writes them to the store's metafield so this page updates automatically. Re-run daily or set up a cron job.<br><br>
+      <strong>Option 2 — Webhook receiver:</strong> Run <code>node scripts/webhook-receiver.js</code> on a public server.
+      New orders are captured automatically as they arrive.<br><br>
+      <strong>Option 3 — Shopify Admin CSV:</strong> Go to Admin → Orders → filter by tag <code>customisation</code> → Export CSV → upload above.
+      The <em>Lineitem properties</em> column contains the message and file name.
+    </details>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="pcb-toolbar">
+    <input type="text" class="pcb-search" id="pcb-search" placeholder="Search order #, customer, message, file…">
+    <select class="pcb-select" id="pcb-filter-file">
+      <option value="">All orders</option>
+      <option value="with-file">With file upload</option>
+      <option value="no-file">No file</option>
+      <option value="with-msg">With message</option>
+    </select>
+    <span class="pcb-page-info" id="pcb-count-label" style="margin-left:4px;"></span>
+  </div>
+
+  <!-- Table -->
   <div class="pcb-table-wrap">
     <table class="pcb-table" id="pcb-table">
       <thead>
         <tr>
-          <th>Order #</th>
-          <th>Date</th>
-          <th>Customer</th>
-          <th>Email</th>
-          <th>Product</th>
-          <th>Variant</th>
-          <th>Surcharge</th>
+          <th data-col="order_number">Order # <span class="sort-arrow">↕</span></th>
+          <th data-col="created_at">Date <span class="sort-arrow">↕</span></th>
+          <th data-col="customer_name">Customer</th>
+          <th data-col="customer_email">Email</th>
+          <th data-col="product_title">Product</th>
+          <th data-col="variant_title">Variant</th>
+          <th data-col="surcharge">Surcharge</th>
           <th>Message</th>
           <th>File</th>
-          <th>Preview</th>
+          <th>Actions</th>
         </tr>
       </thead>
-      <tbody id="pcb-table-body">
-        <tr><td colspan="10" class="pcb-empty">No orders loaded yet. Click "Load from Admin" or "Paste JSON" to populate.</td></tr>
+      <tbody id="pcb-tbody">
+        <tr><td colspan="10" class="pcb-loading"><div class="pcb-spinner"></div></td></tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Paste JSON modal -->
-  <div id="pcb-paste-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;align-items:center;justify-content:center;">
-    <div style="background:white;border-radius:12px;padding:24px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;">
-      <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--espresso,#1a0a05);">Paste Shopify Orders JSON</h3>
-      <p style="font-size:0.82rem;color:rgba(26,10,5,0.6);margin-bottom:12px;">Paste the JSON from Shopify Admin API or from the export script output. Format: <code>{"orders": [...]}</code></p>
-      <textarea id="pcb-paste-area" style="width:100%;height:200px;padding:10px;border:1px solid #ccc;border-radius:6px;font-family:monospace;font-size:0.8rem;" placeholder='{"orders": [{"order_number": 1042, ...}]}'></textarea>
-      <div style="display:flex;gap:10px;margin-top:12px;">
-        <button class="pcb-btn pcb-btn-dark" id="pcb-paste-submit">Load Data</button>
-        <button class="pcb-btn pcb-btn-outline" id="pcb-paste-cancel">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Image lightbox -->
-  <div class="pcb-lightbox" id="pcb-lightbox">
-    <button class="pcb-lightbox-close" id="pcb-lightbox-close">✕</button>
-    <img id="pcb-lightbox-img" src="" alt="">
-  </div>
+  <!-- Pagination -->
+  <div class="pcb-pagination" id="pcb-pagination"></div>
 
 </div>
+
+<!-- Paste JSON modal -->
+<div class="pcb-modal-bg" id="pcb-paste-modal">
+  <div class="pcb-modal">
+    <h3>Paste Shopify Orders JSON</h3>
+    <p style="font-size:.78rem;color:rgba(26,10,5,.55);margin:0 0 10px;">Format: <code>{"orders":[...]}</code> from Admin API or export script <code>--json</code> flag.</p>
+    <textarea id="pcb-paste-area" placeholder='{"orders": [{"order_number": 1042, "line_items": [...]}]}'></textarea>
+    <div style="display:flex;gap:10px;margin-top:12px;">
+      <button class="pcb-btn pcb-btn-dark" id="pcb-paste-ok">Load Data</button>
+      <button class="pcb-btn pcb-btn-outline" id="pcb-paste-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Image lightbox -->
+<div class="pcb-lightbox" id="pcb-lightbox">
+  <button class="pcb-lb-close" id="pcb-lb-close">✕</button>
+  <img id="pcb-lb-img" src="" alt="">
+</div>
+
+<!-- Toast -->
+<div class="pcb-toast" id="pcb-toast"></div>
+
+<!-- Embedded live data from Liquid metafield -->
+{%- if has_live_data -%}
+<script id="pcb-live-data" type="application/json">
+{{ meta_orders.value | json }}
+</script>
+{%- endif -%}
 
 <script>
 (function () {
   'use strict';
 
-  var ADDON_SKU    = 'PM-BOX-CUSTOM-499';
-  var allRows      = [];
-  var filteredRows = [];
+  /* ────────────────────────────────────────────────── */
+  /* Constants                                          */
+  /* ────────────────────────────────────────────────── */
+  var ADDON_SKU   = 'PM-BOX-CUSTOM-499';
+  var PAGE_SIZE   = 50;
 
-  /* ─── Helpers ─── */
+  var allRows     = [];
+  var filtered    = [];
+  var currentPage = 1;
+  var sortCol     = 'created_at';
+  var sortDir     = -1;   // -1 = desc
+
+  /* ────────────────────────────────────────────────── */
+  /* Helpers                                            */
+  /* ────────────────────────────────────────────────── */
   function esc(s) {
     if (!s) return '';
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
-  function fmt(iso) {
+  function fmtDT(iso) {
     if (!iso) return '–';
-    try { return new Date(iso).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
-    catch(e) { return iso; }
+    try { return new Date(iso).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+    catch(e){ return iso; }
   }
   function fmtDate(iso) {
     if (!iso) return '';
     try { return new Date(iso).toLocaleDateString('en-GB'); }
-    catch(e) { return iso; }
+    catch(e){ return iso; }
+  }
+  function toast(msg, ms) {
+    var t = document.getElementById('pcb-toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, ms || 2800);
   }
 
-  /* ─── Parse Shopify orders JSON into our row format ─── */
+  /* ────────────────────────────────────────────────── */
+  /* Parse Shopify orders JSON into our row format      */
+  /* ────────────────────────────────────────────────── */
   function parseShopifyOrders(orders) {
     var rows = [];
     (orders || []).forEach(function(order) {
       var customer = order.customer || {};
-      var name = [customer.first_name, customer.last_name].filter(Boolean).join(' ') || (order.billing_address ? order.billing_address.name : '') || 'Guest';
-      var email = customer.email || order.email || '';
-
-      /* Find the main product line item with customisation properties */
+      var billing  = order.billing_address || {};
+      var name     = [customer.first_name, customer.last_name].filter(Boolean).join(' ')
+                     || billing.name || 'Guest';
+      var email    = customer.email || order.email || '';
       var lineItems = order.line_items || [];
-      var mainItems = lineItems.filter(function(li) {
-        var props = li.properties || li.customAttributes || [];
-        return props.some(function(p) { return (p.name || p.key) === '_customisation' && p.value === 'yes'; })
-          && li.sku !== ADDON_SKU;
+
+      var addonItem = lineItems.find(function(li){ return li.sku === ADDON_SKU; });
+      var mainItems = lineItems.filter(function(li){
+        return li.sku !== ADDON_SKU &&
+          (li.properties||[]).some(function(p){ return p.name === '_customisation' && p.value === 'yes'; });
       });
-      var addonItem = lineItems.find(function(li) { return li.sku === ADDON_SKU; });
 
-      if (!mainItems.length && !addonItem) return; /* not a customisation order */
+      if (!addonItem && !mainItems.length) return;
 
-      (mainItems.length ? mainItems : [lineItems[0] || {}]).forEach(function(li) {
+      var targets = mainItems.length ? mainItems
+        : lineItems.filter(function(li){ return li.sku !== ADDON_SKU; }).slice(0,1);
+
+      (targets.length ? targets : [lineItems[0]]).forEach(function(li){
+        if (!li) return;
         var props = {};
-        (li.properties || li.customAttributes || []).forEach(function(p) {
-          props[p.name || p.key] = p.value;
-        });
+        (li.properties||[]).forEach(function(p){ props[p.name||p.key] = p.value; });
 
         rows.push({
           order_number:   '#' + (order.order_number || order.name || '?'),
-          order_id:       order.id || '',
+          order_id:       String(order.id || ''),
           created_at:     order.created_at || '',
           customer_name:  name,
           customer_email: email,
           product_title:  li.title || li.name || '–',
           variant_title:  (li.variant_title && li.variant_title !== 'Default Title') ? li.variant_title : 'Default',
-          customised:     true,
-          surcharge:      addonItem ? '£4.99' : (props['_customisation'] === 'yes' ? '£4.99' : '–'),
+          surcharge:      addonItem || props['_customisation'] === 'yes' ? '£4.99' : '–',
           message:        props['Message'] || props['_pcb_message'] || '',
           file_name:      props['_file_name'] || props['_pcb_file_name'] || '',
-          file_size:      props['_file_size'] || ''
+          file_size:      props['_file_size'] || '',
+          order_url:      order.id ? 'https://admin.shopify.com/store/playmatelabs/orders/' + order.id : ''
         });
       });
     });
     return rows;
   }
 
-  /* ─── Render stats ─── */
-  function renderStats(rows) {
-    var total   = rows.length;
-    var revenue = rows.filter(function(r) { return r.surcharge && r.surcharge !== '–'; }).length * 4.99;
-    var files   = rows.filter(function(r) { return r.file_name; }).length;
-    var msgs    = rows.filter(function(r) { return r.message && r.message !== '(no message)'; }).length;
-    document.getElementById('stat-total').textContent    = total;
-    document.getElementById('stat-revenue').textContent  = '£' + revenue.toFixed(2);
-    document.getElementById('stat-files').textContent    = files;
-    document.getElementById('stat-messages').textContent = msgs;
+  /* ────────────────────────────────────────────────── */
+  /* Parse Shopify Admin exported CSV                   */
+  /* Shopify CSV columns include:                       */
+  /*   Name, Email, Created at, Lineitem quantity,      */
+  /*   Lineitem name, Lineitem sku, Lineitem properties  */
+  /* ────────────────────────────────────────────────── */
+  function parseShopifyCSV(csvText) {
+    var rows = [];
+
+    // Simple CSV parser (handles quoted fields with commas/newlines)
+    function parseCSVLine(line) {
+      var result = [], cur = '', inQ = false;
+      for (var i = 0; i < line.length; i++) {
+        var c = line[i];
+        if (c === '"') {
+          if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+          else inQ = !inQ;
+        } else if (c === ',' && !inQ) {
+          result.push(cur); cur = '';
+        } else { cur += c; }
+      }
+      result.push(cur);
+      return result;
+    }
+
+    // Full CSV tokenizer that handles multi-line quoted fields
+    function tokenizeCSV(text) {
+      var records = [], current = [], cur = '', inQ = false;
+      // Remove BOM
+      if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+
+      for (var i = 0; i < text.length; i++) {
+        var c = text[i];
+        if (c === '"') {
+          if (inQ && text[i+1] === '"') { cur += '"'; i++; }
+          else inQ = !inQ;
+        } else if (c === ',' && !inQ) {
+          current.push(cur); cur = '';
+        } else if ((c === '\n' || c === '\r') && !inQ) {
+          if (c === '\r' && text[i+1] === '\n') i++;
+          current.push(cur); cur = '';
+          if (current.some(function(f){ return f.trim() !== ''; })) {
+            records.push(current);
+          }
+          current = [];
+        } else { cur += c; }
+      }
+      if (cur || current.length) { current.push(cur); records.push(current); }
+      return records;
+    }
+
+    var records = tokenizeCSV(csvText);
+    if (records.length < 2) return [];
+
+    var headers = records[0].map(function(h){ return h.trim().toLowerCase(); });
+
+    // Map header names to indices (Shopify uses different column names)
+    function idx(names) {
+      if (!Array.isArray(names)) names = [names];
+      for (var i = 0; i < names.length; i++) {
+        var j = headers.indexOf(names[i].toLowerCase());
+        if (j >= 0) return j;
+      }
+      return -1;
+    }
+
+    var iName         = idx(['name']);
+    var iEmail        = idx(['email']);
+    var iCreated      = idx(['created at', 'created_at']);
+    var iBillingName  = idx(['billing name', 'billing_name']);
+    var iLIName       = idx(['lineitem name', 'lineitem_name']);
+    var iLISku        = idx(['lineitem sku', 'lineitem_sku']);
+    var iLIQty        = idx(['lineitem quantity', 'lineitem_quantity']);
+    var iLIProps      = idx(['lineitem properties', 'lineitem_properties']);
+    var iVariant      = idx(['lineitem variant', 'lineitem_variant', 'variant title', 'variant_title']);
+
+    // Group by order name
+    var orderMap = {};
+
+    for (var r = 1; r < records.length; r++) {
+      var row = records[r];
+      var orderName = iName >= 0 ? (row[iName] || '').trim() : '';
+      if (!orderName) continue;
+
+      if (!orderMap[orderName]) {
+        orderMap[orderName] = {
+          order_number: orderName,
+          email:        iEmail >= 0 ? row[iEmail] || '' : '',
+          billing_name: iBillingName >= 0 ? row[iBillingName] || '' : '',
+          created_at:   iCreated >= 0 ? row[iCreated] || '' : '',
+          line_items:   []
+        };
+      }
+
+      var liProps = iLIProps >= 0 ? row[iLIProps] || '' : '';
+      var sku     = iLISku >= 0 ? (row[iLISku] || '').trim() : '';
+      var title   = iLIName >= 0 ? (row[iLIName] || '').trim() : '';
+      var variant = iVariant >= 0 ? (row[iVariant] || '').trim() : '';
+
+      // Parse line item properties — Shopify exports as "[{name: X, value: Y}]" format
+      var parsedProps = [];
+      if (liProps) {
+        try {
+          // Shopify exports like: [{"name":"Message","value":"Hello"}]
+          var cleaned = liProps
+            .replace(/^"/, '').replace(/"$/, '')
+            .replace(/""/g, '"');
+          parsedProps = JSON.parse(cleaned);
+        } catch(e) {
+          // Try alternate format: "Message: Hello, _file_name: photo.jpg"
+          liProps.split(',').forEach(function(pair){
+            var parts = pair.split(':');
+            if (parts.length >= 2) {
+              parsedProps.push({
+                name: parts[0].trim().replace(/^["']|["']$/g,''),
+                value: parts.slice(1).join(':').trim().replace(/^["']|["']$/g,'')
+              });
+            }
+          });
+        }
+      }
+
+      orderMap[orderName].line_items.push({
+        title: title, sku: sku,
+        variant_title: variant,
+        properties: parsedProps
+      });
+    }
+
+    // Convert map to rows
+    Object.values(orderMap).forEach(function(order){
+      var addonItem = order.line_items.find(function(li){ return li.sku === ADDON_SKU; });
+      var mainItems = order.line_items.filter(function(li){
+        return li.sku !== ADDON_SKU &&
+          li.properties.some(function(p){ return p.name === '_customisation' && p.value === 'yes'; });
+      });
+
+      // If no tagged items, check if addon SKU exists in the order
+      var targets = mainItems.length
+        ? mainItems
+        : (addonItem
+          ? order.line_items.filter(function(li){ return li.sku !== ADDON_SKU; }).slice(0,1)
+          : []);
+
+      if (!targets.length && !addonItem) return;
+
+      (targets.length ? targets : order.line_items.slice(0,1)).forEach(function(li){
+        var props = {};
+        (li.properties||[]).forEach(function(p){ props[p.name||p.key] = p.value; });
+
+        // Parse ISO date from Shopify CSV
+        var created = order.created_at;
+        if (created && !created.includes('T')) {
+          // Shopify CSV format: "2024-03-15 14:22:33 +0000"
+          created = created.replace(' ', 'T').replace(/ (\+\d{4})$/, '$1');
+        }
+
+        rows.push({
+          order_number:   order.order_number,
+          order_id:       '',
+          created_at:     created,
+          customer_name:  order.billing_name || 'Guest',
+          customer_email: order.email,
+          product_title:  li.title || '–',
+          variant_title:  (li.variant_title && li.variant_title !== 'Default Title') ? li.variant_title : 'Default',
+          surcharge:      addonItem || props['_customisation'] === 'yes' ? '£4.99' : '–',
+          message:        props['Message'] || props['_pcb_message'] || '',
+          file_name:      props['_file_name'] || props['_pcb_file_name'] || '',
+          file_size:      props['_file_size'] || '',
+          order_url:      ''
+        });
+      });
+    });
+
+    return rows;
   }
 
-  /* ─── Render table ─── */
-  function renderTable(rows) {
-    var tbody = document.getElementById('pcb-table-body');
-    if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="10" class="pcb-empty">No customisation orders found.</td></tr>';
+  /* ────────────────────────────────────────────────── */
+  /* Render                                             */
+  /* ────────────────────────────────────────────────── */
+  function renderStats(rows) {
+    document.getElementById('stat-total').textContent  = rows.length;
+    var rev = rows.filter(function(r){ return r.surcharge && r.surcharge !== '–'; }).length * 4.99;
+    document.getElementById('stat-revenue').textContent = '£' + rev.toFixed(2);
+    document.getElementById('stat-msgs').textContent   = rows.filter(function(r){ return r.message; }).length;
+    document.getElementById('stat-files').textContent  = rows.filter(function(r){ return r.file_name; }).length;
+  }
+
+  function renderTable() {
+    var tbody = document.getElementById('pcb-tbody');
+    var start = (currentPage - 1) * PAGE_SIZE;
+    var page  = filtered.slice(start, start + PAGE_SIZE);
+
+    var count = filtered.length;
+    var label = document.getElementById('pcb-count-label');
+    label.textContent = count + ' order' + (count !== 1 ? 's' : '');
+    if (allRows.length !== filtered.length) {
+      label.textContent += ' (filtered from ' + allRows.length + ')';
+    }
+
+    if (!page.length) {
+      tbody.innerHTML = '<tr><td colspan="10" class="pcb-empty">No orders found'
+        + (allRows.length ? ' matching your search.' : '.<br><small>Upload a Shopify CSV or run the sync script to populate this page.</small>') + '</td></tr>';
+      renderPagination();
       return;
     }
-    tbody.innerHTML = rows.map(function(r) {
-      var orderLink = r.order_id
-        ? 'https://playmatelabs.myshopify.com/admin/orders/' + r.order_id
-        : 'https://playmatelabs.myshopify.com/admin/orders?query=' + encodeURIComponent(r.order_number);
+
+    tbody.innerHTML = page.map(function(r) {
+      var orderLink = r.order_url
+        || ('https://admin.shopify.com/store/playmatelabs/orders/' + (r.order_id || '?query=' + encodeURIComponent(r.order_number)));
 
       var fileCell = r.file_name
-        ? '<span class="pcb-file-chip" title="' + esc(r.file_name) + '">'
-          + '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
-          + (r.file_name.length > 20 ? r.file_name.substring(0,18) + '…' : r.file_name)
-          + (r.file_size ? ' <span style="opacity:.6">(' + r.file_size + ')</span>' : '')
+        ? '<span class="pcb-file" title="' + esc(r.file_name) + '">'
+          + '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> '
+          + esc(r.file_name.length > 22 ? r.file_name.slice(0,20) + '…' : r.file_name)
+          + (r.file_size ? ' <span style="opacity:.55">(' + esc(r.file_size) + ')</span>' : '')
           + '</span>'
-        : '<span style="color:rgba(26,10,5,0.25);">—</span>';
+        : '<span class="pcb-muted">—</span>';
 
-      var msgCell = r.message && r.message !== '(no message)'
-        ? '<div class="pcb-msg-text">' + esc(r.message) + '</div>'
-        : '<span style="color:rgba(26,10,5,0.25);">—</span>';
+      var msgCell = r.message
+        ? '<div class="pcb-msg" title="' + esc(r.message) + '">' + esc(r.message) + '</div>'
+        : '<span class="pcb-muted">—</span>';
 
-      var previewCell = r.file_name && /\.(jpg|jpeg|png|gif|webp)/i.test(r.file_name)
-        ? '<button class="pcb-btn pcb-btn-outline" style="padding:4px 10px;font-size:0.68rem;" onclick="openPreview(\'' + esc(r.order_number) + '\')" title="Preview image">🖼 View</button>'
-        : '<span style="color:rgba(26,10,5,0.25);">—</span>';
+      var imgBtn = r.file_name && /\.(jpg|jpeg|png|gif|webp|svg)/i.test(r.file_name)
+        ? '<button class="pcb-btn pcb-btn-outline" style="padding:3px 9px;font-size:.65rem;" '
+          + 'onclick="window.pcbPreview(\'' + esc(r.order_number) + '\')" title="Preview image">🖼</button>'
+        : '';
 
-      return '<tr data-order="' + esc(r.order_number) + '">'
-        + '<td><a href="' + orderLink + '" target="_blank" rel="noopener" style="color:var(--burgundy,#5a1432);font-weight:700;">' + esc(r.order_number) + '</a></td>'
-        + '<td style="white-space:nowrap;font-size:0.78rem;">' + fmt(r.created_at) + '</td>'
+      var adminBtn = (r.order_id || r.order_url)
+        ? '<a href="' + esc(orderLink) + '" target="_blank" rel="noopener" class="pcb-btn pcb-btn-outline" style="padding:3px 9px;font-size:.65rem;text-decoration:none;">↗ Admin</a>'
+        : '';
+
+      return '<tr>'
+        + '<td><span style="font-weight:700;color:#5a1432;">' + esc(r.order_number) + '</span></td>'
+        + '<td style="white-space:nowrap;font-size:.75rem;">' + fmtDT(r.created_at) + '</td>'
         + '<td style="font-weight:600;">' + esc(r.customer_name) + '</td>'
-        + '<td style="font-size:0.75rem;">' + esc(r.customer_email) + '</td>'
+        + '<td style="font-size:.72rem;color:rgba(26,10,5,.6);">' + esc(r.customer_email) + '</td>'
         + '<td>' + esc(r.product_title) + '</td>'
-        + '<td style="font-size:0.75rem;color:rgba(26,10,5,0.6);">' + esc(r.variant_title) + '</td>'
-        + '<td style="font-weight:700;color:var(--gold,#C9A84C);">' + esc(r.surcharge || '£4.99') + '</td>'
+        + '<td style="font-size:.72rem;">' + esc(r.variant_title) + '</td>'
+        + '<td style="font-weight:700;color:#C9A84C;">' + esc(r.surcharge || '£4.99') + '</td>'
         + '<td>' + msgCell + '</td>'
         + '<td>' + fileCell + '</td>'
-        + '<td>' + previewCell + '</td>'
+        + '<td style="display:flex;gap:5px;flex-wrap:wrap;">' + imgBtn + adminBtn + '</td>'
         + '</tr>';
     }).join('');
+
+    renderPagination();
   }
 
-  /* ─── Image preview ─── */
-  window.openPreview = function(orderNum) {
-    var row = allRows.find(function(r) { return r.order_number === orderNum; });
+  function renderPagination() {
+    var total  = Math.ceil(filtered.length / PAGE_SIZE);
+    var pg     = document.getElementById('pcb-pagination');
+    if (total <= 1) { pg.innerHTML = ''; return; }
+    var html = '';
+    if (currentPage > 1) html += '<button class="pcb-page-btn" onclick="window.pcbPage(' + (currentPage-1) + ')">‹ Prev</button>';
+    for (var i = Math.max(1, currentPage-2); i <= Math.min(total, currentPage+2); i++) {
+      html += '<button class="pcb-page-btn' + (i===currentPage?' active':'') + '" onclick="window.pcbPage(' + i + ')">' + i + '</button>';
+    }
+    if (currentPage < total) html += '<button class="pcb-page-btn" onclick="window.pcbPage(' + (currentPage+1) + ')">Next ›</button>';
+    html += '<span class="pcb-page-info"> Page ' + currentPage + ' of ' + total + '</span>';
+    pg.innerHTML = html;
+  }
+
+  window.pcbPage = function(n) {
+    currentPage = n;
+    renderTable();
+    document.getElementById('pcb-root').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  /* ────────────────────────────────────────────────── */
+  /* Sort                                               */
+  /* ────────────────────────────────────────────────── */
+  function sortRows(col) {
+    if (sortCol === col) sortDir *= -1;
+    else { sortCol = col; sortDir = -1; }
+
+    var ths = document.querySelectorAll('.pcb-table th[data-col]');
+    ths.forEach(function(th){ th.classList.remove('sorted'); th.querySelector('.sort-arrow').textContent = '↕'; });
+    var active = document.querySelector('.pcb-table th[data-col="' + col + '"]');
+    if (active) {
+      active.classList.add('sorted');
+      active.querySelector('.sort-arrow').textContent = sortDir === -1 ? '↓' : '↑';
+    }
+
+    filtered.sort(function(a, b) {
+      var av = a[col] || '', bv = b[col] || '';
+      if (col === 'created_at') { av = new Date(av).getTime(); bv = new Date(bv).getTime(); }
+      return av < bv ? -sortDir : av > bv ? sortDir : 0;
+    });
+    currentPage = 1;
+    renderTable();
+  }
+
+  document.querySelectorAll('.pcb-table th[data-col]').forEach(function(th){
+    th.addEventListener('click', function(){ sortRows(th.getAttribute('data-col')); });
+  });
+
+  /* ────────────────────────────────────────────────── */
+  /* Filter + Search                                    */
+  /* ────────────────────────────────────────────────── */
+  function applyFilters() {
+    var q    = document.getElementById('pcb-search').value.toLowerCase();
+    var filt = document.getElementById('pcb-filter-file').value;
+
+    filtered = allRows.filter(function(r) {
+      var search = (r.order_number + ' ' + r.customer_name + ' ' + r.customer_email
+                  + ' ' + r.message + ' ' + r.file_name + ' ' + r.product_title).toLowerCase();
+      if (q && search.indexOf(q) === -1) return false;
+      if (filt === 'with-file' && !r.file_name) return false;
+      if (filt === 'no-file'   && r.file_name)  return false;
+      if (filt === 'with-msg'  && !r.message)   return false;
+      return true;
+    });
+
+    // Re-sort
+    filtered.sort(function(a, b) {
+      var av = a[sortCol] || '', bv = b[sortCol] || '';
+      if (sortCol === 'created_at') { av = new Date(av).getTime(); bv = new Date(bv).getTime(); }
+      return av < bv ? -sortDir : av > bv ? sortDir : 0;
+    });
+
+    currentPage = 1;
+    renderTable();
+  }
+
+  document.getElementById('pcb-search').addEventListener('input', applyFilters);
+  document.getElementById('pcb-filter-file').addEventListener('change', applyFilters);
+
+  /* ────────────────────────────────────────────────── */
+  /* Load data                                          */
+  /* ────────────────────────────────────────────────── */
+  function loadRows(rows, source) {
+    // Merge: new rows replace existing ones with same order number
+    var existing = allRows.filter(function(r){
+      return !rows.some(function(nr){ return nr.order_number === r.order_number; });
+    });
+    allRows = existing.concat(rows);
+
+    // Default sort: newest first
+    allRows.sort(function(a, b){
+      var av = new Date(a.created_at||0).getTime();
+      var bv = new Date(b.created_at||0).getTime();
+      return bv - av;
+    });
+
+    filtered = allRows.slice();
+    renderStats(allRows);
+    renderTable();
+
+    if (source) toast('✅ Loaded ' + rows.length + ' orders from ' + source);
+  }
+
+  /* ────────────────────────────────────────────────── */
+  /* Load live data from embedded Liquid metafield      */
+  /* ────────────────────────────────────────────────── */
+  var liveDataEl = document.getElementById('pcb-live-data');
+  if (liveDataEl) {
+    try {
+      var liveData = JSON.parse(liveDataEl.textContent.trim());
+      var liveOrders = liveData.orders || (Array.isArray(liveData) ? liveData : []);
+
+      if (liveOrders.length) {
+        // Live data is already in our row format (written by sync script)
+        allRows  = liveOrders;
+        filtered = allRows.slice();
+        filtered.sort(function(a,b){
+          return new Date(b.created_at||0) - new Date(a.created_at||0);
+        });
+        renderStats(allRows);
+        renderTable();
+      } else {
+        renderTable(); // show empty state
+      }
+    } catch(e) {
+      console.warn('Could not parse live metafield data:', e);
+      renderTable();
+    }
+  } else {
+    renderTable(); // show empty state with instructions
+  }
+
+  /* ────────────────────────────────────────────────── */
+  /* Refresh live (re-read metafield via hidden fetch)  */
+  /* ────────────────────────────────────────────────── */
+  document.getElementById('pcb-refresh-btn').addEventListener('click', function(){
+    // Reload the page — metafield is rendered server-side by Liquid
+    window.location.reload();
+  });
+
+  /* ────────────────────────────────────────────────── */
+  /* CSV File Upload                                    */
+  /* ────────────────────────────────────────────────── */
+  function handleCSVFile(file) {
+    if (!file) return;
+    if (!file.name.match(/\.csv$/i)) {
+      toast('⚠️ Please upload a .csv file', 3000);
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var rows = parseShopifyCSV(e.target.result);
+        if (!rows.length) {
+          toast('⚠️ No customisation orders found in CSV. Check the file contains PM-BOX-CUSTOM-499 or _customisation property.', 4000);
+          return;
+        }
+        loadRows(rows, file.name);
+      } catch(err) {
+        toast('❌ CSV parse error: ' + err.message, 4000);
+        console.error(err);
+      }
+    };
+    reader.readAsText(file, 'utf-8');
+  }
+
+  document.getElementById('pcb-file-input').addEventListener('change', function(){
+    handleCSVFile(this.files[0]);
+    this.value = ''; // reset so same file can be re-uploaded
+  });
+
+  // Drag-and-drop
+  var dropZone = document.getElementById('pcb-drop-zone');
+  dropZone.addEventListener('dragover', function(e){
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+  dropZone.addEventListener('dragleave', function(){
+    dropZone.classList.remove('drag-over');
+  });
+  dropZone.addEventListener('drop', function(e){
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    var file = e.dataTransfer.files[0];
+    handleCSVFile(file);
+  });
+
+  /* ────────────────────────────────────────────────── */
+  /* Paste JSON modal                                   */
+  /* ────────────────────────────────────────────────── */
+  var pasteModal = document.getElementById('pcb-paste-modal');
+  document.getElementById('pcb-paste-btn').addEventListener('click', function(){
+    pasteModal.classList.add('open');
+  });
+  document.getElementById('pcb-paste-cancel').addEventListener('click', function(){
+    pasteModal.classList.remove('open');
+  });
+  pasteModal.addEventListener('click', function(e){
+    if (e.target === pasteModal) pasteModal.classList.remove('open');
+  });
+  document.getElementById('pcb-paste-ok').addEventListener('click', function(){
+    var raw = document.getElementById('pcb-paste-area').value.trim();
+    try {
+      var data   = JSON.parse(raw);
+      var orders = data.orders || (Array.isArray(data) ? data : [data]);
+
+      // Detect if it's already in our row format (from sync script --json)
+      if (orders.length && orders[0].order_number !== undefined && !orders[0].line_items) {
+        loadRows(orders, 'JSON');
+      } else {
+        var rows = parseShopifyOrders(orders);
+        loadRows(rows, 'JSON');
+      }
+
+      pasteModal.classList.remove('open');
+      document.getElementById('pcb-paste-area').value = '';
+    } catch(e) {
+      toast('❌ Invalid JSON: ' + e.message, 4000);
+    }
+  });
+
+  /* ────────────────────────────────────────────────── */
+  /* Image preview lightbox                             */
+  /* ────────────────────────────────────────────────── */
+  window.pcbPreview = function(orderNum) {
+    var row = allRows.find(function(r){ return r.order_number === orderNum; });
     if (!row) return;
-    /* Try to find the image in cart attributes if available */
-    var lightbox = document.getElementById('pcb-lightbox');
-    var img = document.getElementById('pcb-lightbox-img');
+
+    var lb  = document.getElementById('pcb-lightbox');
+    var img = document.getElementById('pcb-lb-img');
+
     if (row._file_data) {
       img.src = row._file_data;
-      lightbox.classList.add('open');
+      lb.classList.add('open');
     } else {
-      alert('Image preview requires the file data to be stored in the cart attributes. The file name is: ' + row.file_name);
+      toast('ℹ️ Image preview requires the file to be stored via Shopify Files. Filename: ' + row.file_name, 4000);
     }
   };
 
-  document.getElementById('pcb-lightbox-close').addEventListener('click', function() {
+  document.getElementById('pcb-lb-close').addEventListener('click', function(){
     document.getElementById('pcb-lightbox').classList.remove('open');
   });
-
-  /* ─── Load from Admin (uses browser session if logged in) ─── */
-  document.getElementById('pcb-load-btn').addEventListener('click', function() {
-    var btn = this;
-    btn.textContent = 'Loading…';
-    btn.disabled = true;
-
-    /* Try to fetch from Shopify Admin API via browser (works if staff is logged in) */
-    fetch('/admin/api/2024-01/orders.json?status=any&limit=250&fields=id,order_number,created_at,customer,email,billing_address,line_items,note', {
-      headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(function(r) {
-      if (!r.ok) throw new Error('Not logged in to admin or insufficient scope');
-      return r.json();
-    })
-    .then(function(data) {
-      var orders = data.orders || [];
-      allRows = parseShopifyOrders(orders);
-      filteredRows = allRows;
-      renderStats(allRows);
-      renderTable(allRows);
-      btn.textContent = '✓ Loaded ' + allRows.length + ' orders';
-      setTimeout(function() { btn.textContent = '↻ Load from Admin'; btn.disabled = false; }, 3000);
-    })
-    .catch(function(err) {
-      btn.textContent = '↻ Load from Admin';
-      btn.disabled = false;
-      /* Show helpful instructions */
-      alert('Could not load directly from admin (requires staff login + read_orders scope).\n\nInstead:\n1. Go to Shopify Admin → Orders\n2. Filter by "Box Customisation" product\n3. Export as CSV\n\nOr run: node scripts/export-customisation-orders.js\n\nError: ' + err.message);
-    });
+  document.getElementById('pcb-lightbox').addEventListener('click', function(e){
+    if (e.target === this) this.classList.remove('open');
   });
 
-  /* ─── Paste JSON ─── */
-  var pasteModal = document.getElementById('pcb-paste-modal');
-  document.getElementById('pcb-paste-btn').addEventListener('click', function() {
-    pasteModal.style.display = 'flex';
-  });
-  document.getElementById('pcb-paste-cancel').addEventListener('click', function() {
-    pasteModal.style.display = 'none';
-  });
-  document.getElementById('pcb-paste-submit').addEventListener('click', function() {
-    var raw = document.getElementById('pcb-paste-area').value.trim();
-    try {
-      var data = JSON.parse(raw);
-      var orders = data.orders || (Array.isArray(data) ? data : [data]);
-      allRows = parseShopifyOrders(orders);
-      filteredRows = allRows;
-      renderStats(allRows);
-      renderTable(allRows);
-      pasteModal.style.display = 'none';
-      document.getElementById('pcb-paste-area').value = '';
-    } catch(e) {
-      alert('Invalid JSON: ' + e.message);
-    }
-  });
-
-  /* ─── Filter ─── */
-  document.getElementById('pcb-filter-input').addEventListener('input', function() {
-    var q = this.value.toLowerCase();
-    filteredRows = !q ? allRows : allRows.filter(function(r) {
-      return (r.order_number + ' ' + r.customer_name + ' ' + r.customer_email + ' ' + r.product_title + ' ' + r.message + ' ' + r.file_name).toLowerCase().indexOf(q) !== -1;
-    });
-    renderTable(filteredRows);
-  });
-
-  /* ─── CSV Export ─── */
-  document.getElementById('pcb-export-btn').addEventListener('click', function() {
-    var rows = filteredRows.length ? filteredRows : allRows;
+  /* ────────────────────────────────────────────────── */
+  /* CSV Export (POD-ready)                             */
+  /* ────────────────────────────────────────────────── */
+  document.getElementById('pcb-export-btn').addEventListener('click', function(){
+    var rows = filtered.length ? filtered : allRows;
     if (!rows.length) {
-      alert('No orders to export. Load order data first.');
+      toast('⚠️ No orders to export. Upload a CSV or load data first.', 3000);
       return;
     }
-    var cols = ['Order #','Date','Customer Name','Customer Email','Product','Variant','Customised','Surcharge','Message','File Name','File Size'];
-    var lines = rows.map(function(r) {
+
+    var cols = ['Order #','Date','Customer Name','Customer Email','Product',
+                'Variant','Surcharge','Message','File Name','File Size','Admin URL'];
+
+    var esc2 = function(v){
+      if (!v && v !== 0) return '';
+      var s = String(v);
+      return (s.includes(',') || s.includes('"') || s.includes('\n'))
+        ? '"' + s.replace(/"/g,'""') + '"' : s;
+    };
+
+    var lines = rows.map(function(r){
       return [
         r.order_number,
         fmtDate(r.created_at),
@@ -397,23 +875,26 @@
         r.customer_email,
         r.product_title,
         r.variant_title,
-        r.customised ? 'Yes' : 'No',
         r.surcharge || '£4.99',
-        '"' + (r.message || '').replace(/"/g, '""') + '"',
+        r.message || '',
         r.file_name || '',
-        r.file_size || ''
-      ].join(',');
+        r.file_size || '',
+        r.order_url || ''
+      ].map(esc2).join(',');
     });
-    var bom = '\uFEFF'; /* UTF-8 BOM for Excel compatibility */
-    var csv = bom + cols.join(',') + '\n' + lines.join('\n');
+
+    var bom  = '\uFEFF';
+    var csv  = bom + cols.join(',') + '\n' + lines.join('\n');
     var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    var a = document.createElement('a');
-    a.href  = URL.createObjectURL(blob);
-    a.download = 'customisation-orders-' + new Date().toISOString().substring(0,10) + '.csv';
+    var a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = 'playmate-customisation-orders-' + new Date().toISOString().slice(0,10) + '.csv';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+
+    toast('✅ Exported ' + rows.length + ' orders', 2500);
   });
 
 })();

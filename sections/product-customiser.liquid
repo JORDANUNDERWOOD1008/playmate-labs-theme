@@ -450,10 +450,21 @@
         }
       }
 
+      /* Build a human-readable cart note for order search */
+      var noteLines = [
+        '=== BOX CUSTOMISATION ===',
+        'Product: ' + productTitle,
+        'Message: ' + (state.message.trim() || '(none)'),
+        'File: ' + (state.fileName || '(none)'),
+        'Surcharge: £' + (SURCHARGE_PENCE / 100).toFixed(2),
+        'Time: ' + snapshot.ts,
+        'Tag: customisation'
+      ];
+
       return fetch('/cart/update.json', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ attributes: attrs, note: JSON.stringify(snapshot) })
+        body: JSON.stringify({ attributes: attrs, note: noteLines.join('\n') })
       });
     })
     .then(function() {
