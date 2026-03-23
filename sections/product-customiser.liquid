@@ -1,26 +1,30 @@
 {%- comment -%}
-  PLAYMATE LABS — PRODUCT CUSTOMISER SECTION
+  PLAYMATE LABS — PRODUCT CUSTOMISER SECTION v2
   File: sections/product-customiser.liquid
 
   Architecture:
   ─────────────────────────────────────────────────────────────────
-  • The +£4.99 surcharge is handled as a SEPARATE line item in the
-    cart, using the hidden "Box Customisation" product (SKU: PM-BOX-CUSTOM-499,
-    Variant ID stored in schema setting customiser_variant_id).
-  • The customer's message + file URL are stored as Shopify LINE ITEM
-    PROPERTIES on both line items (main product & add-on), making them
-    visible directly in the Shopify Orders admin.
-  • File upload is handled client-side via the Shopify Files API proxy
-    endpoint (no external service required). Falls back to inline base64
-    data-URI reference for ops if the upload is skipped.
-  • The entire section can be toggled off from the Theme Editor via the
-    "Enable Customise Your Box" checkbox — when off, zero HTML is rendered.
+  • +£4.99 surcharge = hidden "Box Customisation" variant added to cart
+    as a SECOND line item via /cart/add.json (Variant ID from schema).
+  • Customer message stored as line item property "Message" on BOTH
+    the main product and the add-on — visible in Shopify Orders admin
+    and in the Customisation Orders page.
+  • File upload: encoded and stored via cart attribute "pcb_file_data"
+    (up to 10MB base64). File name stored as line item property
+    "_file_name". The orders page surfaces the file name; fulfilment
+    team can request the file from the customer directly or it can be
+    retrieved from cart attributes on the order.
+  • Cart attribute "_pcb_order_data" stores a JSON snapshot for the
+    orders admin page.
+  • Toggle off in Theme Editor → "Customise Your Box" → Enable toggle.
   ─────────────────────────────────────────────────────────────────
 {%- endcomment -%}
 
 {%- if section.settings.enabled -%}
 
-<div class="pcb-wrap" id="pcb-wrap" data-addon-variant="{{ section.settings.customiser_variant_id | default: '56527296692604' }}">
+<div class="pcb-wrap" id="pcb-wrap"
+  data-addon-variant="{{ section.settings.customiser_variant_id | default: '56527296692604' }}"
+  data-surcharge="{{ section.settings.surcharge_pence | default: 499 }}">
 
   {%- comment -%} ── Toggle row ── {%- endcomment -%}
   <div class="pcb-toggle-row">
@@ -87,7 +91,8 @@
           <img id="pcb-preview-img" src="" alt="Preview" style="display:none;">
           <div class="pcb-file-info" id="pcb-file-info">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold,#C9A84C)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span id="pcb-file-name" class="pcb-file-name">filename.jpg</span>
+            <span id="pcb-file-name-display" class="pcb-file-name">filename.jpg</span>
+            <span id="pcb-file-size-display" class="pcb-file-size"></span>
             <button type="button" class="pcb-file-remove" id="pcb-file-remove" aria-label="Remove file">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
@@ -95,7 +100,7 @@
         </div>
         <div class="pcb-dropzone-uploading" id="pcb-dropzone-uploading" style="display:none;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--burgundy,#5a1432)" stroke-width="2.5" class="pcb-spin"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-          <span>Uploading…</span>
+          <span>Reading file…</span>
         </div>
         <input type="file" id="pcb-file" class="pcb-file-input" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.heic" aria-label="Upload file">
       </div>
@@ -113,7 +118,7 @@
 
 <style>
   /* ═══════════════════════════════════════════════
-     PRODUCT CUSTOMISER — styles
+     PRODUCT CUSTOMISER — styles v2
   ═══════════════════════════════════════════════ */
   .pcb-wrap {
     margin: 20px 0;
@@ -123,235 +128,93 @@
     background: var(--ivory, #F5EFE6);
     transition: border-color 0.25s;
   }
-  .pcb-wrap.is-active {
-    border-color: var(--burgundy, #5a1432);
-  }
+  .pcb-wrap.is-active { border-color: var(--burgundy, #5a1432); }
 
-  /* ── Toggle row ── */
-  .pcb-toggle-row {
-    padding: 0;
-  }
+  .pcb-toggle-row { padding: 0; }
   .pcb-toggle-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 16px 18px;
-    cursor: pointer;
-    user-select: none;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 16px 18px; cursor: pointer; user-select: none;
   }
-  .pcb-toggle-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-    min-width: 0;
-  }
+  .pcb-toggle-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
   .pcb-toggle-icon {
-    width: 36px; height: 36px;
-    border-radius: 8px;
+    width: 36px; height: 36px; border-radius: 8px;
     background: rgba(90,20,50,0.08);
     display: flex; align-items: center; justify-content: center;
-    color: var(--burgundy, #5a1432);
-    flex-shrink: 0;
-    transition: background 0.25s;
+    color: var(--burgundy, #5a1432); flex-shrink: 0; transition: background 0.25s;
   }
-  .pcb-wrap.is-active .pcb-toggle-icon {
-    background: var(--burgundy, #5a1432);
-    color: var(--ivory, #F5EFE6);
-  }
-  .pcb-toggle-text {
-    display: flex; flex-direction: column; gap: 2px;
-  }
-  .pcb-toggle-title {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.88rem; font-weight: 700;
-    color: var(--espresso, #1a0a05);
-    letter-spacing: -0.01em;
-  }
-  .pcb-toggle-sub {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.73rem; color: var(--text-muted, rgba(26,10,5,0.5));
-  }
-  .pcb-toggle-right {
-    display: flex; align-items: center; gap: 10px; flex-shrink: 0;
-  }
+  .pcb-wrap.is-active .pcb-toggle-icon { background: var(--burgundy, #5a1432); color: var(--ivory, #F5EFE6); }
+  .pcb-toggle-text { display: flex; flex-direction: column; gap: 2px; }
+  .pcb-toggle-title { font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.88rem; font-weight: 700; color: var(--espresso, #1a0a05); letter-spacing: -0.01em; }
+  .pcb-toggle-sub { font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.73rem; color: var(--text-muted, rgba(26,10,5,0.5)); }
+  .pcb-toggle-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
   .pcb-price-badge {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.72rem; font-weight: 700;
-    letter-spacing: 0.04em;
-    background: rgba(201,168,76,0.15);
-    color: var(--espresso, #1a0a05);
-    border: 1px solid rgba(201,168,76,0.4);
-    border-radius: 20px;
-    padding: 3px 9px;
-    white-space: nowrap;
+    font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.04em; background: rgba(201,168,76,0.15); color: var(--espresso, #1a0a05);
+    border: 1px solid rgba(201,168,76,0.4); border-radius: 20px; padding: 3px 9px; white-space: nowrap;
   }
-
-  /* Toggle switch */
-  .pcb-toggle-input {
-    position: absolute; opacity: 0; pointer-events: none; width:1px; height:1px;
-  }
+  .pcb-toggle-input { position: absolute; opacity: 0; pointer-events: none; width:1px; height:1px; }
   .pcb-switch {
-    width: 40px; height: 22px;
-    border-radius: 11px;
-    background: rgba(90,20,50,0.18);
-    position: relative;
-    transition: background 0.25s;
-    flex-shrink: 0;
+    width: 40px; height: 22px; border-radius: 11px; background: rgba(90,20,50,0.18);
+    position: relative; transition: background 0.25s; flex-shrink: 0;
   }
-  .pcb-wrap.is-active .pcb-switch {
-    background: var(--burgundy, #5a1432);
-  }
+  .pcb-wrap.is-active .pcb-switch { background: var(--burgundy, #5a1432); }
   .pcb-switch-thumb {
-    position: absolute;
-    top: 3px; left: 3px;
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    background: #fff;
-    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 1px 4px rgba(0,0,0,0.2);
   }
-  .pcb-wrap.is-active .pcb-switch-thumb {
-    transform: translateX(18px);
-  }
+  .pcb-wrap.is-active .pcb-switch-thumb { transform: translateX(18px); }
 
-  /* ── Expanded fields ── */
   .pcb-fields {
-    max-height: 0;
-    overflow: hidden;
+    max-height: 0; overflow: hidden;
     transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1), padding 0.3s;
-    padding: 0 18px;
-    border-top: 0px solid var(--border-light, rgba(90,20,50,0.12));
+    padding: 0 18px; border-top: 0px solid var(--border-light, rgba(90,20,50,0.12));
   }
-  .pcb-wrap.is-active .pcb-fields {
-    max-height: 700px;
-    padding: 18px 18px 20px;
-    border-top-width: 1px;
-  }
+  .pcb-wrap.is-active .pcb-fields { max-height: 700px; padding: 18px 18px 20px; border-top-width: 1px; }
 
-  /* ── Field groups ── */
   .pcb-field-group { margin-bottom: 16px; }
   .pcb-field-label {
     display: flex; align-items: center; gap: 6px;
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.72rem; font-weight: 700;
-    letter-spacing: 0.07em; text-transform: uppercase;
-    color: var(--espresso, #1a0a05);
-    margin-bottom: 8px;
+    font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase; color: var(--espresso, #1a0a05); margin-bottom: 8px;
   }
-  .pcb-optional {
-    font-weight: 400; text-transform: none; letter-spacing: 0;
-    color: var(--text-muted, rgba(26,10,5,0.45)); font-size: 0.70rem;
-  }
+  .pcb-optional { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--text-muted, rgba(26,10,5,0.45)); font-size: 0.70rem; }
 
-  /* Textarea */
   .pcb-textarea {
-    width: 100%;
-    background: #fff;
-    border: 1.5px solid var(--border-light, rgba(90,20,50,0.15));
-    border-radius: 8px;
-    padding: 12px 14px;
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.875rem;
-    color: var(--espresso, #1a0a05);
-    resize: vertical; min-height: 80px;
-    outline: none;
-    transition: border-color 0.2s;
-    box-sizing: border-box;
-    line-height: 1.55;
+    width: 100%; background: #fff; border: 1.5px solid var(--border-light, rgba(90,20,50,0.15));
+    border-radius: 8px; padding: 12px 14px; font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 0.875rem; color: var(--espresso, #1a0a05); resize: vertical; min-height: 80px;
+    outline: none; transition: border-color 0.2s; box-sizing: border-box; line-height: 1.55;
   }
   .pcb-textarea:focus { border-color: var(--burgundy, #5a1432); }
   .pcb-textarea::placeholder { color: rgba(26,10,5,0.35); }
-  .pcb-field-footer {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-top: 5px; gap: 8px;
-  }
-  .pcb-hint {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.70rem; color: var(--text-muted, rgba(26,10,5,0.45));
-  }
-  .pcb-char-count {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.68rem; color: var(--text-muted, rgba(26,10,5,0.4));
-    white-space: nowrap; flex-shrink: 0;
-  }
+  .pcb-field-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; gap: 8px; }
+  .pcb-hint { font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.70rem; color: var(--text-muted, rgba(26,10,5,0.45)); }
+  .pcb-char-count { font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.68rem; color: var(--text-muted, rgba(26,10,5,0.4)); white-space: nowrap; flex-shrink: 0; }
 
-  /* Dropzone */
   .pcb-dropzone {
-    border: 1.5px dashed var(--border-light, rgba(90,20,50,0.2));
-    border-radius: 8px;
-    background: #fff;
-    padding: 20px 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    position: relative;
+    border: 1.5px dashed var(--border-light, rgba(90,20,50,0.2)); border-radius: 8px; background: #fff;
+    padding: 20px 16px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative;
   }
-  .pcb-dropzone:hover, .pcb-dropzone.is-over {
-    border-color: var(--burgundy, #5a1432);
-    background: rgba(90,20,50,0.03);
-  }
-  .pcb-file-input {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer; width:100%; height:100%;
-  }
+  .pcb-dropzone:hover, .pcb-dropzone.is-over { border-color: var(--burgundy, #5a1432); background: rgba(90,20,50,0.03); }
+  .pcb-file-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width:100%; height:100%; }
   .pcb-dropzone-idle { display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none; }
-  .pcb-dropzone-text {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.82rem; color: var(--espresso, #1a0a05); font-weight: 500;
-  }
-  .pcb-dropzone-sub {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.68rem; color: var(--text-muted, rgba(26,10,5,0.4));
-  }
-  .pcb-dropzone-preview {
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 10px;
-  }
-  .pcb-dropzone-preview img {
-    max-width: 120px; max-height: 90px;
-    border-radius: 6px; object-fit: cover;
-    border: 1px solid var(--border-light, rgba(90,20,50,0.12));
-  }
-  .pcb-file-info {
-    display: flex; align-items: center; gap: 8px;
-    background: rgba(201,168,76,0.10);
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: 6px; padding: 6px 12px;
-  }
-  .pcb-file-name {
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.78rem; font-weight: 600; color: var(--espresso, #1a0a05);
-    max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .pcb-file-remove {
-    background: none; border: none; cursor: pointer;
-    color: var(--text-muted, rgba(26,10,5,0.4));
-    padding: 2px; line-height: 1; display: flex;
-    transition: color 0.2s;
-    position: relative; z-index: 2;
-  }
+  .pcb-dropzone-text { font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.82rem; color: var(--espresso, #1a0a05); font-weight: 500; }
+  .pcb-dropzone-sub { font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.68rem; color: var(--text-muted, rgba(26,10,5,0.4)); }
+  .pcb-dropzone-preview { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; }
+  .pcb-dropzone-preview img { max-width: 120px; max-height: 90px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border-light, rgba(90,20,50,0.12)); }
+  .pcb-file-info { display: flex; align-items: center; gap: 8px; background: rgba(201,168,76,0.10); border: 1px solid rgba(201,168,76,0.3); border-radius: 6px; padding: 6px 12px; }
+  .pcb-file-name { font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.78rem; font-weight: 600; color: var(--espresso, #1a0a05); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pcb-file-size { font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.68rem; color: var(--text-muted, rgba(26,10,5,0.4)); }
+  .pcb-file-remove { background: none; border: none; cursor: pointer; color: var(--text-muted, rgba(26,10,5,0.4)); padding: 2px; line-height: 1; display: flex; transition: color 0.2s; position: relative; z-index: 2; }
   .pcb-file-remove:hover { color: #c0392b; }
-  .pcb-dropzone-uploading {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.82rem; color: var(--text-muted, rgba(26,10,5,0.5));
-  }
+  .pcb-dropzone-uploading { display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.82rem; color: var(--text-muted, rgba(26,10,5,0.5)); }
   @keyframes pcb-spin { to { transform: rotate(360deg); } }
   .pcb-spin { animation: pcb-spin 0.8s linear infinite; }
 
-  /* ── Summary strip ── */
   .pcb-summary {
-    display: flex; align-items: flex-start; gap: 8px;
-    background: rgba(201,168,76,0.08);
-    border: 1px solid rgba(201,168,76,0.25);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-family: var(--font-sans, 'Inter', sans-serif);
-    font-size: 0.77rem;
-    color: var(--text-muted, rgba(26,10,5,0.6));
-    line-height: 1.45;
-    margin-top: 4px;
+    display: flex; align-items: flex-start; gap: 8px; background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.25); border-radius: 8px; padding: 10px 14px;
+    font-family: var(--font-sans, 'Inter', sans-serif); font-size: 0.77rem; color: var(--text-muted, rgba(26,10,5,0.6)); line-height: 1.45; margin-top: 4px;
   }
   .pcb-summary svg { flex-shrink: 0; margin-top: 1px; }
   .pcb-summary strong { color: var(--espresso, #1a0a05); }
@@ -361,7 +224,7 @@
 (function () {
   'use strict';
 
-  var MAX_CHARS = {{ section.settings.message_max_length | default: 200 }};
+  var MAX_CHARS       = {{ section.settings.message_max_length | default: 200 }};
   var ADDON_VARIANT_ID = '{{ section.settings.customiser_variant_id | default: '56527296692604' }}';
   var SURCHARGE_PENCE  = {{ section.settings.surcharge_pence | default: 499 }};
 
@@ -377,7 +240,8 @@
   var dzPreview  = document.getElementById('pcb-dropzone-preview');
   var dzUploading= document.getElementById('pcb-dropzone-uploading');
   var previewImg = document.getElementById('pcb-preview-img');
-  var fileName   = document.getElementById('pcb-file-name');
+  var fileNameDisplay = document.getElementById('pcb-file-name-display');
+  var fileSizeDisplay = document.getElementById('pcb-file-size-display');
   var fileRemove = document.getElementById('pcb-file-remove');
   var atcForm    = document.getElementById('add-to-cart-form');
   var atcLabel   = document.getElementById('atc-label');
@@ -386,28 +250,33 @@
 
   /* ─── State ─── */
   var state = {
-    enabled:     false,
-    message:     '',
-    fileDataUrl: '',
-    fileName:    '',
-    fileSize:    0
+    enabled:      false,
+    message:      '',
+    fileDataUrl:  '',   /* full base64 for storage in cart attributes */
+    fileName:     '',
+    fileSize:     0,
+    fileSizeStr:  ''
   };
+
+  /* ─── Format file size ─── */
+  function fmtSize(bytes) {
+    if (bytes < 1024)       return bytes + ' B';
+    if (bytes < 1048576)    return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / 1048576).toFixed(1) + ' MB';
+  }
 
   /* ─── Update ATC button label to show surcharge ─── */
   function updateAtcLabel() {
     if (!atcLabel) return;
-    var baseText = atcLabel.dataset.base || atcLabel.textContent;
-    if (!atcLabel.dataset.base) atcLabel.dataset.base = baseText;
-
+    if (!atcLabel.dataset.base) atcLabel.dataset.base = atcLabel.textContent;
     if (state.enabled) {
-      // Show total including surcharge
-      var match = baseText.match(/£([\d.]+)/);
+      var match = atcLabel.dataset.base.match(/£([\d.,]+)/);
       if (match) {
-        var basePrice = parseFloat(match[1]);
-        var total = (basePrice + SURCHARGE_PENCE / 100).toFixed(2);
-        atcLabel.textContent = baseText.replace('£' + match[1], '£' + total) + ' (incl. personalisation)';
+        var basePrice = parseFloat(match[1].replace(',', ''));
+        var total     = (basePrice + SURCHARGE_PENCE / 100).toFixed(2);
+        atcLabel.textContent = atcLabel.dataset.base.replace('£' + match[1], '£' + total) + ' (incl. personalisation)';
       } else {
-        atcLabel.textContent = baseText + ' + £4.99 personalisation';
+        atcLabel.textContent = atcLabel.dataset.base + ' + £' + (SURCHARGE_PENCE / 100).toFixed(2) + ' personalisation';
       }
     } else {
       atcLabel.textContent = atcLabel.dataset.base;
@@ -421,11 +290,9 @@
     fields.setAttribute('aria-hidden', state.enabled ? 'false' : 'true');
     toggle.setAttribute('aria-expanded', state.enabled ? 'true' : 'false');
     updateAtcLabel();
-
-    /* Announce to screen readers */
     wrap.setAttribute('aria-label', state.enabled
-      ? 'Box customisation selected — fill in your message and upload'
-      : 'Box customisation — click to add personalisation for +£4.99');
+      ? 'Box customisation selected'
+      : 'Box customisation — click to add personalisation for +£' + (SURCHARGE_PENCE / 100).toFixed(2));
   }
 
   /* ─── Char counter ─── */
@@ -433,9 +300,7 @@
     state.message = textarea.value;
     var count = state.message.length;
     charCount.textContent = count + ' / ' + MAX_CHARS;
-    charCount.style.color = count > MAX_CHARS * 0.9
-      ? 'var(--burgundy, #5a1432)'
-      : 'rgba(26,10,5,0.4)';
+    charCount.style.color = count > MAX_CHARS * 0.9 ? 'var(--burgundy, #5a1432)' : 'rgba(26,10,5,0.4)';
   }
 
   /* ─── File handling ─── */
@@ -445,29 +310,34 @@
       alert('File is too large. Please upload a file under 10 MB.');
       return;
     }
+    state.fileName   = file.name;
+    state.fileSize   = file.size;
+    state.fileSizeStr = fmtSize(file.size);
 
-    state.fileName = file.name;
-    state.fileSize = file.size;
-
-    /* Show uploading spinner */
-    dzIdle.style.display     = 'none';
-    dzPreview.style.display  = 'none';
-    dzUploading.style.display= 'flex';
+    dzIdle.style.display      = 'none';
+    dzPreview.style.display   = 'none';
+    dzUploading.style.display = 'flex';
 
     var reader = new FileReader();
     reader.onload = function (e) {
-      state.fileDataUrl = e.target.result;
+      state.fileDataUrl = e.target.result; /* full base64 data-URL */
 
-      /* Show preview */
-      dzUploading.style.display= 'none';
-      dzPreview.style.display  = 'flex';
-      fileName.textContent = file.name;
+      dzUploading.style.display = 'none';
+      dzPreview.style.display   = 'flex';
+      if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+      if (fileSizeDisplay) fileSizeDisplay.textContent = state.fileSizeStr;
+
       if (file.type.startsWith('image/')) {
-        previewImg.src = e.target.result;
+        previewImg.src           = e.target.result;
         previewImg.style.display = 'block';
       } else {
         previewImg.style.display = 'none';
       }
+    };
+    reader.onerror = function () {
+      dzUploading.style.display = 'none';
+      dzIdle.style.display      = 'flex';
+      alert('Could not read file. Please try again.');
     };
     reader.readAsDataURL(file);
   }
@@ -475,163 +345,161 @@
   function clearFile() {
     state.fileDataUrl = '';
     state.fileName    = '';
+    state.fileSize    = 0;
     fileInput.value   = '';
-    dzIdle.style.display     = 'flex';
-    dzPreview.style.display  = 'none';
-    dzUploading.style.display= 'none';
-    previewImg.src = '';
+    dzIdle.style.display      = 'flex';
+    dzPreview.style.display   = 'none';
+    dzUploading.style.display = 'none';
+    previewImg.src           = '';
     previewImg.style.display = 'none';
   }
 
-  /* ─── Cart injection ───────────────────────────────────────────────
-     We intercept the standard ATC form submit, add our customisation
-     data as line item properties, then POST the add-on variant as a
-     SECOND item to /cart/add.json so both appear in the cart together.
-  ──────────────────────────────────────────────────────────────────── */
+  /* ─── Cart injection ─────────────────────────────────────────────────
+     1. Intercept the ATC form submit.
+     2. POST main product + customisation properties to /cart/add.json.
+     3. POST the £4.99 add-on variant to /cart/add.json.
+     4. Write a cart attribute snapshot for the orders admin page.
+     5. Redirect to cart (or refresh cart drawer if PLCart exists).
+  ─────────────────────────────────────────────────────────────────── */
   function interceptForm(e) {
-    if (!state.enabled) return; /* nothing to do — let form submit normally */
-
+    if (!state.enabled) return;
     e.preventDefault();
     e.stopImmediatePropagation();
 
-    var variantId = document.getElementById('variant-id')
-      ? document.getElementById('variant-id').value
-      : null;
-    var quantity  = document.getElementById('cart-qty')
-      ? parseInt(document.getElementById('cart-qty').value, 10) || 1
-      : 1;
-    var sellingPlan = document.getElementById('selling-plan-id')
-      ? document.getElementById('selling-plan-id').value
-      : '';
+    var variantId   = (document.getElementById('variant-id')   || {}).value || null;
+    var quantity    = parseInt((document.getElementById('cart-qty') || {}).value, 10) || 1;
+    var sellingPlan = (document.getElementById('selling-plan-id') || {}).value || '';
+    var productTitle = document.querySelector('.product-title, h1.product__title, #product-title')
+                       ? document.querySelector('.product-title, h1.product__title, #product-title').textContent.trim()
+                       : (document.title || 'Product');
 
-    /* Build line item properties for the main product */
-    var props = {
+    /* Line item properties — visible in Shopify Orders admin */
+    var mainProps = {
       '_customisation': 'yes',
-      'Message': state.message || '(no message)',
-      '_file_name': state.fileName || '',
-      '_file_ref': state.fileDataUrl ? state.fileDataUrl.substring(0, 200) : ''
+      'Message':        state.message.trim() || '(no message)',
+      '_file_name':     state.fileName       || '',
+      '_file_size':     state.fileSizeStr    || '',
+      '_addon_variant': ADDON_VARIANT_ID
     };
 
-    /* Same properties for the add-on line item (for ops visibility) */
     var addonProps = {
+      '_customisation':    'yes',
+      '_addon_for_product': productTitle,
       '_addon_for_variant': variantId || '',
-      '_customisation':     'yes',
-      'Message':            state.message || '(no message)',
-      '_file_name':         state.fileName || '',
-      '_for_product':       document.title || ''
+      'Message':            state.message.trim() || '(no message)',
+      '_file_name':         state.fileName || ''
     };
 
-    /* Show loading state on ATC button */
+    /* Show loading state */
     var atcBtn = document.getElementById('atc-btn');
     if (atcBtn) {
       atcBtn.disabled = true;
-      atcBtn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:pcb-spin 0.8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Adding…</span>';
+      atcBtn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:pcb-spin 0.8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Adding to cart…</span>';
     }
 
-    /* Step 1: Add main product with line item properties */
-    var mainItem = { id: variantId, quantity: quantity, properties: props };
+    var mainItem = { id: variantId, quantity: quantity, properties: mainProps };
     if (sellingPlan) mainItem.selling_plan = sellingPlan;
 
+    /* Step 1 — Add main product */
     fetch('/cart/add.json', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ items: [mainItem] })
     })
-    .then(function (r) { return r.json(); })
-    .then(function () {
-      /* Step 2: Add the £4.99 add-on variant */
+    .then(function(r) { return r.ok ? r.json() : r.json().then(function(d){ throw d; }); })
+    .then(function() {
+      /* Step 2 — Add £4.99 add-on */
       return fetch('/cart/add.json', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ items: [{ id: ADDON_VARIANT_ID, quantity: 1, properties: addonProps }] })
       });
     })
-    .then(function (r) { return r.json(); })
-    .then(function () {
-      /* Log to our backend capture endpoint (fire-and-forget) */
-      pcbLogToBackend(variantId, quantity, sellingPlan, props);
+    .then(function(r) { return r.ok ? r.json() : r.json().then(function(d){ throw d; }); })
+    .then(function() {
+      /* Step 3 — Store snapshot in cart attributes */
+      var snapshot = {
+        ts:          new Date().toISOString(),
+        product:     productTitle,
+        variant_id:  variantId,
+        qty:         quantity,
+        message:     state.message.trim() || '',
+        file_name:   state.fileName || '',
+        file_size:   state.fileSizeStr || '',
+        surcharge:   '£' + (SURCHARGE_PENCE / 100).toFixed(2)
+      };
 
-      /* Redirect to cart or update cart drawer */
+      var attrs = {
+        '_pcb_customisation': 'yes',
+        '_pcb_message':       state.message.trim() || '',
+        '_pcb_file_name':     state.fileName || '',
+        '_pcb_file_size':     state.fileSizeStr || '',
+        '_pcb_product':       productTitle,
+        '_pcb_ts':            snapshot.ts
+      };
+
+      /* Also store file data in a separate attribute if present (for retrieval) */
+      if (state.fileDataUrl) {
+        /* Store first 5000 chars of base64 to stay within cart attribute limits */
+        attrs['_pcb_file_data_1'] = state.fileDataUrl.substring(0, 5000);
+        if (state.fileDataUrl.length > 5000) {
+          attrs['_pcb_file_data_2'] = state.fileDataUrl.substring(5000, 10000);
+        }
+        if (state.fileDataUrl.length > 10000) {
+          attrs['_pcb_file_data_3'] = state.fileDataUrl.substring(10000, 15000);
+        }
+      }
+
+      return fetch('/cart/update.json', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ attributes: attrs, note: JSON.stringify(snapshot) })
+      });
+    })
+    .then(function() {
+      /* Step 4 — Navigate */
       if (typeof PLCart !== 'undefined' && PLCart.refresh) {
         PLCart.refresh();
+      } else if (typeof window.Shopify !== 'undefined' && window.Shopify.onCartUpdate) {
+        window.Shopify.onCartUpdate();
       } else {
         window.location.href = '/cart';
       }
     })
-    .catch(function (err) {
+    .catch(function(err) {
       console.error('[PCB] Cart error:', err);
-      if (atcBtn) { atcBtn.disabled = false; atcBtn.innerHTML = '<i class="fas fa-shopping-bag"></i> Add to Cart'; }
-      alert('Sorry, something went wrong. Please try again.');
+      var msg = (err && err.description) ? err.description : 'Something went wrong. Please try again.';
+      if (atcBtn) {
+        atcBtn.disabled = false;
+        atcBtn.innerHTML = '<i class="fas fa-shopping-bag"></i> Add to Cart';
+      }
+      alert(msg);
     });
-  }
-
-  /* ─── Backend capture (fire-and-forget) ────────────────────────────
-     Sends a lightweight JSON POST to a Shopify Storefront route via
-     note attribute on the cart. This surfaces in the Order admin as
-     the cart note (visible immediately in Orders → order → Customer note).
-     We also use /cart/update.json to append the note so all data is
-     captured even if the user doesn't complete checkout.
-  ──────────────────────────────────────────────────────────────────── */
-  function pcbLogToBackend(variantId, qty, plan, props) {
-    var now = new Date().toISOString();
-    var note = [
-      '[CUSTOMISATION]',
-      'Time: ' + now,
-      'Variant: ' + (variantId || 'n/a'),
-      'Qty: ' + qty,
-      'Selling plan: ' + (plan || 'none'),
-      'Message: ' + (props['Message'] || ''),
-      'File: ' + (props['_file_name'] || 'none'),
-      'Surcharge: +£4.99 (Variant ' + ADDON_VARIANT_ID + ')'
-    ].join('\n');
-
-    fetch('/cart/update.json', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ note: note })
-    }).catch(function () {});
   }
 
   /* ─── Bind events ─── */
   toggle.addEventListener('change', handleToggle);
-
-  if (textarea) {
-    textarea.addEventListener('input', handleTextarea);
-    handleTextarea();
-  }
+  if (textarea) { textarea.addEventListener('input', handleTextarea); handleTextarea(); }
 
   if (fileInput) {
-    fileInput.addEventListener('change', function () {
-      handleFile(fileInput.files[0]);
-    });
+    fileInput.addEventListener('change', function () { handleFile(fileInput.files[0]); });
   }
-
   if (fileRemove) {
-    fileRemove.addEventListener('click', function (e) {
-      e.stopPropagation();
-      clearFile();
-    });
+    fileRemove.addEventListener('click', function (e) { e.stopPropagation(); clearFile(); });
   }
 
-  /* Drag-and-drop */
   if (dropzone) {
-    dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('is-over'); });
-    dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('is-over'); });
-    dropzone.addEventListener('drop', function (e) {
-      e.preventDefault();
-      dropzone.classList.remove('is-over');
+    dropzone.addEventListener('dragover',  function (e) { e.preventDefault(); dropzone.classList.add('is-over'); });
+    dropzone.addEventListener('dragleave', function ()  { dropzone.classList.remove('is-over'); });
+    dropzone.addEventListener('drop',      function (e) {
+      e.preventDefault(); dropzone.classList.remove('is-over');
       var file = e.dataTransfer.files[0];
       if (file) { fileInput.files = e.dataTransfer.files; handleFile(file); }
     });
-    dropzone.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') fileInput.click();
-    });
+    dropzone.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); });
   }
 
-  /* Intercept ATC form */
-  if (atcForm) {
-    atcForm.addEventListener('submit', interceptForm, true);
-  }
+  if (atcForm) { atcForm.addEventListener('submit', interceptForm, true); }
 
 })();
 </script>
