@@ -1,0 +1,344 @@
+{% comment %}
+  PLAYMATE LABS — CUSTOMISATION ORDERS ADMIN VIEW
+  File: templates/page.customisation-orders.liquid
+
+  URL: /pages/customisation-orders  (password-protected page)
+  Purpose: Ops / fulfilment team can view all orders with box
+  customisation selected, including message, file reference, and
+  customer details — without needing Shopify admin access.
+
+  Security: Protect this page in Shopify admin → Pages → set
+  page visibility or use a password-protected theme section.
+  You can also restrict via Shopify Functions or a simple metafield
+  password check.
+{% endcomment %}
+
+{{ 'global.css' | asset_url | stylesheet_tag }}
+
+<style>
+  .pcb-admin-wrap {
+    max-width: 1100px;
+    margin: 48px auto;
+    padding: 0 24px 80px;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+  }
+  .pcb-admin-header {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-light, rgba(90,20,50,0.12));
+  }
+  .pcb-admin-title {
+    font-family: var(--font-serif, 'Cormorant Garamond', serif);
+    font-size: 2rem; font-weight: 600;
+    color: var(--espresso, #1a0a05); margin-bottom: 6px;
+  }
+  .pcb-admin-sub {
+    font-size: 0.85rem; color: var(--text-muted, rgba(26,10,5,0.5));
+  }
+  .pcb-admin-stats {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px;
+  }
+  .pcb-stat-card {
+    flex: 1; min-width: 140px;
+    background: var(--ivory, #F5EFE6);
+    border: 1px solid var(--border-light, rgba(90,20,50,0.12));
+    border-radius: 10px; padding: 16px 20px;
+  }
+  .pcb-stat-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted, rgba(26,10,5,0.5)); margin-bottom: 6px; }
+  .pcb-stat-value { font-family: var(--font-serif, 'Cormorant Garamond', serif); font-size: 1.8rem; font-weight: 600; color: var(--espresso, #1a0a05); line-height: 1; }
+  .pcb-stat-value.gold { color: var(--gold, #C9A84C); }
+  .pcb-filter-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .pcb-filter-input {
+    flex: 1; min-width: 200px; padding: 10px 14px;
+    border: 1.5px solid var(--border-light, rgba(90,20,50,0.15));
+    border-radius: 8px; font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 0.85rem; outline: none;
+    transition: border-color 0.2s;
+  }
+  .pcb-filter-input:focus { border-color: var(--burgundy, #5a1432); }
+  .pcb-export-btn {
+    padding: 10px 20px; background: var(--espresso, #1a0a05);
+    color: var(--ivory, #F5EFE6); border: none; border-radius: 8px;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; cursor: pointer; transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .pcb-export-btn:hover { background: #2d1408; }
+  .pcb-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border-light, rgba(90,20,50,0.12)); }
+  .pcb-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; background: #fff; }
+  .pcb-table th {
+    background: var(--espresso, #1a0a05); color: var(--ivory, #F5EFE6);
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 12px 14px; text-align: left;
+    white-space: nowrap;
+  }
+  .pcb-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-light, rgba(90,20,50,0.08));
+    vertical-align: top; color: var(--espresso, #1a0a05);
+  }
+  .pcb-table tr:last-child td { border-bottom: none; }
+  .pcb-table tr:hover td { background: rgba(245,239,230,0.5); }
+  .pcb-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .pcb-badge-yes { background: rgba(201,168,76,0.18); color: #7a5c10; border: 1px solid rgba(201,168,76,0.4); }
+  .pcb-badge-no { background: rgba(90,20,50,0.08); color: rgba(90,20,50,0.6); border: 1px solid rgba(90,20,50,0.15); }
+  .pcb-msg-cell { max-width: 200px; }
+  .pcb-msg-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--text-muted, rgba(26,10,5,0.6)); font-style: italic; font-size: 0.78rem; }
+  .pcb-file-link { color: var(--burgundy, #5a1432); text-decoration: underline; font-size: 0.75rem; word-break: break-all; }
+  .pcb-empty { text-align: center; padding: 60px 24px; color: var(--text-muted, rgba(26,10,5,0.4)); }
+  .pcb-loading { text-align: center; padding: 40px; color: var(--text-muted, rgba(26,10,5,0.4)); }
+  .pcb-info-box {
+    background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 10px; padding: 16px 20px; margin-bottom: 24px;
+    font-size: 0.82rem; color: rgba(26,10,5,0.65); line-height: 1.55;
+  }
+  .pcb-info-box strong { color: var(--espresso, #1a0a05); }
+  @media (max-width: 640px) {
+    .pcb-admin-title { font-size: 1.5rem; }
+    .pcb-stat-value  { font-size: 1.4rem; }
+  }
+</style>
+
+<div class="pcb-admin-wrap">
+
+  <div class="pcb-admin-header">
+    <h1 class="pcb-admin-title">📦 Customisation Orders</h1>
+    <p class="pcb-admin-sub">All orders where customers selected "Customise your box" — including their message, file, and surcharge status.</p>
+  </div>
+
+  <div class="pcb-info-box">
+    <strong>How this works:</strong> This view fetches orders from the Shopify Admin API that contain the
+    <code>Box Customisation</code> line item (SKU: <code>PM-BOX-CUSTOM-499</code>). The customer's message
+    and file reference are stored as line item properties on each order, visible here and in the Shopify
+    Orders admin. Data is loaded live — no separate database required.
+  </div>
+
+  <div class="pcb-admin-stats" id="pcb-stats">
+    <div class="pcb-stat-card">
+      <div class="pcb-stat-label">Total customised orders</div>
+      <div class="pcb-stat-value" id="stat-total">–</div>
+    </div>
+    <div class="pcb-stat-card">
+      <div class="pcb-stat-label">Revenue from surcharges</div>
+      <div class="pcb-stat-value gold" id="stat-revenue">–</div>
+    </div>
+    <div class="pcb-stat-card">
+      <div class="pcb-stat-label">With file uploads</div>
+      <div class="pcb-stat-value" id="stat-files">–</div>
+    </div>
+    <div class="pcb-stat-card">
+      <div class="pcb-stat-label">With messages</div>
+      <div class="pcb-stat-value" id="stat-messages">–</div>
+    </div>
+  </div>
+
+  <div class="pcb-filter-row">
+    <input type="text" class="pcb-filter-input" id="pcb-filter-input" placeholder="Search by order, product, customer or message…">
+    <button class="pcb-export-btn" id="pcb-export-btn">⬇ Export CSV</button>
+  </div>
+
+  <div class="pcb-table-wrap">
+    <table class="pcb-table" id="pcb-table">
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>Date</th>
+          <th>Customer</th>
+          <th>Email</th>
+          <th>Product</th>
+          <th>Variant</th>
+          <th>Customised?</th>
+          <th>Surcharge</th>
+          <th>Message</th>
+          <th>File</th>
+        </tr>
+      </thead>
+      <tbody id="pcb-table-body">
+        <tr><td colspan="10" class="pcb-loading">Loading orders…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var ADDON_SKU = 'PM-BOX-CUSTOM-499';
+  var allRows = [];
+
+  /* ─────────────────────────────────────────────────────────────────
+     Fetch orders containing the customisation add-on via the
+     Shopify Storefront API proxy. In production this should be
+     a private app endpoint or Shopify Function. For this build
+     we use a simple fetch to the internal orders endpoint that
+     Shopify exposes to logged-in staff accounts on the storefront.
+     ─────────────────────────────────────────────────────────────────
+     NOTE: The actual order data pull requires Admin API access
+     which cannot be called from the browser (CORS). In deployment
+     this page is served by a lightweight Cloudflare Worker / Shopify
+     App Proxy that forwards requests to the Admin API securely.
+     Below we build the full UI + CSV export. The data endpoint
+     returns JSON matching the structure in buildRow().
+  ──────────────────────────────────────────────────────────────────── */
+
+  function loadOrders() {
+    /* App Proxy endpoint or Shopify Admin API proxy — replace with real endpoint when deploying */
+    fetch('/apps/customiser/orders')
+      .then(function (r) {
+        if (!r.ok) throw new Error('API unavailable');
+        return r.json();
+      })
+      .then(function (data) {
+        allRows = data.orders || [];
+        renderStats(allRows);
+        renderTable(allRows);
+      })
+      .catch(function () {
+        /* Fallback: parse from Shopify order note (demo mode) */
+        renderDemoData();
+      });
+  }
+
+  /* ─── Demo / fallback renderer ─── */
+  function renderDemoData() {
+    allRows = [
+      {
+        order_number: '#1042',
+        created_at: '2026-03-12T10:24:00Z',
+        customer_name: 'Sarah Thompson',
+        customer_email: 'sarah.t@example.com',
+        product_title: 'The Velvet Hour',
+        variant_title: 'Default',
+        customised: true,
+        surcharge: '£4.99',
+        message: 'Happy anniversary my love. Every year with you is better than the last.',
+        file_ref: 'sarah-anniversary.jpg'
+      },
+      {
+        order_number: '#1047',
+        created_at: '2026-03-13T14:05:00Z',
+        customer_name: 'James Okafor',
+        customer_email: 'j.okafor@example.com',
+        product_title: 'The Velvet Hour',
+        variant_title: 'Default',
+        customised: true,
+        surcharge: '£4.99',
+        message: 'For my wife on her birthday. You deserve the world.',
+        file_ref: 'birthday-photo.png'
+      },
+      {
+        order_number: '#1053',
+        created_at: '2026-03-14T09:18:00Z',
+        customer_name: 'Emily Chan',
+        customer_email: 'emily.c@example.com',
+        product_title: 'The Velvet Hour',
+        variant_title: 'Default',
+        customised: true,
+        surcharge: '£4.99',
+        message: 'A little something to say thank you.',
+        file_ref: ''
+      }
+    ];
+    renderStats(allRows);
+    renderTable(allRows);
+
+    /* Show info note about live data */
+    var info = document.querySelector('.pcb-info-box');
+    if (info) {
+      info.innerHTML += '<br><br><strong>⚠️ Demo mode:</strong> The App Proxy endpoint (<code>/apps/customiser/orders</code>) is not yet connected. Sample data shown above. Connect a Cloudflare Worker or Shopify App Proxy to see live order data.';
+    }
+  }
+
+  function renderStats(rows) {
+    var total    = rows.length;
+    var revenue  = (total * 4.99).toFixed(2);
+    var withFile = rows.filter(function (r) { return r.file_ref; }).length;
+    var withMsg  = rows.filter(function (r) { return r.message && r.message !== '(no message)'; }).length;
+
+    document.getElementById('stat-total').textContent    = total;
+    document.getElementById('stat-revenue').textContent  = '£' + revenue;
+    document.getElementById('stat-files').textContent    = withFile;
+    document.getElementById('stat-messages').textContent = withMsg;
+  }
+
+  function renderTable(rows) {
+    var tbody = document.getElementById('pcb-table-body');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="10" class="pcb-empty">No customisation orders found yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(function (r) {
+      var date = r.created_at ? new Date(r.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : '–';
+      var badge = r.customised
+        ? '<span class="pcb-badge pcb-badge-yes">Yes</span>'
+        : '<span class="pcb-badge pcb-badge-no">No</span>';
+      var fileCell = r.file_ref
+        ? '<a href="' + r.file_ref + '" class="pcb-file-link" target="_blank" rel="noopener">' + (r.file_ref.length > 30 ? r.file_ref.substring(0, 30) + '…' : r.file_ref) + '</a>'
+        : '<span style="color:rgba(26,10,5,0.3);">—</span>';
+      var msgCell = r.message && r.message !== '(no message)'
+        ? '<div class="pcb-msg-text">' + escHtml(r.message) + '</div>'
+        : '<span style="color:rgba(26,10,5,0.3);">—</span>';
+
+      return '<tr>'
+        + '<td><a href="https://playmatelabs.myshopify.com/admin/orders?query=' + encodeURIComponent(r.order_number) + '" target="_blank" style="color:var(--burgundy,#5a1432);font-weight:600;">' + escHtml(r.order_number) + '</a></td>'
+        + '<td style="white-space:nowrap;">' + date + '</td>'
+        + '<td>' + escHtml(r.customer_name || '–') + '</td>'
+        + '<td style="font-size:0.75rem;">' + escHtml(r.customer_email || '–') + '</td>'
+        + '<td>' + escHtml(r.product_title || '–') + '</td>'
+        + '<td>' + escHtml(r.variant_title || 'Default') + '</td>'
+        + '<td>' + badge + '</td>'
+        + '<td style="font-weight:600;color:var(--gold,#C9A84C);">' + escHtml(r.surcharge || '£4.99') + '</td>'
+        + '<td class="pcb-msg-cell">' + msgCell + '</td>'
+        + '<td>' + fileCell + '</td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ─── Filter ─── */
+  document.getElementById('pcb-filter-input').addEventListener('input', function () {
+    var q = this.value.toLowerCase();
+    var filtered = !q ? allRows : allRows.filter(function (r) {
+      return (r.order_number + r.customer_name + r.customer_email + r.product_title + r.message + r.file_ref).toLowerCase().includes(q);
+    });
+    renderTable(filtered);
+  });
+
+  /* ─── CSV Export ─── */
+  document.getElementById('pcb-export-btn').addEventListener('click', function () {
+    var headers = ['Order #','Date','Customer','Email','Product','Variant','Customised','Surcharge','Message','File'];
+    var rows = allRows.map(function (r) {
+      return [
+        r.order_number,
+        r.created_at ? new Date(r.created_at).toLocaleDateString('en-GB') : '',
+        r.customer_name,
+        r.customer_email,
+        r.product_title,
+        r.variant_title || 'Default',
+        r.customised ? 'Yes' : 'No',
+        r.surcharge || '£4.99',
+        '"' + (r.message || '').replace(/"/g,'""') + '"',
+        r.file_ref || ''
+      ].join(',');
+    });
+    var csv = [headers.join(',')].concat(rows).join('\n');
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'customisation-orders-' + new Date().toISOString().substring(0,10) + '.csv';
+    a.click();
+  });
+
+  loadOrders();
+})();
+</script>
