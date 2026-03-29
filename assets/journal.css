@@ -236,7 +236,16 @@
 
 .article-content-section { padding: 4rem 0; }
 .article-layout { display: grid; grid-template-columns: 1fr 320px; gap: 4rem; align-items: start; }
-.article-body { font-size: 1.0625rem; line-height: 1.8; color: var(--text, #2C1810); }
+.article-body {
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--text, #2C1810);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+  overflow-x: hidden;
+}
 .article-body h2 { font-family: var(--font-serif, 'Playfair Display', serif); font-size: 1.75rem; margin: 2.5rem 0 1rem; }
 .article-body h3 { font-family: var(--font-serif, 'Playfair Display', serif); font-size: 1.375rem; margin: 2rem 0 0.75rem; }
 .article-body p { margin-bottom: 1.5rem; }
@@ -432,6 +441,61 @@
   .journal-newsletter-fields { flex-direction: column; }
   .article-hero-title { font-size: clamp(1.75rem, 7vw, 3rem); }
   .article-related-grid { grid-template-columns: 1fr; }
+
+  /* --- Mobile article text containment --- */
+  .article-content-section {
+    padding: 2rem 0;
+  }
+  .article-content-section .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    overflow-x: hidden;
+  }
+  .article-layout {
+    gap: 1.5rem;
+  }
+  .article-body {
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+  .article-body h2 {
+    font-size: 1.375rem;
+    margin: 2rem 0 0.75rem;
+  }
+  .article-body h3 {
+    font-size: 1.125rem;
+    margin: 1.5rem 0 0.625rem;
+  }
+  .article-body blockquote {
+    padding: 0.75rem 1rem;
+    margin: 1.5rem 0;
+    font-size: 1.0625rem;
+  }
+  .article-body ul,
+  .article-body ol {
+    margin-left: 1rem;
+  }
+  .article-body li {
+    padding-left: 0.125rem;
+  }
+  .article-body img {
+    margin: 1.25rem 0;
+    border-radius: 0.75rem;
+  }
+  .article-hero {
+    padding: calc(var(--nav-height, 64px) + 1.5rem) 0 2rem;
+  }
+  .article-hero .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .article-hero-excerpt {
+    font-size: 1rem;
+  }
+  .article-meta-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
 }
 
 /* Figure / image captions in articles */
