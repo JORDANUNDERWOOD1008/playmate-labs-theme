@@ -228,6 +228,7 @@
   {%- if request.page_type == 'product' -%}{% render 'schema-product', product: product %}{%- endif -%}
   {%- if request.page_type == 'article' -%}{% render 'schema-article', article: article, blog: blog %}{%- endif -%}
   {% render 'schema-breadcrumbs' %}
+  {% render 'schema-faq' %}
 </head>
 
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}--{{ template.suffix }}{% endif %}">
