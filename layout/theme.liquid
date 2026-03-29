@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#6B1E3A">
   <meta name="msvalidate.01" content="DD22E6752A61891AC89B366341673A50" />
 
-  {%- comment -%} ═══ GOOGLE CONSENT MODE v2 — must be FIRST script ═══ {%- endcomment -%}
+  {%- comment -%} ══ GOOGLE CONSENT MODE v2 — must be FIRST script ══ {%- endcomment -%}
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -22,10 +22,10 @@
     });
   </script>
 
-  {%- comment -%} ═══ DATA LAYER ═══ {%- endcomment -%}
+  {%- comment -%} ══ DATA LAYER ══ {%- endcomment -%}
   {% render 'datalayer' %}
 
-  {%- comment -%} ═══ GOOGLE TAG MANAGER — head ═══
+  {%- comment -%} ══ GOOGLE TAG MANAGER — head ══
        Replace GTM-NXMGJ6W7 with your container ID
        Create at: https://tagmanager.google.com
   {%- endcomment -%}
@@ -57,10 +57,21 @@
     {%- endif -%}
   </title>
 
+  {%- comment -%} ══ META DESCRIPTIONS — unique per page type ══ {%- endcomment -%}
   {% if template == 'index' %}
     <meta name="description" content="Novel sensory experiences, monthly date night drops and immersive events for modern couples. Rewriting how couples do date night. Join 14,000+ couples.">
   {% elsif page_description %}
     <meta name="description" content="{{ page_description | escape }}">
+  {% elsif template == 'collection' %}
+    <meta name="description" content="Browse {{ collection.title | escape }} from Playmate Labs. Aphrodisiac chocolates, date night kits and sensory products designed for couples.">
+  {% elsif template == 'list-collections' %}
+    <meta name="description" content="Explore all Playmate Labs collections — aphrodisiac chocolates, date night drops, couples gift bundles and sensory experiences.">
+  {% elsif template == 'blog' %}
+    <meta name="description" content="The Playmate Journal — expert guides on aphrodisiac ingredients, date night ideas, intimacy tips and couples wellness from Playmate Labs.">
+  {% elsif template.name == 'page' and page.handle == 'faq' %}
+    <meta name="description" content="Frequently asked questions about Playmate Labs aphrodisiac chocolates — ingredients, shipping, dietary info and how our products work.">
+  {% elsif template == 'search' %}
+    <meta name="description" content="Search Playmate Labs for aphrodisiac chocolates, date night products, couples gifts and journal articles.">
   {% endif %}
 
   {% render 'meta-tags' %}
