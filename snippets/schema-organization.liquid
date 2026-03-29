@@ -1,0 +1,58 @@
+<!-- Schema: Organization + WebSite (homepage only) -->
+{%- if request.page_type == 'index' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "{{ shop.url }}/#organization",
+      "name": "Playmate Labs",
+      "url": "{{ shop.url }}",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PLAYMATE-RED_7.png?v=1726978341",
+        "width": 512,
+        "height": 512
+      },
+      "description": "{{ shop.description | escape }}",
+      "foundingDate": "2024",
+      "founder": {
+        "@type": "Person",
+        "name": "Jordan Underwood",
+        "url": "{{ shop.url }}/pages/jordan-underwood"
+      },
+      "sameAs": [
+        "https://www.instagram.com/playmatelabs/",
+        "https://www.tiktok.com/@playmatelabs",
+        "https://uk.pinterest.com/playmatelabs/"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "info@playmatelabs.com",
+        "contactType": "customer service",
+        "availableLanguage": "English"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "{{ shop.url }}/#website",
+      "url": "{{ shop.url }}",
+      "name": "Playmate Labs",
+      "description": "{{ shop.description | escape }}",
+      "publisher": {
+        "@id": "{{ shop.url }}/#organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "{{ shop.url }}/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+}
+</script>
+{%- endif -%}
