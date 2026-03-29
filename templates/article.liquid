@@ -145,6 +145,35 @@
     </div>
   </section>
 
+  <!-- A/B TEST: PRODUCT CTA CARD (Variant B only — hidden by default, shown via JS) -->
+  <section class="article-cta-card-section" id="ab-cta-card" style="display:none;" data-test="blog-cta-v1">
+    <div class="container">
+      <div class="article-cta-card">
+        <div class="article-cta-card-img">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0637/2176/7068/files/newbright1.png?v=1762956658&width=400"
+            alt="Aphrodisiac Hot Choc Spoons by Playmate Labs"
+            loading="lazy"
+            width="400"
+            height="533"
+          >
+        </div>
+        <div class="article-cta-card-content">
+          <span class="article-cta-card-eyebrow">Enjoyed this article?</span>
+          <h3 class="article-cta-card-title">Aphrodisiac Hot Choc Spoons</h3>
+          <p class="article-cta-card-desc">Stir real dark chocolate and aphrodisiac botanicals into warm milk. Three flavours. Science-backed ingredients. The perfect excuse to slow down together.</p>
+          <div class="article-cta-card-price">
+            <span class="article-cta-card-price-current">From £14.99</span>
+            <span class="article-cta-card-price-compare">£29.98</span>
+          </div>
+          <a href="/products/aphrodisiac-hot-choc-spoons" class="btn btn-primary article-cta-card-btn" id="ab-cta-btn">
+            Shop Hot Choc Spoons
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- RELATED ARTICLES -->
   {%- if blog.articles.size > 1 -%}
   <section class="article-related section bg-ivory">
@@ -185,3 +214,62 @@
   {%- endif -%}
 
 </article>
+
+<!-- A/B TEST: Blog CTA Card v1 — variant assignment + GA4 tracking -->
+<script>
+(function(){
+  var TEST_NAME = 'blog_cta_v1';
+  var COOKIE_NAME = 'ab_' + TEST_NAME;
+  var EXPIRY_DAYS = 42;
+
+  function getCookie(name) {
+    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? match[2] : null;
+  }
+
+  function setCookie(name, value, days) {
+    var d = new Date();
+    d.setTime(d.getTime() + days * 86400000);
+    document.cookie = name + '=' + value + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+  }
+
+  function gaEvent(name, params) {
+    if (typeof gtag === 'function') {
+      gtag('event', name, params);
+    }
+  }
+
+  // Assign or retrieve variant
+  var variant = getCookie(COOKIE_NAME);
+  if (!variant) {
+    variant = Math.random() < 0.5 ? 'control' : 'cta_card';
+    setCookie(COOKIE_NAME, variant, EXPIRY_DAYS);
+  }
+
+  // Fire impression event
+  gaEvent('ab_test_view', {
+    test_name: TEST_NAME,
+    variant: variant,
+    page_path: window.location.pathname
+  });
+
+  // Show CTA card for variant B
+  if (variant === 'cta_card') {
+    var card = document.getElementById('ab-cta-card');
+    if (card) card.style.display = '';
+
+    // Track CTA click
+    var btn = document.getElementById('ab-cta-btn');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        gaEvent('ab_cta_click', {
+          test_name: TEST_NAME,
+          variant: variant,
+          product: 'aphrodisiac-hot-choc-spoons',
+          page_path: window.location.pathname
+        });
+      });
+    }
+  }
+})();
+</script>
