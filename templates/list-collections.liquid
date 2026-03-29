@@ -1,0 +1,40 @@
+<!-- Playmate Labs — Collections Index (/collections) -->
+<div class="collections-index-hero" style="padding: calc(var(--nav-height, 80px) + 3rem) 0 2rem; background: var(--ivory, #FAF7F2); border-bottom: 1px solid var(--border-light, #E8DDD3);">
+  <div class="container">
+    <h1 style="font-family: var(--font-serif, 'Playfair Display', serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; margin: 0 0 0.75rem; line-height: 1.15;">
+      Our Collections
+    </h1>
+    <p style="color: var(--text-muted, #6B5E54); max-width: 560px; line-height: 1.7; margin: 0;">
+      Explore our full range of aphrodisiac chocolates, date night experiences and sensory products designed for couples.
+    </p>
+  </div>
+</div>
+
+<div class="collections-index-grid" style="padding: 3rem 0;">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+      {% for collection in collections %}
+        {% unless collection.handle == 'frontpage' %}
+        <a href="{{ collection.url }}" style="display: block; text-decoration: none; color: inherit; border-radius: var(--radius-xl, 1.5rem); overflow: hidden; background: white; border: 1px solid var(--border-light, #E8DDD3); transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(107,30,58,0.1)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+          {% if collection.image %}
+            <div style="aspect-ratio: 16/10; overflow: hidden;">
+              <img src="{{ collection.image | image_url: width: 600 }}" alt="{{ collection.title | escape }}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+          {% else %}
+            <div style="aspect-ratio: 16/10; background: linear-gradient(135deg, #1A0A06, #3D1A2E); display: flex; align-items: center; justify-content: center;">
+              <span style="font-size: 3rem;">🍫</span>
+            </div>
+          {% endif %}
+          <div style="padding: 1.25rem;">
+            <h2 style="font-family: var(--font-serif, 'Playfair Display', serif); font-size: 1.25rem; font-weight: 500; margin: 0 0 0.5rem; line-height: 1.3;">{{ collection.title }}</h2>
+            {% if collection.description != blank %}
+              <p style="font-size: 0.875rem; color: var(--text-muted, #6B5E54); line-height: 1.6; margin: 0;">{{ collection.description | strip_html | truncate: 120 }}</p>
+            {% endif %}
+            <span style="display: inline-block; margin-top: 0.75rem; font-size: 0.8125rem; font-weight: 600; color: var(--burgundy, #6B1E3A);">Shop {{ collection.title }} →</span>
+          </div>
+        </a>
+        {% endunless %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
