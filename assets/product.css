@@ -562,7 +562,7 @@
   }
 }
 
-/* ── Subscribe & Save – Selling Plans UI ─────────────────────── */
+/* — Subscribe & Save – Selling Plans UI ——————————————————————— */
 .product-purchase-options { margin-bottom: 1.5rem; }
 
 .product-purchase-option {
@@ -626,3 +626,9 @@
   outline: none;
   border-color: var(--burgundy, #6B2737);
 }
+
+/* ============================================
+   DUPLICATE SUBTITLE FIX
+   Hide hardcoded subtitle when metafield subtitle is present
+   ============================================ */
+.product-title ~ .product-subtitle ~ .product-subtitle { display: none !important; }
