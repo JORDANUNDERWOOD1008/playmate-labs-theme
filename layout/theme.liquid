@@ -49,6 +49,10 @@
   <title>
     {%- if template == 'index' -%}
       Playmate Labs &mdash; Date Night Experiences, Monthly Drops &amp; Couples Rituals
+    {%- elsif template == 'list-collections' -%}
+      Shop All Collections &mdash; Chocolates, Date Night Kits &amp; Gifts | Playmate Labs
+    {%- elsif template == 'search' -%}
+      Search | Playmate Labs
     {%- else -%}
       {{ page_title }}
       {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
@@ -57,21 +61,21 @@
     {%- endif -%}
   </title>
 
-  {%- comment -%} ══ META DESCRIPTIONS — unique per page type ══ {%- endcomment -%}
+  {%- comment -%} ══ META DESCRIPTIONS — template-specific checks first, then page_description fallback ══ {%- endcomment -%}
   {% if template == 'index' %}
     <meta name="description" content="Novel sensory experiences, monthly date night drops and immersive events for modern couples. Rewriting how couples do date night. Join 14,000+ couples.">
-  {% elsif page_description %}
-    <meta name="description" content="{{ page_description | escape }}">
-  {% elsif template == 'collection' %}
-    <meta name="description" content="Browse {{ collection.title | escape }} from Playmate Labs. Aphrodisiac chocolates, date night kits and sensory products designed for couples.">
   {% elsif template == 'list-collections' %}
-    <meta name="description" content="Explore all Playmate Labs collections — aphrodisiac chocolates, date night drops, couples gift bundles and sensory experiences.">
+    <meta name="description" content="Explore all Playmate Labs collections — aphrodisiac chocolates, date night drops, couples gift bundles and sensory experiences. UK handcrafted.">
+  {% elsif template == 'search' %}
+    <meta name="description" content="Search Playmate Labs for aphrodisiac chocolates, hot chocolate spoons, date night products, couples gifts and journal articles.">
   {% elsif template == 'blog' %}
     <meta name="description" content="The Playmate Journal — expert guides on aphrodisiac ingredients, date night ideas, intimacy tips and couples wellness from Playmate Labs.">
   {% elsif template.name == 'page' and page.handle == 'faq' %}
     <meta name="description" content="Frequently asked questions about Playmate Labs aphrodisiac chocolates — ingredients, shipping, dietary info and how our products work.">
-  {% elsif template == 'search' %}
-    <meta name="description" content="Search Playmate Labs for aphrodisiac chocolates, date night products, couples gifts and journal articles.">
+  {% elsif page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+  {% elsif template == 'collection' %}
+    <meta name="description" content="Browse {{ collection.title | escape }} from Playmate Labs. Aphrodisiac chocolates, date night kits and sensory products designed for couples.">
   {% endif %}
 
   {% render 'meta-tags' %}
