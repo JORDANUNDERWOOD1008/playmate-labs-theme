@@ -53,9 +53,13 @@
       Shop All Collections &mdash; Chocolates, Date Night Kits &amp; Gifts | Playmate Labs
     {%- elsif template == 'search' -%}
       Search | Playmate Labs
+    {%- elsif template == '404' -%}
+      Page Not Found | Playmate Labs
+    {%- elsif template == 'cart' -%}
+      Your Shopping Cart | Playmate Labs
     {%- else -%}
       {{ page_title }}
-      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_tags %} &ndash; tagged &quot;{{ current_tags | join: ', ' }}&quot;{% endif -%}
       {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
       {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
     {%- endif -%}
@@ -69,14 +73,37 @@
   {% elsif template == 'search' %}
     <meta name="description" content="Search Playmate Labs for aphrodisiac chocolates, hot chocolate spoons, date night products, couples gifts and journal articles.">
   {% elsif template == 'blog' %}
-    <meta name="description" content="The Playmate Journal — expert guides on aphrodisiac ingredients, date night ideas, intimacy tips and couples wellness from Playmate Labs.">
+    <meta name="description" content="{{ blog.title | escape }} — expert guides on aphrodisiac ingredients, date night ideas, intimacy tips and couples wellness from Playmate Labs.">
+  {% elsif template == 'article' %}
+    {% if article.excerpt_or_content != blank %}
+      <meta name="description" content="{{ article.excerpt_or_content | strip_html | truncatewords: 25 | escape }}">
+    {% else %}
+      <meta name="description" content="{{ article.title | escape }} — read more on The Playmate Journal by Playmate Labs.">
+    {% endif %}
   {% elsif template.name == 'page' and page.handle == 'faq' %}
     <meta name="description" content="Frequently asked questions about Playmate Labs aphrodisiac chocolates — ingredients, shipping, dietary info and how our products work.">
+  {% elsif template.name == 'page' and page.handle == 'contact' %}
+    <meta name="description" content="Get in touch with Playmate Labs — questions about orders, ingredients, partnerships or wholesale. UK-based team ready to help.">
+  {% elsif template.name == 'page' and page.handle == 'sms-opt-in' %}
+    <meta name="description" content="Sign up for Playmate Labs SMS drop alerts. Be first to know when limited edition date night kits go live.">
   {% elsif page_description %}
     <meta name="description" content="{{ page_description | escape }}">
   {% elsif template == 'collection' %}
     <meta name="description" content="Browse {{ collection.title | escape }} from Playmate Labs. Aphrodisiac chocolates, date night kits and sensory products designed for couples.">
+  {% elsif template == 'cart' %}
+    <meta name="description" content="Review and complete your Playmate Labs order. Free UK shipping on orders over £60.">
+  {% elsif template == '404' %}
+    <meta name="description" content="This page could not be found. Browse Playmate Labs for aphrodisiac chocolates, date night kits and couples experiences.">
+  {% elsif template.name == 'policy' %}
+    <meta name="description" content="{{ page_title | escape }} for Playmate Labs. Read our terms covering orders, shipping, returns and privacy.">
+  {% else %}
+    <meta name="description" content="{{ page_title | escape }} | Playmate Labs — aphrodisiac chocolates, date night experiences and couples products.">
   {% endif %}
+
+  {%- comment -%} ══ NOINDEX — non-content utility pages ══ {%- endcomment -%}
+  {%- if template == '404' or template == 'cart' or template.name == 'policy' -%}
+    <meta name="robots" content="noindex, follow">
+  {%- endif -%}
 
   {% render 'meta-tags' %}
 
