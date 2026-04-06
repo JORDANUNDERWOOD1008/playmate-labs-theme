@@ -94,14 +94,14 @@
     <meta name="description" content="Review and complete your Playmate Labs order. Free UK shipping on orders over £60.">
   {% elsif template == '404' %}
     <meta name="description" content="This page could not be found. Browse Playmate Labs for aphrodisiac chocolates, date night kits and couples experiences.">
-  {% elsif template.name == 'policy' %}
+  {% elsif request.path contains '/policies/' %}
     <meta name="description" content="{{ page_title | escape }} for Playmate Labs. Read our terms covering orders, shipping, returns and privacy.">
   {% else %}
     <meta name="description" content="{{ page_title | escape }} | Playmate Labs — aphrodisiac chocolates, date night experiences and couples products.">
   {% endif %}
 
   {%- comment -%} ══ NOINDEX — non-content utility pages ══ {%- endcomment -%}
-  {%- if template == '404' or template == 'cart' or template.name == 'policy' -%}
+  {%- if template == '404' or template == 'cart' or request.path contains '/policies/' -%}
     <meta name="robots" content="noindex, follow">
   {%- endif -%}
 
