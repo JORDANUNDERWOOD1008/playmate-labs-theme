@@ -45,8 +45,8 @@
         <ul>
           <li><a href="/collections/all">All Products</a></li>
           <li><a href="/products/playmate-chocolate">The Velvet Hour</a></li>
-          <li><a href="/pages/monthly-drops">Monthly Drops</a></li>
-          <li><a href="/pages/gifts">Gifts</a></li>
+          <li><a href="/collections/monthly-drops">Monthly Drops</a></li>
+          <li><a href="/products/aphrodisiac-hot-choc-spoons">Hot Choc Spoons</a></li>
         </ul>
       </div>
 
@@ -55,9 +55,7 @@
         <h4>Explore</h4>
         <ul>
           <li><a href="/pages/about">About Playmate Labs</a></li>
-          <li><a href="/pages/jordan-underwood">Jordan Underwood</a></li>
           <li><a href="/blogs/the-playmate-journal">The Journal</a></li>
-          <li><a href="/pages/events">Events</a></li>
           <li><a href="/pages/5-day-experience">5-Day Experience</a></li>
         </ul>
       </div>
@@ -68,7 +66,6 @@
         <ul>
           <li><a href="/pages/faq">FAQ</a></li>
           <li><a href="/pages/contact-1">Contact Us</a></li>
-          <li><a href="/pages/stockists">Stockists</a></li>
         </ul>
       </div>
 
@@ -144,9 +141,8 @@
             <a href="{{ link.url }}">{{ link.title }}</a>
           {%- endfor -%}
         {%- else -%}
-          <a href="{{ pages['privacy-policy'].url | default: '/policies/privacy-policy' }}">Privacy Policy</a>
-          <a href="{{ pages['terms-conditions'].url | default: '/policies/terms-of-service' }}">Terms &amp; Conditions</a>
-          <a href="{{ pages['cookie-policy'].url | default: '/policies/legal-notice' }}">Cookie Policy</a>
+          <a href="/policies/privacy-policy">Privacy Policy</a>
+          <a href="/policies/terms-of-service">Terms &amp; Conditions</a>
         {%- endif -%}
       </div>
     </div>
