@@ -29,7 +29,7 @@
         </div>
         <div class="article-meta-details">
           <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-            <a href="/pages/jordan-underwood" itemprop="url" style="color:inherit;text-decoration:none;">
+            <a href="/pages/about" itemprop="url" style="color:inherit;text-decoration:none;">
               <span itemprop="name">{{ article.author }}</span>
             </a>
           </span>
@@ -68,7 +68,8 @@
 
         <!-- Main Content -->
         <div class="article-body" itemprop="articleBody">
-          {{ article.content }}
+          {%- comment -%} Downgrade any H1 tags in article body to H2 to avoid duplicate H1s {%- endcomment -%}
+          {{ article.content | replace: '<h1', '<h2' | replace: '</h1>', '</h2>' }}
         </div>
 
         <!-- Sidebar -->
@@ -83,7 +84,7 @@
               </div>
               <div>
                 <p class="article-author-name">
-                  <a href="/pages/jordan-underwood" style="color:inherit;text-decoration:none;">{{ article.author }}</a>
+                  <a href="/pages/about" style="color:inherit;text-decoration:none;">{{ article.author }}</a>
                 </p>
                 {%- if article.author == 'Jordan Underwood' -%}
                   <p class="article-author-role">Founder, Playmate Labs</p>
@@ -96,7 +97,7 @@
               <p style="font-size:0.8125rem;line-height:1.5;margin-top:0.75rem;opacity:0.85;">
                 Jordan founded Playmate Labs to bring science-backed aphrodisiac chocolates to UK couples. He works directly with artisan chocolatiers and ingredient researchers to develop every product.
               </p>
-              <a href="/pages/jordan-underwood" style="font-size:0.8125rem;color:var(--gold,#c9a96e);text-decoration:none;display:inline-block;margin-top:0.5rem;">
+              <a href="/pages/about" style="font-size:0.8125rem;color:var(--gold,#c9a96e);text-decoration:none;display:inline-block;margin-top:0.5rem;">
                 Read full bio →
               </a>
             {%- endif -%}
