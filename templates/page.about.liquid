@@ -116,7 +116,8 @@
         <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ settings.about_heading_color | default: 'var(--espresso)' }};margin:0.75rem 0 1.5rem;">{{ settings.about_founders_heading | default: 'A Note From Us' }}</h2>
         <div class="about-founders-body" style="font-size:1rem;line-height:1.8;color:{{ settings.about_body_text_color | default: 'var(--text-body)' }};">
           {%- if page.content != blank -%}
-            {{ page.content }}
+            {%- comment -%} Downgrade any H1 tags in CMS content to H2 to avoid duplicate H1s {%- endcomment -%}
+            {{ page.content | replace: '<h1', '<h2' | replace: '</h1>', '</h2>' }}
           {%- else -%}
             <p>{{ settings.about_founders_para_1 | default: 'Playmate Labs started as a conversation between two people who loved each other and had run out of interesting things to do about it. We\'d done the restaurants, the weekends away. We kept returning to the same routines.' }}</p>
             <p>{{ settings.about_founders_para_2 | default: 'We started experimenting — with sensory rituals, with structured play, with small ceremonies built around taste and touch. The evenings we remember most weren\'t the expensive ones. They were the ones where something unusual happened.' }}</p>
