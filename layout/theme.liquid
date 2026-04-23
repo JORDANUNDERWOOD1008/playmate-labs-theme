@@ -48,9 +48,9 @@
 
   <title>
     {%- if template == 'index' -%}
-      Playmate Labs &mdash; Date Night Experiences, Monthly Drops &amp; Couples Rituals
+      Playmate Labs — Date Night Experiences &amp; Couples Rituals
     {%- elsif template == 'list-collections' -%}
-      Shop All Collections &mdash; Chocolates, Date Night Kits &amp; Gifts | Playmate Labs
+      Shop All Collections | Playmate Labs
     {%- elsif template == 'search' -%}
       Search | Playmate Labs
     {%- elsif template == '404' -%}
@@ -61,7 +61,7 @@
       {{ page_title }}
       {%- if current_tags %} &ndash; tagged &quot;{{ current_tags | join: ', ' }}&quot;{% endif -%}
       {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+      {%- unless page_title contains 'Playmate Labs' or page_title contains 'playmatelabs' %} | Playmate Labs{% endunless -%}
     {%- endif -%}
   </title>
 
