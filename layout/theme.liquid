@@ -46,6 +46,7 @@
 
   {%- assign formatted_initial_value = cart.total_price | money_with_currency -%}
 
+  {%- comment -%} ══ TITLE TAG — per-template with 70-char limit awareness ══ {%- endcomment -%}
   <title>
     {%- if template == 'index' -%}
       Playmate Labs — Date Night Experiences &amp; Couples Rituals
@@ -57,6 +58,24 @@
       Page Not Found | Playmate Labs
     {%- elsif template == 'cart' -%}
       Your Shopping Cart | Playmate Labs
+    {%- elsif template == 'blog' -%}
+      {%- if current_tags -%}
+        {{ current_tags | join: ', ' }} | {{ blog.title }}
+      {%- else -%}
+        {{ blog.title }} | Playmate Labs
+      {%- endif -%}
+    {%- elsif template == 'article' -%}
+      {%- if article.title.size > 53 -%}
+        {{ article.title | truncate: 70, '' }}
+      {%- else -%}
+        {{ article.title }} | Playmate Labs
+      {%- endif -%}
+    {%- elsif template contains 'product' -%}
+      {%- if product.title.size > 53 -%}
+        {{ product.title | truncate: 53, '' }} | Playmate Labs
+      {%- else -%}
+        {{ product.title }} | Playmate Labs
+      {%- endif -%}
     {%- else -%}
       {{ page_title }}
       {%- if current_tags %} &ndash; tagged &quot;{{ current_tags | join: ', ' }}&quot;{% endif -%}
@@ -149,13 +168,6 @@
      * ============================================================
      * PLAYMATE LABS — HEADER OVERLAP FIX
      * ============================================================
-     * Our nav (#main-nav.site-nav) is position:fixed at the top.
-     * Shopify wraps sections in <div class="shopify-section">,
-     * which must NOT be fixed itself — only the inner .site-nav is.
-     *
-     * CRITICAL: <main id="MainContent"> needs padding-top equal to
-     * the nav height so content is never hidden behind the fixed bar.
-     * ============================================================
      */
 
     /* 1. Neutralise the Shopify section wrapper — must be static */
@@ -183,20 +195,16 @@
       top: var(--nav-height, 72px);
       left: 0;
       right: 0;
-      z-index: 999;   /* just below nav (1000) but above page content */
-      /* height is ~38px — captured in --bar-height below */
+      z-index: 999;
     }
 
-    /* 4. No global padding on MainContent — each hero handles its own
-          top offset via calc(var(--nav-height) + var(--bar-height) + Xrem).
-          Adding padding here causes a double-gap above full-bleed heroes. */
+    /* 4. No global padding on MainContent */
     :root { --bar-height: 38px; }
     #MainContent {
       padding-top: 0;
     }
 
-    /* 5. Non-hero pages (legal, contact, faq etc.) that have no full-bleed
-          hero get a simple spacer pushed onto their first section instead */
+    /* 5. Non-hero pages get a simple spacer */
     #MainContent > .shopify-section:first-child > .page-hero-minimal,
     #MainContent > .shopify-section:first-child > .contact-hero,
     #MainContent > .shopify-section:first-child > .faq-hero,
