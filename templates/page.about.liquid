@@ -20,7 +20,7 @@
     <div class="about-hero-inner" style="max-width:700px;">
       <span class="section-eyebrow" style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_eyebrow | default: 'Our Story' }}</span>
       <h1 style="font-family:var(--font-serif);font-size:clamp(2rem,5vw,3.25rem);color:{{ settings.about_hero_heading_color | default: 'var(--cream)' }};margin:0.75rem 0 1.5rem;line-height:1.2;">
-        {{ settings.about_hero_heading_1 | default: 'We\'re rewriting' }}<br>
+        {{ settings.about_hero_heading_1 | default: 'We\' }}<br>
         {{ settings.about_hero_heading_2 | default: 'how couples do' }}<br>
         <em style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_hero_heading_italic | default: 'date night.' }}</em>
       </h1>
@@ -119,10 +119,10 @@
             {%- comment -%} Downgrade any H1 tags in CMS content to H2 to avoid duplicate H1s {%- endcomment -%}
             {{ page.content | replace: '<h1', '<h2' | replace: '</h1>', '</h2>' }}
           {%- else -%}
-            <p>{{ settings.about_founders_para_1 | default: 'Playmate Labs started as a conversation between two people who loved each other and had run out of interesting things to do about it. We\'d done the restaurants, the weekends away. We kept returning to the same routines.' }}</p>
-            <p>{{ settings.about_founders_para_2 | default: 'We started experimenting — with sensory rituals, with structured play, with small ceremonies built around taste and touch. The evenings we remember most weren\'t the expensive ones. They were the ones where something unusual happened.' }}</p>
+            <p>{{ settings.about_founders_para_1 | default: 'Playmate Labs started as a conversation between two people who loved each other and had run out of interesting things to do about it. We\', the }}</p>
+            <p>{{ settings.about_founders_para_2 | default: 'We started experimenting — with sensory rituals, with structured play, with small ceremonies built around taste and touch. The evenings we remember most weren\' }}</p>
             <p>{{ settings.about_founders_para_3 | default: 'So we built a brand around that instinct. Products with ritual built in. Drops that arrive like a cultural moment. Events that feel like nothing else. A community of people who believe that relationships are worth the effort of doing them well.' }}</p>
-            <p><strong style="color:{{ settings.about_accent_color | default: 'var(--burgundy)' }};">{{ settings.about_founders_sign_off | default: 'Welcome to Playmate Labs. Let\'s see what you two can create.' }}</strong></p>
+            <p><strong style="color:{{ settings.about_accent_color | default: 'var(--burgundy)' }};">{{ settings.about_founders_sign_off | default: 'Welcome to Playmate Labs. Let\' }}</strong></p>
           {%- endif -%}
         </div>
         {%- if settings.about_founder_name != blank -%}
@@ -165,7 +165,7 @@
 <section class="section" style="background:{{ settings.about_cta_bg | default: 'var(--espresso)' }};text-align:center;">
   <div class="container" style="max-width:480px;">
     <h2 style="font-family:var(--font-serif);font-size:1.875rem;color:{{ settings.about_cta_heading_color | default: 'var(--cream)' }};margin-bottom:1rem;">{{ settings.about_cta_heading | default: 'Start here.' }}</h2>
-    <p style="color:rgba(245,239,230,0.7);margin-bottom:2rem;">{{ settings.about_cta_sub | default: 'Free 5-day experience. Or shop the latest drop. Either way, you\'re in the right place.' }}</p>
+    <p style="color:rgba(245,239,230,0.7);margin-bottom:2rem;">{{ settings.about_cta_sub | default: 'Free 5-day experience. Or shop the latest drop. Either way, you\' }}</p>
     <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
       <a href="{{ pages['experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-gold">{{ settings.about_cta_primary | default: 'Try Free Experience' }}</a>
       <a href="{{ routes.all_products_collection_url }}" class="btn btn-ghost">{{ settings.about_cta_secondary | default: 'Shop the Latest Drop' }}</a>
@@ -193,3 +193,39 @@
   .about-pillars-grid, .about-values-grid { grid-template-columns:1fr; }
 }
 </style>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{{ settings.about_hero_heading_1 | default: 'We\\'re rewriting' }}"
+  to: "{{ settings.about_hero_heading_1 | default: 'We\\' }}"
+  position: 1183..1235
+- from: "{{ settings.about_founders_para_1 | default: 'Playmate Labs started as a
+    conversation between two people who loved each other and had run out of interesting
+    things to do about it. We\\'d done the restaurants, the weekends away. We kept
+    returning to the same routines.' }}"
+  to: "{{ settings.about_founders_para_1 | default: 'Playmate Labs started as a conversation
+    between two people who loved each other and had run out of interesting things
+    to do about it. We\\', the }}"
+  position: 9802..9994
+- from: "{{ settings.about_founders_para_2 | default: 'We started experimenting —
+    with sensory rituals, with structured play, with small ceremonies built around
+    taste and touch. The evenings we remember most weren\\'t the expensive ones. They
+    were the ones where something unusual happened.' }}"
+  to: "{{ settings.about_founders_para_2 | default: 'We started experimenting — with
+    sensory rituals, with structured play, with small ceremonies built around taste
+    and touch. The evenings we remember most weren\\' }}"
+  position: 10014..10223
+- from: "{{ settings.about_founders_sign_off | default: 'Welcome to Playmate Labs.
+    Let\\'s see what you two can create.' }}"
+  to: "{{ settings.about_founders_sign_off | default: 'Welcome to Playmate Labs. Let\\'
+    }}"
+  position: 10643..10725
+- from: "{{ settings.about_cta_sub | default: 'Free 5-day experience. Or shop the
+    latest drop. Either way, you\\'re in the right place.' }}"
+  to: "{{ settings.about_cta_sub | default: 'Free 5-day experience. Or shop the latest
+    drop. Either way, you\\' }}"
+  position: 13913..14019
+{% endcomment %}

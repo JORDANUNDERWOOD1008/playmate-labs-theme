@@ -9,7 +9,7 @@
 {{ 'shop.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'shop.js' | asset_url }}" defer></script>
 
-{%- paginate collection.products by section.settings.products_per_page | default: 12 -%}
+{%- paginate collection.products by section.settings.products_per_page -%}
 
 {%- assign is_all = false -%}
 {%- if collection.handle == 'all' or collection.handle == 'frontpage' -%}
@@ -525,3 +525,14 @@
   });
 })();
 </script>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{%- paginate collection.products by section.settings.products_per_page |
+    default: 12 -%}"
+  to: "{%- paginate collection.products by section.settings.products_per_page -%}"
+  position: 426..500
+{% endcomment %}

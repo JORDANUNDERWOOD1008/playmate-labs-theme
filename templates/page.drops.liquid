@@ -125,7 +125,7 @@
         <div class="drops-best-for">
           <span class="drops-meta-label">Best For</span>
           <div class="drops-tags">
-            {%- assign best_for = settings.drops_best_for | default: 'Established couples,Anniversaries,Valentine\'s Day,Gift ideas,At-home date nights' -%}
+            {%- assign best_for = settings.drops_best_for | default: 'Established couples,Anniversaries,Valentine\', Gift, At-home -%}
             {%- assign best_for_items = best_for | split: ',' -%}
             {%- for item in best_for_items -%}
               <span class="drops-tag">{{ item | strip }}</span>
@@ -216,12 +216,12 @@
         <div class="drops-pillar">
           <div class="drops-pillar-icon">🎯</div>
           <h3>{{ settings.drops_pillar_2_title | default: 'Limited by Design' }}</h3>
-          <p>{{ settings.drops_pillar_2_desc | default: '200 kits max per drop. When they\'re gone, they\'re gone. The scarcity makes the ritual feel intentional.' }}</p>
+          <p>{{ settings.drops_pillar_2_desc | default: '200 kits max per drop. When they\', they.re.gone.The.scarcity.makes.the.ritual.feel.intentional }}</p>
         </div>
         <div class="drops-pillar">
           <div class="drops-pillar-icon">✨</div>
           <h3>{{ settings.drops_pillar_3_title | default: 'Curated & Tested' }}</h3>
-          <p>{{ settings.drops_pillar_3_desc | default: 'Every ingredient, product and ritual element is tested in real couples\' date nights before going to production.' }}</p>
+          <p>{{ settings.drops_pillar_3_desc | default: 'Every ingredient, product and ritual element is tested in real couples\' }}</p>
         </div>
       </div>
     </div>
@@ -303,7 +303,7 @@
         {%- assign t_text = 'drops_testimonial_' | append: i | append: '_text' -%}
         {%- assign t_author = 'drops_testimonial_' | append: i | append: '_author' -%}
         {%- assign t_sub = 'drops_testimonial_' | append: i | append: '_sub' -%}
-        {%- assign default_texts = 'The midnight hours drop was genuinely the best thing we have done as a couple this year. Better than any restaurant honestly.,I subscribed after receiving one as a gift. That was 4 months ago. I now buy two — one for us and one for my sister\'s couple.,We do the drop the first Friday of every month. It\'s our ritual now. The quality is exceptional.' | split: ',' -%}
+        {%- assign default_texts = 'The midnight hours drop was genuinely the best thing we have done as a couple this year. Better than any restaurant honestly.,I subscribed after receiving one as a gift. That was 4 months ago. I now buy two — one for us and one for my sister\' | split: ',' -%}
         {%- assign default_authors = 'Emily & Tom,Priya M.,Chris & Dan' | split: ',' -%}
         {%- assign default_subs = 'Drop Subscriber · 2 months,Drop Subscriber · 4 months,Drop Subscriber · 7 months' | split: ',' -%}
         <div class="testimonial-card" style="background:var(--white);border-radius:12px;padding:1.75rem;">
@@ -345,3 +345,37 @@
   setInterval(update, 1000);
 })();
 </script>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{%- assign best_for = settings.drops_best_for | default: 'Established couples,Anniversaries,Valentine\\'s
+    Day,Gift ideas,At-home date nights' -%}"
+  to: "{%- assign best_for = settings.drops_best_for | default: 'Established couples,Anniversaries,Valentine\\',
+    Gift, At-home -%}"
+  position: 7901..8023
+- from: "{{ settings.drops_pillar_2_desc | default: '200 kits max per drop. When they\\'re
+    gone, they\\'re gone. The scarcity makes the ritual feel intentional.' }}"
+  to: "{{ settings.drops_pillar_2_desc | default: '200 kits max per drop. When they\\',
+    they.re.gone.The.scarcity.makes.the.ritual.feel.intentional }}"
+  position: 13303..13445
+- from: "{{ settings.drops_pillar_3_desc | default: 'Every ingredient, product and
+    ritual element is tested in real couples\\' date nights before going to production.'
+    }}"
+  to: "{{ settings.drops_pillar_3_desc | default: 'Every ingredient, product and ritual
+    element is tested in real couples\\' }}"
+  position: 13647..13766
+- from: "{%- assign default_texts = 'The midnight hours drop was genuinely the best
+    thing we have done as a couple this year. Better than any restaurant honestly.,I
+    subscribed after receiving one as a gift. That was 4 months ago. I now buy two
+    — one for us and one for my sister\\'s couple.,We do the drop the first Friday
+    of every month. It\\'s our ritual now. The quality is exceptional.' | split: ','
+    -%}"
+  to: "{%- assign default_texts = 'The midnight hours drop was genuinely the best
+    thing we have done as a couple this year. Better than any restaurant honestly.,I
+    subscribed after receiving one as a gift. That was 4 months ago. I now buy two
+    — one for us and one for my sister\\' | split: ',' -%}"
+  position: 18597..18885
+{% endcomment %}

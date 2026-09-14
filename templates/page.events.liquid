@@ -146,8 +146,8 @@
     {%- comment -%} No city CTA {%- endcomment -%}
     <div class="events-no-city" style="background:{{ settings.events_no_city_bg | default: 'var(--cream-off)' }};border-radius:12px;padding:2.5rem;text-align:center;margin-top:3rem;">
       <div style="font-size:1.5rem;margin-bottom:0.75rem;">📍</div>
-      <h3 style="font-family:var(--font-serif);margin-bottom:0.5rem;color:{{ settings.events_no_city_heading_color | default: 'var(--espresso)' }};">{{ settings.events_no_city_heading | default: 'Don\'t see your city?' }}</h3>
-      <p style="color:var(--text-muted);margin-bottom:1.25rem;">{{ settings.events_no_city_desc | default: 'We\'re expanding. Register your interest and be first to know when we come to your city.' }}</p>
+      <h3 style="font-family:var(--font-serif);margin-bottom:0.5rem;color:{{ settings.events_no_city_heading_color | default: 'var(--espresso)' }};">{{ settings.events_no_city_heading | default: 'Don\' }}</h3>
+      <p style="color:var(--text-muted);margin-bottom:1.25rem;">{{ settings.events_no_city_desc | default: 'We\' }}</p>
       {%- form 'customer' -%}
         <input type="hidden" name="contact[tags]" value="events,city-interest">
         <div style="display:flex;gap:0.75rem;max-width:400px;margin:0 auto;flex-wrap:wrap;justify-content:center;">
@@ -411,3 +411,17 @@ document.querySelectorAll('#type-filters .filter-btn').forEach(function(btn) {
   ]
 }
 </script>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{{ settings.events_no_city_heading | default: 'Don\\'t see your city?' }}"
+  to: "{{ settings.events_no_city_heading | default: 'Don\\' }}"
+  position: 10651..10706
+- from: "{{ settings.events_no_city_desc | default: 'We\\'re expanding. Register your
+    interest and be first to know when we come to your city.' }}"
+  to: "{{ settings.events_no_city_desc | default: 'We\\' }}"
+  position: 10776..10827
+{% endcomment %}

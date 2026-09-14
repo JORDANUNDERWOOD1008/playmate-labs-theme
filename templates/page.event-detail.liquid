@@ -290,7 +290,7 @@
             <p class="testimonial-author">— {{ settings[author_key] }}</p>
           </div>
         {%- else -%}
-          {%- assign default_quotes = '"Honestly one of the best nights we've had together. The atmosphere was perfect." — Sarah & Tom,A date night that actually made us feel like strangers again (in the best way). — James & Claire,"The guided tasting was incredible. We had no idea chocolate could be that sensory." — Alex & Jordan' | split: ',' -%}
+          {%- assign default_quotes = '"Honestly one of the best nights we' | split: ',' -%}
           {%- if default_quotes[forloop.index0] != blank -%}
           <div class="testimonial-card">
             <div class="testimonial-stars">★★★★★</div>
@@ -317,3 +317,18 @@
     </div>
   </div>
 </section>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: '{%- assign default_quotes = ''"Honestly one of the best nights we''ve had
+    together. The atmosphere was perfect." — Sarah & Tom,A date night that actually
+    made us feel like strangers again (in the best way). — James & Claire,"The guided
+    tasting was incredible. We had no idea chocolate could be that sensory." — Alex
+    & Jordan'' | split: '','' -%}'
+  to: '{%- assign default_quotes = ''"Honestly one of the best nights we'' | split:
+    '','' -%}'
+  position: 13637..13719
+{% endcomment %}

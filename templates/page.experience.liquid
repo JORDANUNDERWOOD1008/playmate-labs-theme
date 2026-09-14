@@ -71,8 +71,8 @@
     <div class="exp-days-list">
       {%- assign day_names = 'Curiosity,Play,Sensory,Adventure,Invitation' | split: ',' -%}
       {%- assign day_icons = '🌹,🎮,✨,🌙,🏆' | split: ',' -%}
-      {%- assign day_default_descs = 'Rediscover each other through 10 questions you\'ve never asked. The ones you\'re slightly nervous to answer. The ones that make conversation feel like foreplay.,A competitive sensory challenge — who knows the other better? Scored live with forfeits and rewards designed to make you both laugh flirt and reveal small truths.,A guided 20-minute ritual using things already in your home. Touch taste scent and sound — experienced differently when done together with intention. This is the one people screenshot.,A secret location date night prompt — designed to surprise the person you\'re with. Instructions sealed until you\'ve both committed. Then opened together at a mystery moment.,Your personal welcome into the Playmate world. A reflection ritual a curated recommendation and an exclusive offer to take the experience further with our first Drop kit.' | split: ',' -%}
-      {%- assign day_challenges = '"What\'s a version of yourself your partner has never seen?","Name your partner\'s three favourite physical sensations. Go.","Close your eyes. Eat one thing slowly. Describe what you taste without using flavour words.","Plan something for tomorrow. One rule: they can\'t know what it is until you\'ve arrived.","Write one sentence about tonight. Read it aloud."' | split: '","' -%}
+      {%- assign day_default_descs = 'Rediscover each other through 10 questions you\' | split: ',' -%}
+      {%- assign day_challenges = '"What\' | split: '","' -%}
       {%- assign day_times = '20–30 minutes,25–40 minutes,20–25 minutes,30–45 minutes,30 minutes' | split: ',' -%}
 
       {%- for i in (1..5) -%}
@@ -111,17 +111,17 @@
       <div class="exp-who-card">
         <div class="exp-who-icon">👫</div>
         <h3 style="color:{{ settings.exp_who_title_color | default: 'var(--espresso)' }};">{{ settings.exp_who_1_title | default: 'Established Couples' }}</h3>
-        <p>{{ settings.exp_who_1_desc | default: 'You\'ve been together a while and want to bring back that feeling of discovery. The 5-day experience creates new conversation, new play, new rituals.' }}</p>
+        <p>{{ settings.exp_who_1_desc | default: 'You\', new, new }}</p>
       </div>
       <div class="exp-who-card">
         <div class="exp-who-icon">💫</div>
         <h3 style="color:{{ settings.exp_who_title_color | default: 'var(--espresso)' }};">{{ settings.exp_who_2_title | default: 'Newly Dating' }}</h3>
-        <p>{{ settings.exp_who_2_desc | default: 'You\'ve just started and want to accelerate depth and intimacy in a way that feels natural, playful and a bit electric. This was built for you.' }}</p>
+        <p>{{ settings.exp_who_2_desc | default: 'You\', playful }}</p>
       </div>
       <div class="exp-who-card">
         <div class="exp-who-icon">🎁</div>
         <h3 style="color:{{ settings.exp_who_title_color | default: 'var(--espresso)' }};">{{ settings.exp_who_3_title | default: 'Sending as a Gift' }}</h3>
-        <p>{{ settings.exp_who_3_desc | default: 'Buy the experience for someone else. We\'ll send them the daily prompts with a gift message from you. Thoughtful, personal and surprisingly impactful.' }}</p>
+        <p>{{ settings.exp_who_3_desc | default: 'Buy the experience for someone else. We\', personal }}</p>
       </div>
     </div>
   </div>
@@ -167,7 +167,7 @@
 <section class="section">
   <div class="container">
     <div class="testimonials-grid">
-      {%- assign exp_default_quotes = 'Day 3 — the sensory ritual — completely changed the energy between us. We both cried a little. I then bought the full kit immediately after.,The questions on Day 1 led to a 4-hour conversation we\'d never had in 3 years of dating. I cannot explain how good this felt. For free.,The writing is exceptional. The prompts are intelligent without being clinical. This feels like it was written by someone who actually understands relationships.' | split: ',' -%}
+      {%- assign exp_default_quotes = 'Day 3 — the sensory ritual — completely changed the energy between us. We both cried a little. I then bought the full kit immediately after.,The questions on Day 1 led to a 4-hour conversation we\' | split: ',' -%}
       {%- assign exp_default_authors = 'Emma & Sam · London,Marcus & Jo · Together 3 years,Rachel T. · Manchester' | split: ',' -%}
       {%- for i in (1..3) -%}
         {%- assign t_key = 'exp_testimonial_' | append: i | append: '_text' -%}
@@ -264,11 +264,78 @@
 <section class="section" style="background:{{ settings.exp_fence_bg | default: 'var(--cream-off)' }};text-align:center;">
   <div class="container" style="max-width:560px;">
     <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ settings.exp_fence_heading_color | default: 'var(--espresso)' }};margin-bottom:1rem;">
-      {{ settings.exp_fence_heading_1 | default: 'It\'s free. It\'s 20 minutes.' }}<br>
+      {{ settings.exp_fence_heading_1 | default: 'It\' }}<br>
       <span style="color:{{ settings.exp_accent_color | default: 'var(--gold)' }};">{{ settings.exp_fence_heading_accent | default: 'And it might change everything.' }}</span>
     </h2>
-    <p style="color:var(--text-muted);margin-bottom:2rem;">{{ settings.exp_fence_sub | default: 'Thousands of couples have called it the best date night investment they\'ve made. It costs nothing to try.' }}</p>
+    <p style="color:var(--text-muted);margin-bottom:2rem;">{{ settings.exp_fence_sub | default: 'Thousands of couples have called it the best date night investment they\' }}</p>
     <a href="#signup-form" class="btn btn-primary">{{ settings.exp_fence_cta | default: 'Unlock Free Experience' }}</a>
     <p style="font-size:0.8125rem;color:var(--text-muted);margin-top:1rem;">{{ settings.exp_fence_footnote | default: 'No credit card. No commitment. Just 5 days.' }}</p>
   </div>
 </section>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{%- assign day_default_descs = 'Rediscover each other through 10 questions
+    you\\'ve never asked. The ones you\\'re slightly nervous to answer. The ones that
+    make conversation feel like foreplay.,A competitive sensory challenge — who knows
+    the other better? Scored live with forfeits and rewards designed to make you both
+    laugh flirt and reveal small truths.,A guided 20-minute ritual using things already
+    in your home. Touch taste scent and sound — experienced differently when done
+    together with intention. This is the one people screenshot.,A secret location
+    date night prompt — designed to surprise the person you\\'re with. Instructions
+    sealed until you\\'ve both committed. Then opened together at a mystery moment.,Your
+    personal welcome into the Playmate world. A reflection ritual a curated recommendation
+    and an exclusive offer to take the experience further with our first Drop kit.'
+    | split: ',' -%}"
+  to: "{%- assign day_default_descs = 'Rediscover each other through 10 questions
+    you\\' | split: ',' -%}"
+  position: 4191..4288
+- from: '{%- assign day_challenges = ''"What\''s a version of yourself your partner
+    has never seen?","Name your partner\''s three favourite physical sensations. Go.","Close
+    your eyes. Eat one thing slowly. Describe what you taste without using flavour
+    words.","Plan something for tomorrow. One rule: they can\''t know what it is until
+    you\''ve arrived.","Write one sentence about tonight. Read it aloud."'' | split:
+    ''","'' -%}'
+  to: '{%- assign day_challenges = ''"What\'' | split: ''","'' -%}'
+  position: 4295..4350
+- from: "{{ settings.exp_who_1_desc | default: 'You\\'ve been together a while and
+    want to bring back that feeling of discovery. The 5-day experience creates new
+    conversation, new play, new rituals.' }}"
+  to: "{{ settings.exp_who_1_desc | default: 'You\\', new, new }}"
+  position: 6914..6971
+- from: "{{ settings.exp_who_2_desc | default: 'You\\'ve just started and want to
+    accelerate depth and intimacy in a way that feels natural, playful and a bit electric.
+    This was built for you.' }}"
+  to: "{{ settings.exp_who_2_desc | default: 'You\\', playful }}"
+  position: 7228..7284
+- from: "{{ settings.exp_who_3_desc | default: 'Buy the experience for someone else.
+    We\\'ll send them the daily prompts with a gift message from you. Thoughtful,
+    personal and surprisingly impactful.' }}"
+  to: "{{ settings.exp_who_3_desc | default: 'Buy the experience for someone else.
+    We\\', personal }}"
+  position: 7546..7639
+- from: "{%- assign exp_default_quotes = 'Day 3 — the sensory ritual — completely
+    changed the energy between us. We both cried a little. I then bought the full
+    kit immediately after.,The questions on Day 1 led to a 4-hour conversation we\\'d
+    never had in 3 years of dating. I cannot explain how good this felt. For free.,The
+    writing is exceptional. The prompts are intelligent without being clinical. This
+    feels like it was written by someone who actually understands relationships.'
+    | split: ',' -%}"
+  to: "{%- assign exp_default_quotes = 'Day 3 — the sensory ritual — completely changed
+    the energy between us. We both cried a little. I then bought the full kit immediately
+    after.,The questions on Day 1 led to a 4-hour conversation we\\' | split: ','
+    -%}"
+  position: 10466..10713
+- from: "{{ settings.exp_fence_heading_1 | default: 'It\\'s free. It\\'s 20 minutes.'
+    }}"
+  to: "{{ settings.exp_fence_heading_1 | default: 'It\\' }}"
+  position: 14647..14698
+- from: "{{ settings.exp_fence_sub | default: 'Thousands of couples have called it
+    the best date night investment they\\'ve made. It costs nothing to try.' }}"
+  to: "{{ settings.exp_fence_sub | default: 'Thousands of couples have called it the
+    best date night investment they\\' }}"
+  position: 14948..15062
+{% endcomment %}
