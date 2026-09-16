@@ -582,7 +582,7 @@
     {
       "type": "select",
       "id": "image_fit",
-      "label": "Image fit",
+      "label": "Image fit — desktop",
       "options": [
         {
           "value": "",
@@ -599,6 +599,27 @@
       ],
       "default": "",
       "info": "Contain suits product shots on white — nothing gets cropped."
+    },
+    {
+      "type": "select",
+      "id": "image_fit_mobile",
+      "label": "Image fit — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Same as desktop"
+        },
+        {
+          "value": "cover",
+          "label": "Cover — fill, crop the overflow"
+        },
+        {
+          "value": "contain",
+          "label": "Contain — show it all, never crop"
+        }
+      ],
+      "default": "",
+      "info": "Contain leaves bands of backdrop above and below a photo that does not match the section shape. Cover avoids that on a phone."
     },
     {
       "type": "select",
@@ -843,17 +864,35 @@
     {
       "type": "color_background",
       "id": "bg_color",
-      "label": "Background"
+      "label": "Background — desktop"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color_mobile",
+      "label": "Background — mobile",
+      "info": "Leave blank to use the desktop colour."
     },
     {
       "type": "color",
       "id": "text_color",
-      "label": "Body text"
+      "label": "Body text — desktop"
+    },
+    {
+      "type": "color",
+      "id": "text_color_mobile",
+      "label": "Body text — mobile",
+      "info": "Leave blank to use the desktop colour."
     },
     {
       "type": "color",
       "id": "heading_color",
-      "label": "Headings"
+      "label": "Headings — desktop"
+    },
+    {
+      "type": "color",
+      "id": "heading_color_mobile",
+      "label": "Headings — mobile",
+      "info": "Leave blank to use the desktop colour."
     }
   ],
   "presets": [

@@ -18,7 +18,7 @@
         "bg_align_desktop": "right",
         "backdrop_color": "#FFFFFF",
         "eyebrow_color": "#d92b2b",
-        "heading_text_color": "#1a1a1a",
+        "heading_text_color": "#5D5B5B",
         "italic_color": "#d92b2b",
         "sub_color": "#4a4a4a",
         "pad_top_desktop": 120,
@@ -39,8 +39,7 @@
         "text_valign_mobile": "",
         "content_width": 620,
         "bg_color": "linear-gradient(180deg, rgba(250, 250, 250, 1), rgba(168, 255, 251, 1) 100%)",
-        "text_color": "#B6B5B5",
-        "heading_color": "#5D5B5B"
+        "image_fit_mobile": "cover"
       }
     },
     "home-product-grid": {

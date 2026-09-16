@@ -25,6 +25,26 @@
     --hero-italic-color: {{ hs.italic_color }};
     --hero-sub-color: {{ hs.sub_color }};
   }
+  {%- comment -%} Buttons: the theme's .btn classes carry no colour controls,
+      so paint them here from the section's own settings. {%- endcomment -%}
+  #shopify-section-{{ section.id }} .hero-actions .btn-gold {
+    background-color: {{ hs.btn1_bg }};
+    color: {{ hs.btn1_label_color }};
+    border: 1px solid {{ hs.btn1_border | default: hs.btn1_bg }};
+  }
+  #shopify-section-{{ section.id }} .hero-actions .btn-ghost {
+    background-color: {{ hs.btn2_bg }};
+    color: {{ hs.btn2_label_color }};
+    border: 1px solid {{ hs.btn2_border | default: hs.btn2_label_color }};
+  }
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .hero-section {
+      {%- if hs.eyebrow_color_mobile != blank %}--hero-eyebrow-color: {{ hs.eyebrow_color_mobile }};{% endif %}
+      {%- if hs.heading_color_mobile != blank %}--hero-heading-color: {{ hs.heading_color_mobile }};{% endif %}
+      {%- if hs.italic_color_mobile != blank %}--hero-italic-color: {{ hs.italic_color_mobile }};{% endif %}
+      {%- if hs.sub_color_mobile != blank %}--hero-sub-color: {{ hs.sub_color_mobile }};{% endif %}
+    }
+  }
   #shopify-section-{{ section.id }} .hero-bg-desktop {
     --hero-img-width: {{ w }}%;
     {%- if hs.bg_align_desktop == 'left' %}
@@ -384,26 +404,90 @@
     {
       "type": "color",
       "id": "eyebrow_color",
-      "label": "Eyebrow",
+      "label": "Eyebrow — desktop",
       "default": "#C9A96E"
     },
     {
       "type": "color",
+      "id": "eyebrow_color_mobile",
+      "label": "Eyebrow — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
       "id": "heading_text_color",
-      "label": "Headline",
+      "label": "Headline — desktop",
       "default": "#F5EFE6"
     },
     {
       "type": "color",
+      "id": "heading_color_mobile",
+      "label": "Headline — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
       "id": "italic_color",
-      "label": "Headline italic word",
+      "label": "Headline italic word — desktop",
       "default": "#DFC08A"
     },
     {
       "type": "color",
+      "id": "italic_color_mobile",
+      "label": "Headline italic word — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
       "id": "sub_color",
-      "label": "Subheadline",
+      "label": "Subheadline — desktop",
       "default": "#ADA69C"
+    },
+    {
+      "type": "color",
+      "id": "sub_color_mobile",
+      "label": "Subheadline — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "header",
+      "content": "🔘 Buttons"
+    },
+    {
+      "type": "color",
+      "id": "btn1_bg",
+      "label": "Primary — background",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "btn1_label_color",
+      "label": "Primary — text",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "color",
+      "id": "btn1_border",
+      "label": "Primary — border",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "btn2_bg",
+      "label": "Secondary — background",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "btn2_label_color",
+      "label": "Secondary — text",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "btn2_border",
+      "label": "Secondary — border",
+      "default": "#F5EFE6"
     },
     {
       "type": "header",
@@ -477,7 +561,7 @@
     {
       "type": "select",
       "id": "image_fit",
-      "label": "Image fit",
+      "label": "Image fit — desktop",
       "options": [
         {
           "value": "",
@@ -494,6 +578,27 @@
       ],
       "default": "",
       "info": "Contain suits product shots on white — nothing gets cropped."
+    },
+    {
+      "type": "select",
+      "id": "image_fit_mobile",
+      "label": "Image fit — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Same as desktop"
+        },
+        {
+          "value": "cover",
+          "label": "Cover — fill, crop the overflow"
+        },
+        {
+          "value": "contain",
+          "label": "Contain — show it all, never crop"
+        }
+      ],
+      "default": "",
+      "info": "Contain leaves bands of backdrop above and below a photo that does not match the section shape. Cover avoids that on a phone."
     },
     {
       "type": "select",
@@ -739,16 +844,6 @@
       "type": "color_background",
       "id": "bg_color",
       "label": "Background"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Body text"
-    },
-    {
-      "type": "color",
-      "id": "heading_color",
-      "label": "Headings"
     }
   ],
   "presets": [

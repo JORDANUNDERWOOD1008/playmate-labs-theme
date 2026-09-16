@@ -173,6 +173,30 @@
   {%- endcomment -%}
   {% render 'theme-css-variables' %}
 
+  {%- comment -%}
+    Scroll-reveal safety net. `.reveal` starts at opacity:0 and waits for JS
+    to un-hide it, and the animate-* helpers use fill-mode `both`, so they
+    also hold their from-state. If that JS never runs the copy stays
+    invisible — and inside the theme editor it is frequently caught
+    mid-fade, which makes it impossible to judge text colour.
+  {%- endcomment -%}
+  {%- if request.design_mode -%}
+    <style>
+      .reveal, .reveal-left, .reveal-right, .reveal-scale {
+        opacity: 1 !important; transform: none !important; transition: none !important;
+      }
+      [class*="animate-"] { animation: none !important; opacity: 1 !important; }
+    </style>
+  {%- endif -%}
+  <noscript>
+    <style>
+      .reveal, .reveal-left, .reveal-right, .reveal-scale {
+        opacity: 1 !important; transform: none !important;
+      }
+      [class*="animate-"] { animation: none !important; opacity: 1 !important; }
+    </style>
+  </noscript>
+
   {%- comment -%} Header overlap fix — neutralise Shopify's section wrapper {%- endcomment -%}
   <style>
     /*

@@ -20,11 +20,13 @@
     content_width                             range, px
     text_align_desktop  / text_align_mobile   select left|center|right
     text_valign_desktop / text_valign_mobile  select top|middle|bottom
-    image_fit                                 select cover|contain
+    image_fit / image_fit_mobile              select cover|contain
     image_pos_desktop / image_pos_mobile      select focal point
     overlay_opacity_desktop / _mobile         range, 0-100
     overlay_color                             color
     bg_color / text_color / heading_color     color
+    bg_color_mobile / text_color_mobile /
+      heading_color_mobile                    color  (mobile overrides)
 
   Consumed by CSS as, e.g.:
     padding-top: var(--sec-pad-top);
@@ -93,7 +95,9 @@
 
   {%- if s.bg_color != blank or s.text_color != blank -%}
   {{ sel }} > * {
-    {%- if s.bg_color != blank %}   background-color: var(--sec-bg);{% endif -%}
+    {%- comment -%} `background`, not `background-color`: the colour picker
+        can return a linear-gradient(), which background-color drops. {%- endcomment -%}
+    {%- if s.bg_color != blank %}   background: var(--sec-bg);{% endif -%}
     {%- if s.text_color != blank %} color: var(--sec-text);{% endif -%}
   }
   {%- endif -%}
@@ -162,6 +166,10 @@
         {%- endcase -%}
       {%- endif -%}
       {%- if s.image_pos_mobile != blank %}  --sec-image-pos: {{ s.image_pos_mobile }};{% endif -%}
+      {%- if s.image_fit_mobile != blank %}  --sec-image-fit: {{ s.image_fit_mobile }};{% endif -%}
+      {%- if s.bg_color_mobile != blank %}   --sec-bg: {{ s.bg_color_mobile }};{% endif -%}
+      {%- if s.text_color_mobile != blank %} --sec-text: {{ s.text_color_mobile }};{% endif -%}
+      {%- if s.heading_color_mobile != blank %} --sec-heading: {{ s.heading_color_mobile }};{% endif -%}
       {%- if s.overlay_opacity_mobile != blank %} --sec-overlay-opacity: {{ s.overlay_opacity_mobile | divided_by: 100.0 }};{% endif -%}
       {%- if s.text_valign_mobile != blank -%}
         {%- case s.text_valign_mobile -%}
@@ -171,5 +179,28 @@
         {%- endcase -%}
       {%- endif -%}
     }
+  }
+
+  {%- comment -%}
+    Re-apply on mobile so a mobile-only colour actually lands. Declaring the
+    variable inside the media query is not enough on its own for the rules
+    that were emitted outside it.
+  {%- endcomment -%}
+  @media (max-width: 768px) {
+    {%- if s.bg_color_mobile != blank or s.text_color_mobile != blank -%}
+    {{ sel }} > * {
+      {%- if s.bg_color_mobile != blank %}   background: var(--sec-bg);{% endif -%}
+      {%- if s.text_color_mobile != blank %} color: var(--sec-text);{% endif -%}
+    }
+    {%- endif -%}
+    {%- if s.heading_color_mobile != blank %}
+    {{ sel }} h1, {{ sel }} h2, {{ sel }} h3 { color: var(--sec-heading); }
+    {%- endif -%}
+    {%- if s.image_fit_mobile != blank -%}
+    {{ sel }} > * { background-size: var(--sec-image-fit); }
+    {{ sel }} [class*="-bg"] img,
+    {{ sel }} img[class*="-bg-"],
+    {{ sel }} [class*="__bg"] img { object-fit: var(--sec-image-fit); }
+    {%- endif -%}
   }
 {% endstyle %}
