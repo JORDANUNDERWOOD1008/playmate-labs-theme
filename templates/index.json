@@ -3,7 +3,6 @@
     "home-hero": {
       "type": "home-hero",
       "settings": {
-        "section_hidden": false,
         "hero_bg_image": "shopify://shop_images/6be86923-b928-4928-a089-c1f290f31af0.png",
         "mobile_hero_image": "shopify://shop_images/ae3e7b79-5ecb-4bf8-b041-39c0c1d2714e.png",
         "eyebrow": "A new culture of connection",
@@ -19,14 +18,11 @@
     },
     "value-strip": {
       "type": "value-strip",
-      "settings": {
-        "section_hidden": false
-      }
+      "settings": {}
     },
     "home-featured-drop": {
       "type": "home-featured-drop",
       "settings": {
-        "section_hidden": false,
         "eyebrow": "This Month's Drop",
         "heading": "The Velvet Hour",
         "subheading": "An evening ritual for two. Dark chocolate, warm amber candlelight and a game that turns conversation into connection.",
@@ -52,7 +48,6 @@
     "home-product-grid": {
       "type": "home-product-grid",
       "settings": {
-        "section_hidden": false,
         "eyebrow": "The Collection",
         "heading": "Rituals worth staying in for.",
         "collection": "",
@@ -63,26 +58,19 @@
     },
     "how-it-works": {
       "type": "how-it-works",
-      "settings": {
-        "section_hidden": false
-      }
+      "settings": {}
     },
     "social-proof": {
       "type": "social-proof",
-      "settings": {
-        "section_hidden": false
-      }
+      "settings": {}
     },
     "experience-cta": {
       "type": "experience-cta",
-      "settings": {
-        "section_hidden": false
-      }
+      "settings": {}
     },
     "events-preview": {
       "type": "events-preview",
       "settings": {
-        "section_hidden": false,
         "eyebrow": "Upcoming Experiences",
         "heading": "Experiences worth dressing up for.",
         "subheading": "IRL events, sensory pop-ups and couples experiences across the UK \u2014 and beyond.",
@@ -100,9 +88,7 @@
     },
     "journal-preview": {
       "type": "journal-preview",
-      "settings": {
-        "section_hidden": false
-      }
+      "settings": {}
     },
     "email-capture": {
       "type": "email-capture",

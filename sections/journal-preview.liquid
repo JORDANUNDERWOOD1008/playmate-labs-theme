@@ -1,5 +1,4 @@
 {% render 'section-style', section: section %}
-{%- if section.settings.section_hidden == false -%}
 <!-- JOURNAL PREVIEW -->
 <section class="section" id="journal-preview">
   <div class="container">
@@ -132,7 +131,6 @@
 
   </div>
 </section>
-{%- endif -%}
 
 {% schema %}
 {
@@ -140,18 +138,7 @@
   "settings": [
     {
       "type": "header",
-      "content": "⚙️ Section Visibility"
-    },
-    {
-      "type": "checkbox",
-      "id": "section_hidden",
-      "label": "Hide this section",
-      "default": false,
-      "info": "Tick to hide this section from the live site. Untick to show it again."
-    },
-    {
-      "type": "header",
-      "content": "📐 Spacing — Desktop"
+      "content": "📐 Spacing"
     },
     {
       "type": "range",
@@ -160,7 +147,17 @@
       "max": 240,
       "step": 4,
       "unit": "px",
-      "label": "Padding top",
+      "label": "Padding top — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — mobile",
       "default": 96
     },
     {
@@ -170,21 +167,7 @@
       "max": 240,
       "step": 4,
       "unit": "px",
-      "label": "Padding bottom",
-      "default": 96
-    },
-    {
-      "type": "header",
-      "content": "📱 Spacing — Mobile"
-    },
-    {
-      "type": "range",
-      "id": "pad_top_mobile",
-      "min": 0,
-      "max": 240,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding top",
+      "label": "Padding bottom — desktop",
       "default": 96
     },
     {
@@ -194,17 +177,41 @@
       "max": 240,
       "step": 4,
       "unit": "px",
-      "label": "Padding bottom",
+      "label": "Padding bottom — mobile",
       "default": 96
     },
     {
       "type": "header",
-      "content": "✍️ Text position — Desktop"
+      "content": "✍️ Text placement"
     },
     {
       "type": "select",
       "id": "text_align_desktop",
-      "label": "Text alignment",
+      "label": "Alignment — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Alignment — mobile",
       "options": [
         {
           "value": "",
@@ -228,7 +235,31 @@
     {
       "type": "select",
       "id": "text_valign_desktop",
-      "label": "Vertical position",
+      "label": "Vertical position — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_mobile",
+      "label": "Vertical position — mobile",
       "options": [
         {
           "value": "",
@@ -262,74 +293,22 @@
     },
     {
       "type": "header",
-      "content": "📱 Text position — Mobile"
-    },
-    {
-      "type": "select",
-      "id": "text_align_mobile",
-      "label": "Text alignment",
-      "options": [
-        {
-          "value": "",
-          "label": "Theme default"
-        },
-        {
-          "value": "left",
-          "label": "Left"
-        },
-        {
-          "value": "center",
-          "label": "Centre"
-        },
-        {
-          "value": "right",
-          "label": "Right"
-        }
-      ],
-      "default": ""
-    },
-    {
-      "type": "select",
-      "id": "text_valign_mobile",
-      "label": "Vertical position",
-      "options": [
-        {
-          "value": "",
-          "label": "Theme default"
-        },
-        {
-          "value": "top",
-          "label": "Top"
-        },
-        {
-          "value": "middle",
-          "label": "Middle"
-        },
-        {
-          "value": "bottom",
-          "label": "Bottom"
-        }
-      ],
-      "default": ""
-    },
-    {
-      "type": "header",
       "content": "🎨 Section colours"
     },
     {
       "type": "color_background",
       "id": "bg_color",
-      "label": "Background (blank = theme default)"
+      "label": "Background"
     },
     {
       "type": "color",
       "id": "text_color",
-      "label": "Body text colour"
+      "label": "Body text"
     },
     {
       "type": "color",
       "id": "heading_color",
-      "label": "Heading colour"
+      "label": "Headings"
     }
   ],
   "presets": [
