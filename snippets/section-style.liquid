@@ -77,18 +77,72 @@
   {%- endif -%}
 
   {%- comment -%}
-    Colour is safe to apply generically. Padding is NOT — several sections
-    carry their own inner wrapper that owns the vertical rhythm, so applying
-    it here as well would double up. Padding is consumed by the stylesheet
-    instead (.section, .value-strip, .hero-content-wrap), which keeps one
-    variable working across every section that shares those classes.
+    ── Applying the controls ────────────────────────────────────────────
+    These rules used to live in each section's own stylesheet, which meant
+    only the hero ever honoured them and every other section shipped dead
+    sliders. They are applied generically here instead, covering both
+    layout patterns in this theme:
+
+      * sections whose photo is a CSS background-image (featured drop)
+      * sections whose photo is an <img> in a *-bg wrapper (hero)
+
+    Padding is the one exception — it stays in the stylesheet, because
+    several sections own their vertical rhythm in an inner wrapper and
+    applying it here as well would double it up.
   {%- endcomment -%}
+
   {%- if s.bg_color != blank or s.text_color != blank -%}
   {{ sel }} > * {
     {%- if s.bg_color != blank %}   background-color: var(--sec-bg);{% endif -%}
     {%- if s.text_color != blank %} color: var(--sec-text);{% endif -%}
   }
   {%- endif -%}
+
+  {%- comment -%} Height: 0 means "size to content", so only cap when asked {%- endcomment -%}
+  {%- if s.height_desktop != blank and s.height_desktop > 0 -%}
+  {{ sel }} > * { min-height: var(--sec-height); }
+  {%- endif -%}
+
+  {%- comment -%} Photo framing — background-image sections {%- endcomment -%}
+  {%- if s.image_fit != blank or s.image_pos_desktop != blank -%}
+  {{ sel }} > * {
+    {%- if s.image_fit != blank %}         background-size: var(--sec-image-fit);{% endif -%}
+    {%- if s.image_pos_desktop != blank %} background-position: var(--sec-image-pos);{% endif -%}
+  }
+  {%- comment -%} Photo framing — <img> sections {%- endcomment -%}
+  {{ sel }} [class*="-bg"] img,
+  {{ sel }} img[class*="-bg-"],
+  {{ sel }} [class*="__bg"] img {
+    {%- if s.image_fit != blank %}         object-fit: var(--sec-image-fit);{% endif -%}
+    {%- if s.image_pos_desktop != blank %} object-position: var(--sec-image-pos);{% endif -%}
+  }
+  {%- endif -%}
+
+  {%- comment -%}
+    Overlay: scale whatever scrim the section already ships rather than
+    replacing it — several are tuned gradients with deliberate clear
+    windows over the product.
+  {%- endcomment -%}
+  {%- if s.overlay_opacity_desktop != blank -%}
+  {{ sel }} [class*="overlay"], {{ sel }} [class*="gradient"] {
+    opacity: var(--sec-overlay-opacity);
+  }
+  {%- endif -%}
+
+  {%- if s.text_align_desktop != blank -%}
+  {{ sel }} > * { text-align: var(--sec-text-align); }
+  {%- endif -%}
+
+  {%- if s.content_width != blank and s.content_width > 0 -%}
+  {{ sel }} > * > .container,
+  {{ sel }} [class*="__inner"],
+  {{ sel }} [class*="-inner"] {
+    max-width: var(--sec-content-width);
+    margin-left: var(--sec-margin-left, auto);
+    margin-right: var(--sec-margin-right, auto);
+  }
+  {%- endif -%}
+
   {%- if s.heading_color != blank %}
   {{ sel }} h1, {{ sel }} h2, {{ sel }} h3 { color: var(--sec-heading); }
   {%- endif %}

@@ -4,8 +4,35 @@
   File: sections/email-capture.liquid
 {% endcomment %}
 
+{%- liquid
+  assign bg = section.settings.bg_image
+  assign bg_m = section.settings.bg_image_mobile | default: bg
+-%}
+{%- if bg != blank -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} .email-capture-section {
+      background-image: url({{ bg | image_url: width: 2000 }});
+      background-size: var(--sec-image-fit, cover);
+      background-position: var(--sec-image-pos, center center);
+      background-repeat: no-repeat;
+    }
+    @media (max-width: 768px) {
+      #shopify-section-{{ section.id }} .email-capture-section {
+        background-image: url({{ bg_m | image_url: width: 1000 }});
+      }
+    }
+    #shopify-section-{{ section.id }} .email-capture-section { position: relative; }
+    #shopify-section-{{ section.id }} .email-capture-section > .container { position: relative; z-index: 2; }
+    #shopify-section-{{ section.id }} .section-bg-overlay {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: var(--sec-overlay-color, #1A0A06);
+      opacity: var(--sec-overlay-opacity, 0.4);
+    }
+  {%- endstyle -%}
+{%- endif -%}
 <section class="section email-capture-section" id="{{ section.settings.section_id | default: 'email-capture' }}"
   style="background:{% if section.settings.dark_bg %}var(--espresso){% else %}var(--cream){% endif %};">
+  {%- if section.settings.bg_image != blank -%}<div class="section-bg-overlay" aria-hidden="true"></div>{%- endif -%}
   <div class="container">
     <div class="email-capture-inner reveal">
       <div class="email-capture-content">
@@ -65,6 +92,22 @@
 {
   "name": "Email / SMS Capture",
   "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Desktop background",
+      "info": "Optional. Leave blank to keep the current gradient."
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image_mobile",
+      "label": "Mobile background",
+      "info": "Optional. Falls back to the desktop image."
+    },
     {
       "type": "checkbox",
       "id": "dark_bg",

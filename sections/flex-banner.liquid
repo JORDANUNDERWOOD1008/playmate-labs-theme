@@ -1,0 +1,189 @@
+{% render 'section-style', section: section %}
+{%- comment -%}
+  PLAYMATE LABS — IMAGE BANNER
+  A full-width photo with optional copy over it. Height is set in vh on
+  desktop and mobile separately, so a banner can be a slim strip or a
+  full-screen statement without touching code.
+{%- endcomment -%}
+
+{%- liquid
+  assign img = section.settings.image
+  assign img_m = section.settings.image_mobile | default: img
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .fb {
+    position: relative;
+    display: flex;
+    align-items: {% case section.settings.v_pos %}{% when 'top' %}flex-start{% when 'bottom' %}flex-end{% else %}center{% endcase %};
+    justify-content: {% case section.settings.h_pos %}{% when 'left' %}flex-start{% when 'right' %}flex-end{% else %}center{% endcase %};
+    min-height: {{ section.settings.height_desktop }}vh;
+    overflow: hidden;
+    background: {{ section.settings.image_bg }};
+  }
+  #shopify-section-{{ section.id }} .fb__img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: var(--sec-image-fit, {{ section.settings.fit_default }});
+    object-position: var(--sec-image-pos, center center);
+  }
+  #shopify-section-{{ section.id }} .fb__scrim {
+    position: absolute; inset: 0; pointer-events: none;
+    background: var(--sec-overlay-color, {{ section.settings.overlay_color }});
+    opacity: var(--sec-overlay-opacity, {{ section.settings.overlay_opacity_desktop | divided_by: 100.0 }});
+  }
+  #shopify-section-{{ section.id }} .fb__inner {
+    position: relative; z-index: 2;
+    max-width: {{ section.settings.copy_width }}px;
+    padding: {{ section.settings.pad_top_desktop }}px 1.5rem {{ section.settings.pad_bottom_desktop }}px;
+    text-align: var(--sec-text-align, {{ section.settings.h_pos }});
+    color: {{ section.settings.text_color | default: '#F5EFE6' }};
+  }
+  #shopify-section-{{ section.id }} .fb__eyebrow {
+    display:block; font-size:0.75rem; letter-spacing:0.18em;
+    text-transform:uppercase; margin-bottom:0.9rem; opacity:0.9;
+  }
+  #shopify-section-{{ section.id }} .fb__heading { margin-bottom: 0.9rem; color: inherit; }
+  #shopify-section-{{ section.id }} .fb__body { line-height:1.6; margin-bottom:1.5rem; opacity:0.92; }
+
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .fb { min-height: {{ section.settings.height_mobile }}vh; }
+    #shopify-section-{{ section.id }} .fb__scrim {
+      opacity: var(--sec-overlay-opacity, {{ section.settings.overlay_opacity_mobile | divided_by: 100.0 }});
+    }
+    #shopify-section-{{ section.id }} .fb__inner {
+      padding: {{ section.settings.pad_top_mobile }}px 1.25rem {{ section.settings.pad_bottom_mobile }}px;
+      max-width: 100%;
+    }
+  }
+{%- endstyle -%}
+
+<section class="fb">
+  {%- if img != blank -%}
+    <img class="fb__img fb__img--d"
+         src="{{ img | image_url: width: 2000 }}"
+         srcset="{{ img | image_url: width: 1000 }} 1000w,
+                 {{ img | image_url: width: 1600 }} 1600w,
+                 {{ img | image_url: width: 2000 }} 2000w"
+         sizes="100vw" width="{{ img.width }}" height="{{ img.height }}"
+         alt="{{ img.alt | escape }}"
+         loading="{% if section.settings.eager_load %}eager{% else %}lazy{% endif %}"
+         {% if section.settings.eager_load %}fetchpriority="high"{% endif %}
+         decoding="async">
+    {%- if img_m != img -%}
+      <img class="fb__img fb__img--m"
+           src="{{ img_m | image_url: width: 1000 }}"
+           width="{{ img_m.width }}" height="{{ img_m.height }}"
+           alt="{{ img_m.alt | escape }}" loading="lazy" decoding="async" style="display:none">
+    {%- endif -%}
+  {%- endif -%}
+
+  <div class="fb__scrim" aria-hidden="true"></div>
+
+  <div class="fb__inner">
+    {%- if section.settings.eyebrow != blank -%}
+      <span class="fb__eyebrow">{{ section.settings.eyebrow }}</span>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="fb__heading heading-xl">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.body != blank -%}
+      <div class="fb__body">{{ section.settings.body }}</div>
+    {%- endif -%}
+    {%- if section.settings.cta_text != blank -%}
+      <a href="{{ section.settings.cta_url | default: '#' }}"
+         class="btn {{ section.settings.cta_style }}">{{ section.settings.cta_text }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{%- if img_m != img and img_m != blank -%}
+  {%- style -%}
+    @media (max-width: 768px) {
+      #shopify-section-{{ section.id }} .fb__img--d { display: none; }
+      #shopify-section-{{ section.id }} .fb__img--m { display: block !important; }
+    }
+  {%- endstyle -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Image Banner",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "🖼️ Image" },
+    { "type": "image_picker", "id": "image", "label": "Desktop image" },
+    { "type": "image_picker", "id": "image_mobile", "label": "Mobile image",
+      "info": "Optional. A portrait crop usually reads better on a phone." },
+    { "type": "select", "id": "fit_default", "label": "Default crop behaviour",
+      "options": [{"value":"cover","label":"Cover — fill, crop overflow"},
+                  {"value":"contain","label":"Contain — show it all"}],
+      "default": "cover" },
+    { "type": "color", "id": "image_bg", "label": "Behind the image", "default": "#1A0A06" },
+    { "type": "checkbox", "id": "eager_load", "label": "Load immediately",
+      "default": false, "info": "Tick only if this is the first thing on the page." },
+
+    { "type": "header", "content": "📏 Height" },
+    { "type": "range", "id": "height_desktop", "min": 20, "max": 100, "step": 2, "unit": "vh",
+      "label": "Height — desktop", "default": 60 },
+    { "type": "range", "id": "height_mobile", "min": 20, "max": 100, "step": 2, "unit": "vh",
+      "label": "Height — mobile", "default": 55 },
+
+    { "type": "header", "content": "✍️ Copy" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "body", "label": "Body" },
+    { "type": "text", "id": "cta_text", "label": "Button text" },
+    { "type": "url", "id": "cta_url", "label": "Button link" },
+    { "type": "select", "id": "cta_style", "label": "Button style",
+      "options": [{"value":"btn-primary","label":"Primary"},
+                  {"value":"btn-secondary","label":"Secondary"},
+                  {"value":"btn-gold","label":"Gold"}], "default": "btn-gold" },
+    { "type": "range", "id": "copy_width", "min": 320, "max": 1000, "step": 20, "unit": "px",
+      "label": "Copy width", "default": 620 },
+
+    { "type": "header", "content": "🧭 Copy position" },
+    { "type": "select", "id": "h_pos", "label": "Horizontal",
+      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Centre"},
+                  {"value":"right","label":"Right"}], "default": "center" },
+    { "type": "select", "id": "v_pos", "label": "Vertical",
+      "options": [{"value":"top","label":"Top"},{"value":"middle","label":"Middle"},
+                  {"value":"bottom","label":"Bottom"}], "default": "middle" },
+
+    { "type": "header", "content": "🌓 Overlay" },
+    { "type": "range", "id": "overlay_opacity_desktop", "min": 0, "max": 100, "step": 5, "unit": "%",
+      "label": "Overlay darkness — desktop", "default": 35,
+      "info": "Keeps copy readable over a busy photo. 0 = none." },
+    { "type": "range", "id": "overlay_opacity_mobile", "min": 0, "max": 100, "step": 5, "unit": "%",
+      "label": "Overlay darkness — mobile", "default": 45 },
+    { "type": "color", "id": "overlay_color", "label": "Overlay colour", "default": "#1A0A06" },
+
+    { "type": "header", "content": "📐 Spacing" },
+    { "type": "range", "id": "pad_top_desktop", "min": 0, "max": 200, "step": 4, "unit": "px",
+      "label": "Padding top — desktop", "default": 64 },
+    { "type": "range", "id": "pad_top_mobile", "min": 0, "max": 200, "step": 4, "unit": "px",
+      "label": "Padding top — mobile", "default": 48 },
+    { "type": "range", "id": "pad_bottom_desktop", "min": 0, "max": 200, "step": 4, "unit": "px",
+      "label": "Padding bottom — desktop", "default": 64 },
+    { "type": "range", "id": "pad_bottom_mobile", "min": 0, "max": 200, "step": 4, "unit": "px",
+      "label": "Padding bottom — mobile", "default": 48 },
+
+    { "type": "header", "content": "🖼️ Image framing" },
+    { "type": "select", "id": "image_fit", "label": "Image fit",
+      "options": [{"value":"","label":"Theme default"},{"value":"cover","label":"Cover"},
+                  {"value":"contain","label":"Contain"}], "default": "" },
+    { "type": "select", "id": "image_pos_desktop", "label": "Focal point — desktop",
+      "options": [{"value":"","label":"Theme default"},
+        {"value":"center center","label":"Centre"},{"value":"center top","label":"Top"},
+        {"value":"center bottom","label":"Bottom"},{"value":"left center","label":"Left"},
+        {"value":"right center","label":"Right"}], "default": "" },
+    { "type": "select", "id": "image_pos_mobile", "label": "Focal point — mobile",
+      "options": [{"value":"","label":"Theme default"},
+        {"value":"center center","label":"Centre"},{"value":"center top","label":"Top"},
+        {"value":"center bottom","label":"Bottom"}], "default": "" },
+
+    { "type": "header", "content": "🎨 Colours" },
+    { "type": "color", "id": "text_color", "label": "Copy colour", "default": "#F5EFE6" }
+  ],
+  "presets": [{ "name": "Image Banner" }]
+}
+{% endschema %}
