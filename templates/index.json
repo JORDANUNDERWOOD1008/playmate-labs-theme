@@ -20,6 +20,162 @@
       "type": "value-strip",
       "settings": {}
     },
+    "banner-nude": {
+      "type": "flex-banner",
+      "settings": {
+        "image": "shopify://shop_images/6be86923-b928-4928-a089-c1f290f31af0.png",
+        "image_mobile": "shopify://shop_images/nude-stacked-cards-blocks-pouch-portrait.png",
+        "image_fit": "cover",
+        "image_bg": "#F2F0EE",
+        "image_pos_desktop": "center center",
+        "image_pos_mobile": "center center",
+        "height_desktop": 80,
+        "height_mobile": 85,
+        "eyebrow": "NEW IN",
+        "heading": "Nude. Stacked",
+        "subheading": "The stacking game that turns a quiet night into a long one.",
+        "body": "<p>Fifty-two cards, three levels and a tower that always falls at the worst possible moment. Packed in a velvet pouch with a blindfold.</p>",
+        "eyebrow_color": "#D92B2B",
+        "heading_color": "#1A1A1A",
+        "sub_color": "#2C2C2C",
+        "body_color": "#3D3D3D",
+        "text_shadow": false,
+        "heading_size": 64,
+        "sub_size": 21,
+        "body_size": 16,
+        "btn1_text": "Shop Nude. Stacked",
+        "btn1_url": "/products/nude-stacked",
+        "btn1_bg": "#D92B2B",
+        "btn1_label_color": "#FFFFFF",
+        "btn1_border": "#D92B2B",
+        "btn2_text": "",
+        "btn2_url": "",
+        "h_pos": "right",
+        "v_pos": "middle",
+        "text_align": "left",
+        "h_pos_mobile": "center",
+        "v_pos_mobile": "bottom",
+        "text_align_mobile": "center",
+        "copy_width": 520,
+        "scrim_style": "solid",
+        "overlay_opacity_desktop": 0,
+        "overlay_opacity_mobile": 30,
+        "overlay_color": "#FFFFFF",
+        "pad_top_desktop": 64,
+        "pad_bottom_desktop": 64,
+        "pad_side_desktop": 48,
+        "pad_top_mobile": 32,
+        "pad_bottom_mobile": 44,
+        "pad_side_mobile": 20
+      }
+    },
+    "banner-chocolate": {
+      "type": "flex-banner",
+      "settings": {
+        "image": "shopify://shop_images/chocolate-hearts-couple-in-bed-landscape.png",
+        "image_mobile": "shopify://shop_images/chocolate-hearts-satin-candle-portrait.png",
+        "image_fit": "cover",
+        "image_bg": "#1A0A06",
+        "image_pos_desktop": "center center",
+        "image_pos_mobile": "center center",
+        "height_desktop": 80,
+        "height_mobile": 85,
+        "eyebrow": "THE ORIGINAL",
+        "heading": "Aphrodisiac Chocolate Hearts",
+        "subheading": "Chocolate for intimate shared moments.",
+        "body": "<p>Vanilla, hot honey and black raspberry. Clinically-proven ingredients, made to share, made to be broken in half.</p>",
+        "eyebrow_color": "#C9A96E",
+        "heading_color": "#FFFFFF",
+        "sub_color": "#F5EFE6",
+        "body_color": "#EDE4DA",
+        "text_shadow": true,
+        "heading_size": 58,
+        "sub_size": 20,
+        "body_size": 16,
+        "btn1_text": "Shop Chocolate Hearts",
+        "btn1_url": "/collections/couples-chocolate-collection",
+        "btn1_bg": "#6B1E3A",
+        "btn1_label_color": "#F5EFE6",
+        "btn1_border": "#6B1E3A",
+        "btn2_text": "",
+        "btn2_url": "",
+        "h_pos": "left",
+        "v_pos": "middle",
+        "text_align": "left",
+        "h_pos_mobile": "center",
+        "v_pos_mobile": "bottom",
+        "text_align_mobile": "center",
+        "copy_width": 560,
+        "scrim_style": "left",
+        "overlay_opacity_desktop": 60,
+        "overlay_opacity_mobile": 70,
+        "overlay_color": "#160806",
+        "pad_top_desktop": 64,
+        "pad_bottom_desktop": 64,
+        "pad_side_desktop": 56,
+        "pad_top_mobile": 32,
+        "pad_bottom_mobile": 48,
+        "pad_side_mobile": 20
+      }
+    },
+    "home-product-grid": {
+      "type": "home-product-grid",
+      "settings": {
+        "eyebrow": "The Collection",
+        "heading": "Rituals worth staying in for.",
+        "collection": "",
+        "products_limit": 8,
+        "view_all_text": "View All Products",
+        "view_all_url": ""
+      }
+    },
+    "story-aphrodisiac": {
+      "type": "flex-image-text",
+      "settings": {
+        "image": "shopify://shop_images/chocolate-hearts-macro-detail-portrait.png",
+        "image_side": "left",
+        "mobile_image_first": true,
+        "image_width": 45,
+        "image_ratio": "4/5",
+        "image_ratio_mobile": "4/3",
+        "fit_default": "cover",
+        "image_bg": "#FAF7F2",
+        "corner_radius": 8,
+        "eyebrow": "MADE PROPERLY",
+        "heading": "Ingredients that let things flow naturally",
+        "body": "<p>Every Playmate product starts with a functional formulation, not a gimmick. Clinically-proven aphrodisiac ingredients, made in the UK, in packaging you would happily leave on the side.</p><p>Stocked by independent retailers across the UK.</p>",
+        "cta_text": "Wholesale enquiries",
+        "cta_url": "/pages/stockists",
+        "cta_style": "btn-secondary",
+        "vertical_align": "middle",
+        "gap": 56,
+        "gap_mobile": 28,
+        "pad_top_desktop": 96,
+        "pad_bottom_desktop": 96,
+        "pad_top_mobile": 56,
+        "pad_bottom_mobile": 56
+      }
+    },
+    "social-proof": {
+      "type": "social-proof",
+      "settings": {}
+    },
+    "email-capture": {
+      "type": "email-capture",
+      "settings": {
+        "dark_bg": true,
+        "section_id": "email-capture",
+        "eyebrow": "Something Special For You",
+        "heading": "Unlock Your Free Virtual Sensory Experience",
+        "subtext": "",
+        "show_phone": true,
+        "email_placeholder": "Your email address",
+        "phone_placeholder": "Phone (for SMS drops \u2014 optional)",
+        "cta_text": "Unlock Free Experience",
+        "disclaimer": "No spam. Unsubscribe anytime.",
+        "success_message": "You're in! Check your inbox for your free experience."
+      }
+    },
     "home-featured-drop": {
       "type": "home-featured-drop",
       "settings": {
@@ -43,30 +199,13 @@
         "waitlist_email_placeholder": "Enter your email",
         "waitlist_phone_placeholder": "Enter your phone number",
         "waitlist_microcopy": "Be the first to know when this drop becomes available."
-      }
-    },
-    "home-product-grid": {
-      "type": "home-product-grid",
-      "settings": {
-        "eyebrow": "The Collection",
-        "heading": "Rituals worth staying in for.",
-        "collection": "",
-        "products_limit": 8,
-        "view_all_text": "View All Products",
-        "view_all_url": ""
-      }
-    },
-    "how-it-works": {
-      "type": "how-it-works",
-      "settings": {}
-    },
-    "social-proof": {
-      "type": "social-proof",
-      "settings": {}
+      },
+      "disabled": true
     },
     "experience-cta": {
       "type": "experience-cta",
-      "settings": {}
+      "settings": {},
+      "disabled": true
     },
     "events-preview": {
       "type": "events-preview",
@@ -84,39 +223,33 @@
         "modal_email_placeholder": "Enter your email",
         "modal_cta_text": "Join Event Waitlist",
         "modal_microcopy": "You'll be the first to hear about Playmate Labs events, pop-ups and immersive experiences."
-      }
+      },
+      "disabled": true
     },
     "journal-preview": {
       "type": "journal-preview",
-      "settings": {}
+      "settings": {},
+      "disabled": true
     },
-    "email-capture": {
-      "type": "email-capture",
-      "settings": {
-        "dark_bg": true,
-        "section_id": "email-capture",
-        "eyebrow": "Something Special For You",
-        "heading": "Unlock Your Free Virtual Sensory Experience",
-        "subtext": "",
-        "show_phone": true,
-        "email_placeholder": "Your email address",
-        "phone_placeholder": "Phone (for SMS drops \u2014 optional)",
-        "cta_text": "Unlock Free Experience",
-        "disclaimer": "No spam. Unsubscribe anytime.",
-        "success_message": "You're in! Check your inbox for your free experience."
-      }
+    "how-it-works": {
+      "type": "how-it-works",
+      "settings": {},
+      "disabled": true
     }
   },
   "order": [
     "home-hero",
     "value-strip",
-    "home-featured-drop",
+    "banner-nude",
+    "banner-chocolate",
     "home-product-grid",
-    "how-it-works",
+    "story-aphrodisiac",
     "social-proof",
+    "email-capture",
+    "home-featured-drop",
     "experience-cta",
     "events-preview",
     "journal-preview",
-    "email-capture"
+    "how-it-works"
   ]
 }
