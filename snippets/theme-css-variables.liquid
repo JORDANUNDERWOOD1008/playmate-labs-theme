@@ -1,0 +1,132 @@
+{%- comment -%}
+  ============================================================
+  PLAYMATE LABS — THEME SETTINGS → CSS CUSTOM PROPERTIES
+  ============================================================
+  Bridges Theme settings (config/settings_schema.json) to the
+  CSS custom properties that global.css and every section read.
+
+  Must be rendered in <head> AFTER global.css so these values
+  win the cascade. Everything here is a no-op override: if a
+  setting is blank the global.css default stands.
+
+  Add a setting here and it becomes live everywhere the
+  variable is already used — no per-section wiring needed.
+{%- endcomment -%}
+
+{%- liquid
+  assign h_font = settings.font_heading
+  assign b_font = settings.font_body
+
+  case settings.font_accent
+    when 'playfair'
+      assign accent_stack = "'Playfair Display', Georgia, serif"
+    when 'inter'
+      assign accent_stack = "'Inter', -apple-system, sans-serif"
+    when 'georgia'
+      assign accent_stack = "Georgia, 'Times New Roman', serif"
+    else
+      assign accent_stack = "'Cormorant Garamond', Georgia, serif"
+  endcase
+-%}
+
+{% style %}
+  {%- comment -%} Self-hosted via Shopify CDN — no Google Fonts round-trip {%- endcomment -%}
+  {{ h_font | font_face: font_display: 'swap' }}
+  {{ b_font | font_face: font_display: 'swap' }}
+  {{ b_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ b_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ h_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+
+  :root {
+    /* ── Brand colours ──
+       Each setting's default is reconciled to the global.css value it
+       replaces, so switching these on changed nothing on its own. */
+    --burgundy:        {{ settings.color_burgundy }};
+    --burgundy-deep:   {{ settings.color_burgundy_dark }};
+    --cream:           {{ settings.color_cream }};
+    --ivory:           {{ settings.color_ivory }};
+    --espresso:        {{ settings.color_espresso }};
+    --gold:            {{ settings.color_gold }};
+    --gold-light:      {{ settings.color_gold_light }};
+    --color-gold:      {{ settings.color_gold }};
+
+    /* ── Text ── */
+    --text-dark:       {{ settings.color_text_body }};
+    --text-muted:      {{ settings.color_text_muted }};
+    --text-light:      {{ settings.color_text_light }};
+    --text-inverse:    {{ settings.color_text_inverse }};
+
+    /* ── Surfaces ── */
+    --white:           {{ settings.color_bg_primary }};
+    --warm-white:      {{ settings.color_bg_warm }};
+    --cream-off:       {{ settings.color_bg_cream }};
+    --charcoal:        {{ settings.color_bg_dark }};
+
+    {%- comment -%}
+      Deliberately NOT wired: --border-light / --border-mid / --border-color,
+      and --text-mid / --burgundy-light. global.css defines the borders as
+      translucent rgba() tints of the burgundy, which a flat hex colour
+      setting cannot reproduce without visibly changing them. Left on the
+      stylesheet defaults until there is a reason to expose them.
+    {%- endcomment -%}
+
+    /* ── Buttons ── */
+    --btn-primary-bg:       {{ settings.color_btn_primary_bg }};
+    --btn-primary-text:     {{ settings.color_btn_primary_text }};
+    --btn-secondary-bg:     {{ settings.color_btn_secondary_bg }};
+    --btn-secondary-text:   {{ settings.color_btn_secondary_text }};
+    --btn-secondary-border: {{ settings.color_btn_secondary_border }};
+    --btn-gold-bg:          {{ settings.color_btn_gold_bg }};
+    --btn-gold-text:        {{ settings.color_btn_gold_text }};
+
+    /* ── Typography ── */
+    --font-serif:   {{ h_font.family }}, {{ h_font.fallback_families }};
+    --font-sans:    {{ b_font.family }}, {{ b_font.fallback_families }};
+    --font-display: {{ accent_stack }};
+    --font-heading-weight: {{ settings.font_weight_heading }};
+    --font-body-weight:    {{ settings.font_weight_body }};
+
+    --font-size-base: {{ settings.font_size_base }}px;
+    --font-size-h1:   {{ settings.font_size_h1 }}px;
+    --font-size-h2:   {{ settings.font_size_h2 }}px;
+    --font-size-h3:   {{ settings.font_size_h3 }}rem;
+
+    --line-height-body:      {{ settings.line_height_body | divided_by: 10.0 }};
+    --letter-spacing-heading: {{ settings.letter_spacing_heading | divided_by: 100.0 }}em;
+    --letter-spacing-eyebrow: {{ settings.letter_spacing_eyebrow | divided_by: 100.0 }}em;
+
+    /* ── Layout ── */
+    --nav-logo-width-desktop: {{ settings.nav_logo_width_desktop }}px;
+    --nav-logo-width-mobile:  {{ settings.nav_logo_width_mobile }}px;
+  }
+
+  {%- comment -%} Apply the type scale the settings promise {%- endcomment -%}
+  html { font-size: var(--font-size-base); }
+
+  body {
+    font-family: var(--font-sans);
+    font-weight: var(--font-body-weight);
+    line-height: var(--line-height-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: var(--font-heading-weight);
+    letter-spacing: var(--letter-spacing-heading);
+  }
+
+  {%- comment -%}
+    Size the utility classes only. Bare <h1>/<h2>/<h3> are used ~460 times
+    across the theme and have never carried a size of their own — giving
+    them one here would resize half the site. The clamp() lower bound and
+    viewport term are unchanged; the setting drives the upper bound, so the
+    scale stays fluid rather than snapping to a fixed pixel size.
+
+    Eyebrow letter-spacing is intentionally left alone too: sections set it
+    individually between 0.12em and 0.22em, and one global value would
+    flatten that.
+  {%- endcomment -%}
+  .heading-xl { font-size: clamp(2rem, 4vw, var(--font-size-h1)); }
+  .heading-lg { font-size: clamp(1.75rem, 3vw, var(--font-size-h2)); }
+  .heading-md { font-size: clamp(1.4rem, 2vw, var(--font-size-h3)); }
+{% endstyle %}

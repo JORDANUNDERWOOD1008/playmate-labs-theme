@@ -223,7 +223,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .section {
-  padding: var(--space-2xl) 0;
+  /* Merchant-controlled via each section's Spacing settings; falls back to
+     the design-system default when a section exposes no control. */
+  padding-top: var(--sec-pad-top, var(--space-2xl));
+  padding-bottom: var(--sec-pad-bottom, var(--space-2xl));
 }
 
 .section-sm {

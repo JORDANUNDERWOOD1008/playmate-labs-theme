@@ -40,7 +40,7 @@
     <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
   {%- endif -%}
 
-  {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
+  {%- unless settings.font_heading.system? and settings.font_body.system? -%}
     <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
   {%- endunless -%}
 
@@ -128,19 +128,24 @@
 
   {{ content_for_header }}
 
-  {%- liquid
-    assign body_font_bold = settings.type_body_font | font_modify: 'weight', 'bold'
-    assign body_font_italic = settings.type_body_font | font_modify: 'style', 'italic'
-    assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
-  %}
+  {%- comment -%}
+    Heading and body faces are chosen in Theme settings → Typography and are
+    served from Shopify's own CDN by 'theme-css-variables' below, so there is
+    no Google Fonts round-trip for them.
 
-  {%- comment -%} Preload critical fonts {%- endcomment -%}
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" as="style">
-
-  {%- comment -%} Google Fonts — Playmate Labs design system {%- endcomment -%}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+    Cormorant Garamond is the one face Shopify's library does not carry, so it
+    is fetched from Google only when the accent style actually asks for it.
+  {%- endcomment -%}
+  {%- if settings.font_accent == 'cormorant' -%}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" media="print" onload="this.media='all'"
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap">
+    <noscript>
+      <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap">
+    </noscript>
+  {%- endif -%}
 
   {%- comment -%} Minimal icon styles — replaces full Font Awesome CDN (~70KB saved) {%- endcomment -%}
   <style>
@@ -161,6 +166,12 @@
   {{ 'global.css' | asset_url | stylesheet_tag }}
   {{ 'components.css' | asset_url | stylesheet_tag }}
   {{ 'theme-extra.css' | asset_url | stylesheet_tag }}
+
+  {%- comment -%}
+    Theme settings → CSS custom properties. Must come after global.css so the
+    merchant's choices override the design-system defaults.
+  {%- endcomment -%}
+  {% render 'theme-css-variables' %}
 
   {%- comment -%} Header overlap fix — neutralise Shopify's section wrapper {%- endcomment -%}
   <style>
@@ -322,6 +333,11 @@
   {%- comment -%} Global JS {%- endcomment -%}
   <script src="{{ 'main.js' | asset_url }}" defer></script>
   <script src="{{ 'cart-api.js' | asset_url }}" defer></script>
+
+  {%- comment -%} Page-specific JS {%- endcomment -%}
+  {%- if template.name == 'index' -%}
+    <script src="{{ 'home.js' | asset_url }}" defer></script>
+  {%- endif -%}
 
   {%- comment -%} Cookie Consent Banner {%- endcomment -%}
   {% render 'consent-banner' %}

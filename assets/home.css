@@ -9,9 +9,9 @@
   /* Desktop: full viewport height — image fills the screen */
   position: relative;
   overflow: hidden;
-  background: #0c0408;
+  background: var(--sec-bg, #0c0408);
   width: 100%;
-  min-height: 100vh;
+  min-height: var(--sec-height, 100vh);
   display: flex;
   flex-direction: column;
 }
@@ -34,8 +34,8 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center center;
+  object-fit: var(--sec-image-fit, cover);
+  object-position: var(--sec-image-pos, center center);
 }
 
 /* ── Mobile background layer (tall portrait photo) ── */
@@ -50,8 +50,8 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
+  object-fit: var(--sec-image-fit, cover);
+  object-position: var(--sec-image-pos, center 30%);
   /* Prevent iOS Safari parallax scroll on the bg image */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
@@ -63,8 +63,10 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  /* Desktop: NO overlay — photo fully visible. Mobile overrides this below. */
-  background: none;
+  /* Overlay darkness is merchant-controlled; 0 by default on desktop. */
+  background: var(--sec-overlay-color, #1A0A06);
+  opacity: var(--sec-overlay-opacity, 0);
+  transition: opacity 0.2s ease;
 }
 
 .hero-particle,
@@ -77,10 +79,10 @@
 .hero-content-wrap {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: var(--sec-justify, center);
   justify-content: flex-start;
-  padding-top: calc(var(--nav-height, 72px) + 3rem);
-  padding-bottom: 6rem;
+  padding-top: var(--sec-pad-top, calc(var(--nav-height, 72px) + 3rem));
+  padding-bottom: var(--sec-pad-bottom, 6rem);
   position: relative;
   z-index: 2;
   width: 100%;
@@ -91,10 +93,12 @@
   grid-template-columns: 1fr;
   gap: 0;
   align-items: flex-start;
-  /* Override global .container centering — left-align copy, right half clear for product photo */
-  max-width: 48%;
-  margin-left: 4% !important;
-  margin-right: auto !important;
+  /* Width and alignment are merchant-controlled; defaults match the original
+     left-aligned layout with the right half clear for the product photo. */
+  max-width: var(--sec-content-width, 48%);
+  text-align: var(--sec-text-align, left);
+  margin-left: var(--sec-margin-left, 4%) !important;
+  margin-right: var(--sec-margin-right, auto) !important;
   padding-left: 0;
 }
 
@@ -288,7 +292,8 @@
    VALUE STRIP
    ============================================ */
 .value-strip {
-  padding: 1.75rem 0;
+  padding-top: var(--sec-pad-top, 1.75rem);
+  padding-bottom: var(--sec-pad-bottom, 1.75rem);
   background: var(--ivory);
   border-top: 1px solid var(--border-light);
   border-bottom: 1px solid var(--border-light);
@@ -1294,6 +1299,9 @@
 
   /* Gradient: dark top band (covers copy), clear window (shows product), dark bottom band (covers buttons) */
   .hero-gradient {
+    /* Tuned mobile gradient: dark bands top/bottom, clear window for the
+       product. The slider scales it as a whole; 100% = as designed. */
+    opacity: var(--sec-overlay-opacity, 1);
     background: linear-gradient(
       180deg,
       rgba(8,2,4,0.88) 0%,
@@ -1340,10 +1348,19 @@
     display: block;
     position: relative;
     z-index: 2;
-    padding: 0;
+    padding-top: var(--sec-pad-top, 0);
+    padding-bottom: var(--sec-pad-bottom, 0);
+    padding-left: 0;
+    padding-right: 0;
   }
   .hero-content-wrap > .container { display: block; }
-  .hero-inner  { display: block; text-align: center; max-width: 100%; }
+  .hero-inner  {
+    display: block;
+    text-align: var(--sec-text-align, center);
+    max-width: var(--sec-content-width, 100%);
+    margin-left: var(--sec-margin-left, auto) !important;
+    margin-right: var(--sec-margin-right, auto) !important;
+  }
   .hero-text   { display: block; width: 100%; }
 
   /* TOP COPY: eyebrow + headline + description

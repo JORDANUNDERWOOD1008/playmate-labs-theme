@@ -1,0 +1,121 @@
+{%- comment -%}
+  ============================================================
+  PLAYMATE LABS — PER-SECTION RESPONSIVE STYLE ENGINE
+  ============================================================
+  Emits a scoped <style> block for one section instance, turning
+  the standard layout settings into CSS custom properties with
+  separate desktop and mobile values.
+
+  Usage, as the first line inside a section's markup:
+      {% render 'section-style', section: section %}
+
+  Every setting is optional. A section only needs to declare the
+  controls it actually wants in its own schema — anything absent
+  is skipped and the stylesheet default stands.
+
+  Recognised setting ids (all optional):
+    pad_top_desktop / pad_bottom_desktop      range, px
+    pad_top_mobile  / pad_bottom_mobile       range, px
+    height_desktop  / height_mobile           range, vh  (0 = auto)
+    content_width                             range, px
+    text_align_desktop  / text_align_mobile   select left|center|right
+    text_valign_desktop / text_valign_mobile  select top|middle|bottom
+    image_fit                                 select cover|contain
+    image_pos_desktop / image_pos_mobile      select focal point
+    overlay_opacity_desktop / _mobile         range, 0-100
+    overlay_color                             color
+    bg_color / text_color / heading_color     color
+
+  Consumed by CSS as, e.g.:
+    padding-top: var(--sec-pad-top);
+    object-fit:  var(--sec-image-fit, cover);
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign sel = '#shopify-section-' | append: section.id
+-%}
+
+{% style %}
+  {{ sel }} {
+    {%- if s.pad_top_desktop != blank %}    --sec-pad-top: {{ s.pad_top_desktop }}px;{% endif -%}
+    {%- if s.pad_bottom_desktop != blank %} --sec-pad-bottom: {{ s.pad_bottom_desktop }}px;{% endif -%}
+    {%- if s.height_desktop != blank and s.height_desktop > 0 %} --sec-height: {{ s.height_desktop }}vh;{% endif -%}
+    {%- if s.height_desktop == 0 %} --sec-height: auto;{% endif -%}
+    {%- if s.content_width != blank and s.content_width > 0 %} --sec-content-width: {{ s.content_width }}px;{% endif -%}
+    {%- if s.text_align_desktop != blank %} --sec-text-align: {{ s.text_align_desktop }};{% endif -%}
+    {%- if s.text_valign_desktop != blank %}--sec-text-valign: {{ s.text_valign_desktop }};{% endif -%}
+    {%- if s.image_fit != blank %}          --sec-image-fit: {{ s.image_fit }};{% endif -%}
+    {%- if s.image_pos_desktop != blank %}  --sec-image-pos: {{ s.image_pos_desktop }};{% endif -%}
+    {%- if s.overlay_opacity_desktop != blank %} --sec-overlay-opacity: {{ s.overlay_opacity_desktop | divided_by: 100.0 }};{% endif -%}
+    {%- if s.overlay_color != blank %}      --sec-overlay-color: {{ s.overlay_color }};{% endif -%}
+    {%- if s.bg_color != blank %}           --sec-bg: {{ s.bg_color }};{% endif -%}
+    {%- if s.text_color != blank %}         --sec-text: {{ s.text_color }};{% endif -%}
+    {%- if s.heading_color != blank %}      --sec-heading: {{ s.heading_color }};{% endif -%}
+  }
+
+  {%- comment -%} Derive content margins from horizontal alignment {%- endcomment -%}
+  {%- if s.text_align_desktop != blank -%}
+    {{ sel }} {
+      {%- case s.text_align_desktop -%}
+        {%- when 'center' -%} --sec-margin-left: auto; --sec-margin-right: auto;
+        {%- when 'right' -%}  --sec-margin-left: auto; --sec-margin-right: 4%;
+        {%- else -%}          --sec-margin-left: 4%;  --sec-margin-right: auto;
+      {%- endcase -%}
+    }
+  {%- endif -%}
+
+  {%- comment -%} Map the vertical-position keyword onto flexbox {%- endcomment -%}
+  {%- if s.text_valign_desktop != blank -%}
+    {{ sel }} {
+      {%- case s.text_valign_desktop -%}
+        {%- when 'top' -%}    --sec-justify: flex-start;
+        {%- when 'bottom' -%} --sec-justify: flex-end;
+        {%- else -%}          --sec-justify: center;
+      {%- endcase -%}
+    }
+  {%- endif -%}
+
+  {%- comment -%}
+    Colour is safe to apply generically. Padding is NOT — several sections
+    carry their own inner wrapper that owns the vertical rhythm, so applying
+    it here as well would double up. Padding is consumed by the stylesheet
+    instead (.section, .value-strip, .hero-content-wrap), which keeps one
+    variable working across every section that shares those classes.
+  {%- endcomment -%}
+  {%- if s.bg_color != blank or s.text_color != blank -%}
+  {{ sel }} > * {
+    {%- if s.bg_color != blank %}   background-color: var(--sec-bg);{% endif -%}
+    {%- if s.text_color != blank %} color: var(--sec-text);{% endif -%}
+  }
+  {%- endif -%}
+  {%- if s.heading_color != blank %}
+  {{ sel }} h1, {{ sel }} h2, {{ sel }} h3 { color: var(--sec-heading); }
+  {%- endif %}
+
+  @media (max-width: 768px) {
+    {{ sel }} {
+      {%- if s.pad_top_mobile != blank %}    --sec-pad-top: {{ s.pad_top_mobile }}px;{% endif -%}
+      {%- if s.pad_bottom_mobile != blank %} --sec-pad-bottom: {{ s.pad_bottom_mobile }}px;{% endif -%}
+      {%- if s.height_mobile != blank and s.height_mobile > 0 %} --sec-height: {{ s.height_mobile }}vh;{% endif -%}
+      {%- if s.height_mobile == 0 %} --sec-height: auto;{% endif -%}
+      {%- if s.text_align_mobile != blank -%}
+        --sec-text-align: {{ s.text_align_mobile }};
+        {%- case s.text_align_mobile -%}
+          {%- when 'center' -%} --sec-margin-left: auto; --sec-margin-right: auto;
+          {%- when 'right' -%}  --sec-margin-left: auto; --sec-margin-right: 4%;
+          {%- else -%}          --sec-margin-left: 4%;  --sec-margin-right: auto;
+        {%- endcase -%}
+      {%- endif -%}
+      {%- if s.image_pos_mobile != blank %}  --sec-image-pos: {{ s.image_pos_mobile }};{% endif -%}
+      {%- if s.overlay_opacity_mobile != blank %} --sec-overlay-opacity: {{ s.overlay_opacity_mobile | divided_by: 100.0 }};{% endif -%}
+      {%- if s.text_valign_mobile != blank -%}
+        {%- case s.text_valign_mobile -%}
+          {%- when 'top' -%}    --sec-justify: flex-start; --sec-text-valign: top;
+          {%- when 'bottom' -%} --sec-justify: flex-end; --sec-text-valign: bottom;
+          {%- else -%}          --sec-justify: center; --sec-text-valign: middle;
+        {%- endcase -%}
+      {%- endif -%}
+    }
+  }
+{% endstyle %}
