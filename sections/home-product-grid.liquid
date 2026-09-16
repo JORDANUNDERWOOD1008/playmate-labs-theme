@@ -6,11 +6,22 @@
 
 <section class="section home-products" id="shop-preview">
   <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow">{{ section.settings.eyebrow | default: 'The Collection' }}</span>
-      <h2 class="heading-xl">{{ section.settings.heading | default: 'Rituals worth staying in for.' }}</h2>
-      <div class="section-divider"></div>
-    </div>
+    {%- comment -%}
+      No `default:` fallback here on purpose: clearing the fields in the
+      editor has to actually remove the header, not silently restore
+      placeholder copy.
+    {%- endcomment -%}
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+      <div class="section-header reveal">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="heading-xl">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.show_divider -%}<div class="section-divider"></div>{%- endif -%}
+      </div>
+    {%- endif -%}
 
     {%- comment -%} Category Pills {%- endcomment -%}
     <div class="shop-category-pills">
@@ -75,13 +86,21 @@
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow",
-      "default": "The Collection"
+      "default": "The Collection",
+      "info": "Leave blank to hide the section header entirely."
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Rituals worth staying in for."
+      "default": "Rituals worth staying in for.",
+      "info": "Leave blank to hide the section header entirely."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider under the header",
+      "default": true
     },
     {
       "type": "collection",

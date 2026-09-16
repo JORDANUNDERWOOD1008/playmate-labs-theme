@@ -12,7 +12,36 @@
 
   {%- comment -%} ── BACKGROUND LAYERS ── {%- endcomment -%}
   <div class="hero-bg" aria-hidden="true">
-    {%- comment -%}
+    {%- liquid
+  assign hs = section.settings
+  assign w = hs.bg_width_desktop
+  assign gutter = 100 | minus: w
+-%}
+{%- style -%}
+  #shopify-section-{{ section.id }} .hero-section {
+    --hero-backdrop: {{ hs.backdrop_color }};
+    --hero-eyebrow-color: {{ hs.eyebrow_color }};
+    --hero-heading-color: {{ hs.heading_text_color }};
+    --hero-italic-color: {{ hs.italic_color }};
+    --hero-sub-color: {{ hs.sub_color }};
+  }
+  #shopify-section-{{ section.id }} .hero-bg-desktop {
+    --hero-img-width: {{ w }}%;
+    {%- if hs.bg_align_desktop == 'left' %}
+    --hero-img-left: 0; --hero-img-right: auto;
+    {%- else %}
+    --hero-img-left: auto; --hero-img-right: 0;
+    {%- endif %}
+  }
+  {%- comment -%} Mobile keeps the photo full-bleed {%- endcomment -%}
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .hero-bg-desktop {
+      --hero-img-width: 100%; --hero-img-left: 0; --hero-img-right: 0;
+    }
+  }
+{%- endstyle -%}
+
+{%- comment -%}
       Desktop bg: merchant image when set, otherwise the packaged photo.
       Served through Shopify's CDN with a srcset so large screens are not
       handed the same file as small ones.
@@ -309,6 +338,72 @@
       "id": "trust_shipping",
       "label": "Trust signal — shipping",
       "default": "Free shipping over £60"
+    },
+    {
+      "type": "header",
+      "content": "🖼️ Photo panel (desktop)"
+    },
+    {
+      "type": "range",
+      "id": "bg_width_desktop",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Photo width",
+      "default": 100,
+      "info": "Below 100% the backdrop shows through beside it — that is where the copy goes."
+    },
+    {
+      "type": "select",
+      "id": "bg_align_desktop",
+      "label": "Photo side",
+      "options": [
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "color",
+      "id": "backdrop_color",
+      "label": "Backdrop",
+      "default": "#0c0408",
+      "info": "Set this to white when the photo is a packshot on white."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Text colours"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "heading_text_color",
+      "label": "Headline",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "italic_color",
+      "label": "Headline italic word",
+      "default": "#DFC08A"
+    },
+    {
+      "type": "color",
+      "id": "sub_color",
+      "label": "Subheadline",
+      "default": "#ADA69C"
     },
     {
       "type": "header",

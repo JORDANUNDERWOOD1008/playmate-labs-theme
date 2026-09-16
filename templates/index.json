@@ -4,7 +4,7 @@
       "type": "home-hero",
       "settings": {
         "hero_bg_image": "shopify://shop_images/6be86923-b928-4928-a089-c1f290f31af0.png",
-        "mobile_hero_image": "shopify://shop_images/ae3e7b79-5ecb-4bf8-b041-39c0c1d2714e.png",
+        "mobile_hero_image": "shopify://shop_images/nude-stacked-cards-blocks-pouch-portrait.png",
         "eyebrow": "A new culture of connection",
         "headline": "<p>Rewriting how <em>couples</em> do date night.</p>",
         "subheadline": "Novel intimate sensory experiences, monthly date night rituals for modern relationships.",
@@ -13,7 +13,26 @@
         "cta_secondary_text": "Shop the Latest Drop",
         "cta_secondary_url": "shopify://products/playmate-chocolate",
         "trust_rating": "25,000+ happy couples",
-        "trust_shipping": "Free shipping over \u00a360"
+        "trust_shipping": "Free shipping over \u00a360",
+        "bg_width_desktop": 52,
+        "bg_align_desktop": "right",
+        "backdrop_color": "#FDFAF4",
+        "eyebrow_color": "#D92B2B",
+        "heading_text_color": "#1A1A1A",
+        "italic_color": "#D92B2B",
+        "sub_color": "#4A4A4A",
+        "image_fit": "contain",
+        "image_pos_desktop": "center center",
+        "image_pos_mobile": "center center",
+        "overlay_opacity_desktop": 0,
+        "overlay_opacity_mobile": 0,
+        "content_width": 620,
+        "text_align_desktop": "left",
+        "text_align_mobile": "center",
+        "height_desktop": 88,
+        "height_mobile": 88,
+        "pad_top_mobile": 24,
+        "pad_bottom_mobile": 40
       }
     },
     "value-strip": {
@@ -24,17 +43,17 @@
       "type": "flex-banner",
       "settings": {
         "image": "shopify://shop_images/6be86923-b928-4928-a089-c1f290f31af0.png",
-        "image_mobile": "shopify://shop_images/nude-stacked-cards-blocks-pouch-portrait.png",
+        "image_mobile": "shopify://shop_images/ae3e7b79-5ecb-4bf8-b041-39c0c1d2714e.png",
         "image_fit": "cover",
-        "image_bg": "#F2F0EE",
+        "image_bg": "#FDFAF4",
         "image_pos_desktop": "center center",
         "image_pos_mobile": "center center",
-        "height_desktop": 80,
-        "height_mobile": 85,
+        "height_desktop": 75,
+        "height_mobile": 95,
         "eyebrow": "NEW IN",
         "heading": "Nude. Stacked",
         "subheading": "The stacking game that turns a quiet night into a long one.",
-        "body": "<p>Fifty-two cards, three levels and a tower that always falls at the worst possible moment. Packed in a velvet pouch with a blindfold.</p>",
+        "body": "<p>Fifty-two cards, three levels, and a tower that always falls at the worst possible moment.</p>",
         "eyebrow_color": "#D92B2B",
         "heading_color": "#1A1A1A",
         "sub_color": "#2C2C2C",
@@ -50,23 +69,24 @@
         "btn1_border": "#D92B2B",
         "btn2_text": "",
         "btn2_url": "",
-        "h_pos": "right",
+        "h_pos": "left",
         "v_pos": "middle",
         "text_align": "left",
         "h_pos_mobile": "center",
         "v_pos_mobile": "bottom",
         "text_align_mobile": "center",
-        "copy_width": 520,
+        "copy_width": 480,
         "scrim_style": "solid",
         "overlay_opacity_desktop": 0,
-        "overlay_opacity_mobile": 30,
+        "overlay_opacity_mobile": 0,
         "overlay_color": "#FFFFFF",
         "pad_top_desktop": 64,
         "pad_bottom_desktop": 64,
-        "pad_side_desktop": 48,
+        "pad_side_desktop": 64,
         "pad_top_mobile": 32,
         "pad_bottom_mobile": 44,
-        "pad_side_mobile": 20
+        "pad_side_mobile": 20,
+        "btn_radius": "999"
       }
     },
     "banner-chocolate": {
@@ -115,18 +135,24 @@
         "pad_side_desktop": 56,
         "pad_top_mobile": 32,
         "pad_bottom_mobile": 48,
-        "pad_side_mobile": 20
+        "pad_side_mobile": 20,
+        "btn_radius": "999"
       }
     },
     "home-product-grid": {
       "type": "home-product-grid",
       "settings": {
-        "eyebrow": "The Collection",
-        "heading": "Rituals worth staying in for.",
+        "eyebrow": "",
+        "heading": "",
         "collection": "",
         "products_limit": 8,
         "view_all_text": "View All Products",
-        "view_all_url": ""
+        "view_all_url": "",
+        "show_divider": false,
+        "pad_top_desktop": 72,
+        "pad_bottom_desktop": 72,
+        "pad_top_mobile": 40,
+        "pad_bottom_mobile": 40
       }
     },
     "story-aphrodisiac": {
@@ -239,10 +265,10 @@
   },
   "order": [
     "home-hero",
+    "home-product-grid",
     "value-strip",
     "banner-nude",
     "banner-chocolate",
-    "home-product-grid",
     "story-aphrodisiac",
     "social-proof",
     "email-capture",
