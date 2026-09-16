@@ -12,24 +12,36 @@
   assign img_m = s.image_mobile | default: img
 
   case s.h_pos
-    when 'left'  then assign justify = 'flex-start'
-    when 'right' then assign justify = 'flex-end'
-    else assign justify = 'center'
+    when 'left'
+      assign justify = 'flex-start'
+    when 'right'
+      assign justify = 'flex-end'
+    else
+      assign justify = 'center'
   endcase
   case s.v_pos
-    when 'top'    then assign align = 'flex-start'
-    when 'bottom' then assign align = 'flex-end'
-    else assign align = 'center'
+    when 'top'
+      assign align = 'flex-start'
+    when 'bottom'
+      assign align = 'flex-end'
+    else
+      assign align = 'center'
   endcase
   case s.h_pos_mobile
-    when 'left'  then assign justify_m = 'flex-start'
-    when 'right' then assign justify_m = 'flex-end'
-    else assign justify_m = 'center'
+    when 'left'
+      assign justify_m = 'flex-start'
+    when 'right'
+      assign justify_m = 'flex-end'
+    else
+      assign justify_m = 'center'
   endcase
   case s.v_pos_mobile
-    when 'top'    then assign align_m = 'flex-start'
-    when 'bottom' then assign align_m = 'flex-end'
-    else assign align_m = 'center'
+    when 'top'
+      assign align_m = 'flex-start'
+    when 'bottom'
+      assign align_m = 'flex-end'
+    else
+      assign align_m = 'center'
   endcase
 -%}
 
