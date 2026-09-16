@@ -37,6 +37,7 @@
     "quick_add_enable": true,
     "show_age_gate": false,
     "show_allergen_notice": true,
+    "klaviyo_sms_list_id": "X8gdAr",
     "sections": {
       "header": {
         "type": "header",
@@ -55,6 +56,8 @@
         "type": "home-hero",
         "settings": {
           "section_hidden": false,
+          "hero_bg_image": "shopify://shop_images/6be86923-b928-4928-a089-c1f290f31af0.png",
+          "mobile_hero_image": "shopify://shop_images/ae3e7b79-5ecb-4bf8-b041-39c0c1d2714e.png",
           "eyebrow": "A new culture of connection",
           "headline": "<p>Rewriting how <em>couples</em> do date night.</p>",
           "subheadline": "Novel intimate sensory experiences, monthly date night rituals for modern relationships.",
@@ -215,7 +218,6 @@
         "disabled": false,
         "settings": {}
       }
-    },
-    "klaviyo_sms_list_id": "X8gdAr"
+    }
   }
 }
