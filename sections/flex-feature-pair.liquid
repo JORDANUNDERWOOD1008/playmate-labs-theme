@@ -1,0 +1,330 @@
+{%- comment -%}
+  PLAYMATE LABS — FEATURE PAIR
+  Two large tiles side by side, equal visual weight. Built for giving two
+  hero products the same billing rather than ranking one above the other.
+  Each tile owns its image (desktop + mobile), copy, colours and button.
+  Copy can sit over the photo or beneath it.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  case s.text_align
+    when 'left'
+      assign flex_align = 'flex-start'
+    when 'right'
+      assign flex_align = 'flex-end'
+    else
+      assign flex_align = 'center'
+  endcase
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .fp {
+    padding-top: {{ s.pad_top_desktop }}px;
+    padding-bottom: {{ s.pad_bottom_desktop }}px;
+    {%- if s.bg_color != blank %}background: {{ s.bg_color }};{% endif %}
+  }
+  #shopify-section-{{ section.id }} .fp__head {
+    text-align: {{ s.heading_align }};
+    max-width: 720px;
+    margin: 0 auto {{ s.head_gap }}px;
+  }
+  #shopify-section-{{ section.id }} .fp__eyebrow {
+    display:block; font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+    margin-bottom:.7rem; color:{{ s.section_eyebrow_color }};
+  }
+  #shopify-section-{{ section.id }} .fp__title {
+    color:{{ s.section_heading_color }}; margin-bottom:.5rem;
+  }
+  #shopify-section-{{ section.id }} .fp__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: {{ s.gap }}px;
+  }
+  #shopify-section-{{ section.id }} .fp__tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: {% if s.copy_position == 'over' %}{{ s.vertical_align }}{% else %}flex-start{% endif %};
+    align-items: {{ flex_align }};
+    overflow: hidden;
+    border-radius: {{ s.corner_radius }}px;
+    {%- if s.copy_position == 'over' %}
+    aspect-ratio: {{ s.tile_ratio }};
+    {%- endif %}
+  }
+  #shopify-section-{{ section.id }} .fp__media {
+    {%- if s.copy_position == 'over' %}
+    position: absolute; inset: 0;
+    {%- else %}
+    position: relative; width: 100%;
+    aspect-ratio: {{ s.tile_ratio }};
+    border-radius: {{ s.corner_radius }}px;
+    overflow: hidden;
+    margin-bottom: 1.1rem;
+    {%- endif %}
+  }
+  #shopify-section-{{ section.id }} .fp__img {
+    width:100%; height:100%; display:block;
+    object-fit: {{ s.image_fit }};
+    transition: transform .6s cubic-bezier(.4,0,.2,1);
+  }
+  {%- if s.zoom_on_hover %}
+  #shopify-section-{{ section.id }} .fp__tile:hover .fp__img { transform: scale(1.04); }
+  {%- endif %}
+  #shopify-section-{{ section.id }} .fp__scrim {
+    position:absolute; inset:0; pointer-events:none;
+    background: linear-gradient(to top, {{ s.overlay_color }} 0%, transparent 62%);
+    opacity: {{ s.overlay_opacity_desktop | divided_by: 100.0 }};
+  }
+  #shopify-section-{{ section.id }} .fp__copy {
+    position: relative; z-index: 2;
+    width: 100%;
+    text-align: {{ s.text_align }};
+    {%- if s.copy_position == 'over' %}padding: {{ s.copy_pad }}px;{% endif %}
+  }
+  #shopify-section-{{ section.id }} .fp__btn {
+    display:inline-flex; align-items:center; justify-content:center;
+    margin-top: 1rem; padding: .8rem 1.8rem;
+    border-radius: {{ s.btn_radius }}px;
+    font-family: var(--font-sans);
+    font-size: {{ s.btn_font_size }}px; font-weight:600;
+    letter-spacing:.1em; text-transform:uppercase; white-space:nowrap;
+    transition: all var(--transition-mid, .3s ease);
+  }
+  #shopify-section-{{ section.id }} .fp__btn:hover { opacity:.88; }
+
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .fp {
+      padding-top: {{ s.pad_top_mobile }}px;
+      padding-bottom: {{ s.pad_bottom_mobile }}px;
+      {%- if s.bg_color_mobile != blank %}background: {{ s.bg_color_mobile }};{% endif %}
+    }
+    #shopify-section-{{ section.id }} .fp__grid {
+      grid-template-columns: {% if s.stack_mobile %}1fr{% else %}repeat(2, 1fr){% endif %};
+      gap: {{ s.gap_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .fp__tile {
+      {%- if s.copy_position == 'over' %}aspect-ratio: {{ s.tile_ratio_mobile }};{% endif %}
+    }
+    #shopify-section-{{ section.id }} .fp__media {
+      {%- unless s.copy_position == 'over' %}aspect-ratio: {{ s.tile_ratio_mobile }};{% endunless %}
+    }
+    #shopify-section-{{ section.id }} .fp__scrim {
+      opacity: {{ s.overlay_opacity_mobile | divided_by: 100.0 }};
+    }
+    #shopify-section-{{ section.id }} .fp__copy {
+      text-align: {{ s.text_align_mobile }};
+      {%- if s.copy_position == 'over' %}padding: {{ s.copy_pad_mobile }}px;{% endif %}
+    }
+    #shopify-section-{{ section.id }} .fp__btn { font-size: {{ s.btn_font_size_mobile }}px; }
+    #shopify-section-{{ section.id }} .fp__head { margin-bottom: {{ s.head_gap_mobile }}px; }
+  }
+
+  {%- for block in section.blocks -%}
+    #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__eyebrow-t { color: {{ block.settings.eyebrow_color }}; }
+    #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__name    { color: {{ block.settings.title_color }}; }
+    #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__tag     { color: {{ block.settings.tagline_color }}; }
+    #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__btn {
+      background: {{ block.settings.btn_bg }};
+      color: {{ block.settings.btn_label_color }};
+      border: 1px solid {{ block.settings.btn_border | default: block.settings.btn_bg }};
+    }
+    #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__media { background: {{ block.settings.image_bg }}; }
+  {%- endfor -%}
+{%- endstyle -%}
+
+<section class="fp">
+  <div class="container">
+    {%- if s.section_eyebrow != blank or s.section_heading != blank -%}
+      <div class="fp__head">
+        {%- if s.section_eyebrow != blank -%}<span class="fp__eyebrow">{{ s.section_eyebrow }}</span>{%- endif -%}
+        {%- if s.section_heading != blank -%}<h2 class="fp__title heading-lg">{{ s.section_heading }}</h2>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="fp__grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign img = block.settings.image
+          assign img_m = block.settings.image_mobile | default: img
+        -%}
+        <a class="fp__tile fp__tile--{{ block.id }}"
+           href="{{ block.settings.url | default: '#' }}" {{ block.shopify_attributes }}>
+          <div class="fp__media">
+            {%- if img != blank -%}
+              <img class="fp__img fp__img--d"
+                   src="{{ img | image_url: width: 1200 }}"
+                   srcset="{{ img | image_url: width: 600 }} 600w,
+                           {{ img | image_url: width: 900 }} 900w,
+                           {{ img | image_url: width: 1200 }} 1200w"
+                   sizes="(max-width: 768px) 92vw, 46vw"
+                   width="{{ img.width }}" height="{{ img.height }}"
+                   alt="{{ img.alt | escape }}" loading="lazy" decoding="async">
+              {%- if img_m != img -%}
+                <img class="fp__img fp__img--m"
+                     src="{{ img_m | image_url: width: 900 }}"
+                     width="{{ img_m.width }}" height="{{ img_m.height }}"
+                     alt="{{ img_m.alt | escape }}" loading="lazy" decoding="async"
+                     style="display:none">
+              {%- endif -%}
+            {%- else -%}
+              {{ 'product-1' | placeholder_svg_tag: 'fp__img' }}
+            {%- endif -%}
+            {%- if s.copy_position == 'over' -%}<div class="fp__scrim"></div>{%- endif -%}
+          </div>
+
+          <div class="fp__copy">
+            {%- if block.settings.eyebrow != blank -%}
+              <span class="fp__eyebrow fp__eyebrow-t">{{ block.settings.eyebrow }}</span>
+            {%- endif -%}
+            {%- if block.settings.title != blank -%}
+              <h3 class="fp__name heading-md">{{ block.settings.title }}</h3>
+            {%- endif -%}
+            {%- if block.settings.tagline != blank -%}
+              <p class="fp__tag">{{ block.settings.tagline }}</p>
+            {%- endif -%}
+            {%- if block.settings.btn_text != blank -%}
+              <span class="fp__btn">{{ block.settings.btn_text }}</span>
+            {%- endif -%}
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- assign has_mobile = false -%}
+{%- for block in section.blocks -%}
+  {%- if block.settings.image_mobile != blank -%}{%- assign has_mobile = true -%}{%- endif -%}
+{%- endfor -%}
+{%- if has_mobile -%}
+  {%- style -%}
+    @media (max-width: 768px) {
+      #shopify-section-{{ section.id }} .fp__img--d { display: none; }
+      #shopify-section-{{ section.id }} .fp__img--m { display: block !important; }
+    }
+  {%- endstyle -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Feature Pair",
+  "tag": "section",
+  "max_blocks": 3,
+  "settings": [
+    { "type": "header", "content": "✍️ Section heading" },
+    { "type": "text", "id": "section_eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "section_heading", "label": "Heading" },
+    { "type": "select", "id": "heading_align", "label": "Heading alignment",
+      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Centre"}],
+      "default": "center" },
+    { "type": "color", "id": "section_eyebrow_color", "label": "Eyebrow colour", "default": "#C9A96E" },
+    { "type": "color", "id": "section_heading_color", "label": "Heading colour", "default": "#1A1A1A" },
+    { "type": "range", "id": "head_gap", "min": 0, "max": 96, "step": 4, "unit": "px",
+      "label": "Gap below heading — desktop", "default": 48 },
+    { "type": "range", "id": "head_gap_mobile", "min": 0, "max": 96, "step": 4, "unit": "px",
+      "label": "Gap below heading — mobile", "default": 28 },
+
+    { "type": "header", "content": "🧱 Tiles" },
+    { "type": "select", "id": "copy_position", "label": "Copy position",
+      "options": [{"value":"over","label":"Over the photo"},
+                  {"value":"below","label":"Beneath the photo"}],
+      "default": "over" },
+    { "type": "select", "id": "tile_ratio", "label": "Tile shape — desktop",
+      "options": [{"value":"1/1","label":"Square"},{"value":"4/5","label":"Portrait 4:5"},
+                  {"value":"3/4","label":"Portrait 3:4"},{"value":"4/3","label":"Landscape 4:3"},
+                  {"value":"16/9","label":"Wide 16:9"}],
+      "default": "4/5" },
+    { "type": "select", "id": "tile_ratio_mobile", "label": "Tile shape — mobile",
+      "options": [{"value":"1/1","label":"Square"},{"value":"4/5","label":"Portrait 4:5"},
+                  {"value":"3/4","label":"Portrait 3:4"},{"value":"4/3","label":"Landscape 4:3"}],
+      "default": "4/5" },
+    { "type": "select", "id": "image_fit", "label": "Image fit",
+      "options": [{"value":"cover","label":"Cover — fill, crop the overflow"},
+                  {"value":"contain","label":"Contain — show it all, never crop"}],
+      "default": "cover",
+      "info": "Contain suits packshots on white; set each tile's backdrop to match." },
+    { "type": "checkbox", "id": "stack_mobile", "label": "Stack tiles on mobile", "default": true,
+      "info": "Untick to keep them side by side on a phone." },
+    { "type": "checkbox", "id": "zoom_on_hover", "label": "Zoom photo on hover", "default": true },
+    { "type": "range", "id": "corner_radius", "min": 0, "max": 32, "step": 2, "unit": "px",
+      "label": "Corner radius", "default": 10 },
+    { "type": "range", "id": "gap", "min": 0, "max": 80, "step": 4, "unit": "px",
+      "label": "Gap between tiles — desktop", "default": 24 },
+    { "type": "range", "id": "gap_mobile", "min": 0, "max": 60, "step": 4, "unit": "px",
+      "label": "Gap between tiles — mobile", "default": 16 },
+
+    { "type": "header", "content": "🧭 Copy placement" },
+    { "type": "select", "id": "vertical_align", "label": "Vertical position (copy over photo)",
+      "options": [{"value":"flex-start","label":"Top"},{"value":"center","label":"Middle"},
+                  {"value":"flex-end","label":"Bottom"}],
+      "default": "flex-end" },
+    { "type": "select", "id": "text_align", "label": "Text alignment — desktop",
+      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Centre"},
+                  {"value":"right","label":"Right"}], "default": "left" },
+    { "type": "select", "id": "text_align_mobile", "label": "Text alignment — mobile",
+      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Centre"},
+                  {"value":"right","label":"Right"}], "default": "center" },
+    { "type": "range", "id": "copy_pad", "min": 8, "max": 64, "step": 4, "unit": "px",
+      "label": "Copy inset — desktop", "default": 32 },
+    { "type": "range", "id": "copy_pad_mobile", "min": 8, "max": 48, "step": 4, "unit": "px",
+      "label": "Copy inset — mobile", "default": 20 },
+
+    { "type": "header", "content": "🌓 Overlay (copy over photo)" },
+    { "type": "range", "id": "overlay_opacity_desktop", "min": 0, "max": 100, "step": 5, "unit": "%",
+      "label": "Strength — desktop", "default": 60 },
+    { "type": "range", "id": "overlay_opacity_mobile", "min": 0, "max": 100, "step": 5, "unit": "%",
+      "label": "Strength — mobile", "default": 70 },
+    { "type": "color", "id": "overlay_color", "label": "Colour", "default": "#1A0A06" },
+
+    { "type": "header", "content": "🔘 Buttons" },
+    { "type": "select", "id": "btn_radius", "label": "Corner style",
+      "options": [{"value":"999","label":"Pill — site standard"},
+                  {"value":"8","label":"Rounded"},{"value":"0","label":"Square"}],
+      "default": "999" },
+    { "type": "range", "id": "btn_font_size", "min": 10, "max": 16, "step": 1, "unit": "px",
+      "label": "Text size — desktop", "default": 12 },
+    { "type": "range", "id": "btn_font_size_mobile", "min": 9, "max": 15, "step": 1, "unit": "px",
+      "label": "Text size — mobile", "default": 11 },
+
+    { "type": "header", "content": "📐 Spacing" },
+    { "type": "range", "id": "pad_top_desktop", "min": 0, "max": 200, "step": 4, "unit": "px",
+      "label": "Padding top — desktop", "default": 96 },
+    { "type": "range", "id": "pad_bottom_desktop", "min": 0, "max": 200, "step": 4, "unit": "px",
+      "label": "Padding bottom — desktop", "default": 96 },
+    { "type": "range", "id": "pad_top_mobile", "min": 0, "max": 200, "step": 4, "unit": "px",
+      "label": "Padding top — mobile", "default": 56 },
+    { "type": "range", "id": "pad_bottom_mobile", "min": 0, "max": 200, "step": 4, "unit": "px",
+      "label": "Padding bottom — mobile", "default": 56 },
+
+    { "type": "header", "content": "🎨 Section background" },
+    { "type": "color_background", "id": "bg_color", "label": "Background — desktop" },
+    { "type": "color_background", "id": "bg_color_mobile", "label": "Background — mobile" }
+  ],
+  "blocks": [
+    { "type": "tile", "name": "Tile", "limit": 3,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "image_picker", "id": "image_mobile", "label": "Mobile image",
+          "info": "Optional. Falls back to the main image." },
+        { "type": "color", "id": "image_bg", "label": "Backdrop behind the photo", "default": "#FAF7F2" },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Product name" },
+        { "type": "text", "id": "tagline", "label": "Tagline" },
+        { "type": "url", "id": "url", "label": "Tile link" },
+        { "type": "text", "id": "btn_text", "label": "Button text", "default": "Shop now" },
+        { "type": "color", "id": "eyebrow_color", "label": "Eyebrow colour", "default": "#C9A96E" },
+        { "type": "color", "id": "title_color", "label": "Title colour", "default": "#FFFFFF" },
+        { "type": "color", "id": "tagline_color", "label": "Tagline colour", "default": "#EDE4DA" },
+        { "type": "color", "id": "btn_bg", "label": "Button background", "default": "#FFFFFF" },
+        { "type": "color", "id": "btn_label_color", "label": "Button text", "default": "#1A1A1A" },
+        { "type": "color", "id": "btn_border", "label": "Button border", "default": "#FFFFFF" }
+      ]}
+  ],
+  "presets": [
+    { "name": "Feature Pair",
+      "blocks": [{ "type": "tile" }, { "type": "tile" }] }
+  ]
+}
+{% endschema %}

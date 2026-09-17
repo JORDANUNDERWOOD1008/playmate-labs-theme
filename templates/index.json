@@ -177,7 +177,8 @@
         "pad_top_mobile": 32,
         "pad_bottom_mobile": 44,
         "pad_side_mobile": 20
-      }
+      },
+      "disabled": true
     },
     "story-aphrodisiac": {
       "type": "flex-image-text",
@@ -435,18 +436,98 @@
         "pad_bottom_desktop": 96,
         "pad_top_mobile": 56,
         "pad_bottom_mobile": 56
+      },
+      "disabled": true
+    },
+    "feature-pair": {
+      "type": "flex-feature-pair",
+      "blocks": {
+        "nude": {
+          "type": "tile",
+          "settings": {
+            "image": "shopify://shop_images/nude-stacked-cards-blocks-pouch-portrait.png",
+            "image_bg": "#FFFFFF",
+            "eyebrow": "NEW IN",
+            "title": "Nude. Stacked",
+            "tagline": "The stacking game that turns a quiet night into a long one.",
+            "url": "/products/nude-stacked",
+            "btn_text": "Shop Nude",
+            "eyebrow_color": "#D92B2B",
+            "title_color": "#1A1A1A",
+            "tagline_color": "#4A4A4A",
+            "btn_bg": "#D92B2B",
+            "btn_label_color": "#FFFFFF",
+            "btn_border": "#D92B2B"
+          }
+        },
+        "choc": {
+          "type": "tile",
+          "settings": {
+            "image": "shopify://shop_images/chocolate-hearts-product-studio-portrait.png",
+            "image_bg": "#FAF7F2",
+            "eyebrow": "THE ORIGINAL",
+            "title": "Aphrodisiac Chocolate Hearts",
+            "tagline": "Vanilla, hot honey and black raspberry. Made to be broken in half.",
+            "url": "/collections/couples-chocolate-collection",
+            "btn_text": "Shop Chocolate",
+            "eyebrow_color": "#C9A96E",
+            "title_color": "#1A1A1A",
+            "tagline_color": "#4A4A4A",
+            "btn_bg": "#6B1E3A",
+            "btn_label_color": "#F5EFE6",
+            "btn_border": "#6B1E3A"
+          }
+        }
+      },
+      "block_order": [
+        "nude",
+        "choc"
+      ],
+      "settings": {
+        "section_eyebrow": "THE RANGE",
+        "section_heading": "Two ways to change the evening",
+        "heading_align": "center",
+        "section_eyebrow_color": "#C9A96E",
+        "section_heading_color": "#1A1A1A",
+        "head_gap": 48,
+        "head_gap_mobile": 28,
+        "copy_position": "below",
+        "tile_ratio": "4/5",
+        "tile_ratio_mobile": "4/5",
+        "image_fit": "cover",
+        "stack_mobile": true,
+        "zoom_on_hover": true,
+        "corner_radius": 10,
+        "gap": 24,
+        "gap_mobile": 16,
+        "vertical_align": "flex-end",
+        "text_align": "left",
+        "text_align_mobile": "center",
+        "copy_pad": 32,
+        "copy_pad_mobile": 20,
+        "overlay_opacity_desktop": 0,
+        "overlay_opacity_mobile": 0,
+        "overlay_color": "#1A0A06",
+        "btn_radius": "999",
+        "btn_font_size": 12,
+        "btn_font_size_mobile": 11,
+        "pad_top_desktop": 96,
+        "pad_bottom_desktop": 96,
+        "pad_top_mobile": 56,
+        "pad_bottom_mobile": 56
       }
     }
   },
   "order": [
     "home-hero",
-    "home-product-grid",
     "value-strip",
-    "banner-nude",
-    "story-chocolate",
+    "feature-pair",
+    "home-product-grid",
     "story-aphrodisiac",
     "social-proof",
     "email-capture",
+    "banner-nude",
+    "story-chocolate",
     "home-featured-drop",
     "experience-cta",
     "events-preview",
