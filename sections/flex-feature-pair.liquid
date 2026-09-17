@@ -172,7 +172,7 @@
                    sizes="(max-width: 768px) 92vw, 46vw"
                    width="{{ img.width }}" height="{{ img.height }}"
                    alt="{{ img.alt | escape }}" loading="lazy" decoding="async">
-              {%- if img_m != img -%}
+              {%- if block.settings.image_mobile != blank and block.settings.image_mobile != img -%}
                 <img class="fp__img fp__img--m"
                      src="{{ img_m | image_url: width: 900 }}"
                      width="{{ img_m.width }}" height="{{ img_m.height }}"
@@ -205,18 +205,27 @@
   </div>
 </section>
 
-{%- assign has_mobile = false -%}
-{%- for block in section.blocks -%}
-  {%- if block.settings.image_mobile != blank -%}{%- assign has_mobile = true -%}{%- endif -%}
-{%- endfor -%}
-{%- if has_mobile -%}
-  {%- style -%}
+{%- comment -%}
+  The swap has to be per tile. A section-wide flag hid every tile's desktop
+  image as soon as ANY tile had a mobile one — and a tile whose mobile image
+  is blank, or identical to its desktop image, renders no --m element to take
+  its place, so the tile went blank. Scope each rule to its own block id and
+  only emit it when that tile genuinely has a second, different image.
+{%- endcomment -%}
+{%- style -%}
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign bimg = block.settings.image
+      assign bimg_m = block.settings.image_mobile
+    -%}
+    {%- if bimg_m != blank and bimg_m != bimg -%}
     @media (max-width: 768px) {
-      #shopify-section-{{ section.id }} .fp__img--d { display: none; }
-      #shopify-section-{{ section.id }} .fp__img--m { display: block !important; }
+      #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__img--d { display: none; }
+      #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__img--m { display: block !important; }
     }
-  {%- endstyle -%}
-{%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endstyle -%}
 
 {% schema %}
 {

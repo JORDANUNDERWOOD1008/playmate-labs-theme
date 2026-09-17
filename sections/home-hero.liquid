@@ -25,6 +25,8 @@
     --hero-italic-color: {{ hs.italic_color }};
     --hero-sub-color: {{ hs.sub_color }};
     --hero-highlight-color: {{ hs.highlight_color }};
+    --hero-trust-color: {{ hs.trust_color }};
+    --hero-stars-color: {{ hs.stars_color }};
     --hero-text-offset: {{ hs.text_offset_desktop }}px;
     --hero-btn-offset: {{ hs.btn_offset_desktop }}px;
     --hero-btn-gap: {{ hs.btn_gap }}px;
@@ -50,6 +52,8 @@
       {%- if hs.italic_color_mobile != blank %}--hero-italic-color: {{ hs.italic_color_mobile }};{% endif %}
       {%- if hs.sub_color_mobile != blank %}--hero-sub-color: {{ hs.sub_color_mobile }};{% endif %}
       {%- if hs.highlight_color_mobile != blank %}--hero-highlight-color: {{ hs.highlight_color_mobile }};{% endif %}
+      {%- if hs.trust_color_mobile != blank %}--hero-trust-color: {{ hs.trust_color_mobile }};{% endif %}
+      {%- if hs.stars_color_mobile != blank %}--hero-stars-color: {{ hs.stars_color_mobile }};{% endif %}
       --hero-text-offset: {{ hs.text_offset_mobile }}px;
       --hero-btn-offset: {{ hs.btn_offset_mobile }}px;
       --hero-top-space: {{ hs.top_space_mobile }}%;
@@ -535,6 +539,31 @@
       "type": "color",
       "id": "highlight_color_mobile",
       "label": "Highlighted word — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "trust_color",
+      "label": "Trust line — desktop",
+      "default": "#6B6B6B",
+      "info": "The star rating and shipping line under the buttons."
+    },
+    {
+      "type": "color",
+      "id": "trust_color_mobile",
+      "label": "Trust line — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "stars_color",
+      "label": "Stars — desktop",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "stars_color_mobile",
+      "label": "Stars — mobile",
       "info": "Leave blank to use the desktop colour."
     },
     {

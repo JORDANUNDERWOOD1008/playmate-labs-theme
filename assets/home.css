@@ -176,7 +176,8 @@
   align-items: center;
   gap: 1rem;
   font-size: 0.8125rem;
-  color: rgba(245, 239, 230, 0.5);
+  /* was a hardcoded translucent cream, invisible on a light photo */
+  color: var(--hero-trust-color, rgba(245, 239, 230, 0.5));
 }
 
 .hero-trust-item {
@@ -185,7 +186,10 @@
   gap: 0.375rem;
 }
 
-.hero-trust-item .star-rating { font-size: 0.75rem; }
+.hero-trust-item .star-rating {
+  font-size: 0.75rem;
+  color: var(--hero-stars-color, var(--gold));
+}
 
 .hero-trust-dot {
   opacity: 0.3;
