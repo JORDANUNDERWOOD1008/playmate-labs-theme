@@ -17,12 +17,33 @@
 -%}
 
 {%- style -%}
+  #shopify-section-{{ section.id }} .st { position: relative; overflow: hidden; }
+  #shopify-section-{{ section.id }} .st__bg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: {{ s.bg_pos_x }}% {{ s.bg_pos_y }}%;
+  }
+  #shopify-section-{{ section.id }} .st__veil {
+    position: absolute; inset: 0; pointer-events: none;
+    background: {{ s.bg_overlay_color }};
+    opacity: {{ s.bg_overlay_opacity | divided_by: 100.0 }};
+  }
+  #shopify-section-{{ section.id }} .st > .container { position: relative; z-index: 2; }
+  @media (max-width: 768px) {
+    {%- unless s.bg_show_mobile %}
+    #shopify-section-{{ section.id }} .st__bg,
+    #shopify-section-{{ section.id }} .st__veil { display: none; }
+    {%- endunless %}
+    #shopify-section-{{ section.id }} .st__bg {
+      object-position: {{ s.bg_pos_x_mobile }}% {{ s.bg_pos_y_mobile }}%;
+    }
+  }
   #shopify-section-{{ section.id }} .st {
     --st-fg: {{ s.text_color }};
     --st-accent: {{ s.accent_color }};
   }
   #shopify-section-{{ section.id }} .st__inner {
-    max-width: {{ s.content_width }}px;
+    max-width: {{ s.copy_width }}px;
     margin-inline: {% if s.content_align == 'center' %}auto{% else %}0{% endif %};
     {%- if s.layout == 'split' %}
     display: grid;
@@ -55,6 +76,17 @@
 {%- endstyle -%}
 
 <section class="section st" style="text-align:{{ s.text_align }};">
+  {%- if s.bg_image != blank -%}
+    {%- assign bg_m = s.bg_image_mobile | default: s.bg_image -%}
+    <img class="st__bg" src="{{ s.bg_image | image_url: width: 2400 }}"
+         srcset="{{ bg_m | image_url: width: 900 }} 900w,
+                 {{ s.bg_image | image_url: width: 1600 }} 1600w,
+                 {{ s.bg_image | image_url: width: 2400 }} 2400w"
+         sizes="100vw"
+         width="{{ s.bg_image.width }}" height="{{ s.bg_image.height }}"
+         alt="{{ s.bg_image.alt | escape }}" loading="lazy" decoding="async">
+    <span class="st__veil"></span>
+  {%- endif -%}
   <div class="container">
     <div class="st__inner">
       <div class="st__lead">
@@ -186,13 +218,14 @@
     },
     {
       "type": "range",
-      "id": "content_width",
-      "label": "Content width",
-      "min": 600,
-      "max": 1400,
+      "id": "copy_width",
+      "label": "Copy column width",
+      "min": 300,
+      "max": 1200,
       "step": 20,
       "unit": "px",
-      "default": 1120
+      "default": 520,
+      "info": "Keep it inside the clear part of the background photograph."
     },
     {
       "type": "select",
@@ -353,6 +386,84 @@
       "id": "cta_border",
       "label": "Button border",
       "default": "#F5EFE6"
+    },
+    {
+      "type": "header",
+      "content": "Background photograph"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Image",
+      "info": "Place the copy over the emptiest part of it."
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image_mobile",
+      "label": "Image — mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "bg_show_mobile",
+      "label": "Show the image on mobile",
+      "default": false,
+      "info": "A wide image crops hard in a tall mobile section. Off falls back to the flat background colour."
+    },
+    {
+      "type": "range",
+      "id": "bg_pos_x",
+      "label": "Image focus — across",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "bg_pos_y",
+      "label": "Image focus — up/down",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "bg_pos_x_mobile",
+      "label": "Image focus — across, mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "bg_pos_y_mobile",
+      "label": "Image focus — up/down, mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "bg_overlay_color",
+      "label": "Darkening wash",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "range",
+      "id": "bg_overlay_opacity",
+      "label": "Darkening wash opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 0
     },
     {
       "type": "header",
