@@ -204,9 +204,9 @@
             "btn_bg": "#6b1e3a",
             "btn_label_color": "#ffffff",
             "btn_border": "#6b1e3a",
-            "title_color_mobile": "#FFFFFF",
-            "tagline_color_mobile": "#F2EDE6",
-            "eyebrow_color_mobile": "#E8C89A"
+            "title_color_mobile": "",
+            "tagline_color_mobile": "",
+            "eyebrow_color_mobile": ""
           }
         },
         "choc": {
@@ -226,9 +226,9 @@
             "btn_bg": "#6b1e3a",
             "btn_label_color": "#f5efe6",
             "btn_border": "#6b1e3a",
-            "title_color_mobile": "#FFFFFF",
-            "tagline_color_mobile": "#F2EDE6",
-            "eyebrow_color_mobile": "#E8C89A"
+            "title_color_mobile": "",
+            "tagline_color_mobile": "",
+            "eyebrow_color_mobile": ""
           }
         }
       },
@@ -255,11 +255,11 @@
         "gap_mobile": 16,
         "vertical_align": "flex-end",
         "text_align": "left",
-        "text_align_mobile": "center",
+        "text_align_mobile": "left",
         "copy_pad": 32,
         "copy_pad_mobile": 20,
         "overlay_opacity_desktop": 0,
-        "overlay_opacity_mobile": 75,
+        "overlay_opacity_mobile": 0,
         "overlay_color": "#1a0a06",
         "btn_radius": "999",
         "btn_font_size": 12,
@@ -273,7 +273,7 @@
         "pad_bottom_mobile": 56,
         "bg_color": "",
         "bg_color_mobile": "",
-        "copy_position_mobile": "over",
+        "copy_position_mobile": "below",
         "overlay_reach": 60,
         "overlay_reach_mobile": 85
       }

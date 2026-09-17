@@ -161,6 +161,33 @@
       border: 1px solid {{ block.settings.btn_border | default: block.settings.btn_bg }};
     }
     #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__media { background: {{ block.settings.image_bg }}; }
+    {%- comment -%}
+      Per-tile copy placement. Photographs do not share their clear space:
+      one shot is empty at the top, the next is empty at the bottom. A single
+      section-wide alignment drops copy onto the product in one of them, so
+      each tile places its own and the scrim follows from that edge.
+    {%- endcomment -%}
+    {%- liquid
+      assign ta = block.settings.copy_align
+      if ta == 'inherit'
+        assign ta = s.vertical_align
+      endif
+      case ta
+        when 'flex-start'
+          assign scrim_dir = 'to bottom'
+        when 'center'
+          assign scrim_dir = 'to bottom'
+        else
+          assign scrim_dir = 'to top'
+      endcase
+    -%}
+    #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} { justify-content: {{ ta }}; }
+    #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__scrim {
+      background: linear-gradient({{ scrim_dir }}, {{ s.overlay_color }} 0%, {{ s.overlay_color }} {{ s.overlay_reach | times: 0.34 | round }}%, transparent {{ s.overlay_reach }}%);
+    }
+    #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__img {
+      object-position: {{ block.settings.image_pos_x }}% {{ block.settings.image_pos_y }}%;
+    }
     @media (max-width: 768px) {
       {%- if block.settings.eyebrow_color_mobile != blank %}
       #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__eyebrow-t { color: {{ block.settings.eyebrow_color_mobile }}; }
@@ -171,6 +198,27 @@
       {%- if block.settings.tagline_color_mobile != blank %}
       #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__tag { color: {{ block.settings.tagline_color_mobile }}; }
       {%- endif %}
+      {%- liquid
+        assign tam = block.settings.copy_align_mobile
+        if tam == 'inherit'
+          assign tam = ta
+        endif
+        case tam
+          when 'flex-start'
+            assign scrim_dir_m = 'to bottom'
+          when 'center'
+            assign scrim_dir_m = 'to bottom'
+          else
+            assign scrim_dir_m = 'to top'
+        endcase
+      -%}
+      #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} { justify-content: {{ tam }}; }
+      #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__scrim {
+        background: linear-gradient({{ scrim_dir_m }}, {{ s.overlay_color }} 0%, {{ s.overlay_color }} {{ s.overlay_reach_mobile | times: 0.34 | round }}%, transparent {{ s.overlay_reach_mobile }}%);
+      }
+      #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__img {
+        object-position: {{ block.settings.image_pos_x_mobile }}% {{ block.settings.image_pos_y_mobile }}%;
+      }
     }
   {%- endfor -%}
 {%- endstyle -%}
@@ -845,6 +893,99 @@
           "id": "btn_border",
           "label": "Button border",
           "default": "#FFFFFF"
+        },
+        {
+          "type": "header",
+          "content": "Copy placement on the image"
+        },
+        {
+          "type": "select",
+          "id": "copy_align",
+          "label": "Copy sits",
+          "options": [
+            {
+              "value": "inherit",
+              "label": "Same as section"
+            },
+            {
+              "value": "flex-start",
+              "label": "Top"
+            },
+            {
+              "value": "center",
+              "label": "Centre"
+            },
+            {
+              "value": "flex-end",
+              "label": "Bottom"
+            }
+          ],
+          "default": "inherit",
+          "info": "Put it over the emptiest part of this particular photograph."
+        },
+        {
+          "type": "select",
+          "id": "copy_align_mobile",
+          "label": "Copy sits — mobile",
+          "options": [
+            {
+              "value": "inherit",
+              "label": "Same as section"
+            },
+            {
+              "value": "flex-start",
+              "label": "Top"
+            },
+            {
+              "value": "center",
+              "label": "Centre"
+            },
+            {
+              "value": "flex-end",
+              "label": "Bottom"
+            }
+          ],
+          "default": "inherit"
+        },
+        {
+          "type": "range",
+          "id": "image_pos_x",
+          "label": "Image focus — across",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "image_pos_y",
+          "label": "Image focus — up/down",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "image_pos_x_mobile",
+          "label": "Image focus — across, mobile",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "image_pos_y_mobile",
+          "label": "Image focus — up/down, mobile",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 50
         }
       ]
     }
