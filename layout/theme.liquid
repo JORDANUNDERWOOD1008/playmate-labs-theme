@@ -206,6 +206,12 @@
      */
 
     /* 1. Neutralise the Shopify section wrapper — must be static */
+    {%- comment -%}
+      Skipped in floating-pill mode: pinning the header section to static with
+      auto height is exactly what leaves a band of page above the hero, and it
+      carries !important so the section cannot override it from its own styles.
+    {%- endcomment -%}
+    {%- unless settings.header_is_pills -%}
     #shopify-section-header,
     .shopify-section.site-header,
     .playmate-header-section {
@@ -213,6 +219,7 @@
       height: auto !important;
       z-index: auto !important;
     }
+    {%- endunless -%}
 
     /* 2. Only the inner nav element is fixed */
     #main-nav.site-nav {

@@ -783,6 +783,13 @@
     "name": "🧭 Header & Navigation",
     "settings": [
       {
+        "type": "checkbox",
+        "id": "header_is_pills",
+        "label": "Header uses the floating-pill style",
+        "default": false,
+        "info": "Must match the Style setting on the Header section. The layout needs to know before the header renders, and it cannot read a section setting."
+      },
+      {
         "type": "header",
         "content": "Logo Sizes"
       },

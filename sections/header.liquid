@@ -14,7 +14,7 @@
 {%- liquid
   assign logo_h = section.settings.logo_height
   assign logo_h_m = section.settings.logo_height_mobile
-  if section.settings.header_style == 'pills'
+  if settings.header_is_pills
     assign logo_h = section.settings.pill_logo_height
     assign logo_h_m = section.settings.pill_logo_height_mobile
   endif
@@ -37,7 +37,7 @@
   them. CSS only — no change to the markup order — so switching it off returns
   the original solid bar exactly.
 {%- endcomment -%}
-{%- if section.settings.header_style == 'pills' -%}
+{%- if settings.header_is_pills -%}
 {%- style -%}
   #shopify-section-{{ section.id }} .site-nav.nav-pills,
   #shopify-section-{{ section.id }} .site-nav.nav-pills.scrolled,
@@ -69,12 +69,27 @@
   #shopify-section-{{ section.id }} .nav-pills .nav-logo span {
     font-size: {{ section.settings.pill_logo_height | times: 0.7 | round }}px;
   }
+  {%- comment -%}
+    Both capsules take the same explicit height. Sizing them by padding alone
+    let them drift apart, because the icons in the right-hand pill are taller
+    than the logo in the left one.
+  {%- endcomment -%}
   #shopify-section-{{ section.id }} .nav-pills .nav-logo,
   #shopify-section-{{ section.id }} .nav-pills .nav-actions {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: {{ section.settings.pill_height }}px;
     background: {{ section.settings.pill_bg }};
     border-radius: 999px;
-    padding: {{ section.settings.pill_pad_y }}px {{ section.settings.pill_pad_x }}px;
+    padding: 0 {{ section.settings.pill_pad_x }}px;
     box-shadow: 0 2px 16px rgba(0,0,0,{{ section.settings.pill_shadow | divided_by: 100.0 }});
+  }
+  {%- comment -%} Icons must not push the capsule taller than its set height {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-icon-btn,
+  #shopify-section-{{ section.id }} .nav-pills .nav-toggle {
+    height: auto;
+    padding: 0 6px;
   }
   #shopify-section-{{ section.id }} .nav-pills .nav-logo span,
   #shopify-section-{{ section.id }} .nav-pills .nav-link,
@@ -102,7 +117,8 @@
     }
     #shopify-section-{{ section.id }} .nav-pills .nav-logo,
     #shopify-section-{{ section.id }} .nav-pills .nav-actions {
-      padding: {{ section.settings.pill_pad_y_mobile }}px {{ section.settings.pill_pad_x_mobile }}px;
+      height: {{ section.settings.pill_height_mobile }}px;
+      padding: 0 {{ section.settings.pill_pad_x_mobile }}px;
     }
     #shopify-section-{{ section.id }} .nav-pills .nav-logo span {
       font-size: {{ section.settings.pill_logo_height_mobile | times: 0.7 | round }}px;
@@ -111,7 +127,7 @@
 {%- endstyle -%}
 {%- endif -%}
 
-<nav class="site-nav{% if section.settings.dark_style %} nav-dark{% endif %}{% if section.settings.header_style == 'pills' %} nav-pills{% endif %}" id="main-nav" role="navigation" aria-label="Main navigation">
+<nav class="site-nav{% if section.settings.dark_style %} nav-dark{% endif %}{% if settings.header_is_pills %} nav-pills{% endif %}" id="main-nav" role="navigation" aria-label="Main navigation">
   <div class="nav-inner">
 
     {%- comment -%} Logo {%- endcomment -%}
@@ -382,24 +398,11 @@
     },
     {
       "type": "header",
-      "content": "🧭 Header style"
+      "content": "🧭 Floating-pill style"
     },
     {
-      "type": "select",
-      "id": "header_style",
-      "label": "Style",
-      "options": [
-        {
-          "value": "bar",
-          "label": "Solid bar (current)"
-        },
-        {
-          "value": "pills",
-          "label": "Floating pills over the page"
-        }
-      ],
-      "default": "bar",
-      "info": "Pills make the bar transparent and float the logo and actions as capsules. Switch back any time."
+      "type": "paragraph",
+      "content": "Switch this style on in Theme settings → Header & Navigation → \"Header uses the floating-pill style\". The settings below apply once it is on."
     },
     {
       "type": "checkbox",
@@ -407,6 +410,27 @@
       "label": "Float over the page",
       "default": true,
       "info": "Lets the section below start at the very top of the screen, so the pills sit on the photo instead of on a white band."
+    },
+    {
+      "type": "range",
+      "id": "pill_height",
+      "min": 32,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Pill height — desktop",
+      "default": 48,
+      "info": "Both capsules use this, so they always match."
+    },
+    {
+      "type": "range",
+      "id": "pill_height_mobile",
+      "min": 28,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Pill height — mobile",
+      "default": 40
     },
     {
       "type": "range",
@@ -464,16 +488,6 @@
     },
     {
       "type": "range",
-      "id": "pill_pad_y",
-      "min": 4,
-      "max": 24,
-      "step": 1,
-      "unit": "px",
-      "label": "Pill height padding — desktop",
-      "default": 10
-    },
-    {
-      "type": "range",
       "id": "pill_pad_x",
       "min": 8,
       "max": 40,
@@ -481,16 +495,6 @@
       "unit": "px",
       "label": "Pill width padding — desktop",
       "default": 20
-    },
-    {
-      "type": "range",
-      "id": "pill_pad_y_mobile",
-      "min": 4,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
-      "label": "Pill height padding — mobile",
-      "default": 8
     },
     {
       "type": "range",
