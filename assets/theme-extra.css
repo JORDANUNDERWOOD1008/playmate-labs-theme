@@ -353,12 +353,21 @@
   padding: 1rem 0;
   z-index: 999;
   transform: translateY(-100%);
-  transition: transform var(--transition-mid);
+  /* Sliding up by its own height left this white panel sitting across the top
+     of the page. It was only ever invisible because the opaque nav bar covered
+     it — make the nav transparent and the panel, and its close button, show
+     through. A hidden panel should not be paintable at all. */
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform var(--transition-mid), visibility 0s linear .3s;
   box-shadow: var(--shadow-md);
 }
 
 .search-bar.open {
   transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition: transform var(--transition-mid), visibility 0s;
 }
 
 .search-bar .container {
@@ -1121,6 +1130,9 @@
 
 #search-bar.open {
   transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition: transform var(--transition-mid), visibility 0s;
 }
 
 #search-bar .container {
