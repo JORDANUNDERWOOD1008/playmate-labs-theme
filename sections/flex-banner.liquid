@@ -77,6 +77,14 @@
   #shopify-section-{{ section.id }} .fb__inner {
     position: relative; z-index: 2;
     width: 100%;
+    {%- comment -%}
+      content-box on purpose. The theme's reset makes everything border-box,
+      which meant the side padding was subtracted from Content width — set it
+      to 460 with 64px padding and the text only got 332px, so a heading that
+      should have fitted on one line wrapped. Here the setting is the width
+      the copy actually gets.
+    {%- endcomment -%}
+    box-sizing: content-box;
     max-width: {{ s.copy_width }}px;
     padding: {{ s.pad_top_desktop }}px {{ s.pad_side_desktop }}px {{ s.pad_bottom_desktop }}px;
     text-align: {{ s.text_align }};
@@ -141,6 +149,7 @@
     #shopify-section-{{ section.id }} .fb__img { object-position: {{ s.image_pos_mobile }}; }
     #shopify-section-{{ section.id }} .fb__scrim { opacity: {{ s.overlay_opacity_mobile | divided_by: 100.0 }}; }
     #shopify-section-{{ section.id }} .fb__inner {
+      box-sizing: border-box;
       max-width: 100%;
       padding: {{ s.pad_top_mobile }}px {{ s.pad_side_mobile }}px {{ s.pad_bottom_mobile }}px;
       text-align: {{ s.text_align_mobile }};
@@ -687,7 +696,8 @@
       "step": 20,
       "unit": "px",
       "label": "Content width",
-      "default": 640
+      "default": 640,
+      "info": "The width the text itself gets. Side padding sits outside this."
     },
     {
       "type": "header",
@@ -780,7 +790,8 @@
       "step": 4,
       "unit": "px",
       "label": "Sides — desktop",
-      "default": 32
+      "default": 32,
+      "info": "Sits outside Content width, so widening it will not squeeze the copy."
     },
     {
       "type": "range",
