@@ -17,13 +17,11 @@
   assign h_font = settings.font_heading
   assign b_font = settings.font_body
 
-  {%- comment -%}
-    --font-display is what the theme actually uses for its largest type — the
-    hero headline, drop prices, stat numbers — while --font-serif only drives
-    the generic h1-h6 rule. So "Heading font" did not control the biggest text
-    on the page. Defaulting the accent to the heading font fixes that, while
-    still allowing a deliberately different display face.
-  {%- endcomment -%}
+  # --font-display is what the theme uses for its largest type - the hero
+  # headline, drop prices, stat numbers - while --font-serif only drives the
+  # generic h1-h6 rule. So the heading font did not control the biggest text on
+  # the page. Defaulting the display face to the heading font fixes that, while
+  # still allowing a deliberately different one.
   case settings.font_accent
     when 'playfair'
       assign accent_stack = "'Playfair Display', Georgia, serif"

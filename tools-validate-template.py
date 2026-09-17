@@ -42,6 +42,15 @@ for f in sorted(pathlib.Path('sections').glob('*.liquid')):
             d = x.get('default')
             if d is not None and (d < lo or d > hi or round((d-lo)/st, 6) % 1 != 0):
                 bad.append(f"{f.name}:{x['id']}{where} default {d} off the step grid")
+# Inside a {% liquid %} tag every line is a bare tag: {% ... %} is a syntax
+# error there, and Shopify rejects the whole file for it.
+for f in list(pathlib.Path('sections').glob('*.liquid')) + \
+         list(pathlib.Path('snippets').glob('*.liquid')) + [pathlib.Path('layout/theme.liquid')]:
+    if not f.exists(): continue
+    for m in re.finditer(r'\{%-?\s*liquid\b(.*?)-?%\}', f.read_text(), re.S):
+        if '{%' in m.group(1):
+            bad.append(f"{f.name}: '{{%' used inside a liquid tag (use # for comments)")
+
 for b in bad: print("  " + b)
 print("  ALL VALID" if not bad else f"  {len(bad)} PROBLEMS — not pushing")
 sys.exit(1 if bad else 0)
