@@ -185,8 +185,8 @@
 
   <div class="fb__inner">
     {%- if s.eyebrow != blank -%}<span class="fb__eyebrow">{{ s.eyebrow }}</span>{%- endif -%}
-    {%- if s.heading != blank -%}<h2 class="fb__heading">{{ s.heading }}</h2>{%- endif -%}
-    {%- if s.subheading != blank -%}<p class="fb__sub">{{ s.subheading }}</p>{%- endif -%}
+    {%- if s.heading != blank -%}<h2 class="fb__heading">{{ s.heading | newline_to_br }}</h2>{%- endif -%}
+    {%- if s.subheading != blank -%}<p class="fb__sub">{{ s.subheading | newline_to_br }}</p>{%- endif -%}
     {%- if s.body != blank -%}<div class="fb__body">{{ s.body }}</div>{%- endif -%}
     {%- if s.btn1_text != blank or s.btn2_text != blank -%}
       <div class="fb__actions">
@@ -369,14 +369,16 @@
       "label": "Eyebrow"
     },
     {
-      "type": "text",
+      "type": "textarea",
       "id": "heading",
-      "label": "Heading"
+      "label": "Heading",
+      "info": "Press Enter to break the line where you want it — useful for fitting copy into a gap in the photo."
     },
     {
-      "type": "text",
+      "type": "textarea",
       "id": "subheading",
-      "label": "Subheading"
+      "label": "Subheading",
+      "info": "Press Enter to break the line where you want it — useful for fitting copy into a gap in the photo."
     },
     {
       "type": "richtext",

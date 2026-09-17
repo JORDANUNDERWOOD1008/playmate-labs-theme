@@ -190,7 +190,7 @@
               <span class="fp__eyebrow fp__eyebrow-t">{{ block.settings.eyebrow }}</span>
             {%- endif -%}
             {%- if block.settings.title != blank -%}
-              <h3 class="fp__name heading-md">{{ block.settings.title }}</h3>
+              <h3 class="fp__name heading-md">{{ block.settings.title | newline_to_br }}</h3>
             {%- endif -%}
             {%- if block.settings.tagline != blank -%}
               <p class="fp__tag">{{ block.settings.tagline }}</p>
@@ -691,10 +691,11 @@
           "label": "Eyebrow"
         },
         {
-          "type": "text",
+          "type": "textarea",
           "id": "title",
           "label": "Title",
-          "default": "Product name"
+          "default": "Product name",
+          "info": "Press Enter to break the line where you want it — useful for fitting copy into a gap in the photo."
         },
         {
           "type": "text",

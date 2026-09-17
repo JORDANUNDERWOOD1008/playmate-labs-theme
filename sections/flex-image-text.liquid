@@ -97,7 +97,7 @@
           <span class="fit-eyebrow">{{ section.settings.eyebrow }}</span>
         {%- endif -%}
         {%- if section.settings.heading != blank -%}
-          <h2 class="fit-heading heading-lg">{{ section.settings.heading }}</h2>
+          <h2 class="fit-heading heading-lg">{{ section.settings.heading | newline_to_br }}</h2>
         {%- endif -%}
         {%- if section.settings.body != blank -%}
           <div class="fit-body">{{ section.settings.body }}</div>
@@ -277,10 +277,11 @@
       "label": "Eyebrow"
     },
     {
-      "type": "text",
+      "type": "textarea",
       "id": "heading",
       "label": "Heading",
-      "default": "Made for shared moments"
+      "default": "Made for shared moments",
+      "info": "Press Enter to break the line where you want it — useful for fitting copy into a gap in the photo."
     },
     {
       "type": "richtext",
