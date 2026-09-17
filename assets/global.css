@@ -687,6 +687,11 @@ h1, h2, h3, h4, h5, h6 {
   text-decoration: none;
 }
 
+.nav-lockup {
+  /* vanishes from layout in the solid-bar style, so nothing moves there */
+  display: contents;
+}
+
 .nav-logo img {
   display: block;
   height: 40px;

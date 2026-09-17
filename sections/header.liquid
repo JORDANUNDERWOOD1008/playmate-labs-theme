@@ -74,10 +74,15 @@
     let them drift apart, because the icons in the right-hand pill are taller
     than the logo in the left one.
   {%- endcomment -%}
-  #shopify-section-{{ section.id }} .nav-pills .nav-logo,
+  {%- comment -%}
+    Two capsules: logo + hamburger on the left, actions on the right, both the
+    same height so they cannot drift apart.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-lockup,
   #shopify-section-{{ section.id }} .nav-pills .nav-actions {
     display: flex;
     align-items: center;
+    gap: {{ section.settings.pill_inner_gap }}px;
     box-sizing: border-box;
     height: {{ section.settings.pill_height }}px;
     background: {{ section.settings.pill_bg }};
@@ -85,6 +90,32 @@
     padding: 0 {{ section.settings.pill_pad_x }}px;
     box-shadow: 0 2px 16px rgba(0,0,0,{{ section.settings.pill_shadow | divided_by: 100.0 }});
   }
+  #shopify-section-{{ section.id }} .nav-pills .nav-logo {
+    display: flex;
+    align-items: center;
+    background: none;
+    padding: 0;
+    box-shadow: none;
+    height: auto;
+  }
+  {%- comment -%} The hamburger belongs in the left capsule at every width {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-toggle {
+    display: flex !important;
+    position: static;
+    width: 20px;
+  }
+  {%- comment -%} Cart as its own accent capsule nested in the right one {%- endcomment -%}
+  {%- if section.settings.pill_cart_accent -%}
+  #shopify-section-{{ section.id }} .nav-pills [data-cart-open] {
+    background: {{ section.settings.pill_accent }};
+    color: {{ section.settings.pill_accent_text }};
+    border-radius: 999px;
+    height: {{ section.settings.pill_height | minus: 14 }}px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+  }
+  {%- endif -%}
   {%- comment -%} Icons must not push the capsule taller than its set height {%- endcomment -%}
   #shopify-section-{{ section.id }} .nav-pills .nav-icon-btn,
   #shopify-section-{{ section.id }} .nav-pills .nav-toggle {
@@ -115,11 +146,17 @@
       padding-left: {{ section.settings.pill_edge_mobile }}px;
       padding-right: {{ section.settings.pill_edge_mobile }}px;
     }
-    #shopify-section-{{ section.id }} .nav-pills .nav-logo,
+    #shopify-section-{{ section.id }} .nav-pills .nav-lockup,
     #shopify-section-{{ section.id }} .nav-pills .nav-actions {
       height: {{ section.settings.pill_height_mobile }}px;
       padding: 0 {{ section.settings.pill_pad_x_mobile }}px;
     }
+    {%- if section.settings.pill_cart_accent %}
+    #shopify-section-{{ section.id }} .nav-pills [data-cart-open] {
+      height: {{ section.settings.pill_height_mobile | minus: 12 }}px;
+      padding: 0 11px;
+    }
+    {%- endif %}
     #shopify-section-{{ section.id }} .nav-pills .nav-logo span {
       font-size: {{ section.settings.pill_logo_height_mobile | times: 0.7 | round }}px;
     }
@@ -131,6 +168,11 @@
   <div class="nav-inner">
 
     {%- comment -%} Logo {%- endcomment -%}
+    {%- comment -%}
+      Logo and hamburger share one capsule in pill mode. The wrapper is
+      display:contents in the solid-bar style, so it changes nothing there.
+    {%- endcomment -%}
+    <div class="nav-lockup">
     <a href="{{ routes.root_url }}" class="nav-logo" aria-label="{{ shop.name }} Home">
       {%- if section.settings.logo != blank -%}
         <img src="{{ section.settings.logo | image_url: height: 160 }}"
@@ -146,6 +188,10 @@
              style="width:auto;height:var(--nav-logo-h,40px);max-width:var(--nav-logo-max,none);object-fit:contain;">
       {%- endif -%}
     </a>
+      <button class="nav-toggle" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
 
     {%- comment -%} Desktop Navigation {%- endcomment -%}
     <ul class="nav-links" role="list">
@@ -223,9 +269,7 @@
       {%- endif -%}
 
       {%- comment -%} Mobile Hamburger {%- endcomment -%}
-      <button class="nav-toggle" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
-        <span></span><span></span><span></span>
-      </button>
+
     </div>
   </div>
 </nav>
@@ -410,6 +454,23 @@
       "label": "Float over the page",
       "default": true,
       "info": "Lets the section below start at the very top of the screen, so the pills sit on the photo instead of on a white band."
+    },
+    {
+      "type": "range",
+      "id": "pill_inner_gap",
+      "min": 0,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap inside each pill",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "pill_cart_accent",
+      "label": "Cart as an accent capsule",
+      "default": true,
+      "info": "Fills the cart button with the accent colour, nested inside the right-hand pill."
     },
     {
       "type": "range",
