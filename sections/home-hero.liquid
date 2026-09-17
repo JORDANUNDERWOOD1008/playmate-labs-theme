@@ -114,10 +114,17 @@
     }
     #shopify-section-{{ section.id }} .hero-inner { display: flex; flex-direction: column; flex: 1; }
     #shopify-section-{{ section.id }} .hero-text {
-      display: flex; flex-direction: column; justify-content: space-between; flex: 1;
+      display: flex; flex-direction: column; flex: 1;
+      justify-content: {{ hs.mobile_copy_distribution }};
+      {%- unless hs.mobile_copy_distribution == 'space-between' %}
+      gap: {{ hs.copy_gap_mobile }}px;
+      {%- endunless %}
     }
     {%- comment -%} the old 70% spacer is what pinning replaces {%- endcomment -%}
+    #shopify-section-{{ section.id }} .hero-copy-bottom { padding-top: 0; }
+    {%- if hs.mobile_copy_distribution == 'space-between' %}
     #shopify-section-{{ section.id }} .hero-copy-bottom { padding-top: 1.25rem; }
+    {%- endif %}
   }
   {%- endif -%}
 
@@ -626,7 +633,43 @@
       "id": "pin_buttons_mobile",
       "label": "Pin buttons to the bottom (mobile)",
       "default": true,
-      "info": "Buttons hold the bottom of the photo and the headline moves independently above them. Untick to go back to the spacer, where 'Space above the buttons' sets their position."
+      "info": "Lets the copy column use the full height so the layout below can place the headline and buttons. Leave on."
+    },
+    {
+      "type": "select",
+      "id": "mobile_copy_distribution",
+      "label": "Headline & buttons — mobile",
+      "options": [
+        {
+          "value": "space-between",
+          "label": "Pushed apart — buttons pinned to the bottom"
+        },
+        {
+          "value": "flex-start",
+          "label": "Together, near the top"
+        },
+        {
+          "value": "center",
+          "label": "Together, centred"
+        },
+        {
+          "value": "flex-end",
+          "label": "Together, near the bottom"
+        }
+      ],
+      "default": "space-between",
+      "info": "The three 'Together' options keep the buttons snug under the headline and move the pair as one block. Use the nudge to fine-tune."
+    },
+    {
+      "type": "range",
+      "id": "copy_gap_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between headline and buttons",
+      "default": 24,
+      "info": "Only applies to the 'Together' options above."
     },
     {
       "type": "range",
