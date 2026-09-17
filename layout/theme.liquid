@@ -375,19 +375,26 @@
     {{ 'scratch-popup.css' | asset_url | stylesheet_tag }}
     {%- style -%}
       .sp {
-        --sp-bg: {{ settings.scratch_bg }};
+        --sp-bg: {{ settings.scratch_bg_color | default: '#FAF7F2' }};
+        --sp-bg-pos: {{ settings.scratch_bg_pos }};
+        --sp-bg-pos-m: {{ settings.scratch_bg_pos_m }};
+        --sp-halign: {{ settings.scratch_halign }};
+        --sp-valign: {{ settings.scratch_valign }};
+        --sp-valign-m: {{ settings.scratch_valign_m }};
+        --sp-text-align: {{ settings.scratch_text_align }};
+        --sp-text-align-m: {{ settings.scratch_text_align_m }};
+        --sp-width: {{ settings.scratch_width }}px;
+        --sp-pad: {{ settings.scratch_pad }}px;
+        --sp-pad-m: {{ settings.scratch_pad_m }}px;
         --sp-heading-color: {{ settings.scratch_heading_color }};
         --sp-sub-color: {{ settings.scratch_sub_color }};
         --sp-prize-color: {{ settings.scratch_prize_color }};
-        --sp-prize-bg: {{ settings.scratch_prize_bg }};
         --sp-btn-bg: {{ settings.scratch_btn_bg }};
         --sp-btn-text: {{ settings.scratch_btn_text }};
         --sp-heading-size: {{ settings.scratch_heading_size }}px;
         --sp-heading-size-m: {{ settings.scratch_heading_size_m }}px;
-        --sp-width: {{ settings.scratch_width }}px;
-        --sp-float-size: {{ settings.scratch_float_size }}px;
-        --sp-float-size-m: {{ settings.scratch_float_size_m }}px;
-        --sp-float-opacity: {{ settings.scratch_float_opacity | divided_by: 100.0 }};
+        --sp-prize-size: {{ settings.scratch_prize_size }}px;
+        --sp-prize-size-m: {{ settings.scratch_prize_size_m }}px;
       }
     {%- endstyle -%}
     {% render 'scratch-popup' %}

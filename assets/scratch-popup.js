@@ -26,14 +26,20 @@
   var revealed = false;
   var lastFocus = null;
 
+  var card  = document.getElementById('spCard');
+  var prize = document.getElementById('spPrize');
+
   function unlock() {
     if (revealed) return;
     revealed = true;
-    if (canvas) canvas.classList.add('is-cleared');
-    if (hint) hint.style.display = 'none';
+    // swap the foil for the reward, the way the reference does it
+    if (card)   card.hidden = true;
+    if (prize)  prize.hidden = false;
     if (submit) submit.disabled = false;
     if (reveal) reveal.hidden = true;
     el.classList.add('sp--revealed');
+    var email = document.getElementById('spEmail');
+    if (email) email.focus();
   }
 
   function setupCanvas() {

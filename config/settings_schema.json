@@ -4910,6 +4910,12 @@
       },
       {
         "type": "text",
+        "id": "scratch_prize_lead",
+        "label": "Reward lead-in",
+        "default": "You've got"
+      },
+      {
+        "type": "text",
         "id": "scratch_prize",
         "label": "Reward",
         "default": "10% OFF"
@@ -4940,52 +4946,201 @@
       },
       {
         "type": "header",
-        "content": "Floating images"
+        "content": "🖼️ Background"
       },
       {
         "type": "image_picker",
-        "id": "scratch_float_1",
-        "label": "Image 1 — top right"
+        "id": "scratch_bg",
+        "label": "Desktop background",
+        "info": "Landscape. Leave clear space where the copy block sits."
       },
       {
         "type": "image_picker",
-        "id": "scratch_float_2",
-        "label": "Image 2 — bottom right"
+        "id": "scratch_bg_mobile",
+        "label": "Mobile background",
+        "info": "Portrait. Falls back to the desktop image."
       },
       {
-        "type": "image_picker",
-        "id": "scratch_float_3",
-        "label": "Image 3 — middle"
+        "type": "select",
+        "id": "scratch_bg_pos",
+        "label": "Focal point — desktop",
+        "options": [
+          {
+            "value": "center center",
+            "label": "Centre"
+          },
+          {
+            "value": "center top",
+            "label": "Top"
+          },
+          {
+            "value": "center bottom",
+            "label": "Bottom"
+          },
+          {
+            "value": "left center",
+            "label": "Left"
+          },
+          {
+            "value": "right center",
+            "label": "Right"
+          }
+        ],
+        "default": "center center"
+      },
+      {
+        "type": "select",
+        "id": "scratch_bg_pos_m",
+        "label": "Focal point — mobile",
+        "options": [
+          {
+            "value": "center center",
+            "label": "Centre"
+          },
+          {
+            "value": "center top",
+            "label": "Top"
+          },
+          {
+            "value": "center bottom",
+            "label": "Bottom"
+          },
+          {
+            "value": "left center",
+            "label": "Left"
+          },
+          {
+            "value": "right center",
+            "label": "Right"
+          }
+        ],
+        "default": "center center"
+      },
+      {
+        "type": "header",
+        "content": "🧭 Copy block"
+      },
+      {
+        "type": "select",
+        "id": "scratch_halign",
+        "label": "Horizontal — desktop",
+        "options": [
+          {
+            "value": "flex-start",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Centre"
+          },
+          {
+            "value": "flex-end",
+            "label": "Right"
+          }
+        ],
+        "default": "flex-start"
+      },
+      {
+        "type": "select",
+        "id": "scratch_valign",
+        "label": "Vertical — desktop",
+        "options": [
+          {
+            "value": "flex-start",
+            "label": "Top"
+          },
+          {
+            "value": "center",
+            "label": "Middle"
+          },
+          {
+            "value": "flex-end",
+            "label": "Bottom"
+          }
+        ],
+        "default": "center"
+      },
+      {
+        "type": "select",
+        "id": "scratch_valign_m",
+        "label": "Vertical — mobile",
+        "options": [
+          {
+            "value": "flex-start",
+            "label": "Top"
+          },
+          {
+            "value": "center",
+            "label": "Middle"
+          },
+          {
+            "value": "flex-end",
+            "label": "Bottom"
+          }
+        ],
+        "default": "flex-start"
+      },
+      {
+        "type": "select",
+        "id": "scratch_text_align",
+        "label": "Text alignment — desktop",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Centre"
+          }
+        ],
+        "default": "center"
+      },
+      {
+        "type": "select",
+        "id": "scratch_text_align_m",
+        "label": "Text alignment — mobile",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Centre"
+          }
+        ],
+        "default": "center"
       },
       {
         "type": "range",
-        "id": "scratch_float_size",
-        "min": 120,
-        "max": 460,
+        "id": "scratch_width",
+        "min": 300,
+        "max": 700,
         "step": 10,
         "unit": "px",
-        "label": "Image size — desktop",
-        "default": 260
+        "label": "Copy block width",
+        "default": 420
       },
       {
         "type": "range",
-        "id": "scratch_float_size_m",
-        "min": 80,
-        "max": 280,
-        "step": 10,
+        "id": "scratch_pad",
+        "min": 16,
+        "max": 120,
+        "step": 4,
         "unit": "px",
-        "label": "Image size — mobile",
-        "default": 150
+        "label": "Copy block padding — desktop",
+        "default": 48
       },
       {
         "type": "range",
-        "id": "scratch_float_opacity",
-        "min": 10,
-        "max": 100,
-        "step": 5,
-        "unit": "%",
-        "label": "Image opacity",
-        "default": 100
+        "id": "scratch_pad_m",
+        "min": 12,
+        "max": 80,
+        "step": 4,
+        "unit": "px",
+        "label": "Copy block padding — mobile",
+        "default": 32
       },
       {
         "type": "header",
@@ -4993,7 +5148,7 @@
       },
       {
         "type": "color",
-        "id": "scratch_bg",
+        "id": "scratch_bg_color",
         "label": "Background",
         "default": "#FAF7F2"
       },
@@ -5014,12 +5169,6 @@
         "id": "scratch_prize_color",
         "label": "Reward text",
         "default": "#6B1E3A"
-      },
-      {
-        "type": "color",
-        "id": "scratch_prize_bg",
-        "label": "Behind the foil",
-        "default": "#FFFFFF"
       },
       {
         "type": "color",
@@ -5067,16 +5216,6 @@
       },
       {
         "type": "range",
-        "id": "scratch_width",
-        "min": 320,
-        "max": 640,
-        "step": 10,
-        "unit": "px",
-        "label": "Content width",
-        "default": 420
-      },
-      {
-        "type": "range",
         "id": "scratch_brush",
         "min": 10,
         "max": 50,
@@ -5094,6 +5233,26 @@
         "unit": "%",
         "label": "Reveal after this much is scratched",
         "default": 45
+      },
+      {
+        "type": "range",
+        "id": "scratch_prize_size",
+        "min": 22,
+        "max": 72,
+        "step": 2,
+        "unit": "px",
+        "label": "Reward size — desktop",
+        "default": 40
+      },
+      {
+        "type": "range",
+        "id": "scratch_prize_size_m",
+        "min": 18,
+        "max": 56,
+        "step": 2,
+        "unit": "px",
+        "label": "Reward size — mobile",
+        "default": 32
       }
     ]
   }

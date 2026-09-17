@@ -1,8 +1,7 @@
 {%- comment -%}
   PLAYMATE LABS — FULL-SCREEN SCRATCH POPUP
-  A full-bleed email capture with a scratch-to-reveal panel. Floating product
-  images sit around the copy. Canvas handles the scratch; when enough of it is
-  cleared the reward shows and the form unlocks.
+  A full-bleed background photograph with the copy block sitting in its empty
+  area. Scratch the foil to reveal the reward, then claim.
 
   Accessibility: the scratch is decoration, never a gate. A Reveal button is
   always present for keyboard and screen-reader users, and if canvas is
@@ -11,51 +10,47 @@
 
 {%- liquid
   assign s = settings
-  assign enabled = s.scratch_popup_enable
+  assign bg_m = s.scratch_bg_mobile | default: s.scratch_bg
 -%}
-{%- if enabled -%}
+{%- if s.scratch_popup_enable -%}
 <div class="sp" id="scratchPopup" role="dialog" aria-modal="true"
      aria-labelledby="spHeading" hidden>
+
+  {%- if s.scratch_bg != blank -%}
+    <img class="sp__bg sp__bg--d" src="{{ s.scratch_bg | image_url: width: 2000 }}"
+         srcset="{{ s.scratch_bg | image_url: width: 1200 }} 1200w,
+                 {{ s.scratch_bg | image_url: width: 2000 }} 2000w"
+         sizes="100vw" alt="" aria-hidden="true" decoding="async">
+    {%- if bg_m != s.scratch_bg -%}
+      <img class="sp__bg sp__bg--m" src="{{ bg_m | image_url: width: 1200 }}"
+           alt="" aria-hidden="true" decoding="async">
+    {%- endif -%}
+  {%- endif -%}
+
   <button class="sp__close" id="spClose" aria-label="Close">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
       <circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>
     </svg>
   </button>
 
-  {%- comment -%} Decorative floating product shots {%- endcomment -%}
-  {%- for i in (1..3) -%}
-    {%- liquid
-      case i
-        when 1
-          assign fimg = s.scratch_float_1
-        when 2
-          assign fimg = s.scratch_float_2
-        else
-          assign fimg = s.scratch_float_3
-      endcase
-    -%}
-    {%- if fimg != blank -%}
-      <img class="sp__float sp__float--{{ i }}" src="{{ fimg | image_url: width: 700 }}"
-           alt="" aria-hidden="true" loading="lazy" decoding="async">
-    {%- endif -%}
-  {%- endfor -%}
-
   <div class="sp__inner">
     {%- if s.scratch_logo != blank -%}
-      <img class="sp__logo" src="{{ s.scratch_logo | image_url: width: 400 }}"
-           alt="{{ shop.name | escape }}" loading="lazy">
+      <img class="sp__logo" src="{{ s.scratch_logo | image_url: height: 200 }}"
+           alt="{{ shop.name | escape }}" decoding="async">
     {%- endif -%}
 
     <h2 class="sp__heading" id="spHeading">{{ s.scratch_heading | default: 'Try your luck' }}</h2>
     <p class="sp__sub">{{ s.scratch_sub | default: 'Scratch below to see what you get' }}</p>
 
+    {%- comment -%} Foil panel — hidden once revealed, replaced by the reward {%- endcomment -%}
     <div class="sp__card" id="spCard">
-      <div class="sp__prize" id="spPrize">
-        <span class="sp__prize-value">{{ s.scratch_prize | default: '10% OFF' }}</span>
-        <span class="sp__prize-note">{{ s.scratch_prize_note | default: 'your first order' }}</span>
-      </div>
       <canvas class="sp__canvas" id="spCanvas" aria-hidden="true"></canvas>
       <span class="sp__hint" id="spHint">{{ s.scratch_hint | default: 'SCRATCH HERE' }}</span>
+    </div>
+
+    <div class="sp__prize" id="spPrize" hidden>
+      <span class="sp__prize-note">{{ s.scratch_prize_lead | default: "You've got" }}</span>
+      <span class="sp__prize-value">{{ s.scratch_prize | default: '10% off' }}</span>
     </div>
 
     <button type="button" class="sp__reveal" id="spReveal">Reveal instead</button>
@@ -71,7 +66,9 @@
       <button class="sp__submit" type="submit" id="spSubmit" disabled>
         {{ s.scratch_cta | default: 'Claim' }}
       </button>
-      <p class="sp__small">{{ s.scratch_smallprint }}</p>
+      {%- if s.scratch_smallprint != blank -%}
+        <p class="sp__small">{{ s.scratch_smallprint }}</p>
+      {%- endif -%}
     </form>
   </div>
 </div>
