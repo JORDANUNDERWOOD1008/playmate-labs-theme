@@ -97,11 +97,6 @@
 }
 
 .hero-inner {
-  /* margin, not transform. transform moves the copy visually but leaves its
-     layout box where it was, so the section never grew to accommodate it and
-     .hero-section's overflow:hidden simply cut the buttons off the bottom.
-     A margin pushes the box itself, and min-height lets the section grow. */
-  margin-top: var(--hero-text-offset, 0px);
   display: grid;
   grid-template-columns: 1fr;
   gap: 0;
@@ -1269,8 +1264,15 @@
 
 /* ── Layout helpers ── */
 .hero-copy-top,
+/* The two copy blocks move independently: nudging the headline should not
+   drag the buttons with it. Margin (not transform) so the section grows. */
+.hero-copy-top {
+  margin-top: var(--hero-text-offset, 0px);
+}
+
 .hero-copy-bottom {
   width: 100%;
+  margin-top: var(--hero-btn-offset, 0px);
 }
 
 @media (max-width: 768px) {
@@ -1348,11 +1350,12 @@
   }
   .hero-text   { display: block; width: 100%; }
 
-  /* TOP COPY: eyebrow + headline + description
-     padding-top pushes text down ~15% from top of image */
+  /* TOP COPY. The 15% was a hardcoded guess at where the headline should
+     sit; it is a control now, with the old value as the default. */
   .hero-copy-top {
     display: block;
-    padding: 15% 1.25rem 1.25rem;
+    padding: var(--hero-top-space, 15%) 1.25rem 1.25rem;
+    margin-top: var(--hero-text-offset, 0px);
   }
   .hero-eyebrow { justify-content: center; margin-bottom: 0.5rem; }
   .hero-eyebrow::before { display: none; }
@@ -1362,16 +1365,19 @@
     line-height: 1.6;
     margin: 0 auto;
     max-width: 300px;
-    color: rgba(245,239,230,0.82);
+    /* was a hardcoded rgba() that sat later in the file than the global
+       rule, so it silently beat the subheadline colour control on mobile */
+    color: var(--hero-sub-color, rgba(245,239,230,0.82));
     margin-bottom: 0;
   }
 
-  /* SPACER: % of section height pushes buttons lower so product is visible.
-     511x1024 image: 55% drops buttons well into the bottom dark band. */
+  /* SPACER that positions the buttons. Was a hardcoded 70%; now a control,
+     and independent of the headline nudge so one does not drag the other. */
   .hero-copy-bottom {
     display: block;
-    padding: 70% 1.25rem 0;
+    padding: var(--hero-btn-space, 70%) 1.25rem 0;
     padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    margin-top: var(--hero-btn-offset, 0px);
   }
 
   .hero-actions {

@@ -26,6 +26,7 @@
     --hero-sub-color: {{ hs.sub_color }};
     --hero-highlight-color: {{ hs.highlight_color }};
     --hero-text-offset: {{ hs.text_offset_desktop }}px;
+    --hero-btn-offset: {{ hs.btn_offset_desktop }}px;
     --hero-btn-gap: {{ hs.btn_gap }}px;
     --hero-btn-padding: {{ hs.btn_pad_y }}px {{ hs.btn_pad_x }}px;
     --hero-btn-fontsize: {{ hs.btn_font_size }}px;
@@ -50,6 +51,9 @@
       {%- if hs.sub_color_mobile != blank %}--hero-sub-color: {{ hs.sub_color_mobile }};{% endif %}
       {%- if hs.highlight_color_mobile != blank %}--hero-highlight-color: {{ hs.highlight_color_mobile }};{% endif %}
       --hero-text-offset: {{ hs.text_offset_mobile }}px;
+      --hero-btn-offset: {{ hs.btn_offset_mobile }}px;
+      --hero-top-space: {{ hs.top_space_mobile }}%;
+      --hero-btn-space: {{ hs.btn_space_mobile }}%;
       {%- if hs.btn_side_by_side_mobile %}
       --hero-btn-direction: row;
       --hero-btn-width: auto;
@@ -67,6 +71,28 @@
     --hero-img-left: auto; --hero-img-right: 0;
     {%- endif %}
   }
+  {%- comment -%}
+    Pinned mode. In normal block flow the buttons sit after the copy, so
+    nudging the copy down drags them with it — and past the bottom of the
+    photo. Stretching the copy column to the full height and pushing the two
+    blocks apart fixes the buttons to the bottom, leaving the headline free
+    to move independently above them.
+  {%- endcomment -%}
+  {%- if hs.pin_buttons_mobile -%}
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .hero-content-wrap { justify-content: stretch; }
+    #shopify-section-{{ section.id }} .hero-content-wrap > .container {
+      display: flex; flex-direction: column; flex: 1;
+    }
+    #shopify-section-{{ section.id }} .hero-inner { display: flex; flex-direction: column; flex: 1; }
+    #shopify-section-{{ section.id }} .hero-text {
+      display: flex; flex-direction: column; justify-content: space-between; flex: 1;
+    }
+    {%- comment -%} the old 70% spacer is what pinning replaces {%- endcomment -%}
+    #shopify-section-{{ section.id }} .hero-copy-bottom { padding-top: 1.25rem; }
+  }
+  {%- endif -%}
+
   {%- comment -%} Mobile keeps the photo full-bleed {%- endcomment -%}
   @media (max-width: 768px) {
     #shopify-section-{{ section.id }} .hero-bg-desktop {
@@ -487,9 +513,9 @@
       "max": 200,
       "step": 4,
       "unit": "px",
-      "label": "Nudge copy up / down — desktop",
+      "label": "Nudge headline block — desktop",
       "default": 0,
-      "info": "Negative moves it up. The section grows to fit, so the buttons stay on the page however far you push it."
+      "info": "Moves the eyebrow, headline and subheadline only. Buttons stay put."
     },
     {
       "type": "range",
@@ -498,9 +524,62 @@
       "max": 200,
       "step": 4,
       "unit": "px",
-      "label": "Nudge copy up / down — mobile",
+      "label": "Nudge headline block — mobile",
       "default": 0,
-      "info": "Negative moves it up. The section grows to fit, so the buttons stay on the page however far you push it."
+      "info": "Moves the eyebrow, headline and subheadline only. Buttons stay put."
+    },
+    {
+      "type": "range",
+      "id": "btn_offset_desktop",
+      "min": -200,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Nudge buttons — desktop",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "btn_offset_mobile",
+      "min": -200,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Nudge buttons — mobile",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "📱 Mobile stacking"
+    },
+    {
+      "type": "checkbox",
+      "id": "pin_buttons_mobile",
+      "label": "Pin buttons to the bottom (mobile)",
+      "default": true,
+      "info": "Buttons hold the bottom of the photo and the headline moves independently above them. Untick to go back to the spacer, where 'Space above the buttons' sets their position."
+    },
+    {
+      "type": "range",
+      "id": "top_space_mobile",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "%",
+      "label": "Space above the headline",
+      "default": 15,
+      "info": "How far down the photo the headline starts. This is the main vertical control on mobile."
+    },
+    {
+      "type": "range",
+      "id": "btn_space_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "%",
+      "label": "Space above the buttons",
+      "default": 70,
+      "info": "Only applies when 'Pin buttons to the bottom' is off."
     },
     {
       "type": "header",
