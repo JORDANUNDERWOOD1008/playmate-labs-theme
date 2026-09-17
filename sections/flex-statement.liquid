@@ -1,0 +1,436 @@
+{% render 'section-style', section: section %}
+{% comment %}
+  PLAYMATE LABS — STATEMENT
+  File: sections/flex-statement.liquid
+
+  One idea, set large. Built for the positioning line — the thing the brand
+  believes that the rest of the category does not. Deliberately has no image:
+  on a page where every other section carries photography, a section that is
+  only type is the one that reads as a held breath.
+
+  Two layouts: "stacked" centres the statement on its own, "split" sets the
+  statement against a supporting paragraph so the eye has somewhere to go.
+{% endcomment %}
+
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .st {
+    --st-fg: {{ s.text_color }};
+    --st-accent: {{ s.accent_color }};
+  }
+  #shopify-section-{{ section.id }} .st__inner {
+    max-width: {{ s.content_width }}px;
+    margin-inline: {% if s.content_align == 'center' %}auto{% else %}0{% endif %};
+    {%- if s.layout == 'split' %}
+    display: grid;
+    grid-template-columns: {{ s.split_ratio }}fr {{ 100 | minus: s.split_ratio }}fr;
+    gap: {{ s.split_gap }}px;
+    align-items: {{ s.split_align }};
+    {%- endif %}
+  }
+  #shopify-section-{{ section.id }} .st__statement {
+    font-size: {{ s.statement_size }}px;
+    line-height: {{ s.statement_leading | divided_by: 100.0 }};
+    letter-spacing: {{ s.statement_tracking | divided_by: 1000.0 }}em;
+    color: {{ s.statement_color }};
+  }
+  #shopify-section-{{ section.id }} .st__support { font-size: {{ s.support_size }}px; }
+  #shopify-section-{{ section.id }} .st__rule { background: {{ s.accent_color }}; }
+
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .st__inner {
+      {%- if s.layout == 'split' %}grid-template-columns: 1fr; gap: {{ s.split_gap_mobile }}px;{% endif %}
+      text-align: {{ s.text_align_mobile }};
+    }
+    #shopify-section-{{ section.id }} .st__statement {
+      font-size: {{ s.statement_size_mobile }}px;
+      line-height: {{ s.statement_leading_mobile | divided_by: 100.0 }};
+    }
+    #shopify-section-{{ section.id }} .st__support { font-size: {{ s.support_size_mobile }}px; }
+    #shopify-section-{{ section.id }} .st__rule { margin-inline: {% if s.text_align_mobile == 'center' %}auto{% else %}0{% endif %}; }
+  }
+{%- endstyle -%}
+
+<section class="section st" style="text-align:{{ s.text_align }};">
+  <div class="container">
+    <div class="st__inner">
+      <div class="st__lead">
+        {%- if s.eyebrow != blank -%}
+          <span class="st__eyebrow" style="color:{{ s.accent_color }};">{{ s.eyebrow }}</span>
+        {%- endif -%}
+        {%- if s.statement != blank -%}
+          {%- comment -%}
+            Wrap a phrase in <strong> in the editor to pick it out in the
+            accent colour — the emphasis belongs in the copy, not in a
+            separate setting that can drift out of sync with it.
+          {%- endcomment -%}
+          <p class="st__statement">{{ s.statement | newline_to_br }}</p>
+        {%- endif -%}
+        {%- if s.show_rule -%}<span class="st__rule"></span>{%- endif -%}
+      </div>
+
+      {%- if s.support != blank or s.cta_text != blank -%}
+        <div class="st__aside">
+          {%- if s.support != blank -%}
+            <div class="st__support" style="color:{{ s.text_color }};">{{ s.support }}</div>
+          {%- endif -%}
+          {%- if s.cta_text != blank -%}
+            <a href="{{ s.cta_url }}" class="st__cta"
+               style="background:{{ s.cta_bg }};color:{{ s.cta_label_color }};border:1px solid {{ s.cta_border | default: s.cta_bg }};">
+              {{ s.cta_text }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Statement",
+  "tag": "section",
+  "class": "shopify-section-statement",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "What we are for"
+    },
+    {
+      "type": "textarea",
+      "id": "statement",
+      "label": "Statement",
+      "info": "Wrap a phrase in <strong> tags to pick it out in the accent colour.",
+      "default": "Most of this category sells pleasure.\nWe design <strong>the part before it</strong>."
+    },
+    {
+      "type": "richtext",
+      "id": "support",
+      "label": "Supporting paragraph",
+      "default": "<p>There is a gap between being willing and actually wanting to. It opens up somewhere between the sofa and the bedroom, on an ordinary Tuesday, in a relationship that is perfectly fine. Everything we make is built for that gap.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "stacked",
+          "label": "Stacked"
+        },
+        {
+          "value": "split",
+          "label": "Statement beside supporting text"
+        }
+      ],
+      "default": "split"
+    },
+    {
+      "type": "range",
+      "id": "split_ratio",
+      "label": "Statement share of the width",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "default": 55
+    },
+    {
+      "type": "range",
+      "id": "split_gap",
+      "label": "Gap between columns",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "split_gap_mobile",
+      "label": "Gap — mobile",
+      "min": 12,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "select",
+      "id": "split_align",
+      "label": "Column alignment",
+      "options": [
+        {
+          "value": "start",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "end",
+          "label": "Bottom"
+        }
+      ],
+      "default": "end"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content width",
+      "min": 600,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1120
+    },
+    {
+      "type": "select",
+      "id": "content_align",
+      "label": "Content position",
+      "options": [
+        {
+          "value": "center",
+          "label": "Centred"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Text alignment — mobile",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rule",
+      "label": "Show accent rule under the statement",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Type"
+    },
+    {
+      "type": "range",
+      "id": "statement_size",
+      "label": "Statement size",
+      "min": 24,
+      "max": 84,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "statement_size_mobile",
+      "label": "Statement size — mobile",
+      "min": 18,
+      "max": 52,
+      "step": 1,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "statement_leading",
+      "label": "Statement line height",
+      "min": 90,
+      "max": 160,
+      "step": 5,
+      "unit": "%",
+      "default": 115
+    },
+    {
+      "type": "range",
+      "id": "statement_leading_mobile",
+      "label": "Statement line height — mobile",
+      "min": 90,
+      "max": 160,
+      "step": 5,
+      "unit": "%",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "statement_tracking",
+      "label": "Statement letter spacing",
+      "min": -40,
+      "max": 60,
+      "step": 5,
+      "default": -15,
+      "info": "Thousandths of an em."
+    },
+    {
+      "type": "range",
+      "id": "support_size",
+      "label": "Supporting text size",
+      "min": 13,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "support_size_mobile",
+      "label": "Supporting text size — mobile",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "cta_bg",
+      "label": "Button background",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "cta_label_color",
+      "label": "Button text",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "color",
+      "id": "cta_border",
+      "label": "Button border",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "header",
+      "content": "Colours"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "color",
+      "id": "statement_color",
+      "label": "Statement",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Supporting text",
+      "default": "#C9BFB4"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent (eyebrow, emphasis, rule)",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_desktop",
+      "label": "Padding top — desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "default": 128
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "label": "Padding bottom — desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "default": 128
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "label": "Padding top — mobile",
+      "min": 0,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "label": "Padding bottom — mobile",
+      "min": 0,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    }
+  ],
+  "presets": [
+    {
+      "name": "Statement"
+    }
+  ]
+}
+{% endschema %}

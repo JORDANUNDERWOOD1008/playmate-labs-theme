@@ -1469,3 +1469,102 @@
 @media (prefers-reduced-motion: reduce) {
   .faq__icon, .faq__icon-v { transition: none; }
 }
+
+/* ============================================
+   STATEMENT
+   ============================================ */
+.st__eyebrow {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.st__statement {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.st__statement strong,
+.st__statement b {
+  font-weight: inherit;
+  font-style: italic;
+  color: var(--st-accent, #C9A96E);
+}
+
+.st__rule {
+  display: block;
+  width: 56px;
+  height: 2px;
+  margin-top: 2rem;
+}
+
+.st__support p { margin: 0 0 0.9rem; line-height: 1.7; }
+.st__support p:last-child { margin-bottom: 0; }
+
+.st__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.75rem;
+  padding: 0.85rem 1.9rem;
+  border-radius: var(--radius-full, 999px);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity var(--transition-mid, .3s ease);
+}
+
+.st__cta:hover { opacity: 0.88; }
+
+/* ============================================
+   STEPS
+   ============================================ */
+.stp__intro {
+  max-width: 60ch;
+  margin: 1rem auto 0;
+  line-height: 1.7;
+}
+
+.stp__intro p { margin: 0 0 0.75rem; }
+.stp__intro p:last-child { margin-bottom: 0; }
+
+.stp__media {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  background: var(--cream, #F5EFE6);
+}
+
+.stp__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.stp__num {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  margin-bottom: 0.75rem;
+}
+
+.stp__title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1.25;
+  margin: 0 0 0.5rem;
+}
+
+.stp__text { line-height: 1.65; }
+.stp__text p { margin: 0 0 0.6rem; }
+.stp__text p:last-child { margin-bottom: 0; }

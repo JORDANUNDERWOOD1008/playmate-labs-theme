@@ -343,11 +343,20 @@
 
 .value-strip-inner::-webkit-scrollbar { display: none; }
 
+/* flex-shrink:0 was fine for three pillars; a fourth then ran past the
+   container and could only be reached by scrolling sideways. Let them share
+   the row instead, and only fall back to a scroller when they genuinely
+   cannot fit. */
 .value-strip-item {
   display: flex;
   align-items: center;
   gap: 0.875rem;
-  flex-shrink: 0;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.value-strip-item p {
+  overflow-wrap: break-word;
 }
 
 .vs-icon {
@@ -1423,6 +1432,12 @@
   .value-strip-inner {
     justify-content: flex-start;
     padding: 0 1rem;
+  }
+
+  /* Narrow screens: back to a swipeable row so each pillar keeps its width. */
+  .value-strip-item {
+    flex: 0 0 auto;
+    max-width: 78vw;
   }
 
   .products-grid {

@@ -92,48 +92,57 @@
     "value-strip": {
       "type": "value-strip",
       "blocks": {
+        "p1": {
+          "type": "pillar",
+          "settings": {
+            "icon": "◈",
+            "title": "Formulated, not flavoured",
+            "text": "Clinically-proven actives"
+          }
+        },
         "p2": {
           "type": "pillar",
           "settings": {
-            "icon": "🎮",
-            "title": "Date Night Games",
-            "text": "Play, flirt, connect"
+            "icon": "✦",
+            "title": "Designed and made in the UK",
+            "text": "In-house, in small runs"
           }
         },
         "p3": {
           "type": "pillar",
           "settings": {
-            "icon": "🇬🇧",
-            "title": "Made in the UK",
-            "text": "Small-batch, shipped fast"
+            "icon": "▢",
+            "title": "Nothing on the box",
+            "text": "Discreet delivery and billing"
           }
         },
         "p4": {
           "type": "pillar",
           "settings": {
-            "icon": "🔒",
-            "title": "Plain Packaging",
-            "text": "Nothing on the box"
+            "icon": "◎",
+            "title": "Stocked in independent retail",
+            "text": "On shelves across the UK"
           }
         }
       },
       "block_order": [
+        "p1",
         "p2",
         "p3",
         "p4"
       ],
-      "disabled": true,
+      "disabled": false,
       "settings": {
-        "pad_top_desktop": 28,
-        "pad_top_mobile": 28,
-        "pad_bottom_desktop": 28,
-        "pad_bottom_mobile": 28,
+        "pad_top_desktop": 56,
+        "pad_top_mobile": 40,
+        "pad_bottom_desktop": 56,
+        "pad_bottom_mobile": 40,
         "text_align_desktop": "",
         "text_align_mobile": "",
         "text_valign_desktop": "",
         "text_valign_mobile": "",
         "content_width": 0,
-        "bg_color": "",
+        "bg_color": "#FFFFFF",
         "bg_color_mobile": "",
         "text_color": "",
         "text_color_mobile": "",
@@ -314,7 +323,8 @@
         "bg_color": "",
         "text_color": "",
         "heading_color": ""
-      }
+      },
+      "disabled": true
     },
     "credibility": {
       "type": "flex-banner",
@@ -328,10 +338,10 @@
         "eager_load": false,
         "height_desktop": 70,
         "height_mobile": 60,
-        "eyebrow": "BEHIND THE SCENES",
-        "heading": "Good products.   \nCloser moments.",
+        "eyebrow": "INSIDE THE LAB",
+        "heading": "Good products.\nCloser moments.",
         "subheading": "",
-        "body": "<ul><li>Made in the UK, </li><li>in small batches, </li><li>and shot in our own </li><li>studio.</li></ul>",
+        "body": "<p>Designed in-house, prototyped with our partners, made in the UK.</p>",
         "eyebrow_color": "#d92b2b",
         "heading_color": "#1a1a1a",
         "sub_color": "#3d3d3d",
@@ -384,8 +394,8 @@
         "text_valign_desktop": "",
         "text_valign_mobile": "",
         "content_width": 0,
-        "bg_color": "",
-        "bg_color_mobile": "",
+        "bg_color": "#FAF7F2",
+        "bg_color_mobile": "#FAF7F2",
         "text_color": "",
         "text_color_mobile": "",
         "heading_color": "",
@@ -801,6 +811,115 @@
         "footer_link_text": "Talk to us.",
         "footer_link_url": "/pages/contact"
       }
+    },
+    "statement": {
+      "type": "flex-statement",
+      "settings": {
+        "eyebrow": "WHERE WE OPERATE",
+        "statement": "Most of this category sells pleasure.\nWe design <strong>the part before it</strong>.",
+        "support": "<p>There is a gap between being willing and actually wanting to. It opens up somewhere between the sofa and the bedroom, on an ordinary Tuesday, in a relationship that is perfectly fine.</p><p>Everything we make is built for that gap — small, easy ways back to each other that ask nothing of you but an evening.</p>",
+        "layout": "split",
+        "split_ratio": 55,
+        "split_gap": 72,
+        "split_gap_mobile": 28,
+        "split_align": "end",
+        "content_width": 1120,
+        "content_align": "center",
+        "text_align": "left",
+        "text_align_mobile": "left",
+        "show_rule": true,
+        "statement_size": 48,
+        "statement_size_mobile": 30,
+        "statement_leading": 115,
+        "statement_leading_mobile": 120,
+        "statement_tracking": -15,
+        "support_size": 17,
+        "support_size_mobile": 15,
+        "bg_color": "#1A0A06",
+        "statement_color": "#F5EFE6",
+        "text_color": "#BFB3A6",
+        "accent_color": "#C9A96E",
+        "pad_top_desktop": 128,
+        "pad_bottom_desktop": 128,
+        "pad_top_mobile": 72,
+        "pad_bottom_mobile": 72
+      }
+    },
+    "process": {
+      "type": "flex-steps",
+      "blocks": {
+        "s1": {
+          "type": "step",
+          "settings": {
+            "title": "Insight",
+            "text": "<p>We start with the moment, not the product. What actually stops two people who like each other from finding their way back to one another on a Tuesday.</p>"
+          }
+        },
+        "s2": {
+          "type": "step",
+          "settings": {
+            "title": "Design",
+            "text": "<p>Concepts are drawn in-house — structure, mechanic, packaging and tone together, because how a thing feels to open is part of whether it gets used.</p>"
+          }
+        },
+        "s3": {
+          "type": "step",
+          "settings": {
+            "title": "Prototype",
+            "text": "<p>We build it with our manufacturing partners and hold it. Formulations, finishes and card stocks get revised until the object earns its place on a bedside table.</p>"
+          }
+        },
+        "s4": {
+          "type": "step",
+          "settings": {
+            "title": "Release",
+            "text": "<p>Tested with real couples, then made in the UK in small runs. What does not change the evening does not ship.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2",
+        "s3",
+        "s4"
+      ],
+      "settings": {
+        "eyebrow": "INSIDE THE LAB",
+        "heading": "An innovation house for intimacy",
+        "intro": "<p>Playmate Labs is a product development studio. Every object starts as a problem about people and ends as something you can hold.</p>",
+        "heading_align": "center",
+        "text_align": "left",
+        "columns": 4,
+        "columns_tablet": 2,
+        "columns_mobile": 1,
+        "gap": 40,
+        "gap_mobile": 32,
+        "content_width": 1200,
+        "show_image": false,
+        "image_ratio": "4/5",
+        "image_ratio_mobile": "3/2",
+        "image_fit": "cover",
+        "corner_radius": 8,
+        "show_numbers": true,
+        "number_style": "rule",
+        "number_size": 13,
+        "number_size_mobile": 12,
+        "title_size": 20,
+        "title_size_mobile": 18,
+        "text_size": 15,
+        "text_size_mobile": 14,
+        "bg_color": "#FFFFFF",
+        "eyebrow_color": "#C9A96E",
+        "heading_color": "#1A1A1A",
+        "title_color": "#1A1A1A",
+        "text_color": "#4A4A4A",
+        "number_color": "#6B1E3A",
+        "rule_color": "#E5DFD6",
+        "pad_top_desktop": 112,
+        "pad_bottom_desktop": 112,
+        "pad_top_mobile": 64,
+        "pad_bottom_mobile": 64
+      }
     }
   },
   "order": [
@@ -809,10 +928,12 @@
     "credibility",
     "home-product-grid",
     "feature-pair",
-    "story-aphrodisiac",
+    "statement",
+    "process",
     "social-proof",
     "faq",
     "email-capture",
+    "story-aphrodisiac",
     "banner-nude",
     "story-chocolate",
     "home-featured-drop",
