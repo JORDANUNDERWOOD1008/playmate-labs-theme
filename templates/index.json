@@ -131,7 +131,7 @@
         "p3",
         "p4"
       ],
-      "disabled": false,
+      "disabled": true,
       "settings": {
         "pad_top_desktop": 56,
         "pad_top_mobile": 40,
@@ -290,46 +290,46 @@
     "story-aphrodisiac": {
       "type": "flex-image-text",
       "settings": {
-        "image": "shopify://shop_images/chocolate-hearts-macro-detail-portrait.png",
+        "image": "shopify://shop_images/lab-bench-nude-stacked-prototypes.png",
         "image_side": "left",
         "mobile_image_first": true,
-        "image_width": 45,
-        "image_ratio": "4/5",
+        "image_width": 50,
+        "image_ratio": "4/3",
         "image_ratio_mobile": "4/3",
         "fit_default": "cover",
         "image_bg": "#faf7f2",
-        "corner_radius": 8,
-        "eyebrow": "MADE PROPERLY",
-        "heading": "Ingredients that let things flow naturally",
-        "body": "<p>Every Playmate product starts with a functional formulation, not a gimmick. Clinically-proven aphrodisiac ingredients, made in the UK, in packaging you would happily leave on the side.</p><p>Stocked by independent retailers across the UK.</p>",
-        "cta_text": "Wholesale enquiries",
-        "cta_url": "/pages/stockists",
+        "corner_radius": 10,
+        "eyebrow": "INSIDE THE LAB",
+        "heading": "Good products.\nCloser moments.",
+        "body": "<p>Playmate Labs is a product development studio. Every object starts as a question about people and ends as something you can hold.</p><p>Drawn in-house, prototyped with our manufacturing partners, finished and made in the UK.</p>",
+        "cta_text": "Our story",
+        "cta_url": "/pages/about",
         "cta_style": "btn-secondary",
         "cta_btn_bg": "#6b1e3a",
         "cta_btn_label_color": "#f5efe6",
         "cta_btn_border": "#6b1e3a",
         "vertical_align": "middle",
-        "gap": 56,
+        "gap": 64,
         "gap_mobile": 28,
-        "pad_top_desktop": 96,
-        "pad_top_mobile": 56,
-        "pad_bottom_desktop": 96,
-        "pad_bottom_mobile": 56,
-        "image_fit": "",
-        "image_pos_desktop": "",
-        "image_pos_mobile": "",
-        "text_align_desktop": "",
-        "text_align_mobile": "",
-        "bg_color": "",
-        "text_color": "",
-        "heading_color": ""
-      },
-      "disabled": true
+        "pad_top_desktop": 112,
+        "pad_top_mobile": 64,
+        "pad_bottom_desktop": 112,
+        "pad_bottom_mobile": 64,
+        "image_fit": "cover",
+        "image_pos_desktop": "center center",
+        "image_pos_mobile": "center center",
+        "text_align_desktop": "left",
+        "text_align_mobile": "left",
+        "bg_color": "#FAF7F2",
+        "text_color": "#4A4A4A",
+        "heading_color": "#1A1A1A",
+        "image_mobile": "shopify://shop_images/lab-bench-nude-stacked-prototypes.png"
+      }
     },
     "credibility": {
       "type": "flex-banner",
       "settings": {
-        "image": "shopify://shop_images/studio-nude-kit-octa-landscape.png",
+        "image": "shopify://shop_images/lab-bench-nude-stacked-prototypes.png",
         "image_mobile": "shopify://shop_images/eaf3c3d7-b507-4f03-9053-a7a749112336.png",
         "image_fit": "cover",
         "image_bg": "#ffffff",
@@ -380,7 +380,8 @@
         "pad_top_mobile": 32,
         "pad_bottom_mobile": 40,
         "pad_side_mobile": 24
-      }
+      },
+      "disabled": true
     },
     "social-proof": {
       "type": "social-proof",
@@ -450,7 +451,7 @@
         "subtext": "",
         "show_phone": true,
         "email_placeholder": "Your email address",
-        "phone_placeholder": "Phone (for SMS drops — optional)",
+        "phone_placeholder": "Phone (for SMS drops, optional)",
         "cta_text": "Join the list",
         "disclaimer": "No spam. Unsubscribe anytime.",
         "success_message": "You're in! Check your inbox for your free experience.",
@@ -818,7 +819,7 @@
       "settings": {
         "eyebrow": "WHERE WE WORK",
         "statement": "Most of this category sells delivery.\nWe make <strong>the invitation</strong>.",
-        "support": "<p>Nobody is having less sex because there aren't enough vibrators. Relationships rarely fail from a lack of love — they fail somewhere between the sofa and the bedroom, on an ordinary Tuesday, for want of a reason to start.</p><p>Flowers. A bum grab. A text you would not read out loud. Small invitations that keep a couple warm. We make those as objects — built for the coffee table, not the top drawer.</p>",
+        "support": "<p>Relationships rarely fail from a lack of love. The good ones simply keep finding their way back to each other, and they tend to have easy ways of doing it built in.</p><p>Flowers. A bum grab. A text you would not read out loud. Small invitations that keep a couple close. We make those as objects, built for the coffee table rather than the top drawer.</p>",
         "layout": "split",
         "split_ratio": 55,
         "split_gap": 72,
@@ -853,28 +854,28 @@
           "type": "step",
           "settings": {
             "title": "Safety",
-            "text": "<p>Nothing starts without it. If it does not feel safe to say, it does not get said — and everything above this rung stays shut.</p>"
+            "text": "<p>Everything starts here. When it feels safe to say, it gets said, and every rung above this one opens up.</p>"
           }
         },
         "s2": {
           "type": "step",
           "settings": {
             "title": "Authenticity",
-            "text": "<p>Safe enough to be honest. There is no point being curious about a version of someone that is not real.</p>"
+            "text": "<p>Safe enough to be honest. Curiosity only means something when it is aimed at the real person.</p>"
           }
         },
         "s3": {
           "type": "step",
           "settings": {
             "title": "Curiosity",
-            "text": "<p>Honesty makes room for questions. Questions are where wanting actually starts — not where it is supposed to arrive.</p>"
+            "text": "<p>Honesty makes room for questions, and questions are where wanting actually starts.</p>"
           }
         },
         "s4": {
           "type": "step",
           "settings": {
             "title": "Play",
-            "text": "<p>Curiosity you act on. This is the rung the rest of the category sells, as though you could start here.</p>"
+            "text": "<p>Curiosity you act on. Most of the category starts here. We think it is the reward for the three rungs underneath it.</p>"
           }
         }
       },
@@ -936,7 +937,7 @@
         "r1"
       ],
       "settings": {
-        "heading": "Also stocked by",
+        "heading": "AS SEEN IN",
         "heading_color": "#8A8178",
         "heading_size": 11,
         "heading_size_mobile": 10,
@@ -957,9 +958,9 @@
         "gap": 56,
         "gap_mobile": 28,
         "row_width": 1100,
-        "bg_color": "#FAF7F2",
-        "bg_color_mobile": "#FAF7F2",
-        "border_top": true,
+        "bg_color": "#FFFFFF",
+        "bg_color_mobile": "#FFFFFF",
+        "border_top": false,
         "border_bottom": true,
         "border_color": "#E5DFD6",
         "pad_top_desktop": 52,
@@ -971,17 +972,17 @@
   },
   "order": [
     "home-hero",
-    "value-strip",
-    "credibility",
+    "retail",
+    "story-aphrodisiac",
     "home-product-grid",
     "feature-pair",
     "statement",
     "process",
-    "retail",
     "faq",
     "email-capture",
+    "credibility",
+    "value-strip",
     "social-proof",
-    "story-aphrodisiac",
     "banner-nude",
     "story-chocolate",
     "home-featured-drop",
