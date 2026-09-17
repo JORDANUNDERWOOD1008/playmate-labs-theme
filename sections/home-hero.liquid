@@ -210,10 +210,23 @@
         {%- comment -%} BOTTOM COPY — buttons + trust {%- endcomment -%}
         <div class="hero-copy-bottom animate-fadeInUp animate-delay-4">
           <div class="hero-actions">
-            <button type="button" class="btn btn-gold btn-xl" id="heroExpBtn"
-                    onclick="document.getElementById('expSignupModal').classList.add('exp-modal--open')">
-              {{ section.settings.cta_primary_text | default: 'Start the 5-Day Experience' }}
-            </button>
+            {%- comment -%}
+              Was hardwired to open the 5-Day Experience modal regardless of
+              what the button said — so a button reading "Shop all" opened a
+              sign-up for something that is not on sale. It follows its own
+              link now; tick the setting below to bring the modal back.
+            {%- endcomment -%}
+            {%- if section.settings.cta_primary_opens_modal -%}
+              <button type="button" class="btn btn-gold btn-xl" id="heroExpBtn"
+                      onclick="document.getElementById('expSignupModal').classList.add('exp-modal--open')">
+                {{ section.settings.cta_primary_text | default: 'Join the list' }}
+              </button>
+            {%- else -%}
+              <a href="{{ section.settings.cta_primary_url | default: '/collections/all' }}"
+                 class="btn btn-gold btn-xl">
+                {{ section.settings.cta_primary_text | default: 'Shop the range' }}
+              </a>
+            {%- endif -%}
             <a href="{{ section.settings.cta_secondary_url | default: '/collections/monthly-drops' }}"
                class="btn btn-ghost btn-xl">
               {{ section.settings.cta_secondary_text | default: 'Shop the Latest Drop' }}
@@ -414,6 +427,13 @@
       "type": "url",
       "id": "cta_primary_url",
       "label": "Primary CTA URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "cta_primary_opens_modal",
+      "label": "Primary button opens the sign-up modal",
+      "default": false,
+      "info": "Off: the button follows its link. On: it opens the 5-Day Experience modal."
     },
     {
       "type": "text",

@@ -6,7 +6,65 @@
 
 {{ 'global.css' | asset_url | stylesheet_tag }}
 
-<nav class="site-nav{% if section.settings.dark_style %} nav-dark{% endif %}" id="main-nav" role="navigation" aria-label="Main navigation">
+{%- comment -%}
+  Floating-pill header. The bar goes transparent and the logo and the action
+  group each become their own rounded capsule sitting over whatever is behind
+  them. CSS only — no change to the markup order — so switching it off returns
+  the original solid bar exactly.
+{%- endcomment -%}
+{%- if section.settings.header_style == 'pills' -%}
+{%- style -%}
+  #shopify-section-{{ section.id }} .site-nav.nav-pills,
+  #shopify-section-{{ section.id }} .site-nav.nav-pills.scrolled,
+  #shopify-section-{{ section.id }} .site-nav.nav-pills.nav-dark {
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  #shopify-section-{{ section.id }} .nav-pills .nav-inner {
+    gap: {{ section.settings.pill_gap }}px;
+    align-items: center;
+  }
+  #shopify-section-{{ section.id }} .nav-pills .nav-logo,
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions {
+    background: {{ section.settings.pill_bg }};
+    border-radius: 999px;
+    padding: {{ section.settings.pill_pad_y }}px {{ section.settings.pill_pad_x }}px;
+    box-shadow: 0 2px 16px rgba(0,0,0,{{ section.settings.pill_shadow | divided_by: 100.0 }});
+  }
+  #shopify-section-{{ section.id }} .nav-pills .nav-logo span,
+  #shopify-section-{{ section.id }} .nav-pills .nav-link,
+  #shopify-section-{{ section.id }} .nav-pills .nav-icon-btn {
+    color: {{ section.settings.pill_text }};
+  }
+  #shopify-section-{{ section.id }} .nav-pills .nav-toggle span {
+    background: {{ section.settings.pill_text }};
+  }
+  {%- comment -%} The cart sits inside the right pill as its own accent capsule {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-cta {
+    background: {{ section.settings.pill_accent }};
+    color: {{ section.settings.pill_accent_text }};
+    border-radius: 999px;
+  }
+  {%- if section.settings.pill_hide_search_mobile %}
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .nav-pills #search-toggle { display: none; }
+  }
+  {%- endif %}
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .nav-pills .nav-inner {
+      padding-left: {{ section.settings.pill_edge_mobile }}px;
+      padding-right: {{ section.settings.pill_edge_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .nav-pills .nav-logo,
+    #shopify-section-{{ section.id }} .nav-pills .nav-actions {
+      padding: {{ section.settings.pill_pad_y_mobile }}px {{ section.settings.pill_pad_x_mobile }}px;
+    }
+  }
+{%- endstyle -%}
+{%- endif -%}
+
+<nav class="site-nav{% if section.settings.dark_style %} nav-dark{% endif %}{% if section.settings.header_style == 'pills' %} nav-pills{% endif %}" id="main-nav" role="navigation" aria-label="Main navigation">
   <div class="nav-inner">
 
     {%- comment -%} Logo {%- endcomment -%}
@@ -58,10 +116,10 @@
     {%- comment -%} Nav Actions {%- endcomment -%}
     <div class="nav-actions">
       {%- if section.settings.show_experience_cta -%}
-        <a href="{{ section.settings.url_experience | default: '/pages/5-day-experience' }}"
+        <a href="{{ section.settings.cta_url | default: '#newsletter' }}"
            class="nav-cta"
            data-show-on-scroll>
-          Unlock Free Experience
+          {{ section.settings.cta_text | default: 'Join the list' }}
         </a>
       {%- endif -%}
 
@@ -126,15 +184,15 @@
     {%- endfor -%}
   </ul>
   <div class="mobile-menu-footer">
-    <a href="{{ section.settings.url_experience | default: '/pages/5-day-experience' }}"
+    <a href="{{ section.settings.cta_url | default: '#newsletter' }}"
        class="btn btn-primary"
        style="width:100%;justify-content:center;margin-bottom:0.75rem;">
-      Unlock Free 5-Day Experience
+      {{ section.settings.cta_text | default: 'Join the list' }}
     </a>
-    <a href="{{ section.settings.url_monthly_drops | default: '/collections/monthly-drops' }}"
+    <a href="{{ section.settings.url_monthly_drops | default: '/collections/all' }}"
        class="btn btn-ghost"
        style="width:100%;justify-content:center;">
-      Shop the Latest Drop
+      {{ section.settings.cta2_text | default: 'Shop the range' }}
     </a>
     <div style="margin-top:1.5rem;display:flex;gap:1rem;justify-content:center;">
       {%- if settings.social_instagram_link != blank -%}
@@ -219,8 +277,26 @@
     {
       "type": "checkbox",
       "id": "show_experience_cta",
-      "label": "Show 'Unlock Free Experience' CTA in nav",
+      "label": "Show the header button",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Header button text",
+      "default": "Join the list"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Header button link",
+      "info": "Leave blank to jump to the sign-up section on the page."
+    },
+    {
+      "type": "text",
+      "id": "cta2_text",
+      "label": "Mobile menu — second button",
+      "default": "Shop the range"
     },
     {
       "type": "header",
@@ -235,6 +311,128 @@
       "type": "url",
       "id": "url_monthly_drops",
       "label": "Monthly Drops (Mobile Menu)"
+    },
+    {
+      "type": "header",
+      "content": "🧭 Header style"
+    },
+    {
+      "type": "select",
+      "id": "header_style",
+      "label": "Style",
+      "options": [
+        {
+          "value": "bar",
+          "label": "Solid bar (current)"
+        },
+        {
+          "value": "pills",
+          "label": "Floating pills over the page"
+        }
+      ],
+      "default": "bar",
+      "info": "Pills make the bar transparent and float the logo and actions as capsules. Switch back any time."
+    },
+    {
+      "type": "color",
+      "id": "pill_bg",
+      "label": "Pill background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "pill_text",
+      "label": "Pill text & icons",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "pill_accent",
+      "label": "Accent button background",
+      "default": "#D92B2B"
+    },
+    {
+      "type": "color",
+      "id": "pill_accent_text",
+      "label": "Accent button text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "pill_gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between pills",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "pill_pad_y",
+      "min": 4,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Pill height padding — desktop",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "pill_pad_x",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Pill width padding — desktop",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "pill_pad_y_mobile",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Pill height padding — mobile",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "pill_pad_x_mobile",
+      "min": 6,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Pill width padding — mobile",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "pill_edge_mobile",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Distance from screen edge — mobile",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "pill_shadow",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "%",
+      "label": "Pill shadow",
+      "default": 10
+    },
+    {
+      "type": "checkbox",
+      "id": "pill_hide_search_mobile",
+      "label": "Hide search on mobile in this style",
+      "default": true,
+      "info": "Keeps the right-hand pill from overflowing a narrow screen."
     }
   ]
 }
