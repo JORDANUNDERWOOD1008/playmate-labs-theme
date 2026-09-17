@@ -122,11 +122,25 @@
     height: auto;
     padding: 0 6px;
   }
-  #shopify-section-{{ section.id }} .nav-pills .nav-logo span,
-  #shopify-section-{{ section.id }} .nav-pills .nav-link,
-  #shopify-section-{{ section.id }} .nav-pills .nav-icon-btn {
+  {%- comment -%}
+    Only things inside a capsule take the capsule's text colour. The inline
+    menu links sit outside them, on the page itself — colouring them white made
+    them vanish against a light hero, which reads as the menu overlapping the
+    pills.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-lockup .nav-logo span,
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-link,
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-icon-btn {
     color: {{ section.settings.pill_text }};
   }
+  {%- if section.settings.pill_hide_menu -%}
+  {%- comment -%} Hamburger at every width, as the reference does {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-links { display: none; }
+  {%- else -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-links .nav-link {
+    color: {{ section.settings.pill_link_color }};
+  }
+  {%- endif -%}
   #shopify-section-{{ section.id }} .nav-pills .nav-toggle span {
     background: {{ section.settings.pill_text }};
   }
@@ -524,6 +538,20 @@
       "id": "pill_text",
       "label": "Pill text & icons",
       "default": "#1A1A1A"
+    },
+    {
+      "type": "checkbox",
+      "id": "pill_hide_menu",
+      "label": "Hamburger at all screen sizes",
+      "default": true,
+      "info": "Hides the inline desktop menu, as the reference design does. Untick to keep the links and colour them below."
+    },
+    {
+      "type": "color",
+      "id": "pill_link_color",
+      "label": "Inline menu link colour",
+      "default": "#1A1A1A",
+      "info": "Only used when the inline menu is shown. These links sit on the page, not inside a capsule."
     },
     {
       "type": "color",

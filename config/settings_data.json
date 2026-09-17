@@ -50,7 +50,9 @@
           "pill_height_mobile": 40,
           "pill_inner_gap": 12,
           "pill_cart_accent": true,
-          "pill_overlay": true
+          "pill_overlay": true,
+          "pill_hide_menu": true,
+          "pill_link_color": "#1A1A1A"
         }
       },
       "footer": {
@@ -100,7 +102,7 @@
         "settings": {}
       }
     },
-    "font_heading": "playfair_display_n4",
+    "font_heading": "jost_n4",
     "font_body": "inter_n4",
     "header_is_pills": true,
     "scratch_popup_enable": true,
@@ -128,6 +130,7 @@
     "scratch_foil_from": "#E8D7AE",
     "scratch_foil_to": "#B08D4F",
     "scratch_mobile_layout": "split",
-    "scratch_img_h_m": 52
+    "scratch_img_h_m": 52,
+    "font_accent": "inter"
   }
 }
