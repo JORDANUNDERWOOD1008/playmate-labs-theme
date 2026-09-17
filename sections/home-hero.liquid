@@ -72,6 +72,34 @@
     {%- endif %}
   }
   {%- comment -%}
+    Per-element visibility. Hiding with CSS rather than skipping the markup
+    keeps the copy in the theme editor and in the page source, so the desktop
+    version and search engines still see it.
+  {%- endcomment -%}
+  @media (max-width: 768px) {
+    {%- unless hs.show_eyebrow_mobile %}
+    #shopify-section-{{ section.id }} .hero-eyebrow { display: none; }
+    {%- endunless %}
+    {%- unless hs.show_sub_mobile %}
+    #shopify-section-{{ section.id }} .hero-sub { display: none; }
+    {%- endunless %}
+    {%- unless hs.show_trust_mobile %}
+    #shopify-section-{{ section.id }} .hero-trust { display: none; }
+    {%- endunless %}
+  }
+  @media (min-width: 769px) {
+    {%- unless hs.show_eyebrow_desktop %}
+    #shopify-section-{{ section.id }} .hero-eyebrow { display: none; }
+    {%- endunless %}
+    {%- unless hs.show_sub_desktop %}
+    #shopify-section-{{ section.id }} .hero-sub { display: none; }
+    {%- endunless %}
+    {%- unless hs.show_trust_desktop %}
+    #shopify-section-{{ section.id }} .hero-trust { display: none; }
+    {%- endunless %}
+  }
+
+  {%- comment -%}
     Pinned mode. In normal block flow the buttons sit after the copy, so
     nudging the copy down drags them with it — and past the bottom of the
     photo. Stretching the copy column to the full height and pushing the two
@@ -547,6 +575,47 @@
       "unit": "px",
       "label": "Nudge buttons — mobile",
       "default": 0
+    },
+    {
+      "type": "header",
+      "content": "👁️ Show on each screen"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_eyebrow_desktop",
+      "label": "Eyebrow — desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_eyebrow_mobile",
+      "label": "Eyebrow — mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sub_desktop",
+      "label": "Subheadline — desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sub_mobile",
+      "label": "Subheadline — mobile",
+      "default": true,
+      "info": "Untick to drop the subheadline on phones while keeping it on desktop."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_desktop",
+      "label": "Trust line — desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_mobile",
+      "label": "Trust line — mobile",
+      "default": true
     },
     {
       "type": "header",
