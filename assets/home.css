@@ -146,6 +146,14 @@
 .hero-headline b {
   font-weight: inherit;
   color: var(--hero-highlight-color, var(--gold));
+  /* Set by the section when the highlighter style is chosen. Defaults are
+     transparent/none so colour-only styling is unaffected. */
+  background: var(--hero-highlight-bg, transparent);
+  padding: var(--hero-highlight-pad, 0);
+  border-radius: var(--hero-highlight-radius, 0);
+  /* keeps the block intact when the phrase wraps onto a second line */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 .hero-headline em {

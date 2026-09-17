@@ -114,7 +114,7 @@
       var first = document.getElementById('spClose');
       if (first) first.focus();
     });
-    remember();
+    if (!/[?&]popup=1/.test(window.location.search)) remember();
   }
   function close() {
     el.classList.remove('is-open');
@@ -139,6 +139,11 @@
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
+
+  // ?popup=1 forces it open for previewing — ignores design mode, the delay
+  // and the already-seen record, and never sets that record itself.
+  var forced = /[?&]popup=1/.test(window.location.search);
+  if (forced) { open(); return; }
 
   if (window.Shopify && window.Shopify.designMode) return;  // never ambush the editor
   if (seen()) return;

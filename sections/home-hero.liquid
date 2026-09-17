@@ -25,6 +25,11 @@
     --hero-italic-color: {{ hs.italic_color }};
     --hero-sub-color: {{ hs.sub_color }};
     --hero-highlight-color: {{ hs.highlight_color }};
+    {%- if hs.highlight_style == 'block' %}
+    --hero-highlight-bg: {{ hs.highlight_bg }};
+    --hero-highlight-pad: {{ hs.highlight_pad_y }}px {{ hs.highlight_pad_x }}px;
+    --hero-highlight-radius: {{ hs.highlight_radius }}px;
+    {%- endif %}
     --hero-trust-color: {{ hs.trust_color }};
     --hero-stars-color: {{ hs.stars_color }};
     --hero-text-offset: {{ hs.text_offset_desktop }}px;
@@ -52,6 +57,7 @@
       {%- if hs.italic_color_mobile != blank %}--hero-italic-color: {{ hs.italic_color_mobile }};{% endif %}
       {%- if hs.sub_color_mobile != blank %}--hero-sub-color: {{ hs.sub_color_mobile }};{% endif %}
       {%- if hs.highlight_color_mobile != blank %}--hero-highlight-color: {{ hs.highlight_color_mobile }};{% endif %}
+      {%- if hs.highlight_style == 'block' %}--hero-highlight-pad: {{ hs.highlight_pad_y_mobile }}px {{ hs.highlight_pad_x_mobile }}px;{% endif %}
       {%- if hs.trust_color_mobile != blank %}--hero-trust-color: {{ hs.trust_color_mobile }};{% endif %}
       {%- if hs.stars_color_mobile != blank %}--hero-stars-color: {{ hs.stars_color_mobile }};{% endif %}
       --hero-text-offset: {{ hs.text_offset_mobile }}px;
@@ -549,9 +555,82 @@
       "info": "Leave blank to use the desktop colour."
     },
     {
+      "type": "select",
+      "id": "highlight_style",
+      "label": "Highlighted word style",
+      "options": [
+        {
+          "value": "colour",
+          "label": "Coloured text"
+        },
+        {
+          "value": "block",
+          "label": "Highlighter block behind it"
+        }
+      ],
+      "default": "colour",
+      "info": "Bold a word in the headline (⌘B) to mark it."
+    },
+    {
+      "type": "color",
+      "id": "highlight_bg",
+      "label": "Highlighter colour",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "highlight_pad_x",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Highlighter width padding — desktop",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "highlight_pad_y",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Highlighter height padding — desktop",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "highlight_pad_x_mobile",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Highlighter width padding — mobile",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "highlight_pad_y_mobile",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Highlighter height padding — mobile",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "highlight_radius",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Highlighter corner radius",
+      "default": 0
+    },
+    {
       "type": "color",
       "id": "highlight_color",
-      "label": "Highlighted word — desktop",
+      "label": "Highlighted word — text",
       "default": "#C9A96E",
       "info": "Bold a word in the headline (⌘B) and it takes this colour. Italic (⌘I) takes the italic colour above."
     },
