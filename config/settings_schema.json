@@ -5277,6 +5277,12 @@
       },
       {
         "type": "color",
+        "id": "scratch_prize_bg",
+        "label": "Card surface under the foil",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
         "id": "scratch_btn_bg",
         "label": "Button background",
         "default": "#6B1E3A"

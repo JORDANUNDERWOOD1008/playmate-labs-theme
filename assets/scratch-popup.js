@@ -32,9 +32,9 @@
   function unlock() {
     if (revealed) return;
     revealed = true;
-    // swap the foil for the reward, the way the reference does it
-    if (card)   card.hidden = true;
-    if (prize)  prize.hidden = false;
+    // fade the remaining foil away; the reward is already underneath it
+    if (canvas) canvas.classList.add('is-cleared');
+    if (hint)   hint.style.display = 'none';
     if (submit) submit.disabled = false;
     if (reveal) reveal.hidden = true;
     el.classList.add('sp--revealed');

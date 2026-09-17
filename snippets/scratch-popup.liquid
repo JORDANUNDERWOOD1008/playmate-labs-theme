@@ -42,15 +42,17 @@
     <h2 class="sp__heading" id="spHeading">{{ s.scratch_heading | default: 'Try your luck' }}</h2>
     <p class="sp__sub">{{ s.scratch_sub | default: 'Scratch below to see what you get' }}</p>
 
-    {%- comment -%} Foil panel — hidden once revealed, replaced by the reward {%- endcomment -%}
+    {%- comment -%}
+      The reward sits inside the card, underneath the foil, so scratching
+      uncovers it rather than swapping it in afterwards.
+    {%- endcomment -%}
     <div class="sp__card" id="spCard">
+      <div class="sp__prize" id="spPrize">
+        <span class="sp__prize-note">{{ s.scratch_prize_lead | default: "You've got" }}</span>
+        <span class="sp__prize-value">{{ s.scratch_prize | default: '10% off' }}</span>
+      </div>
       <canvas class="sp__canvas" id="spCanvas" aria-hidden="true"></canvas>
       <span class="sp__hint" id="spHint">{{ s.scratch_hint | default: 'SCRATCH HERE' }}</span>
-    </div>
-
-    <div class="sp__prize" id="spPrize" hidden>
-      <span class="sp__prize-note">{{ s.scratch_prize_lead | default: "You've got" }}</span>
-      <span class="sp__prize-value">{{ s.scratch_prize | default: '10% off' }}</span>
     </div>
 
     <button type="button" class="sp__reveal" id="spReveal">Reveal instead</button>
