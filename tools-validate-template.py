@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+"""Validate templates/index.json against the section schemas. Exits 1 on failure."""
+import json, re, pathlib, sys
+t = json.loads(pathlib.Path('templates/index.json').read_text())
+bad = []
+for name, sec in t['sections'].items():
+    src = pathlib.Path(f"sections/{sec['type']}.liquid").read_text()
+    sch = json.loads(re.search(r'\{%-?\s*schema\s*-?%\}(.*?)\{%-?\s*endschema\s*-?%\}', src, re.S).group(1))
+    S = {x['id']: x for x in sch['settings'] if isinstance(x, dict) and x.get('id')}
+    for k, v in sec.get('settings', {}).items():
+        d = S.get(k)
+        if not d: bad.append(f"{name}.{k}: not in {sec['type']} schema"); continue
+        if d['type'] == 'range':
+            lo, hi, st = d['min'], d['max'], d.get('step', 1)
+            if not isinstance(v,(int,float)) or v<lo or v>hi or round((v-lo)/st,6)%1!=0:
+                bad.append(f"{name}.{k}={v} invalid for range {lo}-{hi}/{st}")
+        elif d['type'] == 'select' and str(v) not in {o['value'] for o in d['options']}:
+            bad.append(f"{name}.{k}={v!r} not an option")
+    BT = {b['type']: {x['id'] for x in b.get('settings',[]) if isinstance(x,dict) and x.get('id')}
+          for b in sch.get('blocks', [])}
+    for bid, b in sec.get('blocks', {}).items():
+        if b['type'] not in BT: bad.append(f"{name}.{bid}: block type {b['type']!r} unknown"); continue
+        for k in b.get('settings', {}):
+            if k not in BT[b['type']]: bad.append(f"{name}.{bid}.{k}: not in block schema")
+# Shopify limits: ranges may have at most 101 steps
+for f in sorted(pathlib.Path('sections').glob('*.liquid')):
+    m = re.search(r'\{%-?\s*schema\s*-?%\}(.*?)\{%-?\s*endschema\s*-?%\}', f.read_text(), re.S)
+    if not m: continue
+    for x in json.loads(m.group(1))['settings']:
+        if isinstance(x, dict) and x.get('type') == 'range':
+            if (x['max']-x['min'])/x.get('step',1) > 100:
+                bad.append(f"{f.name}:{x['id']} range exceeds 101 steps")
+for b in bad: print("  " + b)
+print("  ALL VALID" if not bad else f"  {len(bad)} PROBLEMS — not pushing")
+sys.exit(1 if bad else 0)

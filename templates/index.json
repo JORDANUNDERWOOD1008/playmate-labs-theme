@@ -639,8 +639,6 @@
         "btn2_text": "",
         "btn2_url": "",
         "btn_radius": "999",
-        "btn_font_size": 12,
-        "btn_font_size_mobile": 11,
         "stack_buttons_mobile": true,
         "h_pos": "left",
         "v_pos": "middle",
