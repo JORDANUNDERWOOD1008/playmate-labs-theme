@@ -4,7 +4,12 @@
   Used for: /pages/stockists
 {% endcomment %}
 
-{{ 'global.css' | asset_url | stylesheet_tag }}
+{%- comment -%}
+  global.css is already loaded by layout/theme.liquid, immediately before
+  theme-css-variables sets the font and colour tokens. Loading it again
+  here landed later in the cascade and reset :root back to the stock
+  Playfair / Cormorant defaults, so these pages ignored the theme fonts.
+{%- endcomment -%}
 
 <section class="page-hero" style="background:linear-gradient(135deg,var(--espresso) 0%,var(--burgundy-deep) 100%);padding:5rem 0 3rem;">
   <div class="container">

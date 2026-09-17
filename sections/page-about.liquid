@@ -22,11 +22,11 @@
     <div class="about-hero-inner" style="max-width:700px;">
       <span class="section-eyebrow" style="color:{{ section.settings.about_accent_color | default: 'var(--gold)' }};">{{ section.settings.about_eyebrow | default: 'Our Story' }}</span>
       <h1 style="font-family:var(--font-serif);font-size:clamp(2rem,5vw,3.25rem);color:{{ section.settings.about_hero_heading_color | default: 'var(--cream)' }};margin:0.75rem 0 1.5rem;line-height:1.2;">
-        {{ section.settings.about_hero_heading_1 | default: "We're rewriting" }}<br>
+        {{ section.settings.about_hero_heading_1 | default: 'We are rewriting' }}<br>
         {{ section.settings.about_hero_heading_2 | default: 'how couples do' }}<br>
         <em style="color:{{ section.settings.about_accent_color | default: 'var(--gold)' }};">{{ section.settings.about_hero_heading_italic | default: 'date night.' }}</em>
       </h1>
-      <p style="font-size:1.0625rem;color:rgba(245,239,230,0.8);line-height:1.7;max-width:580px;">{{ section.settings.about_hero_sub | default: 'Playmate Labs is the cultural platform for modern relationships — built on sensory products, monthly drops, immersive events and digital rituals.' }}</p>
+      <p style="font-size:1.0625rem;color:rgba(245,239,230,0.8);line-height:1.7;max-width:580px;">{{ section.settings.about_hero_sub | default: 'Playmate Labs is a product development studio for modern relationships. We design objects that make it easy for two people to find their way back to each other.' }}</p>
     </div>
   </div>
 </section>
@@ -37,13 +37,20 @@
     <div class="about-problem-grid">
       <div class="about-problem-text">
         <span class="section-eyebrow" style="color:{{ section.settings.about_accent_color | default: 'var(--gold)' }};">{{ section.settings.about_problem_eyebrow | default: 'The Problem' }}</span>
-        <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ section.settings.about_heading_color | default: 'var(--espresso)' }};margin:0.75rem 0 1.25rem;">{{ section.settings.about_problem_heading | default: 'Modern relationships lose novelty. We fix that.' }}</h2>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ section.settings.about_heading_color | default: 'var(--espresso)' }};margin:0.75rem 0 1.25rem;">{{ section.settings.about_problem_heading | default: 'Great relationships keep finding new things to do together.' }}</h2>
         <p style="color:var(--text-body);line-height:1.75;margin-bottom:1rem;">{{ section.settings.about_problem_para_1 | default: 'Research consistently shows that novel shared experiences are the single strongest predictor of long-term relationship satisfaction. But modern life makes novelty hard. We fall into habits. We run out of ideas. Date night becomes dinner and the same TV show.' }}</p>
         <p style="color:var(--text-body);line-height:1.75;">
           {{ section.settings.about_problem_para_2_prefix | default: 'We built Playmate Labs to solve this. Not with therapy or advice — but with' }}
           <strong style="color:{{ section.settings.about_accent_color | default: 'var(--burgundy)' }};">{{ section.settings.about_problem_para_2_bold | default: 'beautiful products, curated experiences and a world worth exploring together.' }}</strong>
         </p>
       </div>
+      {%- comment -%}
+        These figures carry no citation and one of them reads as an internal
+        estimate rather than published research. Hidden until each can be
+        sourced, because an uncited statistic is a liability on a page that
+        retail buyers read.
+      {%- endcomment -%}
+      {%- if section.settings.about_show_stats -%}
       <div class="about-stats-column">
         {%- assign default_stat_nums = '67%,94%,3×' | split: ',' -%}
         {%- assign default_stat_descs = 'of couples report that date nights become predictable within the first 2 years.,of couples who introduced novel sensory rituals reported higher relationship satisfaction after 30 days.,Couples who regularly do structured play are 3x more likely to report relationship satisfaction.' | split: ',' -%}
@@ -56,6 +63,7 @@
           </div>
         {%- endfor -%}
       </div>
+      {%- endif -%}
     </div>
   </div>
 </section>
@@ -81,7 +89,7 @@
     <div class="about-pillars-grid">
       {%- assign default_pillar_icons = '🍫,📦,✨,🎮' | split: ',' -%}
       {%- assign default_pillar_titles = 'Sensory Products,Monthly Drops,Immersive Events,Digital Play' | split: ',' -%}
-      {%- assign default_pillar_descs = 'Consumables ritual kits and beautiful objects designed to create shared sensory experiences.,Limited themed date night kits released like a cultural product. 200 kits. A new theme every month.,IRL experiences — sensory date nights couples mixers and pop-ups across the UK and beyond.,The 5-day experience digital rituals companion app access and a growing world of playful digital intimacy tools.' | split: ',' -%}
+      {%- assign default_pillar_descs = 'Consumables ritual kits and beautiful objects designed to create shared sensory experiences.,Limited themed date night kits released like a cultural product. 200 kits. A new theme every month.,IRL experiences — sensory date nights couples mixers and pop-ups across the UK and beyond.,Digital rituals, companion content and a growing world of playful intimacy tools.' | split: ',' -%}
       {%- for i in (1..4) -%}
         {%- assign p_icon = 'about_pillar_' | append: i | append: '_icon' -%}
         {%- assign p_title = 'about_pillar_' | append: i | append: '_title' -%}
@@ -381,10 +389,27 @@
       "label": "Show brand values section",
       "default": true
     },
-
-    {"type": "header", "content": "🔗 Button URLs (editable in customiser)"},
-    {"type": "url", "id": "url_experience", "label": "Experience CTA"},
-    {"type": "url", "id": "url_monthly_drops", "label": "Shop Drops"}
+    {
+      "type": "header",
+      "content": "🔗 Button URLs (editable in customiser)"
+    },
+    {
+      "type": "url",
+      "id": "url_experience",
+      "label": "Experience CTA"
+    },
+    {
+      "type": "url",
+      "id": "url_monthly_drops",
+      "label": "Shop Drops"
+    },
+    {
+      "type": "checkbox",
+      "id": "about_show_stats",
+      "label": "Show the statistics block",
+      "default": false,
+      "info": "Each figure needs a published source before this goes back on."
+    }
   ]
 }
 {% endschema %}

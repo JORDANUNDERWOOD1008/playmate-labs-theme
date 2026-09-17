@@ -5,7 +5,12 @@
   Schema-driven colours. Category filter with JS. Article cards grid.
 {% endcomment %}
 
-{{ 'global.css' | asset_url | stylesheet_tag }}
+{%- comment -%}
+  global.css is already loaded by layout/theme.liquid, immediately before
+  theme-css-variables sets the font and colour tokens. Loading it again
+  here landed later in the cascade and reset :root back to the stock
+  Playfair / Cormorant defaults, so these pages ignored the theme fonts.
+{%- endcomment -%}
 {{ 'components.css' | asset_url | stylesheet_tag }}
 
 <style>

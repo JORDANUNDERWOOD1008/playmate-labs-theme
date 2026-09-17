@@ -57,13 +57,62 @@
 
   /* ── Gallery ── */
   .product-gallery { position: sticky; top: calc(var(--nav-height) + 1.5rem); }
-  .product-main-img { border-radius: var(--radius-xl); overflow: hidden; background: var(--ivory); aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; cursor: zoom-in; }
-  .product-main-img img { width: 100%; height: 100%; object-fit: cover; }
-  .product-main-img .img-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg,var(--espresso),#3D1A2E); display:flex;align-items:center;justify-content:center;font-size:6rem; }
+  .pg { position: relative; margin-bottom: 1rem; }
+  .pg__track {
+    display: flex; gap: 0; overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;
+    border-radius: var(--radius-xl); background: var(--ivory);
+  }
+  .pg__track::-webkit-scrollbar { display: none; }
+  .pg__track:focus-visible { outline: 2px solid var(--burgundy); outline-offset: 3px; }
+  .pg__slide {
+    flex: 0 0 100%; width: 100%; margin: 0; scroll-snap-align: center;
+    aspect-ratio: 1/1; background: var(--ivory);
+  }
+  .pg__slide img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
+  .pg__slide .img-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg,var(--espresso),#3D1A2E);
+    display: flex; align-items: center; justify-content: center; font-size: 6rem;
+  }
+
+  .pg__arrow {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+    width: 40px; height: 40px; border: 0; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.92); color: var(--espresso);
+    box-shadow: 0 1px 8px rgba(0,0,0,.14);
+    opacity: 0; transition: opacity .2s ease;
+  }
+  .pg:hover .pg__arrow, .pg__arrow:focus-visible { opacity: 1; }
+  .pg__arrow--prev { left: 12px; }
+  .pg__arrow--next { right: 12px; }
+  .pg__arrow[disabled] { opacity: 0 !important; pointer-events: none; }
+
+  .pg__dots {
+    position: absolute; bottom: 12px; left: 0; right: 0; z-index: 2;
+    display: none; justify-content: center; gap: 6px;
+  }
+  .pg__dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.55); transition: background .2s, transform .2s; }
+  .pg__dot.is-active { background: #fff; transform: scale(1.35); }
+
   .product-thumbs { display: flex; gap: 0.625rem; flex-wrap: wrap; }
-  .product-thumb { width: 72px; height: 72px; border-radius: var(--radius-md); overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; flex-shrink: 0; }
+  .product-thumb {
+    width: 72px; height: 72px; padding: 0; border-radius: var(--radius-md);
+    overflow: hidden; cursor: pointer; border: 2px solid transparent;
+    background: none; transition: border-color 0.2s; flex-shrink: 0;
+  }
   .product-thumb.active, .product-thumb:hover { border-color: var(--burgundy); }
-  .product-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .product-thumb:focus-visible { outline: 2px solid var(--burgundy); outline-offset: 2px; }
+  .product-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  @media (max-width: 900px) {
+    /* Touch: swipe the track, read position from the dots. Eight thumbnails
+       wrapped into a grid was taking most of a phone screen. */
+    .pg__dots { display: flex; }
+    .pg__arrow { display: none; }
+    .product-thumbs { display: none; }
+  }
 
   /* ── Product info ── */
   .product-info { padding-top: 0; }
@@ -176,8 +225,19 @@
     <div class="breadcrumb">
       <a href="{{ routes.root_url }}">Home</a>
       <span class="breadcrumb-sep">›</span>
-      {%- if product.collections.size > 0 -%}
-        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+      {%- comment -%}
+        collections.first is whatever Shopify returns, which here is an
+        internal one-letter collection. Prefer a real, descriptive one.
+      {%- endcomment -%}
+      {%- assign crumb = null -%}
+      {%- for c in product.collections -%}
+        {%- if c.title.size > 3 and c.handle != 'frontpage' and c.handle != 'available' -%}
+          {%- assign crumb = c -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if crumb -%}
+        <a href="{{ crumb.url }}">{{ crumb.title }}</a>
         <span class="breadcrumb-sep">›</span>
       {%- endif -%}
       <span>{{ product.title }}</span>
@@ -191,22 +251,57 @@
     <div class="product-grid">
 
       <!-- ── GALLERY ── -->
+      {%- comment -%}
+        A scroll-snap track rather than one image whose src gets swapped, so
+        the gallery can be swiped on touch and still driven by the thumbnails
+        on desktop. Keyboard and no-JS both fall back to plain scrolling.
+      {%- endcomment -%}
       <div class="product-gallery">
-        <!-- Main image -->
-        <div class="product-main-img" id="product-main-image" onclick="openLightbox()">
-          {%- if product.featured_image -%}
-            {{ product.featured_image | image_url: width: 800 | image_tag: id: 'main-product-img', loading: 'eager', alt: product.title }}
-          {%- else -%}
-            <div class="img-placeholder"><span>💫</span></div>
+        <div class="pg" id="pg">
+          <div class="pg__track" id="pgTrack" tabindex="0" role="group" aria-label="{{ product.title | escape }} images">
+            {%- if product.images.size > 0 -%}
+              {%- for image in product.images -%}
+                <figure class="pg__slide" data-index="{{ forloop.index0 }}">
+                  <img src="{{ image | image_url: width: 1000 }}"
+                       srcset="{{ image | image_url: width: 500 }} 500w,
+                               {{ image | image_url: width: 1000 }} 1000w,
+                               {{ image | image_url: width: 1400 }} 1400w"
+                       sizes="(max-width: 900px) 92vw, 45vw"
+                       width="{{ image.width }}" height="{{ image.height }}"
+                       alt="{{ image.alt | default: product.title | escape }}"
+                       loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                       decoding="async"
+                       data-full="{{ image | image_url: width: 1800 }}">
+                </figure>
+              {%- endfor -%}
+            {%- else -%}
+              <figure class="pg__slide"><div class="img-placeholder"><span>💫</span></div></figure>
+            {%- endif -%}
+          </div>
+
+          {%- if product.images.size > 1 -%}
+            <button type="button" class="pg__arrow pg__arrow--prev" id="pgPrev" aria-label="Previous image">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button type="button" class="pg__arrow pg__arrow--next" id="pgNext" aria-label="Next image">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <div class="pg__dots" id="pgDots" aria-hidden="true">
+              {%- for image in product.images -%}
+                <span class="pg__dot{% if forloop.first %} is-active{% endif %}"></span>
+              {%- endfor -%}
+            </div>
           {%- endif -%}
         </div>
-        <!-- Thumbnails -->
+
         {%- if product.images.size > 1 -%}
-          <div class="product-thumbs">
-            {%- for image in product.images limit: 8 -%}
-              <div class="product-thumb{% if forloop.first %} active{% endif %}" onclick="switchImage('{{ image | image_url: width: 800 }}', this)">
-                {{ image | image_url: width: 150 | image_tag: loading: 'lazy', alt: product.title }}
-              </div>
+          <div class="product-thumbs" id="pgThumbs">
+            {%- for image in product.images -%}
+              <button type="button" class="product-thumb{% if forloop.first %} active{% endif %}"
+                      data-index="{{ forloop.index0 }}"
+                      aria-label="Show image {{ forloop.index }} of {{ product.images.size }}">
+                {{ image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}
+              </button>
             {%- endfor -%}
           </div>
         {%- endif -%}
@@ -225,7 +320,7 @@
         <div class="product-tags">
           {%- if is_bestseller -%}<span class="product-tag" style="background:{{ settings.badge_bestseller_bg | default: 'var(--burgundy)' }};color:{{ settings.badge_bestseller_text | default: 'var(--cream)' }};border-color:transparent;">Bestseller</span>{%- endif -%}
           {%- if is_limited -%}<span class="product-tag" style="background:{{ settings.badge_limited_bg | default: 'var(--gold)' }};color:{{ settings.badge_limited_text | default: 'var(--espresso)' }};border-color:transparent;">Limited</span>{%- endif -%}
-          {%- if product.compare_at_price > product.price -%}<span class="product-tag" style="background:{{ settings.badge_sale_bg | default: '#8B2E4F' }};color:{{ settings.badge_sale_text | default: '#FFFFFF' }};border-color:transparent;">Sale</span>{%- endif -%}
+          {%- assign svar = product.selected_or_first_available_variant -%}{%- if svar.compare_at_price > svar.price -%}<span class="product-tag" style="background:{{ settings.badge_sale_bg | default: '#8B2E4F' }};color:{{ settings.badge_sale_text | default: '#FFFFFF' }};border-color:transparent;">Sale</span>{%- endif -%}
         </div>
 
         <h1 class="product-title">{{ product.title }}</h1>
@@ -241,18 +336,23 @@
         {%- endif -%}
 
         <!-- Rating -->
+        {%- if product.metafields.reviews.rating != blank -%}
         <div class="product-rating-row">
           <div class="product-stars">★★★★★</div>
-          <span class="product-rating-num">4.9</span>
-          <a href="#product-reviews" class="product-review-count">{{ product.metafields.reviews.rating_count | default: '2,400+' }} reviews</a>
+          <span class="product-rating-num">{{ product.metafields.reviews.rating }}</span>
+          {%- if product.metafields.reviews.rating_count != blank -%}
+            <a href="#product-reviews" class="product-review-count">{{ product.metafields.reviews.rating_count }} reviews</a>
+          {%- endif -%}
         </div>
+        {%- endif -%}
 
         <!-- Price -->
         <div class="product-price-row">
-          <span class="product-price">{{ product.selected_or_first_available_variant.price | money }}</span>
-          {%- if product.compare_at_price > product.price -%}
-            <span class="product-compare-price">{{ product.compare_at_price | money }}</span>
-            <span class="product-save-badge">Save {{ product.compare_at_price | minus: product.price | money }}</span>
+          {%- assign pvar = product.selected_or_first_available_variant -%}
+          <span class="product-price">{{ pvar.price | money }}</span>
+          {%- if pvar.compare_at_price > pvar.price -%}
+            <span class="product-compare-price">{{ pvar.compare_at_price | money }}</span>
+            <span class="product-save-badge">Save {{ pvar.compare_at_price | minus: pvar.price | money }}</span>
           {%- endif -%}
         </div>
 
@@ -843,13 +943,65 @@
 </div>
 
 <script>
-  // Gallery switcher
-  function switchImage(src, thumb) {
-    var img = document.getElementById('main-product-img');
-    if (img) img.src = src;
-    document.querySelectorAll('.product-thumb').forEach(function(t) { t.classList.remove('active'); });
-    if (thumb) thumb.classList.add('active');
-  }
+  // Gallery: the track is the source of truth. Thumbnails and arrows scroll it,
+  // and whatever it lands on updates them back, so swipe and click stay in sync.
+  (function () {
+    var track = document.getElementById('pgTrack');
+    if (!track) return;
+    var slides = [].slice.call(track.querySelectorAll('.pg__slide'));
+    var thumbs = [].slice.call(document.querySelectorAll('#pgThumbs .product-thumb'));
+    var dots   = [].slice.call(document.querySelectorAll('#pgDots .pg__dot'));
+    var prev   = document.getElementById('pgPrev');
+    var next   = document.getElementById('pgNext');
+    var current = 0;
+
+    function goTo(i, smooth) {
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      track.scrollTo({ left: slides[i].offsetLeft - track.offsetLeft,
+                       behavior: smooth === false ? 'auto' : 'smooth' });
+    }
+    function mark(i) {
+      if (i === current) return;
+      current = i;
+      thumbs.forEach(function (t, n) { t.classList.toggle('active', n === i); });
+      dots.forEach(function (d, n) { d.classList.toggle('is-active', n === i); });
+      if (prev) prev.disabled = (i === 0);
+      if (next) next.disabled = (i === slides.length - 1);
+    }
+
+    thumbs.forEach(function (t) {
+      t.addEventListener('click', function () { goTo(parseInt(t.dataset.index, 10)); });
+    });
+    if (prev) prev.addEventListener('click', function () { goTo(current - 1); });
+    if (next) next.addEventListener('click', function () { goTo(current + 1); });
+
+    track.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); goTo(current + 1); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(current - 1); }
+    });
+
+    // Report the slide nearest the middle of the viewport, so a half-swipe
+    // that snaps back does not leave the thumbnails pointing at the wrong one.
+    var tick;
+    track.addEventListener('scroll', function () {
+      clearTimeout(tick);
+      tick = setTimeout(function () {
+        var mid = track.scrollLeft + track.clientWidth / 2, best = 0, dist = Infinity;
+        slides.forEach(function (s, n) {
+          var c = s.offsetLeft - track.offsetLeft + s.offsetWidth / 2;
+          if (Math.abs(c - mid) < dist) { dist = Math.abs(c - mid); best = n; }
+        });
+        mark(best);
+      }, 90);
+    }, { passive: true });
+
+    track.addEventListener('click', function (e) {
+      if (e.target.tagName === 'IMG' && typeof openLightbox === 'function') openLightbox();
+    });
+
+    if (prev) prev.disabled = true;
+    if (next) next.disabled = slides.length < 2;
+  })();
 
   // Quantity adjuster
   function adjustQty(delta) {
