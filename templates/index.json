@@ -81,7 +81,47 @@
         "bg_color": "",
         "text_color": "",
         "heading_color": ""
-      }
+      },
+      "blocks": {
+        "p1": {
+          "type": "pillar",
+          "settings": {
+            "icon": "\u2726",
+            "title": "Sensory Products",
+            "text": "Consumables, kits & rituals"
+          }
+        },
+        "p2": {
+          "type": "pillar",
+          "settings": {
+            "icon": "\ud83c\udfae",
+            "title": "Date Night Games",
+            "text": "Play, flirt, connect"
+          }
+        },
+        "p3": {
+          "type": "pillar",
+          "settings": {
+            "icon": "\ud83c\uddec\ud83c\udde7",
+            "title": "Made in the UK",
+            "text": "Small-batch, shipped fast"
+          }
+        },
+        "p4": {
+          "type": "pillar",
+          "settings": {
+            "icon": "\ud83d\udd12",
+            "title": "Plain Packaging",
+            "text": "Nothing on the box"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ]
     },
     "banner-nude": {
       "type": "flex-banner",

@@ -1,43 +1,24 @@
 {% render 'section-style', section: section %}
 <!-- VALUE STRIP -->
+{%- comment -%}
+  Block-driven so the pillars can be added, reordered and reworded in the
+  editor. Claims the business cannot currently deliver do not belong here,
+  and hardcoding them made that impossible to fix without a deploy.
+{%- endcomment -%}
 <section class="value-strip">
   <div class="container">
     <div class="value-strip-inner">
-      <div class="value-strip-item reveal" data-delay="0">
-        <div class="vs-icon">✦</div>
-        <div>
-          <h4>Sensory Products</h4>
-          <p>Consumables, kits &amp; rituals</p>
+      {%- for block in section.blocks -%}
+        <div class="value-strip-item reveal" data-delay="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+          {%- if block.settings.icon != blank -%}
+            <div class="vs-icon">{{ block.settings.icon }}</div>
+          {%- endif -%}
+          <div>
+            {%- if block.settings.title != blank -%}<h4>{{ block.settings.title }}</h4>{%- endif -%}
+            {%- if block.settings.text != blank -%}<p>{{ block.settings.text }}</p>{%- endif -%}
+          </div>
         </div>
-      </div>
-      <div class="value-strip-item reveal" data-delay="1">
-        <div class="vs-icon">📦</div>
-        <div>
-          <h4>Monthly Drops</h4>
-          <p>Themed limited releases</p>
-        </div>
-      </div>
-      <div class="value-strip-item reveal" data-delay="2">
-        <div class="vs-icon">✨</div>
-        <div>
-          <h4>Immersive Events</h4>
-          <p>IRL experiences &amp; pop-ups</p>
-        </div>
-      </div>
-      <div class="value-strip-item reveal" data-delay="3">
-        <div class="vs-icon">🎮</div>
-        <div>
-          <h4>Digital Games</h4>
-          <p>5-day sensory experiences</p>
-        </div>
-      </div>
-      <div class="value-strip-item reveal" data-delay="4">
-        <div class="vs-icon">🏆</div>
-        <div>
-          <h4>Community Rewards</h4>
-          <p>Points, perks &amp; early access</p>
-        </div>
-      </div>
+      {%- endfor -%}
     </div>
   </div>
 </section>
@@ -242,7 +223,69 @@
   "presets": [
     {
       "name": "Value Strip",
-      "category": "Promotional"
+      "blocks": [
+        {
+          "type": "pillar",
+          "settings": {
+            "icon": "✦",
+            "title": "Sensory Products",
+            "text": "Consumables, kits & rituals"
+          }
+        },
+        {
+          "type": "pillar",
+          "settings": {
+            "icon": "🎮",
+            "title": "Date Night Games",
+            "text": "Play, flirt, connect"
+          }
+        },
+        {
+          "type": "pillar",
+          "settings": {
+            "icon": "🇬🇧",
+            "title": "Made in the UK",
+            "text": "Small-batch, shipped discreetly"
+          }
+        },
+        {
+          "type": "pillar",
+          "settings": {
+            "icon": "🔒",
+            "title": "Plain Packaging",
+            "text": "Nothing on the box"
+          }
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "pillar",
+      "name": "Pillar",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon",
+          "default": "✦",
+          "info": "Any emoji or character."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Sensory Products"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Supporting line",
+          "default": "Consumables, kits & rituals"
+        }
+      ]
     }
   ]
 }
