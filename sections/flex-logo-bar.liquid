@@ -137,88 +137,347 @@
   "tag": "section",
   "max_blocks": 12,
   "settings": [
-    { "type": "header", "content": "✍️ Heading" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "As seen in",
-      "info": "Leave blank to show the logos on their own." },
-    { "type": "color", "id": "heading_color", "label": "Heading colour — desktop", "default": "#7A6055" },
-    { "type": "color", "id": "heading_color_mobile", "label": "Heading colour — mobile",
-      "info": "Leave blank to use the desktop colour." },
-    { "type": "range", "id": "heading_size", "min": 9, "max": 22, "step": 1, "unit": "px",
-      "label": "Heading size — desktop", "default": 12 },
-    { "type": "range", "id": "heading_size_mobile", "min": 8, "max": 20, "step": 1, "unit": "px",
-      "label": "Heading size — mobile", "default": 11 },
-    { "type": "range", "id": "heading_tracking", "min": 0, "max": 40, "step": 1, "unit": "/100em",
-      "label": "Heading letter spacing", "default": 18 },
-    { "type": "range", "id": "head_gap", "min": 0, "max": 80, "step": 2, "unit": "px",
-      "label": "Gap below heading — desktop", "default": 28 },
-    { "type": "range", "id": "head_gap_mobile", "min": 0, "max": 60, "step": 2, "unit": "px",
-      "label": "Gap below heading — mobile", "default": 18 },
-
-    { "type": "header", "content": "🏷️ Logos" },
-    { "type": "range", "id": "logo_height", "min": 12, "max": 90, "step": 2, "unit": "px",
-      "label": "Logo height — desktop", "default": 34,
-      "info": "A shared height is what makes mixed logo shapes sit level." },
-    { "type": "range", "id": "logo_height_mobile", "min": 10, "max": 70, "step": 2, "unit": "px",
-      "label": "Logo height — mobile", "default": 26 },
-    { "type": "range", "id": "logo_max_width", "min": 60, "max": 320, "step": 10, "unit": "px",
-      "label": "Max logo width — desktop", "default": 160,
-      "info": "Stops a very wide wordmark dominating the row." },
-    { "type": "range", "id": "logo_max_width_mobile", "min": 50, "max": 260, "step": 10, "unit": "px",
-      "label": "Max logo width — mobile", "default": 110 },
-    { "type": "checkbox", "id": "greyscale", "label": "Show logos in greyscale", "default": true,
-      "info": "Keeps a row of clashing brand colours from fighting the page." },
-    { "type": "range", "id": "logo_opacity", "min": 20, "max": 100, "step": 5, "unit": "%",
-      "label": "Logo opacity", "default": 65 },
-    { "type": "checkbox", "id": "colour_on_hover", "label": "Full colour on hover", "default": true },
-
-    { "type": "header", "content": "📐 Layout" },
-    { "type": "select", "id": "align", "label": "Alignment — desktop",
-      "options": [{"value":"center","label":"Centred"},{"value":"left","label":"Left"},
-                  {"value":"space-between","label":"Spread across the row"}],
-      "default": "center" },
-    { "type": "select", "id": "mobile_layout", "label": "Mobile layout",
-      "options": [{"value":"wrap","label":"Wrap onto several lines"},
-                  {"value":"scroll","label":"One line, swipe sideways"}],
+    {
+      "type": "header",
+      "content": "✍️ Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "As seen in",
+      "info": "Leave blank to show the logos on their own."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading colour — desktop",
+      "default": "#7A6055"
+    },
+    {
+      "type": "color",
+      "id": "heading_color_mobile",
+      "label": "Heading colour — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 9,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading size — desktop",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 8,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading size — mobile",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "heading_tracking",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "em",
+      "label": "Heading letter spacing (÷100)",
+      "default": 18,
+      "info": "18 renders as 0.18em."
+    },
+    {
+      "type": "range",
+      "id": "head_gap",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap below heading — desktop",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "head_gap_mobile",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap below heading — mobile",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "🏷️ Logos"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "min": 12,
+      "max": 90,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height — desktop",
+      "default": 34,
+      "info": "A shared height is what makes mixed logo shapes sit level."
+    },
+    {
+      "type": "range",
+      "id": "logo_height_mobile",
+      "min": 10,
+      "max": 70,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height — mobile",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width",
+      "min": 60,
+      "max": 320,
+      "step": 10,
+      "unit": "px",
+      "label": "Max logo width — desktop",
+      "default": 160,
+      "info": "Stops a very wide wordmark dominating the row."
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width_mobile",
+      "min": 50,
+      "max": 260,
+      "step": 10,
+      "unit": "px",
+      "label": "Max logo width — mobile",
+      "default": 110
+    },
+    {
+      "type": "checkbox",
+      "id": "greyscale",
+      "label": "Show logos in greyscale",
+      "default": true,
+      "info": "Keeps a row of clashing brand colours from fighting the page."
+    },
+    {
+      "type": "range",
+      "id": "logo_opacity",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Logo opacity",
+      "default": 65
+    },
+    {
+      "type": "checkbox",
+      "id": "colour_on_hover",
+      "label": "Full colour on hover",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "select",
+      "id": "align",
+      "label": "Alignment — desktop",
+      "options": [
+        {
+          "value": "center",
+          "label": "Centred"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "space-between",
+          "label": "Spread across the row"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "options": [
+        {
+          "value": "wrap",
+          "label": "Wrap onto several lines"
+        },
+        {
+          "value": "scroll",
+          "label": "One line, swipe sideways"
+        }
+      ],
       "default": "scroll",
-      "info": "Swiping keeps the section short when you have more than about four logos." },
-    { "type": "range", "id": "gap", "min": 8, "max": 100, "step": 2, "unit": "px",
-      "label": "Gap between logos — desktop", "default": 48 },
-    { "type": "range", "id": "gap_mobile", "min": 8, "max": 72, "step": 2, "unit": "px",
-      "label": "Gap between logos — mobile", "default": 28 },
-    { "type": "range", "id": "row_width", "min": 600, "max": 1600, "step": 20, "unit": "px",
-      "label": "Max row width", "default": 1100 },
-
-    { "type": "header", "content": "📐 Spacing" },
-    { "type": "range", "id": "pad_top_desktop", "min": 0, "max": 160, "step": 4, "unit": "px",
-      "label": "Padding top — desktop", "default": 48 },
-    { "type": "range", "id": "pad_bottom_desktop", "min": 0, "max": 160, "step": 4, "unit": "px",
-      "label": "Padding bottom — desktop", "default": 48 },
-    { "type": "range", "id": "pad_top_mobile", "min": 0, "max": 160, "step": 4, "unit": "px",
-      "label": "Padding top — mobile", "default": 32 },
-    { "type": "range", "id": "pad_bottom_mobile", "min": 0, "max": 160, "step": 4, "unit": "px",
-      "label": "Padding bottom — mobile", "default": 32 },
-
-    { "type": "header", "content": "🎨 Background & rules" },
-    { "type": "color_background", "id": "bg_color", "label": "Background — desktop" },
-    { "type": "color_background", "id": "bg_color_mobile", "label": "Background — mobile" },
-    { "type": "checkbox", "id": "border_top", "label": "Hairline above", "default": true },
-    { "type": "checkbox", "id": "border_bottom", "label": "Hairline below", "default": true },
-    { "type": "color", "id": "border_color", "label": "Hairline colour", "default": "#E8E0D5" }
+      "info": "Swiping keeps the section short when you have more than about four logos."
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 8,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between logos — desktop",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "min": 8,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between logos — mobile",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "row_width",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "label": "Max row width",
+      "default": 1100
+    },
+    {
+      "type": "header",
+      "content": "📐 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — desktop",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — desktop",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — mobile",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — mobile",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "🎨 Background & rules"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color",
+      "label": "Background — desktop"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color_mobile",
+      "label": "Background — mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "border_top",
+      "label": "Hairline above",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "border_bottom",
+      "label": "Hairline below",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Hairline colour",
+      "default": "#E8E0D5"
+    }
   ],
   "blocks": [
-    { "type": "logo", "name": "Logo", "limit": 12,
+    {
+      "type": "logo",
+      "name": "Logo",
+      "limit": 12,
       "settings": [
-        { "type": "image_picker", "id": "logo", "label": "Logo",
-          "info": "A transparent PNG or an SVG works best. Greyscale handles the colour." },
-        { "type": "text", "id": "name", "label": "Name",
-          "info": "Used as the image's alt text — important for screen readers and SEO." },
-        { "type": "url", "id": "url", "label": "Link" },
-        { "type": "checkbox", "id": "new_tab", "label": "Open in a new tab", "default": true }
-      ]}
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo",
+          "info": "A transparent PNG or an SVG works best. Greyscale handles the colour."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "info": "Used as the image's alt text — important for screen readers and SEO."
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "new_tab",
+          "label": "Open in a new tab",
+          "default": true
+        }
+      ]
+    }
   ],
   "presets": [
-    { "name": "As Seen In",
-      "blocks": [{ "type": "logo" }, { "type": "logo" }, { "type": "logo" }, { "type": "logo" }] }
+    {
+      "name": "As Seen In",
+      "blocks": [
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        }
+      ]
+    }
   ]
 }
 {% endschema %}

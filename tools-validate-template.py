@@ -22,14 +22,26 @@ for name, sec in t['sections'].items():
         if b['type'] not in BT: bad.append(f"{name}.{bid}: block type {b['type']!r} unknown"); continue
         for k in b.get('settings', {}):
             if k not in BT[b['type']]: bad.append(f"{name}.{bid}.{k}: not in block schema")
-# Shopify limits: ranges may have at most 101 steps
+# Shopify schema limits, checked here so they fail locally rather than on upload:
+#   - a range may have at most 101 steps
+#   - a range unit is at most 3 characters
+#   - a range default must sit on the step grid
 for f in sorted(pathlib.Path('sections').glob('*.liquid')):
     m = re.search(r'\{%-?\s*schema\s*-?%\}(.*?)\{%-?\s*endschema\s*-?%\}', f.read_text(), re.S)
     if not m: continue
-    for x in json.loads(m.group(1))['settings']:
-        if isinstance(x, dict) and x.get('type') == 'range':
-            if (x['max']-x['min'])/x.get('step',1) > 100:
-                bad.append(f"{f.name}:{x['id']} range exceeds 101 steps")
+    try: sc = json.loads(m.group(1))
+    except Exception as e: bad.append(f"{f.name}: schema will not parse ({e})"); continue
+    pools = [(sc.get('settings', []), '')] + [(b.get('settings', []), ' [block]') for b in sc.get('blocks', [])]
+    for pool, where in pools:
+        for x in pool:
+            if not isinstance(x, dict) or x.get('type') != 'range': continue
+            lo, hi, st = x['min'], x['max'], x.get('step', 1)
+            if (hi-lo)/st > 100: bad.append(f"{f.name}:{x['id']}{where} range exceeds 101 steps")
+            u = x.get('unit', '')
+            if len(u) > 3: bad.append(f"{f.name}:{x['id']}{where} unit {u!r} over 3 chars")
+            d = x.get('default')
+            if d is not None and (d < lo or d > hi or round((d-lo)/st, 6) % 1 != 0):
+                bad.append(f"{f.name}:{x['id']}{where} default {d} off the step grid")
 for b in bad: print("  " + b)
 print("  ALL VALID" if not bad else f"  {len(bad)} PROBLEMS — not pushing")
 sys.exit(1 if bad else 0)
