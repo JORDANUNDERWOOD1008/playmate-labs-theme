@@ -131,6 +131,12 @@
     "scratch_foil_to": "#B08D4F",
     "scratch_mobile_layout": "split",
     "scratch_img_h_m": 52,
-    "font_accent": "heading"
+    "font_accent": "heading",
+    "custom_font_enable": true,
+    "custom_font_url": "https://use.typekit.net/zmd5rwh.css",
+    "custom_font_family": "futura-pt",
+    "custom_font_weight": "700",
+    "custom_font_fallback": "Jost, 'Century Gothic', sans-serif",
+    "custom_font_body": false
   }
 }

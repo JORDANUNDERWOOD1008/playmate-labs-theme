@@ -133,7 +133,9 @@
 .hero-headline {
   font-family: var(--font-display);
   font-size: clamp(3rem, 6vw, 5.5rem);
-  font-weight: 300;
+  /* was a hardcoded 300. Futura PT's web kit carries 400 and 700 only, so a
+     300 request quietly resolves to Book and the Bold setting does nothing. */
+  font-weight: var(--font-heading-weight-custom, var(--font-heading-weight, 300));
   line-height: 1.05;
   letter-spacing: -0.03em;
   color: var(--hero-heading-color, var(--cream));
