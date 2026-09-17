@@ -7,6 +7,31 @@
 {{ 'global.css' | asset_url | stylesheet_tag }}
 
 {%- comment -%}
+  Logo sizing. The <img> carried an inline height:40px, and an inline style
+  beats every stylesheet rule — which is why the size controls did nothing.
+  The inline rule now reads a variable instead, so the settings can drive it.
+{%- endcomment -%}
+{%- liquid
+  assign logo_h = section.settings.logo_height
+  assign logo_h_m = section.settings.logo_height_mobile
+  if section.settings.header_style == 'pills'
+    assign logo_h = section.settings.pill_logo_height
+    assign logo_h_m = section.settings.pill_logo_height_mobile
+  endif
+-%}
+{%- style -%}
+  #shopify-section-{{ section.id }} .nav-logo-img {
+    --nav-logo-h: {{ logo_h }}px;
+    {%- if section.settings.logo_max_width > 0 %}
+    --nav-logo-max: {{ section.settings.logo_max_width }}px;
+    {%- endif %}
+  }
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .nav-logo-img { --nav-logo-h: {{ logo_h_m }}px; }
+  }
+{%- endstyle -%}
+
+{%- comment -%}
   Floating-pill header. The bar goes transparent and the logo and the action
   group each become their own rounded capsule sitting over whatever is behind
   them. CSS only — no change to the markup order — so switching it off returns
@@ -41,10 +66,6 @@
   }
   {%- comment -%} The logo needs its own size here — it is no longer sharing a
       bar with the nav links, so the bar height stops constraining it. {%- endcomment -%}
-  #shopify-section-{{ section.id }} .nav-pills .nav-logo img {
-    width: auto;
-    height: {{ section.settings.pill_logo_height }}px;
-  }
   #shopify-section-{{ section.id }} .nav-pills .nav-logo span {
     font-size: {{ section.settings.pill_logo_height | times: 0.7 | round }}px;
   }
@@ -83,9 +104,6 @@
     #shopify-section-{{ section.id }} .nav-pills .nav-actions {
       padding: {{ section.settings.pill_pad_y_mobile }}px {{ section.settings.pill_pad_x_mobile }}px;
     }
-    #shopify-section-{{ section.id }} .nav-pills .nav-logo img {
-      height: {{ section.settings.pill_logo_height_mobile }}px;
-    }
     #shopify-section-{{ section.id }} .nav-pills .nav-logo span {
       font-size: {{ section.settings.pill_logo_height_mobile | times: 0.7 | round }}px;
     }
@@ -99,17 +117,17 @@
     {%- comment -%} Logo {%- endcomment -%}
     <a href="{{ routes.root_url }}" class="nav-logo" aria-label="{{ shop.name }} Home">
       {%- if section.settings.logo != blank -%}
-        <img src="{{ section.settings.logo | image_url: height: 40 }}"
+        <img src="{{ section.settings.logo | image_url: height: 160 }}"
              alt="{{ shop.name }}"
-             height="40"
              loading="eager"
-             style="width:auto;height:40px;object-fit:contain;">
+             class="nav-logo-img"
+             style="width:auto;height:var(--nav-logo-h,40px);max-width:var(--nav-logo-max,none);object-fit:contain;">
       {%- else -%}
         <img src="{{ 'playmate-logo.png' | asset_url }}"
              alt="{{ shop.name }}"
-             height="40"
              loading="eager"
-             style="width:auto;height:40px;object-fit:contain;">
+             class="nav-logo-img"
+             style="width:auto;height:var(--nav-logo-h,40px);max-width:var(--nav-logo-max,none);object-fit:contain;">
       {%- endif -%}
     </a>
 
@@ -277,13 +295,34 @@
     },
     {
       "type": "range",
-      "id": "logo_width",
-      "min": 50,
-      "max": 250,
-      "step": 10,
-      "default": 120,
+      "id": "logo_height",
+      "min": 14,
+      "max": 80,
+      "step": 2,
       "unit": "px",
-      "label": "Logo width"
+      "label": "Logo height — desktop",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "logo_height_mobile",
+      "min": 12,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height — mobile",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width",
+      "min": 0,
+      "max": 400,
+      "step": 10,
+      "default": 0,
+      "unit": "px",
+      "label": "Logo max width (0 = no limit)",
+      "info": "Optional cap for a very wide wordmark. Height below is the main control."
     },
     {
       "type": "checkbox",
