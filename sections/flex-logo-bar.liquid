@@ -27,7 +27,7 @@
   #shopify-section-{{ section.id }} .lb__head {
     text-align: center;
     font-size: {{ s.heading_size }}px;
-    letter-spacing: {{ s.heading_tracking }}em;
+    letter-spacing: {{ s.heading_tracking | divided_by: 100.0 }}em;
     text-transform: uppercase;
     color: {{ s.heading_color }};
     margin-bottom: {{ s.head_gap }}px;
@@ -93,6 +93,10 @@
     }
     {%- endif %}
   }
+  #shopify-section-{{ section.id }} .lb__wordmark { font-size: {{ s.wordmark_size }}px; }
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .lb__wordmark { font-size: {{ s.wordmark_size_mobile }}px; }
+  }
 {%- endstyle -%}
 
 <section class="lb">
@@ -113,6 +117,12 @@
                width="{{ logo.width }}" height="{{ logo.height }}"
                alt="{{ block.settings.name | default: logo.alt | escape }}"
                loading="lazy" decoding="async">
+        {%- elsif block.settings.name != blank -%}
+          {%- comment -%}
+            A retailer named but not yet supplied as artwork still counts as
+            proof. Set the name in type rather than showing a placeholder box.
+          {%- endcomment -%}
+          <span class="lb__wordmark">{{ block.settings.name }}</span>
         {%- else -%}
           {{ 'image' | placeholder_svg_tag: 'lb__img' }}
         {%- endif -%}
@@ -256,6 +266,27 @@
       "unit": "px",
       "label": "Max logo width — mobile",
       "default": 110
+    },
+    {
+      "type": "range",
+      "id": "wordmark_size",
+      "label": "Name-only text size",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 22,
+      "info": "Used for retailers listed by name until you upload their logo."
+    },
+    {
+      "type": "range",
+      "id": "wordmark_size_mobile",
+      "label": "Name-only text size — mobile",
+      "min": 11,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 17
     },
     {
       "type": "checkbox",

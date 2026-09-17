@@ -96,8 +96,8 @@
           "type": "pillar",
           "settings": {
             "icon": "◈",
-            "title": "Formulated, not flavoured",
-            "text": "Clinically-proven actives"
+            "title": "Actives, not novelty",
+            "text": "The best the UK legally allows"
           }
         },
         "p2": {
@@ -437,7 +437,8 @@
         "t1",
         "t2",
         "t3"
-      ]
+      ],
+      "disabled": true
     },
     "email-capture": {
       "type": "email-capture",
@@ -815,9 +816,9 @@
     "statement": {
       "type": "flex-statement",
       "settings": {
-        "eyebrow": "WHERE WE OPERATE",
-        "statement": "Most of this category sells pleasure.\nWe design <strong>the part before it</strong>.",
-        "support": "<p>There is a gap between being willing and actually wanting to. It opens up somewhere between the sofa and the bedroom, on an ordinary Tuesday, in a relationship that is perfectly fine.</p><p>Everything we make is built for that gap — small, easy ways back to each other that ask nothing of you but an evening.</p>",
+        "eyebrow": "WHERE WE WORK",
+        "statement": "Most of this category sells delivery.\nWe make <strong>the invitation</strong>.",
+        "support": "<p>Nobody is having less sex because there aren't enough vibrators. Relationships rarely fail from a lack of love — they fail somewhere between the sofa and the bedroom, on an ordinary Tuesday, for want of a reason to start.</p><p>Flowers. A bum grab. A text you would not read out loud. Small invitations that keep a couple warm. We make those as objects — built for the coffee table, not the top drawer.</p>",
         "layout": "split",
         "split_ratio": 55,
         "split_gap": 72,
@@ -851,29 +852,29 @@
         "s1": {
           "type": "step",
           "settings": {
-            "title": "Insight",
-            "text": "<p>We start with the moment, not the product. What actually stops two people who like each other from finding their way back to one another on a Tuesday.</p>"
+            "title": "Safety",
+            "text": "<p>Nothing starts without it. If it does not feel safe to say, it does not get said — and everything above this rung stays shut.</p>"
           }
         },
         "s2": {
           "type": "step",
           "settings": {
-            "title": "Design",
-            "text": "<p>Concepts are drawn in-house — structure, mechanic, packaging and tone together, because how a thing feels to open is part of whether it gets used.</p>"
+            "title": "Authenticity",
+            "text": "<p>Safe enough to be honest. There is no point being curious about a version of someone that is not real.</p>"
           }
         },
         "s3": {
           "type": "step",
           "settings": {
-            "title": "Prototype",
-            "text": "<p>We build it with our manufacturing partners and hold it. Formulations, finishes and card stocks get revised until the object earns its place on a bedside table.</p>"
+            "title": "Curiosity",
+            "text": "<p>Honesty makes room for questions. Questions are where wanting actually starts — not where it is supposed to arrive.</p>"
           }
         },
         "s4": {
           "type": "step",
           "settings": {
-            "title": "Release",
-            "text": "<p>Tested with real couples, then made in the UK in small runs. What does not change the evening does not ship.</p>"
+            "title": "Play",
+            "text": "<p>Curiosity you act on. This is the rung the rest of the category sells, as though you could start here.</p>"
           }
         }
       },
@@ -884,9 +885,9 @@
         "s4"
       ],
       "settings": {
-        "eyebrow": "INSIDE THE LAB",
-        "heading": "An innovation house for intimacy",
-        "intro": "<p>Playmate Labs is a product development studio. Every object starts as a problem about people and ends as something you can hold.</p>",
+        "eyebrow": "WHY WE ARE CALLED PLAYMATE",
+        "heading": "Play is the last rung, not the first",
+        "intro": "<p>Four things have to be true before a couple can properly play. Everything we make is built to move you one rung up.</p>",
         "heading_align": "center",
         "text_align": "left",
         "columns": 4,
@@ -920,6 +921,52 @@
         "pad_top_mobile": 64,
         "pad_bottom_mobile": 64
       }
+    },
+    "retail": {
+      "type": "flex-logo-bar",
+      "blocks": {
+        "r1": {
+          "type": "logo",
+          "settings": {
+            "name": "Lovehoney"
+          }
+        }
+      },
+      "block_order": [
+        "r1"
+      ],
+      "settings": {
+        "heading": "Also stocked by",
+        "heading_color": "#8A8178",
+        "heading_size": 11,
+        "heading_size_mobile": 10,
+        "heading_tracking": 18,
+        "head_gap": 28,
+        "head_gap_mobile": 20,
+        "logo_height": 34,
+        "logo_height_mobile": 26,
+        "logo_max_width": 190,
+        "logo_max_width_mobile": 140,
+        "wordmark_size": 26,
+        "wordmark_size_mobile": 20,
+        "greyscale": false,
+        "logo_opacity": 100,
+        "colour_on_hover": false,
+        "align": "center",
+        "mobile_layout": "wrap",
+        "gap": 56,
+        "gap_mobile": 28,
+        "row_width": 1100,
+        "bg_color": "#FAF7F2",
+        "bg_color_mobile": "#FAF7F2",
+        "border_top": true,
+        "border_bottom": true,
+        "border_color": "#E5DFD6",
+        "pad_top_desktop": 52,
+        "pad_bottom_desktop": 52,
+        "pad_top_mobile": 36,
+        "pad_bottom_mobile": 36
+      }
     }
   },
   "order": [
@@ -930,9 +977,10 @@
     "feature-pair",
     "statement",
     "process",
-    "social-proof",
+    "retail",
     "faq",
     "email-capture",
+    "social-proof",
     "story-aphrodisiac",
     "banner-nude",
     "story-chocolate",
