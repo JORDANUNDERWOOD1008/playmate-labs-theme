@@ -24,6 +24,11 @@
     --hero-heading-color: {{ hs.heading_text_color }};
     --hero-italic-color: {{ hs.italic_color }};
     --hero-sub-color: {{ hs.sub_color }};
+    --hero-highlight-color: {{ hs.highlight_color }};
+    --hero-text-offset: {{ hs.text_offset_desktop }}px;
+    --hero-btn-gap: {{ hs.btn_gap }}px;
+    --hero-btn-padding: {{ hs.btn_pad_y }}px {{ hs.btn_pad_x }}px;
+    --hero-btn-fontsize: {{ hs.btn_font_size }}px;
   }
   {%- comment -%} Buttons: the theme's .btn classes carry no colour controls,
       so paint them here from the section's own settings. {%- endcomment -%}
@@ -43,6 +48,15 @@
       {%- if hs.heading_color_mobile != blank %}--hero-heading-color: {{ hs.heading_color_mobile }};{% endif %}
       {%- if hs.italic_color_mobile != blank %}--hero-italic-color: {{ hs.italic_color_mobile }};{% endif %}
       {%- if hs.sub_color_mobile != blank %}--hero-sub-color: {{ hs.sub_color_mobile }};{% endif %}
+      {%- if hs.highlight_color_mobile != blank %}--hero-highlight-color: {{ hs.highlight_color_mobile }};{% endif %}
+      --hero-text-offset: {{ hs.text_offset_mobile }}px;
+      {%- if hs.btn_side_by_side_mobile %}
+      --hero-btn-direction: row;
+      --hero-btn-width: auto;
+      --hero-btn-maxwidth: none;
+      {%- endif %}
+      --hero-btn-padding: {{ hs.btn_pad_y_mobile }}px {{ hs.btn_pad_x_mobile }}px;
+      --hero-btn-fontsize: {{ hs.btn_font_size_mobile }}px;
     }
   }
   #shopify-section-{{ section.id }} .hero-bg-desktop {
@@ -448,6 +462,124 @@
       "id": "sub_color_mobile",
       "label": "Subheadline — mobile",
       "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Highlighted word — desktop",
+      "default": "#C9A96E",
+      "info": "Bold a word in the headline (⌘B) and it takes this colour. Italic (⌘I) takes the italic colour above."
+    },
+    {
+      "type": "color",
+      "id": "highlight_color_mobile",
+      "label": "Highlighted word — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "header",
+      "content": "🎚️ Fine positioning"
+    },
+    {
+      "type": "range",
+      "id": "text_offset_desktop",
+      "min": -200,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Nudge copy up / down — desktop",
+      "default": 0,
+      "info": "Negative moves it up. Use after setting the vertical position."
+    },
+    {
+      "type": "range",
+      "id": "text_offset_mobile",
+      "min": -200,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Nudge copy up / down — mobile",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "📏 Button size"
+    },
+    {
+      "type": "checkbox",
+      "id": "btn_side_by_side_mobile",
+      "label": "Buttons side by side on mobile",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "btn_gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between buttons",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_y",
+      "min": 6,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Height padding — desktop",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_x",
+      "min": 10,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Width padding — desktop",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size — desktop",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_y_mobile",
+      "min": 6,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Height padding — mobile",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_x_mobile",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Width padding — mobile",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size_mobile",
+      "min": 9,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size — mobile",
+      "default": 11
     },
     {
       "type": "header",
