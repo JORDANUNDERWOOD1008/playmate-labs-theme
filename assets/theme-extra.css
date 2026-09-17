@@ -1579,3 +1579,5 @@
   white-space: nowrap;
   color: currentColor;
 }
+
+.st__fade { z-index: 1; }

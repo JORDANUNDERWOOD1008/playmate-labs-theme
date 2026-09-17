@@ -28,6 +28,18 @@
     background: {{ s.bg_overlay_color }};
     opacity: {{ s.bg_overlay_opacity | divided_by: 100.0 }};
   }
+  {%- if s.bg_fade_bottom > 0 %}
+  {%- comment -%}
+    Dissolves the photograph into the section's own background colour at the
+    bottom edge, so a following section on the same colour continues rather
+    than butting up against a hard horizontal line.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} .st__fade {
+    position: absolute; left: 0; right: 0; bottom: 0; pointer-events: none;
+    height: {{ s.bg_fade_bottom }}%;
+    background: linear-gradient(to bottom, transparent 0%, {{ s.bg_color }} 92%);
+  }
+  {%- endif %}
   #shopify-section-{{ section.id }} .st > .container { position: relative; z-index: 2; }
   @media (max-width: 768px) {
     {%- unless s.bg_show_mobile %}
@@ -86,6 +98,7 @@
          width="{{ s.bg_image.width }}" height="{{ s.bg_image.height }}"
          alt="{{ s.bg_image.alt | escape }}" loading="lazy" decoding="async">
     <span class="st__veil"></span>
+    {%- if s.bg_fade_bottom > 0 -%}<span class="st__fade"></span>{%- endif -%}
   {%- endif -%}
   <div class="container">
     <div class="st__inner">
@@ -464,6 +477,17 @@
       "step": 5,
       "unit": "%",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "bg_fade_bottom",
+      "label": "Fade image out at the bottom",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "default": 0,
+      "info": "Use when the next section shares this background colour."
     },
     {
       "type": "header",
