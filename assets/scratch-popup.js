@@ -19,25 +19,30 @@
   }
   function remember() { try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {} }
 
-  var canvas  = document.getElementById('spCanvas');
-  var hint    = document.getElementById('spHint');
-  var submit  = document.getElementById('spSubmit');
-  var reveal  = document.getElementById('spReveal');
+  var canvas = document.getElementById('spCanvas');
+  var hint   = document.getElementById('spHint');
+  var claim  = document.getElementById('spClaim');
+  var reveal = document.getElementById('spReveal');
+  var step1  = document.getElementById('spStep1');
+  var step2  = document.getElementById('spStep2');
   var revealed = false;
   var lastFocus = null;
 
-  var card  = document.getElementById('spCard');
-  var prize = document.getElementById('spPrize');
-
+  // scratching only unlocks the Claim button; the reward and the email field
+  // belong to the second step
   function unlock() {
     if (revealed) return;
     revealed = true;
-    // fade the remaining foil away; the reward is already underneath it
     if (canvas) canvas.classList.add('is-cleared');
     if (hint)   hint.style.display = 'none';
-    if (submit) submit.disabled = false;
+    if (claim)  claim.disabled = false;
     if (reveal) reveal.hidden = true;
     el.classList.add('sp--revealed');
+  }
+
+  function toStep2() {
+    if (step1) step1.hidden = true;
+    if (step2) step2.hidden = false;
     var email = document.getElementById('spEmail');
     if (email) email.focus();
   }
@@ -129,6 +134,7 @@
     if (e.key === 'Escape' && !el.hidden) close();
   });
   if (reveal) reveal.addEventListener('click', unlock);
+  if (claim)  claim.addEventListener('click', toStep2);
 
   // keep focus inside while open
   el.addEventListener('keydown', function (e) {

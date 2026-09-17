@@ -112,8 +112,8 @@
   {%- comment -%} Cart as its own accent capsule nested in the right one {%- endcomment -%}
   {%- if section.settings.pill_cart_accent -%}
   #shopify-section-{{ section.id }} .nav-pills [data-cart-open] {
-    background: {{ section.settings.pill_accent }};
-    color: {{ section.settings.pill_accent_text }};
+    background: {{ section.settings.pill_cart_bg }};
+    color: {{ section.settings.pill_cart_text }};
     border-radius: 999px;
     height: {{ section.settings.pill_height | minus: 14 }}px;
     padding: 0 14px;
@@ -136,7 +136,7 @@
   #shopify-section-{{ section.id }} .nav-pills .nav-lockup .nav-logo span,
   #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-link,
   #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-icon-btn {
-    color: {{ section.settings.pill_text }};
+    color: {{ section.settings.pill_icon_color }};
   }
   {%- if section.settings.pill_hide_menu -%}
   {%- comment -%} Hamburger at every width, as the reference does {%- endcomment -%}
@@ -150,9 +150,10 @@
     background: {{ section.settings.pill_text }};
   }
   {%- comment -%} The cart sits inside the right pill as its own accent capsule {%- endcomment -%}
+  {%- comment -%} CTA and cart are separate accents, not one shared colour {%- endcomment -%}
   #shopify-section-{{ section.id }} .nav-pills .nav-cta {
-    background: {{ section.settings.pill_accent }};
-    color: {{ section.settings.pill_accent_text }};
+    background: {{ section.settings.pill_cta_bg }};
+    color: {{ section.settings.pill_cta_text }};
     border-radius: 999px;
   }
   {%- if section.settings.pill_hide_search_mobile %}
@@ -560,14 +561,32 @@
     },
     {
       "type": "color",
-      "id": "pill_accent",
-      "label": "Accent button background",
+      "id": "pill_cta_bg",
+      "label": "Join-the-list button — background",
       "default": "#D92B2B"
     },
     {
       "type": "color",
-      "id": "pill_accent_text",
-      "label": "Accent button text",
+      "id": "pill_cta_text",
+      "label": "Join-the-list button — text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "pill_cart_bg",
+      "label": "Cart button — background",
+      "default": "#D92B2B"
+    },
+    {
+      "type": "color",
+      "id": "pill_cart_text",
+      "label": "Cart button — icon",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "pill_icon_color",
+      "label": "Search & account icons",
       "default": "#FFFFFF"
     },
     {

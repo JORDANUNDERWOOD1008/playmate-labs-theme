@@ -39,42 +39,49 @@
            alt="{{ shop.name | escape }}" decoding="async">
     {%- endif -%}
 
-    <h2 class="sp__heading" id="spHeading">{{ s.scratch_heading | default: 'Try your luck' }}</h2>
-    <p class="sp__sub">{{ s.scratch_sub | default: 'Scratch below to see what you get' }}</p>
+    {%- comment -%} STEP 1 — scratch, then claim {%- endcomment -%}
+    <div class="sp__step" id="spStep1">
+      <h2 class="sp__heading" id="spHeading">{{ s.scratch_heading | default: 'Try your luck' }}</h2>
+      <p class="sp__sub">{{ s.scratch_sub | default: 'Scratch below to see what you get' }}</p>
 
-    {%- comment -%}
-      The reward sits inside the card, underneath the foil, so scratching
-      uncovers it rather than swapping it in afterwards.
-    {%- endcomment -%}
-    <div class="sp__card" id="spCard">
-      <div class="sp__prize" id="spPrize">
-        <span class="sp__prize-note">{{ s.scratch_prize_lead | default: "You've got" }}</span>
-        <span class="sp__prize-value">{{ s.scratch_prize | default: '10% off' }}</span>
-        {%- if s.scratch_code != blank -%}
-          <span class="sp__prize-code">{{ s.scratch_code }}</span>
-        {%- endif -%}
+      <div class="sp__card" id="spCard">
+        <div class="sp__prize-peek">
+          <span class="sp__prize-value">{{ s.scratch_prize | default: 'Up to 60% off' }}</span>
+        </div>
+        <canvas class="sp__canvas" id="spCanvas" aria-hidden="true"></canvas>
+        <span class="sp__hint" id="spHint">{{ s.scratch_hint | default: 'SCRATCH HERE' }}</span>
       </div>
-      <canvas class="sp__canvas" id="spCanvas" aria-hidden="true"></canvas>
-      <span class="sp__hint" id="spHint">{{ s.scratch_hint | default: 'SCRATCH HERE' }}</span>
+
+      <button type="button" class="sp__submit" id="spClaim" disabled>
+        {{ s.scratch_claim | default: 'Claim' }}
+      </button>
+      <button type="button" class="sp__reveal" id="spReveal">Reveal instead</button>
     </div>
 
-    <button type="button" class="sp__reveal" id="spReveal">Reveal instead</button>
+    {%- comment -%} STEP 2 — reward, then email {%- endcomment -%}
+    <div class="sp__step" id="spStep2" hidden>
+      <p class="sp__prize-note">{{ s.scratch_prize_lead | default: "You've got" }}</p>
+      <h2 class="sp__heading sp__heading--prize">{{ s.scratch_prize | default: 'Up to 60% off' }}</h2>
+      <p class="sp__sub">{{ s.scratch_email_prompt | default: 'Enter your email to get your deal' }}</p>
 
-    <form class="sp__form" id="spForm" method="post" action="/contact#contact_form"
-          accept-charset="UTF-8">
-      <input type="hidden" name="form_type" value="customer">
-      <input type="hidden" name="utf8" value="✓">
-      <input type="hidden" name="contact[tags]" value="newsletter,scratch-popup">
-      <label class="sp__label" for="spEmail">Email</label>
-      <input class="sp__input" id="spEmail" type="email" name="contact[email]"
-             placeholder="{{ s.scratch_placeholder | default: 'your@email.com' }}" required>
-      <button class="sp__submit" type="submit" id="spSubmit" disabled>
-        {{ s.scratch_cta | default: 'Claim' }}
-      </button>
-      {%- if s.scratch_smallprint != blank -%}
-        <p class="sp__small">{{ s.scratch_smallprint }}</p>
-      {%- endif -%}
-    </form>
+      <form class="sp__form" id="spForm" method="post" action="/contact#contact_form"
+            accept-charset="UTF-8">
+        <input type="hidden" name="form_type" value="customer">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="contact[tags]" value="newsletter,scratch-popup">
+        <label class="sp__label" for="spEmail">Email</label>
+        <input class="sp__input" id="spEmail" type="email" name="contact[email]"
+               placeholder="{{ s.scratch_placeholder | default: 'Your email address' }}" required>
+        <button class="sp__submit" type="submit">{{ s.scratch_cta | default: 'Continue' }}</button>
+        {%- if s.scratch_code != blank -%}
+          <p class="sp__prize-code">{{ s.scratch_code }}</p>
+        {%- endif -%}
+        {%- if s.scratch_smallprint != blank -%}
+          <p class="sp__small">{{ s.scratch_smallprint }}</p>
+        {%- endif -%}
+      </form>
+    </div>
+
   </div>
 </div>
 {%- endif -%}

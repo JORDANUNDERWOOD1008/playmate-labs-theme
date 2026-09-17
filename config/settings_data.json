@@ -42,8 +42,6 @@
           "logo_height_mobile": 32,
           "pill_bg": "#020202",
           "pill_text": "#FFFFFF",
-          "pill_accent": "#D92B2B",
-          "pill_accent_text": "#FFFFFF",
           "pill_logo_height": 26,
           "pill_logo_height_mobile": 20,
           "pill_height": 48,
@@ -52,7 +50,12 @@
           "pill_cart_accent": true,
           "pill_overlay": true,
           "pill_hide_menu": true,
-          "pill_link_color": "#1A1A1A"
+          "pill_link_color": "#1A1A1A",
+          "pill_cta_bg": "#D92B2B",
+          "pill_cta_text": "#FFFFFF",
+          "pill_cart_bg": "#D92B2B",
+          "pill_cart_text": "#FFFFFF",
+          "pill_icon_color": "#FFFFFF"
         }
       },
       "footer": {
@@ -140,8 +143,12 @@
     "custom_font_body": false,
     "scratch_prize_bg": "#F5EFE6",
     "scratch_delay": 6,
-    "scratch_prize": "10% off",
+    "scratch_prize": "Up to 60% off",
     "scratch_code": "WELCOME10",
-    "scratch_smallprint": "One use per customer. By signing up you agree to receive marketing emails."
+    "scratch_smallprint": "One use per customer. By signing up you agree to receive marketing emails.",
+    "scratch_claim": "Claim",
+    "scratch_cta": "Continue",
+    "scratch_email_prompt": "Enter your email to get your deal",
+    "scratch_placeholder": "Your email address"
   }
 }

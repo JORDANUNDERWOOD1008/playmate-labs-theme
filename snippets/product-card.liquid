@@ -15,19 +15,32 @@
   <a href="{{ product.url }}" class="product-card-link" aria-label="{{ product.title | escape }}">
 
     {%- comment -%} Product Image {%- endcomment -%}
+    {%- comment -%}
+      A card image can differ from the product's first image. Set the metafield
+      custom.card_image on a product and the card uses that, leaving the
+      product page free to lead with a different shot — so a detail crop can
+      carry the homepage while the product page opens on a full packshot.
+    {%- endcomment -%}
+    {%- liquid
+      assign card_img = product.metafields.custom.card_image.value | default: product.featured_image
+      assign hover_img = product.images[1]
+      if card_img == product.images[1] and product.images[2]
+        assign hover_img = product.images[2]
+      endif
+    -%}
     <div class="product-card-img">
-      {%- if product.featured_image -%}
+      {%- if card_img -%}
         <img
-          src="{{ product.featured_image | image_url: width: 600 }}"
-          alt="{{ product.featured_image.alt | default: product.title | escape }}"
+          src="{{ card_img | image_url: width: 600 }}"
+          alt="{{ card_img.alt | default: product.title | escape }}"
           width="600"
           height="600"
           loading="lazy"
           class="product-img-main">
-        {%- if product.images[1] -%}
+        {%- if hover_img -%}
           <img
-            src="{{ product.images[1] | image_url: width: 600 }}"
-            alt="{{ product.images[1].alt | default: product.title | escape }}"
+            src="{{ hover_img | image_url: width: 600 }}"
+            alt="{{ hover_img.alt | default: product.title | escape }}"
             width="600"
             height="600"
             loading="lazy"

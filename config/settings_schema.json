@@ -4996,7 +4996,8 @@
         "type": "text",
         "id": "scratch_prize",
         "label": "Reward",
-        "default": "10% OFF"
+        "default": "10% OFF",
+        "info": "Must match a discount that actually exists."
       },
       {
         "type": "text",
@@ -5018,9 +5019,21 @@
       },
       {
         "type": "text",
-        "id": "scratch_cta",
-        "label": "Button text",
+        "id": "scratch_claim",
+        "label": "Step 1 button",
         "default": "Claim"
+      },
+      {
+        "type": "text",
+        "id": "scratch_email_prompt",
+        "label": "Step 2 prompt",
+        "default": "Enter your email to get your deal"
+      },
+      {
+        "type": "text",
+        "id": "scratch_cta",
+        "label": "Step 2 button",
+        "default": "Continue"
       },
       {
         "type": "textarea",
