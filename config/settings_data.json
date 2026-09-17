@@ -39,7 +39,18 @@
           "url_experience": "",
           "url_monthly_drops": "",
           "logo_height": 40,
-          "logo_height_mobile": 32
+          "logo_height_mobile": 32,
+          "pill_bg": "#020202",
+          "pill_text": "#FFFFFF",
+          "pill_accent": "#D92B2B",
+          "pill_accent_text": "#FFFFFF",
+          "pill_logo_height": 26,
+          "pill_logo_height_mobile": 20,
+          "pill_height": 48,
+          "pill_height_mobile": 40,
+          "pill_inner_gap": 12,
+          "pill_cart_accent": true,
+          "pill_overlay": true
         }
       },
       "footer": {
