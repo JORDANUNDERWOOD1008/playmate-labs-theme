@@ -97,7 +97,11 @@
 }
 
 .hero-inner {
-  transform: translateY(var(--hero-text-offset, 0px));
+  /* margin, not transform. transform moves the copy visually but leaves its
+     layout box where it was, so the section never grew to accommodate it and
+     .hero-section's overflow:hidden simply cut the buttons off the bottom.
+     A margin pushes the box itself, and min-height lets the section grow. */
+  margin-top: var(--hero-text-offset, 0px);
   display: grid;
   grid-template-columns: 1fr;
   gap: 0;

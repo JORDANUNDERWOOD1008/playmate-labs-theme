@@ -117,7 +117,18 @@
       text-align: {{ s.text_align_mobile }};
       {%- if s.copy_position == 'over' %}padding: {{ s.copy_pad_mobile }}px;{% endif %}
     }
-    #shopify-section-{{ section.id }} .fp__btn { font-size: {{ s.btn_font_size_mobile }}px; }
+    #shopify-section-{{ section.id }} .fp__btn {
+      font-size: {{ s.btn_font_size_mobile }}px;
+      padding: {{ s.btn_pad_y_mobile }}px {{ s.btn_pad_x_mobile }}px;
+      {%- if s.btn_full_width_mobile %}
+      display: flex; width: 100%;
+      {%- endif %}
+      {%- if s.stack_mobile == false %}
+      /* Side by side leaves each tile roughly half the screen, which is too
+         narrow for nowrap to be safe. */
+      white-space: normal; text-align: center;
+      {%- endif %}
+    }
     #shopify-section-{{ section.id }} .fp__head { margin-bottom: {{ s.head_gap_mobile }}px; }
   }
 
@@ -213,118 +224,545 @@
   "tag": "section",
   "max_blocks": 3,
   "settings": [
-    { "type": "header", "content": "✍️ Section heading" },
-    { "type": "text", "id": "section_eyebrow", "label": "Eyebrow" },
-    { "type": "text", "id": "section_heading", "label": "Heading" },
-    { "type": "select", "id": "heading_align", "label": "Heading alignment",
-      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Centre"}],
-      "default": "center" },
-    { "type": "color", "id": "section_eyebrow_color", "label": "Eyebrow colour", "default": "#C9A96E" },
-    { "type": "color", "id": "section_heading_color", "label": "Heading colour", "default": "#1A1A1A" },
-    { "type": "range", "id": "head_gap", "min": 0, "max": 96, "step": 4, "unit": "px",
-      "label": "Gap below heading — desktop", "default": 48 },
-    { "type": "range", "id": "head_gap_mobile", "min": 0, "max": 96, "step": 4, "unit": "px",
-      "label": "Gap below heading — mobile", "default": 28 },
-
-    { "type": "header", "content": "🧱 Tiles" },
-    { "type": "select", "id": "copy_position", "label": "Copy position",
-      "options": [{"value":"over","label":"Over the photo"},
-                  {"value":"below","label":"Beneath the photo"}],
-      "default": "over" },
-    { "type": "select", "id": "tile_ratio", "label": "Tile shape — desktop",
-      "options": [{"value":"1/1","label":"Square"},{"value":"4/5","label":"Portrait 4:5"},
-                  {"value":"3/4","label":"Portrait 3:4"},{"value":"4/3","label":"Landscape 4:3"},
-                  {"value":"16/9","label":"Wide 16:9"}],
-      "default": "4/5" },
-    { "type": "select", "id": "tile_ratio_mobile", "label": "Tile shape — mobile",
-      "options": [{"value":"1/1","label":"Square"},{"value":"4/5","label":"Portrait 4:5"},
-                  {"value":"3/4","label":"Portrait 3:4"},{"value":"4/3","label":"Landscape 4:3"}],
-      "default": "4/5" },
-    { "type": "select", "id": "image_fit", "label": "Image fit",
-      "options": [{"value":"cover","label":"Cover — fill, crop the overflow"},
-                  {"value":"contain","label":"Contain — show it all, never crop"}],
+    {
+      "type": "header",
+      "content": "✍️ Section heading"
+    },
+    {
+      "type": "text",
+      "id": "section_eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "section_eyebrow_color",
+      "label": "Eyebrow colour",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "section_heading_color",
+      "label": "Heading colour",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "range",
+      "id": "head_gap",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap below heading — desktop",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "head_gap_mobile",
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap below heading — mobile",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "🧱 Tiles"
+    },
+    {
+      "type": "select",
+      "id": "copy_position",
+      "label": "Copy position",
+      "options": [
+        {
+          "value": "over",
+          "label": "Over the photo"
+        },
+        {
+          "value": "below",
+          "label": "Beneath the photo"
+        }
+      ],
+      "default": "over"
+    },
+    {
+      "type": "select",
+      "id": "tile_ratio",
+      "label": "Tile shape — desktop",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "Square"
+        },
+        {
+          "value": "4/5",
+          "label": "Portrait 4:5"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait 3:4"
+        },
+        {
+          "value": "4/3",
+          "label": "Landscape 4:3"
+        },
+        {
+          "value": "16/9",
+          "label": "Wide 16:9"
+        }
+      ],
+      "default": "4/5"
+    },
+    {
+      "type": "select",
+      "id": "tile_ratio_mobile",
+      "label": "Tile shape — mobile",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "Square"
+        },
+        {
+          "value": "4/5",
+          "label": "Portrait 4:5"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait 3:4"
+        },
+        {
+          "value": "4/3",
+          "label": "Landscape 4:3"
+        }
+      ],
+      "default": "4/5"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover — fill, crop the overflow"
+        },
+        {
+          "value": "contain",
+          "label": "Contain — show it all, never crop"
+        }
+      ],
       "default": "cover",
-      "info": "Contain suits packshots on white; set each tile's backdrop to match." },
-    { "type": "checkbox", "id": "stack_mobile", "label": "Stack tiles on mobile", "default": true,
-      "info": "Untick to keep them side by side on a phone." },
-    { "type": "checkbox", "id": "zoom_on_hover", "label": "Zoom photo on hover", "default": true },
-    { "type": "range", "id": "corner_radius", "min": 0, "max": 32, "step": 2, "unit": "px",
-      "label": "Corner radius", "default": 10 },
-    { "type": "range", "id": "gap", "min": 0, "max": 80, "step": 4, "unit": "px",
-      "label": "Gap between tiles — desktop", "default": 24 },
-    { "type": "range", "id": "gap_mobile", "min": 0, "max": 60, "step": 4, "unit": "px",
-      "label": "Gap between tiles — mobile", "default": 16 },
-
-    { "type": "header", "content": "🧭 Copy placement" },
-    { "type": "select", "id": "vertical_align", "label": "Vertical position (copy over photo)",
-      "options": [{"value":"flex-start","label":"Top"},{"value":"center","label":"Middle"},
-                  {"value":"flex-end","label":"Bottom"}],
-      "default": "flex-end" },
-    { "type": "select", "id": "text_align", "label": "Text alignment — desktop",
-      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Centre"},
-                  {"value":"right","label":"Right"}], "default": "left" },
-    { "type": "select", "id": "text_align_mobile", "label": "Text alignment — mobile",
-      "options": [{"value":"left","label":"Left"},{"value":"center","label":"Centre"},
-                  {"value":"right","label":"Right"}], "default": "center" },
-    { "type": "range", "id": "copy_pad", "min": 8, "max": 64, "step": 4, "unit": "px",
-      "label": "Copy inset — desktop", "default": 32 },
-    { "type": "range", "id": "copy_pad_mobile", "min": 8, "max": 48, "step": 4, "unit": "px",
-      "label": "Copy inset — mobile", "default": 20 },
-
-    { "type": "header", "content": "🌓 Overlay (copy over photo)" },
-    { "type": "range", "id": "overlay_opacity_desktop", "min": 0, "max": 100, "step": 5, "unit": "%",
-      "label": "Strength — desktop", "default": 60 },
-    { "type": "range", "id": "overlay_opacity_mobile", "min": 0, "max": 100, "step": 5, "unit": "%",
-      "label": "Strength — mobile", "default": 70 },
-    { "type": "color", "id": "overlay_color", "label": "Colour", "default": "#1A0A06" },
-
-    { "type": "header", "content": "🔘 Buttons" },
-    { "type": "select", "id": "btn_radius", "label": "Corner style",
-      "options": [{"value":"999","label":"Pill — site standard"},
-                  {"value":"8","label":"Rounded"},{"value":"0","label":"Square"}],
-      "default": "999" },
-    { "type": "range", "id": "btn_font_size", "min": 10, "max": 16, "step": 1, "unit": "px",
-      "label": "Text size — desktop", "default": 12 },
-    { "type": "range", "id": "btn_font_size_mobile", "min": 9, "max": 15, "step": 1, "unit": "px",
-      "label": "Text size — mobile", "default": 11 },
-
-    { "type": "header", "content": "📐 Spacing" },
-    { "type": "range", "id": "pad_top_desktop", "min": 0, "max": 200, "step": 4, "unit": "px",
-      "label": "Padding top — desktop", "default": 96 },
-    { "type": "range", "id": "pad_bottom_desktop", "min": 0, "max": 200, "step": 4, "unit": "px",
-      "label": "Padding bottom — desktop", "default": 96 },
-    { "type": "range", "id": "pad_top_mobile", "min": 0, "max": 200, "step": 4, "unit": "px",
-      "label": "Padding top — mobile", "default": 56 },
-    { "type": "range", "id": "pad_bottom_mobile", "min": 0, "max": 200, "step": 4, "unit": "px",
-      "label": "Padding bottom — mobile", "default": 56 },
-
-    { "type": "header", "content": "🎨 Section background" },
-    { "type": "color_background", "id": "bg_color", "label": "Background — desktop" },
-    { "type": "color_background", "id": "bg_color_mobile", "label": "Background — mobile" }
+      "info": "Contain suits packshots on white; set each tile's backdrop to match."
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_mobile",
+      "label": "Stack tiles on mobile",
+      "default": true,
+      "info": "Untick to keep them side by side on a phone."
+    },
+    {
+      "type": "checkbox",
+      "id": "zoom_on_hover",
+      "label": "Zoom photo on hover",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Corner radius",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between tiles — desktop",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between tiles — mobile",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "🧭 Copy placement"
+    },
+    {
+      "type": "select",
+      "id": "vertical_align",
+      "label": "Vertical position (copy over photo)",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Middle"
+        },
+        {
+          "value": "flex-end",
+          "label": "Bottom"
+        }
+      ],
+      "default": "flex-end"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment — desktop",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Text alignment — mobile",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "copy_pad",
+      "min": 8,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "Copy inset — desktop",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "copy_pad_mobile",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Copy inset — mobile",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "🌓 Overlay (copy over photo)"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Strength — desktop",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Strength — mobile",
+      "default": 70
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Colour",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "header",
+      "content": "🔘 Buttons"
+    },
+    {
+      "type": "select",
+      "id": "btn_radius",
+      "label": "Corner style",
+      "options": [
+        {
+          "value": "999",
+          "label": "Pill — site standard"
+        },
+        {
+          "value": "8",
+          "label": "Rounded"
+        },
+        {
+          "value": "0",
+          "label": "Square"
+        }
+      ],
+      "default": "999"
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size — desktop",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size_mobile",
+      "min": 9,
+      "max": 15,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size — mobile",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_y_mobile",
+      "min": 6,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Button height padding — mobile",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_x_mobile",
+      "min": 6,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "label": "Button width padding — mobile",
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "btn_full_width_mobile",
+      "label": "Full-width buttons on mobile",
+      "default": false,
+      "info": "Useful when tiles sit side by side and space is tight."
+    },
+    {
+      "type": "header",
+      "content": "📐 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — mobile",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — mobile",
+      "default": 56
+    },
+    {
+      "type": "header",
+      "content": "🎨 Section background"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color",
+      "label": "Background — desktop"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color_mobile",
+      "label": "Background — mobile"
+    }
   ],
   "blocks": [
-    { "type": "tile", "name": "Tile", "limit": 3,
+    {
+      "type": "tile",
+      "name": "Tile",
+      "limit": 3,
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "image_picker", "id": "image_mobile", "label": "Mobile image",
-          "info": "Optional. Falls back to the main image." },
-        { "type": "color", "id": "image_bg", "label": "Backdrop behind the photo", "default": "#FAF7F2" },
-        { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
-        { "type": "text", "id": "title", "label": "Title", "default": "Product name" },
-        { "type": "text", "id": "tagline", "label": "Tagline" },
-        { "type": "url", "id": "url", "label": "Tile link" },
-        { "type": "text", "id": "btn_text", "label": "Button text", "default": "Shop now" },
-        { "type": "color", "id": "eyebrow_color", "label": "Eyebrow colour", "default": "#C9A96E" },
-        { "type": "color", "id": "title_color", "label": "Title colour", "default": "#FFFFFF" },
-        { "type": "color", "id": "tagline_color", "label": "Tagline colour", "default": "#EDE4DA" },
-        { "type": "color", "id": "btn_bg", "label": "Button background", "default": "#FFFFFF" },
-        { "type": "color", "id": "btn_label_color", "label": "Button text", "default": "#1A1A1A" },
-        { "type": "color", "id": "btn_border", "label": "Button border", "default": "#FFFFFF" }
-      ]}
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Mobile image",
+          "info": "Optional. Falls back to the main image."
+        },
+        {
+          "type": "color",
+          "id": "image_bg",
+          "label": "Backdrop behind the photo",
+          "default": "#FAF7F2"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Product name"
+        },
+        {
+          "type": "text",
+          "id": "tagline",
+          "label": "Tagline"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Tile link"
+        },
+        {
+          "type": "text",
+          "id": "btn_text",
+          "label": "Button text",
+          "default": "Shop now"
+        },
+        {
+          "type": "color",
+          "id": "eyebrow_color",
+          "label": "Eyebrow colour",
+          "default": "#C9A96E"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title colour",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "tagline_color",
+          "label": "Tagline colour",
+          "default": "#EDE4DA"
+        },
+        {
+          "type": "color",
+          "id": "btn_bg",
+          "label": "Button background",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "btn_label_color",
+          "label": "Button text",
+          "default": "#1A1A1A"
+        },
+        {
+          "type": "color",
+          "id": "btn_border",
+          "label": "Button border",
+          "default": "#FFFFFF"
+        }
+      ]
+    }
   ],
   "presets": [
-    { "name": "Feature Pair",
-      "blocks": [{ "type": "tile" }, { "type": "tile" }] }
+    {
+      "name": "Feature Pair",
+      "blocks": [
+        {
+          "type": "tile"
+        },
+        {
+          "type": "tile"
+        }
+      ]
+    }
   ]
 }
 {% endschema %}
