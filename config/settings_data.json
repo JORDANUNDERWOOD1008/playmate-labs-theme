@@ -149,6 +149,11 @@
     "scratch_claim": "Claim",
     "scratch_cta": "Continue",
     "scratch_email_prompt": "Enter your email to get your deal",
-    "scratch_placeholder": "Your email address"
+    "scratch_placeholder": "Your email address",
+    "scratch_trigger": "tab",
+    "scratch_tab_label": "Try your luck?",
+    "scratch_tab_side": "left",
+    "scratch_tab_bg": "#6B1E3A",
+    "scratch_tab_text": "#FFFFFF"
   }
 }

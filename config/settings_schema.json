@@ -5383,6 +5383,65 @@
         "unit": "px",
         "label": "Reward size — mobile",
         "default": 32
+      },
+      {
+        "type": "header",
+        "content": "How it opens"
+      },
+      {
+        "type": "select",
+        "id": "scratch_trigger",
+        "label": "Trigger",
+        "options": [
+          {
+            "value": "tab",
+            "label": "Side tab only — never interrupts"
+          },
+          {
+            "value": "both",
+            "label": "Side tab + opens itself after the delay"
+          },
+          {
+            "value": "auto",
+            "label": "Opens itself only"
+          }
+        ],
+        "default": "tab",
+        "info": "The tab stays on screen until the reward is claimed."
+      },
+      {
+        "type": "text",
+        "id": "scratch_tab_label",
+        "label": "Tab label",
+        "default": "Try your luck?"
+      },
+      {
+        "type": "select",
+        "id": "scratch_tab_side",
+        "label": "Tab side",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ],
+        "default": "left"
+      },
+      {
+        "type": "color",
+        "id": "scratch_tab_bg",
+        "label": "Tab background",
+        "default": "#6B1E3A"
+      },
+      {
+        "type": "color",
+        "id": "scratch_tab_text",
+        "label": "Tab text",
+        "default": "#FFFFFF"
       }
     ]
   }

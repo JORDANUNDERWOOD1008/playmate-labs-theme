@@ -74,8 +74,9 @@
   {%- endif %}
   #shopify-section-{{ section.id }} .fp__scrim {
     position:absolute; inset:0; pointer-events:none;
-    background: linear-gradient(to top, {{ s.overlay_color }} 0%, transparent 62%);
+    background: linear-gradient(to top, {{ s.overlay_color }} 0%, {{ s.overlay_color }} {{ s.overlay_reach | times: 0.34 | round }}%, transparent {{ s.overlay_reach }}%);
     opacity: {{ s.overlay_opacity_desktop | divided_by: 100.0 }};
+    {%- unless s.copy_position == 'over' %}display: none;{% endunless %}
   }
   #shopify-section-{{ section.id }} .fp__copy {
     position: relative; z-index: 2;
@@ -104,18 +105,36 @@
       grid-template-columns: {% if s.stack_mobile %}1fr{% else %}repeat(2, 1fr){% endif %};
       gap: {{ s.gap_mobile }}px;
     }
+    {%- liquid
+      assign cpm = s.copy_position_mobile
+      if cpm == 'inherit'
+        assign cpm = s.copy_position
+      endif
+    -%}
     #shopify-section-{{ section.id }} .fp__tile {
-      {%- if s.copy_position == 'over' %}aspect-ratio: {{ s.tile_ratio_mobile }};{% endif %}
+      justify-content: {% if cpm == 'over' %}{{ s.vertical_align }}{% else %}flex-start{% endif %};
+      {%- if cpm == 'over' %}aspect-ratio: {{ s.tile_ratio_mobile }};{% else %}aspect-ratio: auto;{% endif %}
     }
     #shopify-section-{{ section.id }} .fp__media {
-      {%- unless s.copy_position == 'over' %}aspect-ratio: {{ s.tile_ratio_mobile }};{% endunless %}
+      {%- if cpm == 'over' %}
+      position: absolute; inset: 0;
+      aspect-ratio: auto; margin-bottom: 0;
+      {%- else %}
+      position: relative; width: 100%;
+      aspect-ratio: {{ s.tile_ratio_mobile }};
+      border-radius: {{ s.corner_radius }}px;
+      overflow: hidden;
+      margin-bottom: 1.1rem;
+      {%- endif %}
     }
     #shopify-section-{{ section.id }} .fp__scrim {
       opacity: {{ s.overlay_opacity_mobile | divided_by: 100.0 }};
+      background: linear-gradient(to top, {{ s.overlay_color }} 0%, {{ s.overlay_color }} {{ s.overlay_reach_mobile | times: 0.34 | round }}%, transparent {{ s.overlay_reach_mobile }}%);
+      {%- if cpm == 'over' %}display: block;{% else %}display: none;{% endif %}
     }
     #shopify-section-{{ section.id }} .fp__copy {
       text-align: {{ s.text_align_mobile }};
-      {%- if s.copy_position == 'over' %}padding: {{ s.copy_pad_mobile }}px;{% endif %}
+      {%- if cpm == 'over' %}padding: {{ s.copy_pad_mobile }}px;{% else %}padding: 0;{% endif %}
     }
     #shopify-section-{{ section.id }} .fp__btn {
       font-size: {{ s.btn_font_size_mobile }}px;
@@ -142,6 +161,17 @@
       border: 1px solid {{ block.settings.btn_border | default: block.settings.btn_bg }};
     }
     #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__media { background: {{ block.settings.image_bg }}; }
+    @media (max-width: 768px) {
+      {%- if block.settings.eyebrow_color_mobile != blank %}
+      #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__eyebrow-t { color: {{ block.settings.eyebrow_color_mobile }}; }
+      {%- endif %}
+      {%- if block.settings.title_color_mobile != blank %}
+      #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__name { color: {{ block.settings.title_color_mobile }}; }
+      {%- endif %}
+      {%- if block.settings.tagline_color_mobile != blank %}
+      #shopify-section-{{ section.id }} .fp__tile--{{ block.id }} .fp__tag { color: {{ block.settings.tagline_color_mobile }}; }
+      {%- endif %}
+    }
   {%- endfor -%}
 {%- endstyle -%}
 
@@ -182,7 +212,7 @@
             {%- else -%}
               {{ 'product-1' | placeholder_svg_tag: 'fp__img' }}
             {%- endif -%}
-            {%- if s.copy_position == 'over' -%}<div class="fp__scrim"></div>{%- endif -%}
+            <div class="fp__scrim"></div>
           </div>
 
           <div class="fp__copy">
@@ -314,6 +344,27 @@
         }
       ],
       "default": "over"
+    },
+    {
+      "type": "select",
+      "id": "copy_position_mobile",
+      "label": "Copy position on mobile",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "Same as desktop"
+        },
+        {
+          "value": "over",
+          "label": "Over the image"
+        },
+        {
+          "value": "below",
+          "label": "Below the image"
+        }
+      ],
+      "default": "over",
+      "info": "Stacked full-width tiles read better with the copy over the image."
     },
     {
       "type": "select",
@@ -542,6 +593,27 @@
       "default": "#1A0A06"
     },
     {
+      "type": "range",
+      "id": "overlay_reach",
+      "label": "Overlay reach — desktop",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 60,
+      "info": "How far up the tile the darkening gradient extends."
+    },
+    {
+      "type": "range",
+      "id": "overlay_reach_mobile",
+      "label": "Overlay reach — mobile",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
       "type": "header",
       "content": "🔘 Buttons"
     },
@@ -739,6 +811,22 @@
           "id": "tagline_color",
           "label": "Tagline colour",
           "default": "#EDE4DA"
+        },
+        {
+          "type": "color",
+          "id": "eyebrow_color_mobile",
+          "label": "Eyebrow — mobile",
+          "info": "Leave blank to match desktop."
+        },
+        {
+          "type": "color",
+          "id": "title_color_mobile",
+          "label": "Title — mobile"
+        },
+        {
+          "type": "color",
+          "id": "tagline_color_mobile",
+          "label": "Tagline — mobile"
         },
         {
           "type": "color",

@@ -14,7 +14,7 @@
         "cta_secondary_text": "SIGN UP",
         "cta_secondary_url": "shopify://products/playmate-chocolate",
         "trust_rating": "25,000+ happy couples",
-        "trust_shipping": "Free shipping over \u00a360",
+        "trust_shipping": "Free shipping over £60",
         "bg_width_desktop": 52,
         "bg_align_desktop": "right",
         "backdrop_color": "#ffffff",
@@ -95,7 +95,7 @@
         "p2": {
           "type": "pillar",
           "settings": {
-            "icon": "\ud83c\udfae",
+            "icon": "🎮",
             "title": "Date Night Games",
             "text": "Play, flirt, connect"
           }
@@ -103,7 +103,7 @@
         "p3": {
           "type": "pillar",
           "settings": {
-            "icon": "\ud83c\uddec\ud83c\udde7",
+            "icon": "🇬🇧",
             "title": "Made in the UK",
             "text": "Small-batch, shipped fast"
           }
@@ -111,7 +111,7 @@
         "p4": {
           "type": "pillar",
           "settings": {
-            "icon": "\ud83d\udd12",
+            "icon": "🔒",
             "title": "Plain Packaging",
             "text": "Nothing on the box"
           }
@@ -168,7 +168,20 @@
         "text_color": "",
         "text_color_mobile": "",
         "heading_color": "",
-        "heading_color_mobile": ""
+        "heading_color_mobile": "",
+        "mobile_layout": "grid",
+        "mobile_columns": "2",
+        "mobile_gap": 14,
+        "viewall_style": "tile",
+        "desktop_columns": 4,
+        "card_show_badge": true,
+        "card_show_quick_add": true,
+        "card_show_category": false,
+        "card_show_desc": false,
+        "card_show_rating": false,
+        "card_show_cta": true,
+        "card_cta_text": "Shop now",
+        "card_text_align": "left"
       }
     },
     "feature-pair": {
@@ -190,7 +203,10 @@
             "tagline_color": "#4a4a4a",
             "btn_bg": "#6b1e3a",
             "btn_label_color": "#ffffff",
-            "btn_border": "#6b1e3a"
+            "btn_border": "#6b1e3a",
+            "title_color_mobile": "#FFFFFF",
+            "tagline_color_mobile": "#F2EDE6",
+            "eyebrow_color_mobile": "#E8C89A"
           }
         },
         "choc": {
@@ -209,7 +225,10 @@
             "tagline_color": "#4a4a4a",
             "btn_bg": "#6b1e3a",
             "btn_label_color": "#f5efe6",
-            "btn_border": "#6b1e3a"
+            "btn_border": "#6b1e3a",
+            "title_color_mobile": "#FFFFFF",
+            "tagline_color_mobile": "#F2EDE6",
+            "eyebrow_color_mobile": "#E8C89A"
           }
         }
       },
@@ -229,7 +248,7 @@
         "tile_ratio": "4/5",
         "tile_ratio_mobile": "4/5",
         "image_fit": "cover",
-        "stack_mobile": false,
+        "stack_mobile": true,
         "zoom_on_hover": true,
         "corner_radius": 10,
         "gap": 24,
@@ -240,7 +259,7 @@
         "copy_pad": 32,
         "copy_pad_mobile": 20,
         "overlay_opacity_desktop": 0,
-        "overlay_opacity_mobile": 0,
+        "overlay_opacity_mobile": 75,
         "overlay_color": "#1a0a06",
         "btn_radius": "999",
         "btn_font_size": 12,
@@ -253,7 +272,10 @@
         "pad_top_mobile": 56,
         "pad_bottom_mobile": 56,
         "bg_color": "",
-        "bg_color_mobile": ""
+        "bg_color_mobile": "",
+        "copy_position_mobile": "over",
+        "overlay_reach": 60,
+        "overlay_reach_mobile": 85
       }
     },
     "story-aphrodisiac": {
@@ -374,10 +396,10 @@
           "type": "testimonial",
           "settings": {
             "stars": 5,
-            "quote": "We've tried every date night box on the market. Nothing comes close. The Velvet Hour didn't just give us things to do \u2014 it gave us a reason to actually be present with each other again.",
+            "quote": "We've tried every date night box on the market. Nothing comes close. The Velvet Hour didn't just give us things to do — it gave us a reason to actually be present with each other again.",
             "initials": "S+J",
             "name": "Sophie & James",
-            "detail": "London \u00b7 Velvet Hour Kit"
+            "detail": "London · Velvet Hour Kit"
           }
         },
         "t2": {
@@ -387,17 +409,17 @@
             "quote": "I bought this as a Valentine's gift thinking it was just a nice box. It turned into the best conversation we'd had in two years. Now we subscribe monthly.",
             "initials": "M",
             "name": "Marcus D.",
-            "detail": "Manchester \u00b7 Monthly Subscriber"
+            "detail": "Manchester · Monthly Subscriber"
           }
         },
         "t3": {
           "type": "testimonial",
           "settings": {
             "stars": 5,
-            "quote": "The 5-Day Experience was honestly better than therapy for us. Low stakes, high reward. We look forward to it every morning \u2014 it's genuinely changed our relationship.",
+            "quote": "The 5-Day Experience was honestly better than therapy for us. Low stakes, high reward. We look forward to it every morning — it's genuinely changed our relationship.",
             "initials": "A+K",
             "name": "Aisha & Kai",
-            "detail": "Birmingham \u00b7 5-Day Experience"
+            "detail": "Birmingham · 5-Day Experience"
           }
         }
       },
@@ -417,7 +439,7 @@
         "subtext": "",
         "show_phone": true,
         "email_placeholder": "Your email address",
-        "phone_placeholder": "Phone (for SMS drops \u2014 optional)",
+        "phone_placeholder": "Phone (for SMS drops — optional)",
         "cta_text": "Join the list",
         "disclaimer": "No spam. Unsubscribe anytime.",
         "success_message": "You're in! Check your inbox for your free experience.",
@@ -555,12 +577,12 @@
         "heading": "The Velvet Hour",
         "subheading": "An evening ritual for two. Dark chocolate, warm amber candlelight and a game that turns conversation into connection.",
         "drop_product": "massage-candle",
-        "drop_badge": "Drop 08 \u2014 Jan 2025",
+        "drop_badge": "Drop 08 — Jan 2025",
         "limit_badge": "Limited 200 Kits",
         "drop_tagline": "A ritual for modern romance.",
         "drop_desc": "",
-        "drop_includes": "72% Madagascan Dark Chocolate Ritual Bar (120g)|Amber Vetiver Hand-poured Candle (150ml)|The Connection Game \u2014 52 card deck|Velvet Hour Ritual Guide|Digital companion experience access|Luxury gift packaging",
-        "drop_price": "\u00a368",
+        "drop_includes": "72% Madagascan Dark Chocolate Ritual Bar (120g)|Amber Vetiver Hand-poured Candle (150ml)|The Connection Game — 52 card deck|Velvet Hour Ritual Guide|Digital companion experience access|Luxury gift packaging",
+        "drop_price": "£68",
         "cta_text": "",
         "cta_url": "",
         "hide_shop_cta": true,
@@ -633,7 +655,7 @@
       "settings": {
         "eyebrow": "Upcoming Experiences",
         "heading": "Experiences worth dressing up for.",
-        "subheading": "IRL events, sensory pop-ups and couples experiences across the UK \u2014 and beyond.",
+        "subheading": "IRL events, sensory pop-ups and couples experiences across the UK — and beyond.",
         "view_all_url": "",
         "view_all_label": "",
         "hide_view_all": true,
@@ -702,6 +724,83 @@
         "heading_color": "",
         "heading_color_mobile": ""
       }
+    },
+    "faq": {
+      "type": "faq-accordion",
+      "blocks": {
+        "q1": {
+          "type": "faq",
+          "settings": {
+            "question": "Is the packaging discreet?",
+            "answer": "<p>Yes. Plain outer box, no branding, no product names on the label. It arrives looking like any other parcel, and your statement shows Playmate Labs.</p>",
+            "open_by_default": false
+          }
+        },
+        "q2": {
+          "type": "faq",
+          "settings": {
+            "question": "What is actually in the chocolate?",
+            "answer": "<p>Belgian chocolate with a functional blend of aphrodisiac actives. Every batch is made in the UK by artisan chocolatiers. Full ingredient and allergen information is on each product page.</p>",
+            "open_by_default": false
+          }
+        },
+        "q3": {
+          "type": "faq",
+          "settings": {
+            "question": "Allergens?",
+            "answer": "<p>Our chocolate contains milk and soya, and is produced in a kitchen that handles nuts. If you have a severe allergy, check the full declaration on the product page before ordering.</p>",
+            "open_by_default": false
+          }
+        },
+        "q4": {
+          "type": "faq",
+          "settings": {
+            "question": "How many servings in a box?",
+            "answer": "<p>Each box holds enough for one evening for two. Most couples order two or three boxes at a time, which is why the multi-box options are priced the way they are.</p>",
+            "open_by_default": false
+          }
+        },
+        "q5": {
+          "type": "faq",
+          "settings": {
+            "question": "When will it arrive?",
+            "answer": "<p>UK orders are dispatched within one working day and typically arrive in two to three. Free shipping over &pound;60.</p>",
+            "open_by_default": false
+          }
+        },
+        "q6": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you supply retailers?",
+            "answer": "<p>We do. Playmate Labs is stocked by independent retailers across the UK. For trade pricing and lead times, get in touch through the wholesale enquiries form.</p>",
+            "open_by_default": false
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6"
+      ],
+      "settings": {
+        "eyebrow": "Before you ask",
+        "heading": "The questions we actually get",
+        "heading_align": "center",
+        "single_open": true,
+        "content_width": 760,
+        "list_align": "center",
+        "bg_color": "#FFFFFF",
+        "pad_top_desktop": 96,
+        "pad_bottom_desktop": 96,
+        "pad_top_mobile": 56,
+        "pad_bottom_mobile": 56,
+        "footer_text": "Something we have not covered? ",
+        "footer_link_text": "Talk to us.",
+        "footer_link_url": "/pages/contact"
+      }
     }
   },
   "order": [
@@ -712,6 +811,7 @@
     "feature-pair",
     "story-aphrodisiac",
     "social-proof",
+    "faq",
     "email-capture",
     "banner-nude",
     "story-chocolate",

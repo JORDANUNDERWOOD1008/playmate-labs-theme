@@ -1,0 +1,156 @@
+{% render 'section-style', section: section %}
+{% comment %}
+  PLAYMATE LABS — FAQ ACCORDION
+  File: sections/faq-accordion.liquid
+
+  Native <details>/<summary>, so it opens without JavaScript, is keyboard
+  operable and is announced correctly by screen readers. The only script is
+  the optional "one open at a time" behaviour.
+{% endcomment %}
+
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .faq {
+    --faq-line: {{ s.divider_color }};
+    --faq-q: {{ s.question_color }};
+    --faq-a: {{ s.answer_color }};
+    --faq-icon: {{ s.icon_color }};
+  }
+  #shopify-section-{{ section.id }} .faq__list {
+    max-width: {{ s.content_width }}px;
+    margin-inline: {% if s.list_align == 'center' %}auto{% else %}0{% endif %};
+  }
+  #shopify-section-{{ section.id }} .faq__q { font-size: {{ s.question_size }}px; }
+  #shopify-section-{{ section.id }} .faq__a { font-size: {{ s.answer_size }}px; }
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .faq__q { font-size: {{ s.question_size_mobile }}px; }
+    #shopify-section-{{ section.id }} .faq__a { font-size: {{ s.answer_size_mobile }}px; }
+  }
+{%- endstyle -%}
+
+<section class="section faq">
+  <div class="container">
+    {%- if s.eyebrow != blank or s.heading != blank -%}
+      <div class="section-header reveal" style="text-align:{{ s.heading_align }};">
+        {%- if s.eyebrow != blank -%}
+          <span class="section-eyebrow" style="color:{{ s.eyebrow_color }};">{{ s.eyebrow }}</span>
+        {%- endif -%}
+        {%- if s.heading != blank -%}
+          <h2 class="heading-xl" style="color:{{ s.heading_color }};">{{ s.heading | newline_to_br }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="faq__list reveal" {% if s.single_open %}data-single-open{% endif %}>
+      {%- for block in section.blocks -%}
+        <details class="faq__item" {{ block.shopify_attributes }}{% if block.settings.open_by_default %} open{% endif %}>
+          <summary class="faq__q">
+            <span>{{ block.settings.question }}</span>
+            <svg class="faq__icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19" class="faq__icon-v"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </summary>
+          <div class="faq__a">{{ block.settings.answer }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+
+    {%- if s.footer_text != blank -%}
+      <p class="faq__footer" style="text-align:{{ s.heading_align }};color:{{ s.answer_color }};">
+        {{ s.footer_text }}
+        {%- if s.footer_link_text != blank -%}
+          <a href="{{ s.footer_link_url }}" style="color:{{ s.footer_link_color }};">{{ s.footer_link_text }}</a>
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+  </div>
+</section>
+
+{%- if s.single_open -%}
+  <script>
+    (function () {
+      var list = document.querySelector('#shopify-section-{{ section.id }} [data-single-open]');
+      if (!list) return;
+      list.addEventListener('toggle', function (e) {
+        var t = e.target;
+        if (t.tagName !== 'DETAILS' || !t.open) return;
+        list.querySelectorAll('details[open]').forEach(function (d) { if (d !== t) d.open = false; });
+      }, true);
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "section",
+  "class": "shopify-section-faq",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Before you ask" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "The questions we actually get" },
+    { "type": "select", "id": "heading_align", "label": "Header alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Centre" }
+      ], "default": "center" },
+    { "type": "header", "content": "Behaviour" },
+    { "type": "checkbox", "id": "single_open", "label": "Only one answer open at a time", "default": true },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "content_width", "label": "List width", "min": 480, "max": 1080, "step": 20, "unit": "px", "default": 760 },
+    { "type": "select", "id": "list_align", "label": "List position",
+      "options": [
+        { "value": "center", "label": "Centred" },
+        { "value": "left", "label": "Left" }
+      ], "default": "center" },
+    { "type": "range", "id": "question_size", "label": "Question size", "min": 14, "max": 28, "step": 1, "unit": "px", "default": 18 },
+    { "type": "range", "id": "question_size_mobile", "label": "Question size — mobile", "min": 13, "max": 24, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "answer_size", "label": "Answer size", "min": 12, "max": 22, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "answer_size_mobile", "label": "Answer size — mobile", "min": 12, "max": 20, "step": 1, "unit": "px", "default": 15 },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow", "default": "#C9A96E" },
+    { "type": "color", "id": "heading_color", "label": "Heading", "default": "#1A1A1A" },
+    { "type": "color", "id": "question_color", "label": "Question", "default": "#1A1A1A" },
+    { "type": "color", "id": "answer_color", "label": "Answer", "default": "#4A4A4A" },
+    { "type": "color", "id": "icon_color", "label": "Open/close icon", "default": "#6B1E3A" },
+    { "type": "color", "id": "divider_color", "label": "Divider line", "default": "#E5DFD6" },
+    { "type": "header", "content": "Footer line" },
+    { "type": "text", "id": "footer_text", "label": "Text", "default": "Something we have not covered? " },
+    { "type": "text", "id": "footer_link_text", "label": "Link text", "default": "Talk to us." },
+    { "type": "url", "id": "footer_link_url", "label": "Link" },
+    { "type": "color", "id": "footer_link_color", "label": "Link colour", "default": "#6B1E3A" },
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "pad_top_desktop", "label": "Padding top — desktop", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 96 },
+    { "type": "range", "id": "pad_bottom_desktop", "label": "Padding bottom — desktop", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 96 },
+    { "type": "range", "id": "pad_top_mobile", "label": "Padding top — mobile", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "pad_bottom_mobile", "label": "Padding bottom — mobile", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FAF7F2" }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "How discreet is the packaging?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Plain outer box, no branding and no product names on the label. The sender shows as Playmate Labs on your statement.</p>" },
+        { "type": "checkbox", "id": "open_by_default", "label": "Open by default", "default": false }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "blocks": [
+        { "type": "faq" },
+        { "type": "faq" },
+        { "type": "faq" },
+        { "type": "faq" }
+      ]
+    }
+  ]
+}
+{% endschema %}

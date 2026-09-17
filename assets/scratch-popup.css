@@ -85,3 +85,42 @@
 }
 
 @media (prefers-reduced-motion:reduce){ .sp{transition:none} }
+
+
+/* ── Edge tab ─────────────────────────────────────────────────────────────
+   Vertical pill anchored to the side of the viewport. Sits below the popup
+   (z-index) and above page content. Rotated text, so its box is tall-narrow
+   and the rotation happens inside it — no transform on the positioned box,
+   which would fight `position: fixed`. */
+.sp__tab {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9990;
+  border: 0;
+  cursor: pointer;
+  padding: 18px 9px;
+  background: var(--sp-tab-bg, #6B1E3A);
+  color: var(--sp-tab-fg, #FFFFFF);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  box-shadow: 0 2px 14px rgba(0,0,0,.18);
+  transition: filter .2s ease, opacity .2s ease;
+}
+
+.sp__tab[data-side="left"]  { left: 0;  border-radius: 0 10px 10px 0; rotate: 180deg; }
+.sp__tab[data-side="right"] { right: 0; border-radius: 10px 0 0 10px; }
+
+.sp__tab:hover { filter: brightness(1.15); }
+.sp__tab:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.sp__tab[hidden] { display: none !important; }
+
+@media (max-width: 768px) {
+  /* Clear of thumb-reach controls and any sticky bar at the bottom. */
+  .sp__tab { top: auto; bottom: 96px; transform: none; padding: 15px 8px; font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .sp__tab { transition: none } }

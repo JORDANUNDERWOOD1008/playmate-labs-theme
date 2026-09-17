@@ -351,8 +351,14 @@
   {%- comment -%} Cart Drawer {%- endcomment -%}
   {% render 'cart-drawer' %}
 
-  {%- comment -%} Newsletter Popup {%- endcomment -%}
-  {% render 'newsletter-popup' %}
+  {%- comment -%}
+    Newsletter Popup — RETIRED 2026-09-17.
+    It and the exit-intent popup inside the same snippet fired on top of the
+    scratch popup, so a first-time mobile visitor met three modals before
+    seeing a product. The scratch popup is now the only interruption, and it
+    asks for the email itself. Re-enable only if the scratch popup goes away.
+  {%- endcomment -%}
+  {%- comment -%}{% render 'newsletter-popup' %}{%- endcomment -%}
 
   {%- comment -%} Toast Notification {%- endcomment -%}
   <div id="toast-container" class="toast-container" aria-live="polite"></div>
@@ -413,6 +419,7 @@
     <script>
       window.PM_SCRATCH = {
         delay: {{ settings.scratch_delay }},
+        trigger: {{ settings.scratch_trigger | json }},
         days: {{ settings.scratch_days }},
         brush: {{ settings.scratch_brush }},
         threshold: {{ settings.scratch_threshold | divided_by: 100.0 }},

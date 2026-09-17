@@ -6,10 +6,18 @@
   var el = document.getElementById('scratchPopup');
   if (!el) return;
 
-  var KEY   = 'pm_scratch_seen';
-  var cfg   = window.PM_SCRATCH || {};
-  var delay = (cfg.delay || 6) * 1000;
-  var days  = cfg.days || 14;
+  var KEY     = 'pm_scratch_seen';      // gates the automatic open
+  var CLAIMED = 'pm_scratch_claimed';   // gates the edge tab
+  var cfg     = window.PM_SCRATCH || {};
+  var delay   = (cfg.delay || 6) * 1000;
+  var days    = cfg.days || 14;
+  var trigger = cfg.trigger || 'tab';
+  var tab     = document.getElementById('spTab');
+
+  function claimed() { try { return !!localStorage.getItem(CLAIMED); } catch (e) { return false; } }
+  function markClaimed() { try { localStorage.setItem(CLAIMED, String(Date.now())); } catch (e) {} }
+  function showTab() { if (tab && !claimed()) tab.hidden = false; }
+  function hideTab() { if (tab) tab.hidden = true; }
 
   function seen() {
     try {
@@ -41,6 +49,7 @@
   }
 
   function toStep2() {
+    markClaimed();
     if (step1) step1.hidden = true;
     if (step2) step2.hidden = false;
     var email = document.getElementById('spEmail');
@@ -110,6 +119,7 @@
   }
 
   function open() {
+    hideTab();
     lastFocus = document.activeElement;
     el.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -122,6 +132,7 @@
     if (!/[?&]popup=1/.test(window.location.search)) remember();
   }
   function close() {
+    showTab();
     el.classList.remove('is-open');
     document.body.style.overflow = '';
     setTimeout(function () { el.hidden = true; }, 260);
@@ -146,12 +157,16 @@
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
 
+  if (tab) tab.addEventListener('click', open);
+
   // ?popup=1 forces it open for previewing — ignores design mode, the delay
   // and the already-seen record, and never sets that record itself.
   var forced = /[?&]popup=1/.test(window.location.search);
   if (forced) { open(); return; }
 
-  if (window.Shopify && window.Shopify.designMode) return;  // never ambush the editor
-  if (seen()) return;
-  setTimeout(open, delay);
+  if (window.Shopify && window.Shopify.designMode) { showTab(); return; }  // never ambush the editor
+
+  showTab();                                    // the tab is always the way back in
+  if (seen()) return;                           // already auto-opened recently
+  if (trigger === 'auto' || trigger === 'both') setTimeout(open, delay);
 })();
