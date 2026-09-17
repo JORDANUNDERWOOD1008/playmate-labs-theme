@@ -649,6 +649,79 @@
           }
         ],
         "default": "400"
+      },
+      {
+        "type": "header",
+        "content": "🔤 Licensed web font"
+      },
+      {
+        "type": "paragraph",
+        "content": "For a font you hold a web licence for — Adobe Fonts, Monotype, Fontspring. Create a web project with the provider, then paste its stylesheet URL and family name here."
+      },
+      {
+        "type": "checkbox",
+        "id": "custom_font_enable",
+        "label": "Use a licensed web font for headings",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "custom_font_url",
+        "label": "Stylesheet URL",
+        "info": "Adobe Fonts gives you a link like https://use.typekit.net/abc1def.css"
+      },
+      {
+        "type": "text",
+        "id": "custom_font_family",
+        "label": "Family name",
+        "info": "Exactly as the provider names it — Adobe calls Futura PT \"futura-pt\"."
+      },
+      {
+        "type": "select",
+        "id": "custom_font_weight",
+        "label": "Weight",
+        "options": [
+          {
+            "value": "300",
+            "label": "Light 300"
+          },
+          {
+            "value": "400",
+            "label": "Book / Regular 400"
+          },
+          {
+            "value": "500",
+            "label": "Medium 500"
+          },
+          {
+            "value": "600",
+            "label": "Demi 600"
+          },
+          {
+            "value": "700",
+            "label": "Bold 700"
+          },
+          {
+            "value": "800",
+            "label": "Heavy 800"
+          }
+        ],
+        "default": "700",
+        "info": "Include this weight in the web project or it will not load."
+      },
+      {
+        "type": "text",
+        "id": "custom_font_fallback",
+        "label": "Fallback stack",
+        "default": "Jost, 'Century Gothic', sans-serif",
+        "info": "Shown while the font loads, and if it fails. Keep something geometric."
+      },
+      {
+        "type": "checkbox",
+        "id": "custom_font_body",
+        "label": "Use it for body text too",
+        "default": false,
+        "info": "Futura is a display face — it gets hard to read at paragraph sizes."
       }
     ]
   },

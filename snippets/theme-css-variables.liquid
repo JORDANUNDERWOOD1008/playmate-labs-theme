@@ -87,9 +87,22 @@
     --btn-gold-text:        {{ settings.color_btn_gold_text }};
 
     /* ── Typography ── */
+    {%- if settings.custom_font_enable and settings.custom_font_family != blank -%}
+    --font-serif:   {{ settings.custom_font_family }}, {{ settings.custom_font_fallback }};
+    --font-heading-weight-custom: {{ settings.custom_font_weight }};
+    {%- else -%}
     --font-serif:   {{ h_font.family }}, {{ h_font.fallback_families }};
+    {%- endif -%}
+    {%- if settings.custom_font_enable and settings.custom_font_body and settings.custom_font_family != blank -%}
+    --font-sans:    {{ settings.custom_font_family }}, {{ settings.custom_font_fallback }};
+    {%- else -%}
     --font-sans:    {{ b_font.family }}, {{ b_font.fallback_families }};
+    {%- endif -%}
+    {%- if settings.custom_font_enable and settings.custom_font_family != blank -%}
+    --font-display: {{ settings.custom_font_family }}, {{ settings.custom_font_fallback }};
+    {%- else -%}
     --font-display: {{ accent_stack }};
+    {%- endif -%}
     --font-heading-weight: {{ settings.font_weight_heading }};
     --font-body-weight:    {{ settings.font_weight_body }};
 
@@ -118,7 +131,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
-    font-weight: var(--font-heading-weight);
+    font-weight: var(--font-heading-weight-custom, var(--font-heading-weight));
     letter-spacing: var(--letter-spacing-heading);
   }
 
