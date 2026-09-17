@@ -5,7 +5,7 @@
   Mirrors: https://njpvfxya.gensparkspace.com/about.html
 {% endcomment %}
 
-{{ 'global.css' | asset_url | stylesheet_tag }}
+{%- comment -%} global.css is loaded by the layout before theme-css-variables; loading it again here reverts every setting-driven variable. {%- endcomment -%}
 
 <style>
   :root {

@@ -4,7 +4,12 @@
   File: sections/header.liquid
 {% endcomment %}
 
-{{ 'global.css' | asset_url | stylesheet_tag }}
+{%- comment -%}
+  global.css is already loaded by the layout, before theme-css-variables.
+  Loading it again here re-declared :root and reverted every variable the
+  settings had just set — which is why choosing a heading font left the
+  hero headline rendering in the stylesheet's hardcoded display face.
+{%- endcomment -%}
 
 {%- comment -%}
   Logo sizing. The <img> carried an inline height:40px, and an inline style

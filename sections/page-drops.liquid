@@ -8,7 +8,7 @@
 
 {{ 'drops.css' | asset_url | stylesheet_tag }}
 
-{{ 'global.css' | asset_url | stylesheet_tag }}
+{%- comment -%} global.css is loaded by the layout before theme-css-variables; loading it again here reverts every setting-driven variable. {%- endcomment -%}
 {{ 'components.css' | asset_url | stylesheet_tag }}
 
 {%- comment -%} Schema-driven colour overrides — mapped to new v4 settings IDs {%- endcomment -%}

@@ -7,7 +7,7 @@
   Used for: /pages/stockists
 {% endcomment %}
 
-{{ 'global.css' | asset_url | stylesheet_tag }}
+{%- comment -%} global.css is loaded by the layout before theme-css-variables; loading it again here reverts every setting-driven variable. {%- endcomment -%}
 
 <section class="page-hero" style="{%- if stockists_hero_img -%}background-image:url('{{ stockists_hero_img  }}');background-size:cover;background-position:center;{%- else -%}background:linear-gradient(135deg,var(--espresso) 0%,var(--burgundy-deep) 100%);{%- endif -%}padding:5rem 0 3rem;">
   <div class="container">
