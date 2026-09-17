@@ -4,6 +4,13 @@
   File: sections/home-product-grid.liquid
 {% endcomment %}
 
+{%- style -%}
+  #shopify-section-{{ section.id }} .home-products .btn-secondary {
+    background-color: {{ section.settings.viewall_btn_bg }};
+    color: {{ section.settings.viewall_btn_label_color }};
+    border: 1px solid {{ section.settings.viewall_btn_border }};
+  }
+{%- endstyle -%}
 <section class="section home-products" id="shop-preview">
   <div class="container">
     {%- comment -%}
@@ -24,6 +31,15 @@
     {%- endif -%}
 
     {%- comment -%} Category Pills {%- endcomment -%}
+    {%- comment -%}
+      Only worth showing once there is something to filter between. With no
+      category blocks this rendered a single "All" pill, which is noise.
+    {%- endcomment -%}
+    {%- assign category_blocks = 0 -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'category' -%}{%- assign category_blocks = category_blocks | plus: 1 -%}{%- endif -%}
+    {%- endfor -%}
+    {%- if category_blocks > 0 -%}
     <div class="shop-category-pills">
       <button class="category-pill active" data-filter="all">All</button>
       {%- for block in section.blocks -%}
@@ -34,6 +50,7 @@
         {%- endif -%}
       {%- endfor -%}
     </div>
+    {%- endif -%}
 
     <div class="product-grid product-grid-4">
       {%- assign grid_collection = collections[section.settings.collection] -%}
@@ -126,6 +143,28 @@
       "type": "url",
       "id": "view_all_url",
       "label": "View all link URL"
+    },
+    {
+      "type": "header",
+      "content": "🔘 View-all button"
+    },
+    {
+      "type": "color",
+      "id": "viewall_btn_bg",
+      "label": "Background",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "viewall_btn_label_color",
+      "label": "Text",
+      "default": "#6B1E3A"
+    },
+    {
+      "type": "color",
+      "id": "viewall_btn_border",
+      "label": "Border",
+      "default": "#6B1E3A"
     },
     {
       "type": "header",

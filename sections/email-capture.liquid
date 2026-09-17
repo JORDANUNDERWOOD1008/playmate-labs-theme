@@ -30,6 +30,13 @@
     }
   {%- endstyle -%}
 {%- endif -%}
+{%- style -%}
+  #shopify-section-{{ section.id }} .email-capture-section .btn-gold {
+    background-color: {{ section.settings.submit_btn_bg }};
+    color: {{ section.settings.submit_btn_label_color }};
+    border: 1px solid {{ section.settings.submit_btn_border }};
+  }
+{%- endstyle -%}
 <section class="section email-capture-section" id="{{ section.settings.section_id | default: 'email-capture' }}"
   style="background:{% if section.settings.dark_bg %}var(--espresso){% else %}var(--cream){% endif %};">
   {%- if section.settings.bg_image != blank -%}<div class="section-bg-overlay" aria-hidden="true"></div>{%- endif -%}
@@ -172,6 +179,28 @@
       "id": "success_message",
       "label": "Success message",
       "default": "You're in! Check your inbox for your free experience."
+    },
+    {
+      "type": "header",
+      "content": "🔘 Submit button"
+    },
+    {
+      "type": "color",
+      "id": "submit_btn_bg",
+      "label": "Background",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "submit_btn_label_color",
+      "label": "Text",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "color",
+      "id": "submit_btn_border",
+      "label": "Border",
+      "default": "#C9A96E"
     },
     {
       "type": "header",
