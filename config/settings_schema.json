@@ -498,8 +498,12 @@
       {
         "type": "select",
         "id": "font_accent",
-        "label": "Accent font style",
+        "label": "Display font",
         "options": [
+          {
+            "value": "heading",
+            "label": "Same as heading font"
+          },
           {
             "value": "cormorant",
             "label": "Cormorant Garamond (Italic)"
@@ -517,7 +521,8 @@
             "label": "Georgia (System)"
           }
         ],
-        "default": "cormorant"
+        "default": "heading",
+        "info": "Used for the largest type — hero headline, prices, stat numbers."
       },
       {
         "type": "header",
