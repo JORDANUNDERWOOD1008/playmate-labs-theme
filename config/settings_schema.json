@@ -4839,5 +4839,255 @@
         "default": "Some products contain nuts, dairy, soy and gluten. Full ingredient lists are on each product page."
       }
     ]
+  },
+  {
+    "name": "🎟️ Scratch Popup",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Behaviour"
+      },
+      {
+        "type": "checkbox",
+        "id": "scratch_popup_enable",
+        "label": "Enable the scratch popup",
+        "default": false,
+        "info": "Replaces nothing — the standard newsletter popup has its own setting. Never appears in the theme editor."
+      },
+      {
+        "type": "range",
+        "id": "scratch_delay",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "unit": "s",
+        "label": "Show after",
+        "default": 6
+      },
+      {
+        "type": "range",
+        "id": "scratch_days",
+        "min": 1,
+        "max": 90,
+        "step": 1,
+        "unit": "d",
+        "label": "Do not show again for",
+        "default": 14
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "image_picker",
+        "id": "scratch_logo",
+        "label": "Logo"
+      },
+      {
+        "type": "text",
+        "id": "scratch_heading",
+        "label": "Heading",
+        "default": "Try your luck"
+      },
+      {
+        "type": "text",
+        "id": "scratch_sub",
+        "label": "Subheading",
+        "default": "Scratch below to see what you get"
+      },
+      {
+        "type": "text",
+        "id": "scratch_hint",
+        "label": "Text on the foil",
+        "default": "SCRATCH HERE"
+      },
+      {
+        "type": "text",
+        "id": "scratch_prize",
+        "label": "Reward",
+        "default": "10% OFF"
+      },
+      {
+        "type": "text",
+        "id": "scratch_prize_note",
+        "label": "Reward note",
+        "default": "your first order"
+      },
+      {
+        "type": "text",
+        "id": "scratch_placeholder",
+        "label": "Email placeholder",
+        "default": "your@email.com"
+      },
+      {
+        "type": "text",
+        "id": "scratch_cta",
+        "label": "Button text",
+        "default": "Claim"
+      },
+      {
+        "type": "textarea",
+        "id": "scratch_smallprint",
+        "label": "Small print",
+        "default": "One use per customer. By signing up you agree to receive marketing emails."
+      },
+      {
+        "type": "header",
+        "content": "Floating images"
+      },
+      {
+        "type": "image_picker",
+        "id": "scratch_float_1",
+        "label": "Image 1 — top right"
+      },
+      {
+        "type": "image_picker",
+        "id": "scratch_float_2",
+        "label": "Image 2 — bottom right"
+      },
+      {
+        "type": "image_picker",
+        "id": "scratch_float_3",
+        "label": "Image 3 — middle"
+      },
+      {
+        "type": "range",
+        "id": "scratch_float_size",
+        "min": 120,
+        "max": 460,
+        "step": 10,
+        "unit": "px",
+        "label": "Image size — desktop",
+        "default": 260
+      },
+      {
+        "type": "range",
+        "id": "scratch_float_size_m",
+        "min": 80,
+        "max": 280,
+        "step": 10,
+        "unit": "px",
+        "label": "Image size — mobile",
+        "default": 150
+      },
+      {
+        "type": "range",
+        "id": "scratch_float_opacity",
+        "min": 10,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "Image opacity",
+        "default": 100
+      },
+      {
+        "type": "header",
+        "content": "Colours & size"
+      },
+      {
+        "type": "color",
+        "id": "scratch_bg",
+        "label": "Background",
+        "default": "#FAF7F2"
+      },
+      {
+        "type": "color",
+        "id": "scratch_heading_color",
+        "label": "Heading",
+        "default": "#6B1E3A"
+      },
+      {
+        "type": "color",
+        "id": "scratch_sub_color",
+        "label": "Body text",
+        "default": "#4A4A4A"
+      },
+      {
+        "type": "color",
+        "id": "scratch_prize_color",
+        "label": "Reward text",
+        "default": "#6B1E3A"
+      },
+      {
+        "type": "color",
+        "id": "scratch_prize_bg",
+        "label": "Behind the foil",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "scratch_btn_bg",
+        "label": "Button background",
+        "default": "#6B1E3A"
+      },
+      {
+        "type": "color",
+        "id": "scratch_btn_text",
+        "label": "Button text",
+        "default": "#F5EFE6"
+      },
+      {
+        "type": "color",
+        "id": "scratch_foil_from",
+        "label": "Foil — light",
+        "default": "#E8D7AE"
+      },
+      {
+        "type": "color",
+        "id": "scratch_foil_to",
+        "label": "Foil — dark",
+        "default": "#B08D4F"
+      },
+      {
+        "type": "range",
+        "id": "scratch_heading_size",
+        "min": 24,
+        "max": 80,
+        "step": 2,
+        "unit": "px",
+        "label": "Heading size — desktop",
+        "default": 52
+      },
+      {
+        "type": "range",
+        "id": "scratch_heading_size_m",
+        "min": 20,
+        "max": 60,
+        "step": 2,
+        "unit": "px",
+        "label": "Heading size — mobile",
+        "default": 38
+      },
+      {
+        "type": "range",
+        "id": "scratch_width",
+        "min": 320,
+        "max": 640,
+        "step": 10,
+        "unit": "px",
+        "label": "Content width",
+        "default": 420
+      },
+      {
+        "type": "range",
+        "id": "scratch_brush",
+        "min": 10,
+        "max": 50,
+        "step": 2,
+        "unit": "px",
+        "label": "Scratch brush size",
+        "default": 22
+      },
+      {
+        "type": "range",
+        "id": "scratch_threshold",
+        "min": 20,
+        "max": 80,
+        "step": 5,
+        "unit": "%",
+        "label": "Reveal after this much is scratched",
+        "default": 45
+      }
+    ]
   }
 ]

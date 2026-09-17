@@ -21,9 +21,32 @@
     backdrop-filter: none;
     box-shadow: none;
   }
+  {%- if section.settings.pill_overlay -%}
+  {%- comment -%}
+    The header section still sits in the document flow, so even with a fixed
+    nav inside it there is a band of page above the hero — the white strip.
+    Taking it out of flow lets the hero start at the very top and the pills
+    float over the photograph, which is the whole point of this style.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} {
+    position: absolute !important;
+    top: 0; left: 0; right: 0;
+    height: 0 !important;
+    overflow: visible;
+  }
+  {%- endif -%}
   #shopify-section-{{ section.id }} .nav-pills .nav-inner {
     gap: {{ section.settings.pill_gap }}px;
     align-items: center;
+  }
+  {%- comment -%} The logo needs its own size here — it is no longer sharing a
+      bar with the nav links, so the bar height stops constraining it. {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-logo img {
+    width: auto;
+    height: {{ section.settings.pill_logo_height }}px;
+  }
+  #shopify-section-{{ section.id }} .nav-pills .nav-logo span {
+    font-size: {{ section.settings.pill_logo_height | times: 0.7 | round }}px;
   }
   #shopify-section-{{ section.id }} .nav-pills .nav-logo,
   #shopify-section-{{ section.id }} .nav-pills .nav-actions {
@@ -59,6 +82,12 @@
     #shopify-section-{{ section.id }} .nav-pills .nav-logo,
     #shopify-section-{{ section.id }} .nav-pills .nav-actions {
       padding: {{ section.settings.pill_pad_y_mobile }}px {{ section.settings.pill_pad_x_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .nav-pills .nav-logo img {
+      height: {{ section.settings.pill_logo_height_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .nav-pills .nav-logo span {
+      font-size: {{ section.settings.pill_logo_height_mobile | times: 0.7 | round }}px;
     }
   }
 {%- endstyle -%}
@@ -332,6 +361,33 @@
       ],
       "default": "bar",
       "info": "Pills make the bar transparent and float the logo and actions as capsules. Switch back any time."
+    },
+    {
+      "type": "checkbox",
+      "id": "pill_overlay",
+      "label": "Float over the page",
+      "default": true,
+      "info": "Lets the section below start at the very top of the screen, so the pills sit on the photo instead of on a white band."
+    },
+    {
+      "type": "range",
+      "id": "pill_logo_height",
+      "min": 14,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height — desktop",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "pill_logo_height_mobile",
+      "min": 12,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height — mobile",
+      "default": 20
     },
     {
       "type": "color",
