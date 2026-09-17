@@ -5017,6 +5017,33 @@
         "default": "center center"
       },
       {
+        "type": "select",
+        "id": "scratch_mobile_layout",
+        "label": "Mobile layout",
+        "options": [
+          {
+            "value": "split",
+            "label": "Photo below the copy"
+          },
+          {
+            "value": "fill",
+            "label": "Photo fills the screen"
+          }
+        ],
+        "default": "split",
+        "info": "A portrait product shot rarely has enough clear space to carry the copy over it."
+      },
+      {
+        "type": "range",
+        "id": "scratch_img_h_m",
+        "min": 30,
+        "max": 70,
+        "step": 2,
+        "unit": "%",
+        "label": "Photo height — mobile",
+        "default": 52
+      },
+      {
         "type": "header",
         "content": "🧭 Copy block"
       },

@@ -53,10 +53,21 @@
 .sp__small{font-size:11px;margin:12px 0 0;color:var(--sp-sub-color,#4A4A4A);opacity:.8}
 
 @media (max-width:768px){
-  .sp{align-items:var(--sp-valign-m,flex-start);justify-content:center}
+  .sp{align-items:var(--sp-valign-m,flex-start);justify-content:center;
+      /* the copy must clear the close button and the notch */
+      padding-top:max(56px, env(safe-area-inset-top, 0px));
+      padding-bottom:env(safe-area-inset-bottom, 0px)}
   .sp__bg--d{display:none}
   .sp__bg--m{display:block}
   .sp__bg{object-position:var(--sp-bg-pos-m,center center)}
+
+  /* Split layout: the photo holds the lower band and the copy sits above it on
+     the flat background. A portrait product shot has nowhere near enough clear
+     space to carry a full copy block over the top of it. */
+  .sp--split .sp__bg{top:auto;bottom:0;height:var(--sp-img-h-m,52%);object-fit:contain;
+                     object-position:center bottom}
+  .sp--split .sp__inner{padding-bottom:calc(var(--sp-img-h-m,52%) + 8px)}
+
   .sp__inner{max-width:100%;padding:var(--sp-pad-m,32px 22px);
              text-align:var(--sp-text-align-m,center)}
   .sp__heading{font-size:var(--sp-heading-size-m,38px)}

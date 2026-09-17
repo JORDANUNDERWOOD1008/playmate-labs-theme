@@ -13,7 +13,7 @@
   assign bg_m = s.scratch_bg_mobile | default: s.scratch_bg
 -%}
 {%- if s.scratch_popup_enable -%}
-<div class="sp" id="scratchPopup" role="dialog" aria-modal="true"
+<div class="sp{% if s.scratch_mobile_layout == 'split' %} sp--split{% endif %}" id="scratchPopup" role="dialog" aria-modal="true"
      aria-labelledby="spHeading" hidden>
 
   {%- if s.scratch_bg != blank -%}
