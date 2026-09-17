@@ -5000,6 +5000,12 @@
       },
       {
         "type": "text",
+        "id": "scratch_code",
+        "label": "Discount code",
+        "info": "Shown once the card is scratched. Must be a code that already works at checkout."
+      },
+      {
+        "type": "text",
         "id": "scratch_prize_note",
         "label": "Reward note",
         "default": "your first order"

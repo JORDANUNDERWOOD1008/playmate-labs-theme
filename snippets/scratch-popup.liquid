@@ -50,6 +50,9 @@
       <div class="sp__prize" id="spPrize">
         <span class="sp__prize-note">{{ s.scratch_prize_lead | default: "You've got" }}</span>
         <span class="sp__prize-value">{{ s.scratch_prize | default: '10% off' }}</span>
+        {%- if s.scratch_code != blank -%}
+          <span class="sp__prize-code">{{ s.scratch_code }}</span>
+        {%- endif -%}
       </div>
       <canvas class="sp__canvas" id="spCanvas" aria-hidden="true"></canvas>
       <span class="sp__hint" id="spHint">{{ s.scratch_hint | default: 'SCRATCH HERE' }}</span>

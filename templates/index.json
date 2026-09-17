@@ -6,10 +6,11 @@
         "hero_bg_image": "shopify://shop_images/IMG_0049.png",
         "mobile_hero_image": "shopify://shop_images/IMG_0049.png",
         "eyebrow": "A new culture of connection",
-        "headline": "<p>REWRITE, </p><p><em><strong>DATENIGHT</strong></em><em>.</em> </p>",
+        "headline": "<p>Rewrite </p><p><em><strong>Datenight.</strong></em></p>",
         "subheadline": "Novel intimate sensory experiences, monthly date night rituals for modern relationships.",
         "cta_primary_text": "SHOP ALL",
         "cta_primary_url": "/collections/all",
+        "cta_primary_opens_modal": false,
         "cta_secondary_text": "SIGN UP",
         "cta_secondary_url": "shopify://products/playmate-chocolate",
         "trust_rating": "25,000+ happy couples",
@@ -19,20 +20,27 @@
         "backdrop_color": "#ffffff",
         "eyebrow_color": "#d92b2b",
         "eyebrow_color_mobile": "#ffffff",
-        "heading_text_color": "#5d5b5b",
+        "heading_text_color": "#000000",
         "heading_color_mobile": "#ffffff",
-        "italic_color": "#d92b2b",
+        "italic_color": "#FFFFFF",
         "italic_color_mobile": "#ffffff",
         "sub_color": "#020202",
         "sub_color_mobile": "",
-        "highlight_color": "#c9a96e",
+        "highlight_style": "block",
+        "highlight_bg": "#000000",
+        "highlight_pad_x": 12,
+        "highlight_pad_y": 4,
+        "highlight_pad_x_mobile": 8,
+        "highlight_pad_y_mobile": 2,
+        "highlight_radius": 0,
+        "highlight_color": "#FFFFFF",
         "highlight_color_mobile": "#ffffff",
         "trust_color": "#6b6b6b",
         "trust_color_mobile": "",
         "stars_color": "#c9a96e",
         "stars_color_mobile": "",
         "text_offset_desktop": 0,
-        "text_offset_mobile": 120,
+        "text_offset_mobile": 48,
         "btn_offset_desktop": 0,
         "btn_offset_mobile": -24,
         "show_eyebrow_desktop": true,
@@ -78,21 +86,12 @@
         "text_valign_desktop": "",
         "text_valign_mobile": "bottom",
         "content_width": 620,
-        "bg_color": "",
-        "cta_primary_opens_modal": false
+        "bg_color": ""
       }
     },
     "value-strip": {
       "type": "value-strip",
       "blocks": {
-        "p1": {
-          "type": "pillar",
-          "settings": {
-            "icon": "\u2726",
-            "title": "Sensory Products",
-            "text": "Consumables, kits & rituals"
-          }
-        },
         "p2": {
           "type": "pillar",
           "settings": {
@@ -119,11 +118,11 @@
         }
       },
       "block_order": [
-        "p1",
         "p2",
         "p3",
         "p4"
       ],
+      "disabled": true,
       "settings": {
         "pad_top_desktop": 28,
         "pad_top_mobile": 28,
@@ -230,7 +229,7 @@
         "tile_ratio": "4/5",
         "tile_ratio_mobile": "4/5",
         "image_fit": "cover",
-        "stack_mobile": true,
+        "stack_mobile": false,
         "zoom_on_hover": true,
         "corner_radius": 10,
         "gap": 24,
@@ -248,7 +247,7 @@
         "btn_font_size_mobile": 11,
         "btn_pad_y_mobile": 10,
         "btn_pad_x_mobile": 14,
-        "btn_full_width_mobile": false,
+        "btn_full_width_mobile": true,
         "pad_top_desktop": 96,
         "pad_bottom_desktop": 96,
         "pad_top_mobile": 56,
@@ -355,9 +354,9 @@
       "type": "social-proof",
       "settings": {
         "pad_top_desktop": 96,
-        "pad_top_mobile": 96,
+        "pad_top_mobile": 52,
         "pad_bottom_desktop": 96,
-        "pad_bottom_mobile": 96,
+        "pad_bottom_mobile": 52,
         "text_align_desktop": "",
         "text_align_mobile": "",
         "text_valign_desktop": "",
@@ -369,7 +368,44 @@
         "text_color_mobile": "",
         "heading_color": "",
         "heading_color_mobile": ""
-      }
+      },
+      "blocks": {
+        "t1": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "We've tried every date night box on the market. Nothing comes close. The Velvet Hour didn't just give us things to do \u2014 it gave us a reason to actually be present with each other again.",
+            "initials": "S+J",
+            "name": "Sophie & James",
+            "detail": "London \u00b7 Velvet Hour Kit"
+          }
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "I bought this as a Valentine's gift thinking it was just a nice box. It turned into the best conversation we'd had in two years. Now we subscribe monthly.",
+            "initials": "M",
+            "name": "Marcus D.",
+            "detail": "Manchester \u00b7 Monthly Subscriber"
+          }
+        },
+        "t3": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "quote": "The 5-Day Experience was honestly better than therapy for us. Low stakes, high reward. We look forward to it every morning \u2014 it's genuinely changed our relationship.",
+            "initials": "A+K",
+            "name": "Aisha & Kai",
+            "detail": "Birmingham \u00b7 5-Day Experience"
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ]
     },
     "email-capture": {
       "type": "email-capture",
@@ -389,9 +425,9 @@
         "submit_btn_label_color": "#1a0a06",
         "submit_btn_border": "#c9a96e",
         "pad_top_desktop": 96,
-        "pad_top_mobile": 96,
+        "pad_top_mobile": 52,
         "pad_bottom_desktop": 96,
-        "pad_bottom_mobile": 96,
+        "pad_bottom_mobile": 52,
         "height_desktop": 0,
         "height_mobile": 0,
         "image_fit": "",
@@ -536,9 +572,9 @@
         "waitlist_phone_placeholder": "Enter your phone number",
         "waitlist_microcopy": "Be the first to know when this drop becomes available.",
         "pad_top_desktop": 96,
-        "pad_top_mobile": 96,
+        "pad_top_mobile": 52,
         "pad_bottom_desktop": 96,
-        "pad_bottom_mobile": 96,
+        "pad_bottom_mobile": 52,
         "height_desktop": 0,
         "height_mobile": 0,
         "image_fit": "",
@@ -566,9 +602,9 @@
       "disabled": true,
       "settings": {
         "pad_top_desktop": 96,
-        "pad_top_mobile": 96,
+        "pad_top_mobile": 52,
         "pad_bottom_desktop": 96,
-        "pad_bottom_mobile": 96,
+        "pad_bottom_mobile": 52,
         "height_desktop": 0,
         "height_mobile": 0,
         "image_fit": "",
@@ -609,9 +645,9 @@
         "modal_cta_text": "Join Event Waitlist",
         "modal_microcopy": "You'll be the first to hear about Playmate Labs events, pop-ups and immersive experiences.",
         "pad_top_desktop": 96,
-        "pad_top_mobile": 96,
+        "pad_top_mobile": 52,
         "pad_bottom_desktop": 96,
-        "pad_bottom_mobile": 96,
+        "pad_bottom_mobile": 52,
         "text_align_desktop": "",
         "text_align_mobile": "",
         "text_valign_desktop": "",
@@ -630,9 +666,9 @@
       "disabled": true,
       "settings": {
         "pad_top_desktop": 96,
-        "pad_top_mobile": 96,
+        "pad_top_mobile": 52,
         "pad_bottom_desktop": 96,
-        "pad_bottom_mobile": 96,
+        "pad_bottom_mobile": 52,
         "text_align_desktop": "",
         "text_align_mobile": "",
         "text_valign_desktop": "",
@@ -651,9 +687,9 @@
       "disabled": true,
       "settings": {
         "pad_top_desktop": 96,
-        "pad_top_mobile": 96,
+        "pad_top_mobile": 52,
         "pad_bottom_desktop": 96,
-        "pad_bottom_mobile": 96,
+        "pad_bottom_mobile": 52,
         "text_align_desktop": "",
         "text_align_mobile": "",
         "text_valign_desktop": "",
@@ -671,10 +707,10 @@
   "order": [
     "home-hero",
     "value-strip",
+    "credibility",
     "home-product-grid",
     "feature-pair",
     "story-aphrodisiac",
-    "credibility",
     "social-proof",
     "email-capture",
     "banner-nude",

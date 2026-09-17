@@ -138,7 +138,10 @@
     "custom_font_weight": "700",
     "custom_font_fallback": "Jost, 'Century Gothic', sans-serif",
     "custom_font_body": false,
-    "scratch_prize_bg": "#FFFFFF",
-    "scratch_delay": 6
+    "scratch_prize_bg": "#F5EFE6",
+    "scratch_delay": 6,
+    "scratch_prize": "10% off",
+    "scratch_code": "WELCOME10",
+    "scratch_smallprint": "One use per customer. By signing up you agree to receive marketing emails."
   }
 }
