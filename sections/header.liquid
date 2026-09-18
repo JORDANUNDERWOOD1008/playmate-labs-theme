@@ -306,8 +306,6 @@
                   <li><a href="{{ childlink.url }}" class="nav-dropdown-link"{% if childlink.current %} aria-current="page"{% endif %}>{{ childlink.title }}</a></li>
                 {%- endfor -%}
               </ul>
-    </div>
-
           </li>
         {%- else -%}
           <li class="nav-item">
@@ -320,6 +318,7 @@
         {%- endif -%}
       {%- endfor -%}
     </ul>
+    </div>
 
     {%- comment -%} Nav Actions {%- endcomment -%}
     <div class="nav-actions">
