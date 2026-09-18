@@ -149,64 +149,64 @@
         "t1": {
           "type": "faq",
           "settings": {
-            "question": "What is the minimum order?",
-            "answer": "<p>TO CONFIRM: state your MOQ, by product and in total.</p>",
+            "question": "Where do you ship to?",
+            "answer": "<p>TO CONFIRM: territories you supply, and whether the formulations are compliant in the EU and elsewhere.</p>",
             "open_by_default": false
           }
         },
         "t2": {
           "type": "faq",
           "settings": {
-            "question": "What are your trade terms and margin?",
-            "answer": "<p>TO CONFIRM: wholesale price or discount off RRP, and your standard payment terms.</p>",
+            "question": "Can we get samples before committing?",
+            "answer": "<p>Yes, always. Tell us what you are considering and we will send the products with trade pricing.</p>",
             "open_by_default": false
           }
         },
         "t3": {
           "type": "faq",
           "settings": {
-            "question": "Case quantities and pallet configuration",
-            "answer": "<p>TO CONFIRM: units per outer case, cases per layer and per pallet, case dimensions and weight.</p>",
+            "question": "What are your payment terms?",
+            "answer": "<p>TO CONFIRM: your standard terms for a first order and for established accounts.</p>",
             "open_by_default": false
           }
         },
         "t4": {
           "type": "faq",
           "settings": {
-            "question": "Lead times",
-            "answer": "<p>TO CONFIRM: lead time from purchase order for stock held, and for a production run.</p>",
+            "question": "Do you supply marketing assets?",
+            "answer": "<p>Yes. Product photography, lifestyle imagery and copy are supplied with every order, so your team is not building a listing from a packshot and a paragraph.</p>",
             "open_by_default": false
           }
         },
         "t5": {
           "type": "faq",
           "settings": {
-            "question": "Shelf life and storage",
-            "answer": "<p>TO CONFIRM: shelf life from production, and storage conditions. Chocolate needs a temperature range stating.</p>",
+            "question": "What documentation can you provide?",
+            "answer": "<p>Full ingredient, allergen and nutritional declarations, product specifications and barcodes. Tell us what your compliance team needs and we will send it.</p>",
             "open_by_default": false
           }
         },
         "t6": {
           "type": "faq",
           "settings": {
-            "question": "Barcodes, compliance and documentation",
-            "answer": "<p>Every unit carries its own barcode. Full ingredient, allergen and nutritional declarations are available, along with product specifications for your compliance team.</p>",
+            "question": "Is the packaging suitable for open display?",
+            "answer": "<p>Yes, and that is deliberate. Nothing in the range is explicit on the outside, so it can sit on an open shelf and be promoted through public channels.</p>",
             "open_by_default": false
           }
         },
         "t7": {
           "type": "faq",
           "settings": {
-            "question": "Can we get samples?",
-            "answer": "<p>Yes. Tell us what you are considering and we will send samples with trade pricing.</p>",
+            "question": "Do you work with distributors?",
+            "answer": "<p>TO CONFIRM: whether you supply distributors, and any territory exclusivity.</p>",
             "open_by_default": false
           }
         },
         "t8": {
           "type": "faq",
           "settings": {
-            "question": "Do you supply outside the UK?",
-            "answer": "<p>TO CONFIRM: which territories you can ship to, and whether the formulation is compliant in the EU.</p>",
+            "question": "Can you do exclusives or own-brand collaborations?",
+            "answer": "<p>We have done retailer collaborations before, including co-branded packaging. Tell us what you have in mind.</p>",
             "open_by_default": false
           }
         }
@@ -222,8 +222,8 @@
         "t8"
       ],
       "settings": {
-        "eyebrow": "THE COMMERCIALS",
-        "heading": "Everything a buyer asks first",
+        "eyebrow": "THE PRACTICALITIES",
+        "heading": "Questions we get from buyers",
         "heading_align": "center",
         "single_open": true,
         "content_width": 820,
@@ -233,9 +233,9 @@
         "pad_bottom_desktop": 112,
         "pad_top_mobile": 64,
         "pad_bottom_mobile": 64,
-        "footer_text": "Need something not covered here? ",
-        "footer_link_text": "Ask us.",
-        "footer_link_url": "#trade-enquiry"
+        "footer_text": "Per-product numbers are all in the brochure. ",
+        "footer_link_text": "Get a copy.",
+        "footer_link_url": "#brochure"
       }
     },
     "form": {
@@ -257,12 +257,124 @@
         "pad_top_mobile": 64,
         "pad_bottom_mobile": 64
       }
+    },
+    "brochure": {
+      "type": "trade-brochure",
+      "settings": {
+        "eyebrow": "THE TRADE BROCHURE",
+        "heading": "Every number you need,\nin one document.",
+        "body": "<p>Case packs, pallet configurations, margins and lead times vary by product, so they live in the brochure rather than scattered across a page you have to scroll.</p>",
+        "contents": "Trade pricing and RRP by product|Case packs and pallet configuration|Carton dimensions and weights|Lead times and minimum orders|Ingredients, allergens and shelf life|Barcodes and product specifications",
+        "pdf_url": "",
+        "view_label": "Read it now",
+        "download_label": "Download PDF",
+        "pending_note": "The brochure is being finalised. Leave your email below and we will send it the moment it is ready.",
+        "cover": "shopify://shop_images/trade-brochure-palletisation-nude-stacked.png",
+        "cover_caption": "A page from the brochure: Nude. Stacked, palletised",
+        "image_share": 50,
+        "show_email": true,
+        "email_label": "Or have it emailed to you",
+        "email_placeholder": "Your work email",
+        "email_button": "Send it",
+        "sent_message": "On its way. Check your inbox in the next few minutes.",
+        "content_width": 1120,
+        "bg_color": "#FFFFFF",
+        "eyebrow_color": "#C9A96E",
+        "heading_color": "#1A1A1A",
+        "text_color": "#4A4A4A",
+        "btn1_bg": "#6B1E3A",
+        "btn1_text": "#FFFFFF",
+        "btn2_text": "#1A1A1A",
+        "btn2_border": "#D8D0C6",
+        "pad_top_desktop": 112,
+        "pad_bottom_desktop": 112,
+        "pad_top_mobile": 64,
+        "pad_bottom_mobile": 64
+      }
+    },
+    "process": {
+      "type": "flex-steps",
+      "blocks": {
+        "p1": {
+          "type": "step",
+          "settings": {
+            "title": "Get in touch",
+            "text": "<p>Tell us what kind of shop you run and what you are drawn to. We come back with trade pricing and the brochure.</p>"
+          }
+        },
+        "p2": {
+          "type": "step",
+          "settings": {
+            "title": "Samples",
+            "text": "<p>We send the products themselves. Nothing here survives being described; it has to be opened.</p>"
+          }
+        },
+        "p3": {
+          "type": "step",
+          "settings": {
+            "title": "Terms and first order",
+            "text": "<p>We agree quantities, payment terms and a delivery date, and confirm everything in writing before anything is picked.</p>"
+          }
+        },
+        "p4": {
+          "type": "step",
+          "settings": {
+            "title": "Replenishment",
+            "text": "<p>Case packs and pallet configurations are built for straightforward reordering, with assets supplied for your own listings and marketing.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ],
+      "settings": {
+        "eyebrow": "HOW IT WORKS",
+        "heading": "From first email to shelf",
+        "intro": "",
+        "heading_align": "center",
+        "text_align": "left",
+        "columns": 4,
+        "columns_tablet": 2,
+        "columns_mobile": 1,
+        "gap": 40,
+        "gap_mobile": 32,
+        "content_width": 1200,
+        "show_image": false,
+        "image_ratio": "4/5",
+        "image_ratio_mobile": "3/2",
+        "image_fit": "cover",
+        "corner_radius": 8,
+        "show_numbers": true,
+        "number_style": "rule",
+        "number_size": 13,
+        "number_size_mobile": 12,
+        "title_size": 20,
+        "title_size_mobile": 18,
+        "text_size": 15,
+        "text_size_mobile": 14,
+        "bg_color": "#FAF7F2",
+        "eyebrow_color": "#C9A96E",
+        "heading_color": "#1A1A1A",
+        "title_color": "#1A1A1A",
+        "text_color": "#4A4A4A",
+        "number_color": "#6B1E3A",
+        "rule_color": "#E5DFD6",
+        "pad_top_desktop": 112,
+        "pad_bottom_desktop": 112,
+        "pad_top_mobile": 64,
+        "pad_bottom_mobile": 64
+      }
     }
   },
   "order": [
     "hero",
     "why",
     "linecard",
+    "brochure",
+    "process",
     "terms",
     "form"
   ]
