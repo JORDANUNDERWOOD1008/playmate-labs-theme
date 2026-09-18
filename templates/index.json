@@ -948,19 +948,72 @@
     "retail": {
       "type": "flex-logo-bar",
       "blocks": {
+        "logo_7HcREt": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/press-logo__0001s_0003_lad-bible.png",
+            "name": "",
+            "url": "",
+            "new_tab": true
+          }
+        },
+        "logo_7y4Gmw": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/press-logo__0001s_0001_lovehoney.png",
+            "name": "",
+            "url": "",
+            "new_tab": true
+          }
+        },
+        "logo_Aq6dVE": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/press-logo__0001s_0000_metro.png",
+            "name": "",
+            "url": "",
+            "new_tab": true
+          }
+        },
+        "logo_e68PpL": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/press-logo__0001s_0005_womens-health.png",
+            "name": "",
+            "url": "",
+            "new_tab": true
+          }
+        },
+        "logo_qrF9ER": {
+          "type": "logo",
+          "settings": {
+            "logo": "shopify://shop_images/press-logo__0001s_0002_cosmopolitan.png",
+            "name": "",
+            "url": "",
+            "new_tab": true
+          }
+        },
         "r1": {
           "type": "logo",
           "settings": {
-            "name": "Lovehoney"
+            "logo": "shopify://shop_images/press-logo__0001s_0004_red.png",
+            "name": "",
+            "url": "",
+            "new_tab": true
           }
         }
       },
       "block_order": [
+        "logo_7HcREt",
+        "logo_7y4Gmw",
+        "logo_Aq6dVE",
+        "logo_e68PpL",
+        "logo_qrF9ER",
         "r1"
       ],
       "settings": {
         "heading": "AS SEEN IN",
-        "heading_color": "#8A8178",
+        "heading_color": "#8a8178",
         "heading_size": 11,
         "heading_size_mobile": 10,
         "heading_tracking": 18,
@@ -984,11 +1037,12 @@
         "bg_color_mobile": "#FFFFFF",
         "border_top": false,
         "border_bottom": true,
-        "border_color": "#E5DFD6",
+        "border_color": "#e5dfd6",
         "pad_top_desktop": 52,
         "pad_bottom_desktop": 52,
         "pad_top_mobile": 36,
-        "pad_bottom_mobile": 36
+        "pad_bottom_mobile": 36,
+        "heading_color_mobile": ""
       }
     }
   },
