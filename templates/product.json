@@ -12,7 +12,7 @@
     "main": {
       "type": "main-product",
       "settings": {
-        "pcb_enabled": true,
+        "pcb_enabled": false,
         "pcb_surcharge_display": "4.99",
         "pcb_surcharge_pence": 499,
         "pcb_variant_id": "56527296692604",
@@ -23,7 +23,11 @@
         "pcb_message_hint": "Printed on a card inside your box.",
         "pcb_message_max": 200,
         "pcb_upload_label": "Upload a photo or file",
-        "pcb_upload_hint": "Drop a photo here or click to browse"
+        "pcb_upload_hint": "Drop a photo here or click to browse",
+        "related_collection": "frontpage",
+        "related_count": 2,
+        "breadcrumb_collection": "frontpage",
+        "breadcrumb_label": "Shop"
       }
     },
     "product-page-banner": {

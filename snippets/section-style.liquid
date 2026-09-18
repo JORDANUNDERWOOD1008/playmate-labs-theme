@@ -1,0 +1,206 @@
+{%- comment -%}
+  ============================================================
+  PLAYMATE LABS — PER-SECTION RESPONSIVE STYLE ENGINE
+  ============================================================
+  Emits a scoped <style> block for one section instance, turning
+  the standard layout settings into CSS custom properties with
+  separate desktop and mobile values.
+
+  Usage, as the first line inside a section's markup:
+      {% render 'section-style', section: section %}
+
+  Every setting is optional. A section only needs to declare the
+  controls it actually wants in its own schema — anything absent
+  is skipped and the stylesheet default stands.
+
+  Recognised setting ids (all optional):
+    pad_top_desktop / pad_bottom_desktop      range, px
+    pad_top_mobile  / pad_bottom_mobile       range, px
+    height_desktop  / height_mobile           range, vh  (0 = auto)
+    content_width                             range, px
+    text_align_desktop  / text_align_mobile   select left|center|right
+    text_valign_desktop / text_valign_mobile  select top|middle|bottom
+    image_fit / image_fit_mobile              select cover|contain
+    image_pos_desktop / image_pos_mobile      select focal point
+    overlay_opacity_desktop / _mobile         range, 0-100
+    overlay_color                             color
+    bg_color / text_color / heading_color     color
+    bg_color_mobile / text_color_mobile /
+      heading_color_mobile                    color  (mobile overrides)
+
+  Consumed by CSS as, e.g.:
+    padding-top: var(--sec-pad-top);
+    object-fit:  var(--sec-image-fit, cover);
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign sel = '#shopify-section-' | append: section.id
+-%}
+
+{% style %}
+  {{ sel }} {
+    {%- if s.pad_top_desktop != blank %}    --sec-pad-top: {{ s.pad_top_desktop }}px;{% endif -%}
+    {%- if s.pad_bottom_desktop != blank %} --sec-pad-bottom: {{ s.pad_bottom_desktop }}px;{% endif -%}
+    {%- if s.height_desktop != blank and s.height_desktop > 0 %} --sec-height: {{ s.height_desktop }}vh;{% endif -%}
+    {%- if s.height_desktop == 0 %} --sec-height: auto;{% endif -%}
+    {%- if s.content_width != blank and s.content_width > 0 %} --sec-content-width: {{ s.content_width }}px;{% endif -%}
+    {%- if s.text_align_desktop != blank %} --sec-text-align: {{ s.text_align_desktop }};{% endif -%}
+    {%- if s.text_valign_desktop != blank %}--sec-text-valign: {{ s.text_valign_desktop }};{% endif -%}
+    {%- if s.image_fit != blank %}          --sec-image-fit: {{ s.image_fit }};{% endif -%}
+    {%- if s.image_pos_desktop != blank %}  --sec-image-pos: {{ s.image_pos_desktop }};{% endif -%}
+    {%- if s.overlay_opacity_desktop != blank %} --sec-overlay-opacity: {{ s.overlay_opacity_desktop | divided_by: 100.0 }};{% endif -%}
+    {%- if s.overlay_color != blank %}      --sec-overlay-color: {{ s.overlay_color }};{% endif -%}
+    {%- if s.bg_color != blank %}           --sec-bg: {{ s.bg_color }};{% endif -%}
+    {%- if s.text_color != blank %}         --sec-text: {{ s.text_color }};{% endif -%}
+    {%- if s.heading_color != blank %}      --sec-heading: {{ s.heading_color }};{% endif -%}
+  }
+
+  {%- comment -%} Derive content margins from horizontal alignment {%- endcomment -%}
+  {%- if s.text_align_desktop != blank -%}
+    {{ sel }} {
+      {%- case s.text_align_desktop -%}
+        {%- when 'center' -%} --sec-margin-left: auto; --sec-margin-right: auto;
+        {%- when 'right' -%}  --sec-margin-left: auto; --sec-margin-right: 4%;
+        {%- else -%}          --sec-margin-left: 4%;  --sec-margin-right: auto;
+      {%- endcase -%}
+    }
+  {%- endif -%}
+
+  {%- comment -%} Map the vertical-position keyword onto flexbox {%- endcomment -%}
+  {%- if s.text_valign_desktop != blank -%}
+    {{ sel }} {
+      {%- case s.text_valign_desktop -%}
+        {%- when 'top' -%}    --sec-justify: flex-start;
+        {%- when 'bottom' -%} --sec-justify: flex-end;
+        {%- else -%}          --sec-justify: center;
+      {%- endcase -%}
+    }
+  {%- endif -%}
+
+  {%- comment -%}
+    ── Applying the controls ────────────────────────────────────────────
+    These rules used to live in each section's own stylesheet, which meant
+    only the hero ever honoured them and every other section shipped dead
+    sliders. They are applied generically here instead, covering both
+    layout patterns in this theme:
+
+      * sections whose photo is a CSS background-image (featured drop)
+      * sections whose photo is an <img> in a *-bg wrapper (hero)
+
+    Padding is the one exception — it stays in the stylesheet, because
+    several sections own their vertical rhythm in an inner wrapper and
+    applying it here as well would double it up.
+  {%- endcomment -%}
+
+  {%- if s.bg_color != blank or s.text_color != blank -%}
+  {{ sel }} > * {
+    {%- comment -%} `background`, not `background-color`: the colour picker
+        can return a linear-gradient(), which background-color drops. {%- endcomment -%}
+    {%- if s.bg_color != blank %}   background: var(--sec-bg);{% endif -%}
+    {%- if s.text_color != blank %} color: var(--sec-text);{% endif -%}
+  }
+  {%- endif -%}
+
+  {%- comment -%} Height: 0 means "size to content", so only cap when asked {%- endcomment -%}
+  {%- if s.height_desktop != blank and s.height_desktop > 0 -%}
+  {{ sel }} > * { min-height: var(--sec-height); }
+  {%- endif -%}
+
+  {%- comment -%} Photo framing — background-image sections {%- endcomment -%}
+  {%- if s.image_fit != blank or s.image_pos_desktop != blank -%}
+  {{ sel }} > * {
+    {%- if s.image_fit != blank %}         background-size: var(--sec-image-fit);{% endif -%}
+    {%- if s.image_pos_desktop != blank %} background-position: var(--sec-image-pos);{% endif -%}
+  }
+  {%- comment -%} Photo framing — <img> sections {%- endcomment -%}
+  {{ sel }} [class*="-bg"] img,
+  {{ sel }} img[class*="-bg-"],
+  {{ sel }} [class*="__bg"] img {
+    {%- if s.image_fit != blank %}         object-fit: var(--sec-image-fit);{% endif -%}
+    {%- if s.image_pos_desktop != blank %} object-position: var(--sec-image-pos);{% endif -%}
+  }
+  {%- endif -%}
+
+  {%- comment -%}
+    Overlay: scale whatever scrim the section already ships rather than
+    replacing it — several are tuned gradients with deliberate clear
+    windows over the product.
+  {%- endcomment -%}
+  {%- if s.overlay_opacity_desktop != blank -%}
+  {{ sel }} [class*="overlay"], {{ sel }} [class*="gradient"] {
+    opacity: var(--sec-overlay-opacity);
+  }
+  {%- endif -%}
+
+  {%- if s.text_align_desktop != blank -%}
+  {{ sel }} > * { text-align: var(--sec-text-align); }
+  {%- endif -%}
+
+  {%- if s.content_width != blank and s.content_width > 0 -%}
+  {{ sel }} > * > .container,
+  {{ sel }} [class*="__inner"],
+  {{ sel }} [class*="-inner"] {
+    max-width: var(--sec-content-width);
+    margin-left: var(--sec-margin-left, auto);
+    margin-right: var(--sec-margin-right, auto);
+  }
+  {%- endif -%}
+
+  {%- if s.heading_color != blank %}
+  {{ sel }} h1, {{ sel }} h2, {{ sel }} h3 { color: var(--sec-heading); }
+  {%- endif %}
+
+  @media (max-width: 768px) {
+    {{ sel }} {
+      {%- if s.pad_top_mobile != blank %}    --sec-pad-top: {{ s.pad_top_mobile }}px;{% endif -%}
+      {%- if s.pad_bottom_mobile != blank %} --sec-pad-bottom: {{ s.pad_bottom_mobile }}px;{% endif -%}
+      {%- if s.height_mobile != blank and s.height_mobile > 0 %} --sec-height: {{ s.height_mobile }}vh;{% endif -%}
+      {%- if s.height_mobile == 0 %} --sec-height: auto;{% endif -%}
+      {%- if s.text_align_mobile != blank -%}
+        --sec-text-align: {{ s.text_align_mobile }};
+        {%- case s.text_align_mobile -%}
+          {%- when 'center' -%} --sec-margin-left: auto; --sec-margin-right: auto;
+          {%- when 'right' -%}  --sec-margin-left: auto; --sec-margin-right: 4%;
+          {%- else -%}          --sec-margin-left: 4%;  --sec-margin-right: auto;
+        {%- endcase -%}
+      {%- endif -%}
+      {%- if s.image_pos_mobile != blank %}  --sec-image-pos: {{ s.image_pos_mobile }};{% endif -%}
+      {%- if s.image_fit_mobile != blank %}  --sec-image-fit: {{ s.image_fit_mobile }};{% endif -%}
+      {%- if s.bg_color_mobile != blank %}   --sec-bg: {{ s.bg_color_mobile }};{% endif -%}
+      {%- if s.text_color_mobile != blank %} --sec-text: {{ s.text_color_mobile }};{% endif -%}
+      {%- if s.heading_color_mobile != blank %} --sec-heading: {{ s.heading_color_mobile }};{% endif -%}
+      {%- if s.overlay_opacity_mobile != blank %} --sec-overlay-opacity: {{ s.overlay_opacity_mobile | divided_by: 100.0 }};{% endif -%}
+      {%- if s.text_valign_mobile != blank -%}
+        {%- case s.text_valign_mobile -%}
+          {%- when 'top' -%}    --sec-justify: flex-start; --sec-text-valign: top;
+          {%- when 'bottom' -%} --sec-justify: flex-end; --sec-text-valign: bottom;
+          {%- else -%}          --sec-justify: center; --sec-text-valign: middle;
+        {%- endcase -%}
+      {%- endif -%}
+    }
+  }
+
+  {%- comment -%}
+    Re-apply on mobile so a mobile-only colour actually lands. Declaring the
+    variable inside the media query is not enough on its own for the rules
+    that were emitted outside it.
+  {%- endcomment -%}
+  @media (max-width: 768px) {
+    {%- if s.bg_color_mobile != blank or s.text_color_mobile != blank -%}
+    {{ sel }} > * {
+      {%- if s.bg_color_mobile != blank %}   background: var(--sec-bg);{% endif -%}
+      {%- if s.text_color_mobile != blank %} color: var(--sec-text);{% endif -%}
+    }
+    {%- endif -%}
+    {%- if s.heading_color_mobile != blank %}
+    {{ sel }} h1, {{ sel }} h2, {{ sel }} h3 { color: var(--sec-heading); }
+    {%- endif -%}
+    {%- if s.image_fit_mobile != blank -%}
+    {{ sel }} > * { background-size: var(--sec-image-fit); }
+    {{ sel }} [class*="-bg"] img,
+    {{ sel }} img[class*="-bg-"],
+    {{ sel }} [class*="__bg"] img { object-fit: var(--sec-image-fit); }
+    {%- endif -%}
+  }
+{% endstyle %}

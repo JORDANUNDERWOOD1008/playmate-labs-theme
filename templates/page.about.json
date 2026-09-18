@@ -1,0 +1,225 @@
+{
+  "sections": {
+    "hero": {
+      "type": "flex-banner",
+      "settings": {
+        "image": "shopify://shop_images/studio-nude-kit-octa-landscape.png",
+        "image_mobile": "shopify://shop_images/lab-bench-nude-stacked-prototypes.png",
+        "image_fit": "cover",
+        "image_bg": "#FFFFFF",
+        "image_pos_desktop": "center center",
+        "image_pos_mobile": "center center",
+        "eager_load": true,
+        "height_desktop": 75,
+        "height_mobile": 70,
+        "eyebrow": "OUR STORY",
+        "heading": "We are rewriting\nhow couples do date night.",
+        "body": "<p>Playmate Labs is a product development studio for modern relationships.</p>",
+        "eyebrow_color": "#B4472F",
+        "heading_color": "#1A1A1A",
+        "body_color": "#4A4A4A",
+        "h_pos": "left",
+        "v_pos": "middle",
+        "text_align": "left",
+        "h_pos_mobile": "left",
+        "v_pos_mobile": "bottom",
+        "text_align_mobile": "left",
+        "copy_width": 440,
+        "overlay_opacity_desktop": 30,
+        "overlay_opacity_mobile": 55,
+        "overlay_color": "#FFFFFF",
+        "btn1_text": "Shop the range",
+        "btn1_url": "/collections/frontpage",
+        "btn1_bg": "#6B1E3A",
+        "btn1_label_color": "#FFFFFF",
+        "btn1_border": "#6B1E3A",
+        "btn_radius": "999",
+        "scrim_style": "left",
+        "pad_top_desktop": 120,
+        "pad_bottom_desktop": 64,
+        "heading_size": 54,
+        "pad_top_mobile": 96
+      }
+    },
+    "studio": {
+      "type": "flex-image-text",
+      "settings": {
+        "image": "shopify://shop_images/lab-bench-nude-stacked-prototypes.png",
+        "image_side": "left",
+        "mobile_image_first": true,
+        "image_width": 50,
+        "image_ratio": "4/3",
+        "image_ratio_mobile": "4/3",
+        "image_fit": "cover",
+        "corner_radius": 10,
+        "eyebrow": "WHAT WE ACTUALLY DO",
+        "heading": "Every object starts\nas a question about people.",
+        "body": "<p>We are not a supplement brand and we are not a sex shop. We design the objects that sit earlier in the evening than either: the small, easy invitations that give two people a reason to start.</p><p>Concepts are drawn in-house. Structure, mechanic, packaging and tone get decided together, because how a thing feels to open is part of whether it ever gets used.</p>",
+        "vertical_align": "middle",
+        "gap": 64,
+        "gap_mobile": 28,
+        "text_align_desktop": "left",
+        "text_align_mobile": "left",
+        "bg_color": "#FFFFFF",
+        "text_color": "#4A4A4A",
+        "heading_color": "#1A1A1A",
+        "pad_top_desktop": 112,
+        "pad_bottom_desktop": 112,
+        "pad_top_mobile": 64,
+        "pad_bottom_mobile": 64
+      }
+    },
+    "process": {
+      "type": "flex-steps",
+      "blocks": {
+        "s1": {
+          "type": "step",
+          "settings": {
+            "title": "Insight",
+            "text": "<p>We start with the moment, not the product. What actually stops two people who like each other from finding their way back to one another on a Tuesday.</p>"
+          }
+        },
+        "s2": {
+          "type": "step",
+          "settings": {
+            "title": "Design",
+            "text": "<p>Drawn in-house. Renders, technical drawings and print-ready files, then the tone of voice that has to survive being read out loud.</p>"
+          }
+        },
+        "s3": {
+          "type": "step",
+          "settings": {
+            "title": "Prototype",
+            "text": "<p>Built with our manufacturing partners and held in the hand. Materials, finishes and card stocks get revised until the object earns a place on a bedside table.</p>"
+          }
+        },
+        "s4": {
+          "type": "step",
+          "settings": {
+            "title": "Release",
+            "text": "<p>Made in the UK in small runs, then put in front of real couples. What does not change the evening does not ship.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2",
+        "s3",
+        "s4"
+      ],
+      "settings": {
+        "eyebrow": "HOW IT GETS MADE",
+        "heading": "Four stages, no shortcuts",
+        "intro": "",
+        "heading_align": "center",
+        "text_align": "left",
+        "columns": 4,
+        "columns_tablet": 2,
+        "columns_mobile": 1,
+        "gap": 40,
+        "gap_mobile": 32,
+        "content_width": 1200,
+        "show_image": false,
+        "image_ratio": "4/5",
+        "image_ratio_mobile": "3/2",
+        "image_fit": "cover",
+        "corner_radius": 8,
+        "show_numbers": true,
+        "number_style": "rule",
+        "number_size": 13,
+        "number_size_mobile": 12,
+        "title_size": 20,
+        "title_size_mobile": 18,
+        "text_size": 15,
+        "text_size_mobile": 14,
+        "bg_color": "#FAF7F2",
+        "eyebrow_color": "#C9A96E",
+        "heading_color": "#1A1A1A",
+        "title_color": "#1A1A1A",
+        "text_color": "#4A4A4A",
+        "number_color": "#6B1E3A",
+        "rule_color": "#E5DFD6",
+        "pad_top_desktop": 112,
+        "pad_bottom_desktop": 112,
+        "pad_top_mobile": 64,
+        "pad_bottom_mobile": 64
+      }
+    },
+    "packing": {
+      "type": "flex-image-text",
+      "settings": {
+        "image": "shopify://shop_images/lab-packing-bench-landscape.png",
+        "image_side": "right",
+        "mobile_image_first": true,
+        "image_width": 50,
+        "image_ratio": "4/3",
+        "image_ratio_mobile": "4/3",
+        "image_fit": "cover",
+        "corner_radius": 10,
+        "eyebrow": "HOW IT REACHES YOU",
+        "heading": "Plain on the outside,\nconsidered on the inside.",
+        "body": "<p>Orders are packed by us. Plain outer box, no branding and no product names on the label, and the same name on your statement.</p><p>Free UK shipping over &pound;60, dispatched within one working day.</p>",
+        "vertical_align": "middle",
+        "gap": 64,
+        "gap_mobile": 28,
+        "text_align_desktop": "left",
+        "text_align_mobile": "left",
+        "bg_color": "#FFFFFF",
+        "text_color": "#4A4A4A",
+        "heading_color": "#1A1A1A",
+        "pad_top_desktop": 112,
+        "pad_bottom_desktop": 112,
+        "pad_top_mobile": 64,
+        "pad_bottom_mobile": 64
+      }
+    },
+    "closing": {
+      "type": "flex-statement",
+      "settings": {
+        "eyebrow": "WHERE WE ARE GOING",
+        "statement": "A sexual wellness brand you would\nleave out on the <strong>coffee table</strong>.",
+        "support": "<p>The category has spent decades hiding itself in a top drawer. We would rather make things good enough to be seen: designed properly, made here, and stocked by independent retailers across the UK.</p>",
+        "layout": "split",
+        "split_ratio": 55,
+        "split_gap": 72,
+        "split_gap_mobile": 28,
+        "split_align": "end",
+        "copy_width": 1120,
+        "content_align": "center",
+        "text_align": "left",
+        "text_align_mobile": "left",
+        "show_rule": true,
+        "statement_size": 42,
+        "statement_size_mobile": 28,
+        "statement_leading": 115,
+        "statement_leading_mobile": 120,
+        "statement_tracking": -15,
+        "support_size": 17,
+        "support_size_mobile": 15,
+        "bg_color": "#1A0A06",
+        "statement_color": "#F5EFE6",
+        "text_color": "#BFB3A6",
+        "accent_color": "#C9A96E",
+        "bg_show_mobile": false,
+        "bg_overlay_opacity": 0,
+        "bg_fade_bottom": 0,
+        "cta_text": "Trade and wholesale enquiries",
+        "cta_url": "/pages/contact",
+        "cta_bg": "#F5EFE6",
+        "cta_label_color": "#1A0A06",
+        "cta_border": "#F5EFE6",
+        "pad_top_desktop": 128,
+        "pad_bottom_desktop": 128,
+        "pad_top_mobile": 72,
+        "pad_bottom_mobile": 72
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "studio",
+    "process",
+    "packing",
+    "closing"
+  ]
+}

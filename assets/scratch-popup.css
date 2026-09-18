@@ -1,0 +1,126 @@
+/* PLAYMATE LABS — full-screen scratch popup */
+.sp{position:fixed;inset:0;z-index:9999;display:flex;overflow-y:auto;
+    align-items:var(--sp-valign,center);justify-content:var(--sp-halign,flex-start);
+    opacity:0;transition:opacity .26s ease;background:var(--sp-bg,#FAF7F2)}
+.sp.is-open{opacity:1}
+.sp[hidden]{display:none}
+
+/* full-bleed photograph; the copy sits in its empty area */
+.sp__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+        object-position:var(--sp-bg-pos,center center)}
+.sp__bg--m{display:none}
+
+.sp__close{position:absolute;top:20px;right:20px;z-index:3;background:none;border:0;
+           color:var(--sp-close,#1A1A1A);cursor:pointer;padding:6px;line-height:0;opacity:.65}
+.sp__close:hover{opacity:1}
+.sp__close:focus-visible{outline:2px solid var(--sp-btn-bg,#6B1E3A);outline-offset:3px;border-radius:50%}
+
+.sp__inner{position:relative;z-index:2;width:100%;max-width:var(--sp-width,420px);
+           padding:var(--sp-pad,48px);text-align:var(--sp-text-align,center)}
+.sp__logo{display:block;margin:0 auto 22px;height:var(--sp-logo-h,42px);width:auto}
+.sp__heading{font-family:var(--font-serif);font-size:var(--sp-heading-size,54px);
+             line-height:1.05;margin:0 0 10px;color:var(--sp-heading-color,#6B1E3A)}
+.sp__sub{font-size:15px;margin:0 0 26px;color:var(--sp-sub-color,#4A4A4A)}
+
+.sp__card{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;
+          margin:0 auto 16px;box-shadow:0 2px 20px rgba(0,0,0,.10);
+          background:var(--sp-prize-bg,#FFF)}
+.sp__canvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:none;
+            transition:opacity .45s ease}
+.sp__canvas.is-cleared{opacity:0;pointer-events:none}
+.sp__hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+          pointer-events:none;font-size:20px;letter-spacing:.14em;font-weight:600;
+          color:rgba(255,255,255,.7);transition:opacity .3s ease}
+
+.sp__step[hidden]{display:none}
+.sp__prize-peek{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+                text-align:center;padding:12px}
+.sp__heading--prize{color:var(--sp-prize-color,#6B1E3A);margin-bottom:10px}
+.sp__prize-note{font-size:15px;color:var(--sp-sub-color,#4A4A4A)}
+.sp__prize-code{display:inline-block;margin-top:12px;font-size:13px;letter-spacing:.14em;font-weight:600;
+                padding:4px 12px;border:1px dashed var(--sp-prize-color,#6B1E3A);
+                border-radius:4px;color:var(--sp-prize-color,#6B1E3A)}
+.sp__prize-value{font-family:var(--font-serif);font-size:var(--sp-prize-size,40px);
+                 line-height:1.1;color:var(--sp-prize-color,#6B1E3A)}
+
+.sp__reveal{background:none;border:0;text-decoration:underline;cursor:pointer;
+            font-size:13px;color:var(--sp-sub-color,#4A4A4A);margin:14px 0 0;padding:4px;
+            display:block;width:100%}
+.sp__reveal[hidden]{display:none}
+
+.sp__label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.sp__input{width:100%;padding:14px 16px;border:1px solid var(--sp-input-border,#E8E0D5);
+           border-radius:999px;font-size:15px;text-align:center;margin-bottom:10px;
+           background:var(--sp-input-bg,#FFF);color:#1A1A1A}
+.sp__input:focus{outline:2px solid var(--sp-btn-bg,#6B1E3A);outline-offset:1px}
+.sp__submit{width:100%;padding:15px 24px;border:0;border-radius:999px;cursor:pointer;
+            font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+            background:var(--sp-btn-bg,#6B1E3A);color:var(--sp-btn-text,#F5EFE6);
+            transition:opacity .2s ease}
+.sp__submit:disabled{opacity:.35;cursor:not-allowed}
+.sp__small{font-size:11px;margin:12px 0 0;color:var(--sp-sub-color,#4A4A4A);opacity:.8}
+
+@media (max-width:768px){
+  .sp{align-items:var(--sp-valign-m,flex-start);justify-content:center;
+      /* the copy must clear the close button and the notch */
+      padding-top:max(56px, env(safe-area-inset-top, 0px));
+      padding-bottom:env(safe-area-inset-bottom, 0px)}
+  .sp__bg--d{display:none}
+  .sp__bg--m{display:block}
+  .sp__bg{object-position:var(--sp-bg-pos-m,center center)}
+
+  /* Split layout: the photo holds the lower band and the copy sits above it on
+     the flat background. A portrait product shot has nowhere near enough clear
+     space to carry a full copy block over the top of it. */
+  .sp--split .sp__bg{top:auto;bottom:0;height:var(--sp-img-h-m,52%);object-fit:contain;
+                     object-position:center bottom}
+  .sp--split .sp__inner{padding-bottom:calc(var(--sp-img-h-m,52%) + 8px)}
+
+  .sp__inner{max-width:100%;padding:var(--sp-pad-m,32px 22px);
+             text-align:var(--sp-text-align-m,center)}
+  .sp__heading{font-size:var(--sp-heading-size-m,38px)}
+  .sp__prize-value{font-size:var(--sp-prize-size-m,32px)}
+  .sp__hint{font-size:16px}
+  .sp__close{top:14px;right:14px}
+}
+
+@media (prefers-reduced-motion:reduce){ .sp{transition:none} }
+
+
+/* ── Edge tab ─────────────────────────────────────────────────────────────
+   Vertical pill anchored to the side of the viewport. Sits below the popup
+   (z-index) and above page content. Rotated text, so its box is tall-narrow
+   and the rotation happens inside it — no transform on the positioned box,
+   which would fight `position: fixed`. */
+.sp__tab {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9990;
+  border: 0;
+  cursor: pointer;
+  padding: 18px 9px;
+  background: var(--sp-tab-bg, #6B1E3A);
+  color: var(--sp-tab-fg, #FFFFFF);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  box-shadow: 0 2px 14px rgba(0,0,0,.18);
+  transition: filter .2s ease, opacity .2s ease;
+}
+
+.sp__tab[data-side="left"]  { left: 0;  border-radius: 0 10px 10px 0; rotate: 180deg; }
+.sp__tab[data-side="right"] { right: 0; border-radius: 10px 0 0 10px; }
+
+.sp__tab:hover { filter: brightness(1.15); }
+.sp__tab:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.sp__tab[hidden] { display: none !important; }
+
+@media (max-width: 768px) {
+  /* Clear of thumb-reach controls and any sticky bar at the bottom. */
+  .sp__tab { top: auto; bottom: 96px; transform: none; padding: 15px 8px; font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .sp__tab { transition: none } }

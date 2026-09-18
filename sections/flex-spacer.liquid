@@ -1,0 +1,49 @@
+{%- comment -%}
+  PLAYMATE LABS — SPACER
+  Blank vertical space with independent desktop and mobile heights, plus
+  an optional hairline rule. For breathing room between sections without
+  padding a neighbour into an odd shape.
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .fs {
+    height: {{ section.settings.height_desktop }}px;
+    background: {{ section.settings.bg_color | default: 'transparent' }};
+    display: flex; align-items: center;
+  }
+  #shopify-section-{{ section.id }} .fs__rule {
+    width: 100%;
+    border-top: {{ section.settings.rule_thickness }}px solid {{ section.settings.rule_color }};
+    max-width: {{ section.settings.rule_width }}%;
+    margin: 0 auto;
+  }
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .fs { height: {{ section.settings.height_mobile }}px; }
+  }
+{%- endstyle -%}
+
+<div class="fs" aria-hidden="true">
+  {%- if section.settings.show_rule -%}<div class="fs__rule"></div>{%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Spacer",
+  "tag": "section",
+  "settings": [
+    { "type": "range", "id": "height_desktop", "min": 0, "max": 200, "step": 4, "unit": "px",
+      "label": "Height — desktop", "default": 64 },
+    { "type": "range", "id": "height_mobile", "min": 0, "max": 200, "step": 4, "unit": "px",
+      "label": "Height — mobile", "default": 40 },
+    { "type": "header", "content": "Divider line" },
+    { "type": "checkbox", "id": "show_rule", "label": "Show a divider line", "default": false },
+    { "type": "color", "id": "rule_color", "label": "Line colour", "default": "#E8E0D5" },
+    { "type": "range", "id": "rule_thickness", "min": 1, "max": 6, "step": 1, "unit": "px",
+      "label": "Line thickness", "default": 1 },
+    { "type": "range", "id": "rule_width", "min": 10, "max": 100, "step": 5, "unit": "%",
+      "label": "Line width", "default": 100 },
+    { "type": "color_background", "id": "bg_color", "label": "Background" }
+  ],
+  "presets": [{ "name": "Spacer" }]
+}
+{% endschema %}

@@ -4,27 +4,216 @@
   File: sections/header.liquid
 {% endcomment %}
 
-{{ 'global.css' | asset_url | stylesheet_tag }}
+{%- comment -%}
+  global.css is already loaded by the layout, before theme-css-variables.
+  Loading it again here re-declared :root and reverted every variable the
+  settings had just set — which is why choosing a heading font left the
+  hero headline rendering in the stylesheet's hardcoded display face.
+{%- endcomment -%}
 
-<nav class="site-nav{% if section.settings.dark_style %} nav-dark{% endif %}" id="main-nav" role="navigation" aria-label="Main navigation">
+{%- comment -%}
+  Logo sizing. The <img> carried an inline height:40px, and an inline style
+  beats every stylesheet rule — which is why the size controls did nothing.
+  The inline rule now reads a variable instead, so the settings can drive it.
+{%- endcomment -%}
+{%- liquid
+  assign logo_h = section.settings.logo_height
+  assign logo_h_m = section.settings.logo_height_mobile
+  if settings.header_is_pills
+    assign logo_h = section.settings.pill_logo_height
+    assign logo_h_m = section.settings.pill_logo_height_mobile
+  endif
+-%}
+{%- style -%}
+  #shopify-section-{{ section.id }} .nav-logo-img {
+    --nav-logo-h: {{ logo_h }}px;
+    {%- if section.settings.logo_max_width > 0 %}
+    --nav-logo-max: {{ section.settings.logo_max_width }}px;
+    {%- endif %}
+  }
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .nav-logo-img { --nav-logo-h: {{ logo_h_m }}px; }
+  }
+{%- endstyle -%}
+
+{%- comment -%}
+  Floating-pill header. The bar goes transparent and the logo and the action
+  group each become their own rounded capsule sitting over whatever is behind
+  them. CSS only — no change to the markup order — so switching it off returns
+  the original solid bar exactly.
+{%- endcomment -%}
+{%- if settings.header_is_pills -%}
+{%- style -%}
+  #shopify-section-{{ section.id }} .site-nav.nav-pills,
+  #shopify-section-{{ section.id }} .site-nav.nav-pills.scrolled,
+  #shopify-section-{{ section.id }} .site-nav.nav-pills.nav-dark {
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  {%- if section.settings.pill_overlay -%}
+  {%- comment -%}
+    The header section still sits in the document flow, so even with a fixed
+    nav inside it there is a band of page above the hero — the white strip.
+    Taking it out of flow lets the hero start at the very top and the pills
+    float over the photograph, which is the whole point of this style.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} {
+    position: absolute !important;
+    top: 0; left: 0; right: 0;
+    height: 0 !important;
+    overflow: visible;
+  }
+  {%- endif -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-inner {
+    gap: {{ section.settings.pill_gap }}px;
+    align-items: center;
+  }
+  {%- comment -%} The logo needs its own size here — it is no longer sharing a
+      bar with the nav links, so the bar height stops constraining it. {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-logo span {
+    font-size: {{ section.settings.pill_logo_height | times: 0.7 | round }}px;
+  }
+  {%- comment -%}
+    Both capsules take the same explicit height. Sizing them by padding alone
+    let them drift apart, because the icons in the right-hand pill are taller
+    than the logo in the left one.
+  {%- endcomment -%}
+  {%- comment -%}
+    Two capsules: logo + hamburger on the left, actions on the right, both the
+    same height so they cannot drift apart.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-lockup,
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: {{ section.settings.pill_inner_gap }}px;
+    box-sizing: border-box;
+    height: {{ section.settings.pill_height }}px;
+    background: {{ section.settings.pill_bg }};
+    border-radius: 999px;
+    padding: 0 {{ section.settings.pill_pad_x }}px;
+    box-shadow: 0 2px 16px rgba(0,0,0,{{ section.settings.pill_shadow | divided_by: 100.0 }});
+  }
+  #shopify-section-{{ section.id }} .nav-pills .nav-logo {
+    display: flex;
+    align-items: center;
+    background: none;
+    padding: 0;
+    box-shadow: none;
+    height: auto;
+  }
+  {%- comment -%} The hamburger belongs in the left capsule at every width {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-toggle {
+    display: flex !important;
+    position: static;
+    width: 20px;
+  }
+  {%- comment -%} Cart as its own accent capsule nested in the right one {%- endcomment -%}
+  {%- if section.settings.pill_cart_accent -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-icon-btn[data-cart-open],
+  #shopify-section-{{ section.id }} .nav-pills [data-cart-open] {
+    background: {{ section.settings.pill_cart_bg }};
+    color: {{ section.settings.pill_cart_text }};
+    border-radius: 999px;
+    height: {{ section.settings.pill_height | minus: 14 }}px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+  }
+  {%- endif -%}
+  {%- comment -%} Icons must not push the capsule taller than its set height {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-icon-btn,
+  #shopify-section-{{ section.id }} .nav-pills .nav-toggle {
+    height: auto;
+    padding: 0 6px;
+  }
+  {%- comment -%}
+    Only things inside a capsule take the capsule's text colour. The inline
+    menu links sit outside them, on the page itself — colouring them white made
+    them vanish against a light hero, which reads as the menu overlapping the
+    pills.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-lockup .nav-logo span,
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-link,
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-icon-btn {
+    color: {{ section.settings.pill_icon_color }};
+  }
+  {%- if section.settings.pill_hide_menu -%}
+  {%- comment -%} Hamburger at every width, as the reference does {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-links { display: none; }
+  {%- else -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-links .nav-link {
+    color: {{ section.settings.pill_link_color }};
+  }
+  {%- endif -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-toggle span {
+    background: {{ section.settings.pill_text }};
+  }
+  {%- comment -%} The cart sits inside the right pill as its own accent capsule {%- endcomment -%}
+  {%- comment -%} CTA and cart are separate accents, not one shared colour {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-cta {
+    background: {{ section.settings.pill_cta_bg }};
+    color: {{ section.settings.pill_cta_text }};
+    border-radius: 999px;
+  }
+  {%- if section.settings.pill_hide_search_mobile %}
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .nav-pills #search-toggle { display: none; }
+  }
+  {%- endif %}
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .nav-pills .nav-inner {
+      padding-left: {{ section.settings.pill_edge_mobile }}px;
+      padding-right: {{ section.settings.pill_edge_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .nav-pills .nav-lockup,
+    #shopify-section-{{ section.id }} .nav-pills .nav-actions {
+      height: {{ section.settings.pill_height_mobile }}px;
+      padding: 0 {{ section.settings.pill_pad_x_mobile }}px;
+    }
+    {%- if section.settings.pill_cart_accent %}
+    #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-icon-btn[data-cart-open],
+  #shopify-section-{{ section.id }} .nav-pills [data-cart-open] {
+      height: {{ section.settings.pill_height_mobile | minus: 12 }}px;
+      padding: 0 11px;
+    }
+    {%- endif %}
+    #shopify-section-{{ section.id }} .nav-pills .nav-logo span {
+      font-size: {{ section.settings.pill_logo_height_mobile | times: 0.7 | round }}px;
+    }
+  }
+{%- endstyle -%}
+{%- endif -%}
+
+<nav class="site-nav{% if section.settings.dark_style %} nav-dark{% endif %}{% if settings.header_is_pills %} nav-pills{% endif %}" id="main-nav" role="navigation" aria-label="Main navigation">
   <div class="nav-inner">
 
     {%- comment -%} Logo {%- endcomment -%}
+    {%- comment -%}
+      Logo and hamburger share one capsule in pill mode. The wrapper is
+      display:contents in the solid-bar style, so it changes nothing there.
+    {%- endcomment -%}
+    <div class="nav-lockup">
     <a href="{{ routes.root_url }}" class="nav-logo" aria-label="{{ shop.name }} Home">
       {%- if section.settings.logo != blank -%}
-        <img src="{{ section.settings.logo | image_url: height: 40 }}"
+        <img src="{{ section.settings.logo | image_url: height: 160 }}"
              alt="{{ shop.name }}"
-             height="40"
              loading="eager"
-             style="width:auto;height:40px;object-fit:contain;">
+             class="nav-logo-img"
+             style="width:auto;height:var(--nav-logo-h,40px);max-width:var(--nav-logo-max,none);object-fit:contain;">
       {%- else -%}
         <img src="{{ 'playmate-logo.png' | asset_url }}"
              alt="{{ shop.name }}"
-             height="40"
              loading="eager"
-             style="width:auto;height:40px;object-fit:contain;">
+             class="nav-logo-img"
+             style="width:auto;height:var(--nav-logo-h,40px);max-width:var(--nav-logo-max,none);object-fit:contain;">
       {%- endif -%}
     </a>
+      <button class="nav-toggle" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
 
     {%- comment -%} Desktop Navigation {%- endcomment -%}
     <ul class="nav-links" role="list">
@@ -58,10 +247,10 @@
     {%- comment -%} Nav Actions {%- endcomment -%}
     <div class="nav-actions">
       {%- if section.settings.show_experience_cta -%}
-        <a href="{{ section.settings.url_experience | default: '/pages/5-day-experience' }}"
+        <a href="{{ section.settings.cta_url | default: '#newsletter' }}"
            class="nav-cta"
            data-show-on-scroll>
-          Unlock Free Experience
+          {{ section.settings.cta_text | default: 'Join the list' }}
         </a>
       {%- endif -%}
 
@@ -102,9 +291,7 @@
       {%- endif -%}
 
       {%- comment -%} Mobile Hamburger {%- endcomment -%}
-      <button class="nav-toggle" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
-        <span></span><span></span><span></span>
-      </button>
+
     </div>
   </div>
 </nav>
@@ -112,31 +299,62 @@
 {%- comment -%} Mobile Overlay {%- endcomment -%}
 <div class="mobile-menu-overlay" id="mobile-overlay"></div>
 
-{%- comment -%} Mobile Menu {%- endcomment -%}
+{%- comment -%}
+  Mobile Menu
+
+  Products first, as rows with their own photography, then the pages. A menu
+  that lists only page names asks someone to guess what is behind them; at
+  this catalogue size the products can simply be the menu.
+{%- endcomment -%}
 <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation">
-  <ul class="mobile-nav-links">
-    {%- for link in linklists[section.settings.mobile_menu].links -%}
-      <li>
-        <a href="{{ link.url }}"
-           class="mobile-nav-link"
-           {% if link.current %}aria-current="page"{% endif %}>
-          {{ link.title }} <span>→</span>
-        </a>
-      </li>
-    {%- endfor -%}
-  </ul>
-  <div class="mobile-menu-footer">
-    <a href="{{ section.settings.url_experience | default: '/pages/5-day-experience' }}"
-       class="btn btn-primary"
-       style="width:100%;justify-content:center;margin-bottom:0.75rem;">
-      Unlock Free 5-Day Experience
-    </a>
-    <a href="{{ section.settings.url_monthly_drops | default: '/collections/monthly-drops' }}"
-       class="btn btn-ghost"
-       style="width:100%;justify-content:center;">
-      Shop the Latest Drop
-    </a>
-    <div style="margin-top:1.5rem;display:flex;gap:1rem;justify-content:center;">
+  <div class="mobile-menu-scroll">
+
+    {%- assign menu_collection = collections[section.settings.menu_collection] -%}
+    {%- if menu_collection != blank and menu_collection.products.size > 0 -%}
+      <p class="mobile-menu-heading">{{ section.settings.menu_shop_label | default: 'Shop' }}</p>
+      <ul class="mobile-product-list">
+        {%- for product in menu_collection.products limit: section.settings.menu_product_limit -%}
+          {%- assign m_img = product.metafields.custom.card_image.value | default: product.featured_image -%}
+          <li>
+            <a href="{{ product.url }}" class="mobile-product-row">
+              <span class="mobile-product-thumb">
+                {%- if m_img -%}
+                  <img src="{{ m_img | image_url: width: 160 }}" width="160" height="160"
+                       alt="" loading="lazy" decoding="async">
+                {%- endif -%}
+              </span>
+              <span class="mobile-product-name">{{ product.title }}</span>
+              {%- unless product.available -%}
+                <span class="mobile-product-flag">Sold out</span>
+              {%- endunless -%}
+              <svg class="mobile-product-chev" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <ul class="mobile-nav-links">
+      {%- for link in linklists[section.settings.mobile_menu].links -%}
+        <li>
+          <a href="{{ link.url }}" class="mobile-nav-link"
+             {% if link.current %}aria-current="page"{% endif %}>
+            {{ link.title }}
+          </a>
+        </li>
+      {%- endfor -%}
+      {%- if section.settings.stockist_text != blank -%}
+        <li>
+          <a href="{{ section.settings.stockist_url | default: '/pages/contact' }}" class="mobile-nav-link">
+            {{ section.settings.stockist_text }}
+          </a>
+        </li>
+      {%- endif -%}
+    </ul>
+
+    {%- if settings.social_instagram_link != blank or settings.social_tiktok_link != blank -%}
+    <div class="mobile-menu-social">
       {%- if settings.social_instagram_link != blank -%}
         <a href="{{ settings.social_instagram_link }}" class="footer-social-link" aria-label="Instagram" target="_blank" rel="noopener">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
@@ -148,6 +366,15 @@
         </a>
       {%- endif -%}
     </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Pinned so the cart is reachable without scrolling back. {%- endcomment -%}
+  <div class="mobile-menu-footer">
+    <a href="{{ routes.cart_url }}" class="btn btn-primary mobile-menu-cart">
+      {{ section.settings.menu_cart_label | default: 'Cart' }}
+      <span class="mobile-menu-cart-count" data-cart-count>{{ cart.item_count }}</span>
+    </a>
   </div>
 </nav>
 
@@ -190,13 +417,34 @@
     },
     {
       "type": "range",
-      "id": "logo_width",
-      "min": 50,
-      "max": 250,
-      "step": 10,
-      "default": 120,
+      "id": "logo_height",
+      "min": 14,
+      "max": 80,
+      "step": 2,
       "unit": "px",
-      "label": "Logo width"
+      "label": "Logo height — desktop",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "logo_height_mobile",
+      "min": 12,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height — mobile",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width",
+      "min": 0,
+      "max": 400,
+      "step": 10,
+      "default": 0,
+      "unit": "px",
+      "label": "Logo max width (0 = no limit)",
+      "info": "Optional cap for a very wide wordmark. Height below is the main control."
     },
     {
       "type": "checkbox",
@@ -219,8 +467,26 @@
     {
       "type": "checkbox",
       "id": "show_experience_cta",
-      "label": "Show 'Unlock Free Experience' CTA in nav",
+      "label": "Show the header button",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Header button text",
+      "default": "Join the list"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Header button link",
+      "info": "Leave blank to jump to the sign-up section on the page."
+    },
+    {
+      "type": "text",
+      "id": "cta2_text",
+      "label": "Mobile menu — second button",
+      "default": "Shop the range"
     },
     {
       "type": "header",
@@ -235,6 +501,233 @@
       "type": "url",
       "id": "url_monthly_drops",
       "label": "Monthly Drops (Mobile Menu)"
+    },
+    {
+      "type": "header",
+      "content": "🧭 Floating-pill style"
+    },
+    {
+      "type": "paragraph",
+      "content": "Switch this style on in Theme settings → Header & Navigation → \"Header uses the floating-pill style\". The settings below apply once it is on."
+    },
+    {
+      "type": "checkbox",
+      "id": "pill_overlay",
+      "label": "Float over the page",
+      "default": true,
+      "info": "Lets the section below start at the very top of the screen, so the pills sit on the photo instead of on a white band."
+    },
+    {
+      "type": "range",
+      "id": "pill_inner_gap",
+      "min": 0,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap inside each pill",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "pill_cart_accent",
+      "label": "Cart as an accent capsule",
+      "default": true,
+      "info": "Fills the cart button with the accent colour, nested inside the right-hand pill."
+    },
+    {
+      "type": "range",
+      "id": "pill_height",
+      "min": 32,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Pill height — desktop",
+      "default": 48,
+      "info": "Both capsules use this, so they always match."
+    },
+    {
+      "type": "range",
+      "id": "pill_height_mobile",
+      "min": 28,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Pill height — mobile",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "pill_logo_height",
+      "min": 14,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height — desktop",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "pill_logo_height_mobile",
+      "min": 12,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height — mobile",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "pill_bg",
+      "label": "Pill background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "pill_text",
+      "label": "Pill text & icons",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "checkbox",
+      "id": "pill_hide_menu",
+      "label": "Hamburger at all screen sizes",
+      "default": true,
+      "info": "Hides the inline desktop menu, as the reference design does. Untick to keep the links and colour them below."
+    },
+    {
+      "type": "color",
+      "id": "pill_link_color",
+      "label": "Inline menu link colour",
+      "default": "#1A1A1A",
+      "info": "Only used when the inline menu is shown. These links sit on the page, not inside a capsule."
+    },
+    {
+      "type": "color",
+      "id": "pill_cta_bg",
+      "label": "Join-the-list button — background",
+      "default": "#D92B2B"
+    },
+    {
+      "type": "color",
+      "id": "pill_cta_text",
+      "label": "Join-the-list button — text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "pill_cart_bg",
+      "label": "Cart button — background",
+      "default": "#D92B2B"
+    },
+    {
+      "type": "color",
+      "id": "pill_cart_text",
+      "label": "Cart button — icon",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "pill_icon_color",
+      "label": "Search & account icons",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "pill_gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between pills",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "pill_pad_x",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Pill width padding — desktop",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "pill_pad_x_mobile",
+      "min": 6,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Pill width padding — mobile",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "pill_edge_mobile",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Distance from screen edge — mobile",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "pill_shadow",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "%",
+      "label": "Pill shadow",
+      "default": 10
+    },
+    {
+      "type": "checkbox",
+      "id": "pill_hide_search_mobile",
+      "label": "Hide search on mobile in this style",
+      "default": true,
+      "info": "Keeps the right-hand pill from overflowing a narrow screen."
+    },
+    {
+      "type": "header",
+      "content": "Mobile menu"
+    },
+    {
+      "type": "collection",
+      "id": "menu_collection",
+      "label": "Products to list in the menu"
+    },
+    {
+      "type": "text",
+      "id": "menu_shop_label",
+      "label": "Products heading",
+      "default": "Shop"
+    },
+    {
+      "type": "range",
+      "id": "menu_product_limit",
+      "label": "How many products",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "text",
+      "id": "stockist_text",
+      "label": "Trade link label",
+      "default": "Become a stockist"
+    },
+    {
+      "type": "url",
+      "id": "stockist_url",
+      "label": "Trade link"
+    },
+    {
+      "type": "text",
+      "id": "menu_cart_label",
+      "label": "Cart button label",
+      "default": "Cart"
     }
   ]
 }

@@ -1,0 +1,349 @@
+{% render 'section-style', section: section %}
+{% comment %}
+  PLAYMATE LABS — TRADE BROCHURE
+  File: sections/trade-brochure.liquid
+
+  Case packs, pallet configurations, margins and lead times differ per product,
+  so they belong in a document rather than in an FAQ that has to answer for the
+  whole range at once.
+
+  Two routes deliberately: read it now in the browser with no gate, or have it
+  emailed. Gating the only route costs you the buyer who is skimming five
+  suppliers on a Tuesday afternoon.
+{% endcomment %}
+
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .tb__inner { max-width: {{ s.content_width }}px; }
+  #shopify-section-{{ section.id }} .tb__grid {
+    grid-template-columns: {{ s.image_share }}fr {{ 100 | minus: s.image_share }}fr;
+  }
+  #shopify-section-{{ section.id }} .tb__btn--primary {
+    background: {{ s.btn1_bg }}; color: {{ s.btn1_text }}; border-color: {{ s.btn1_bg }};
+  }
+  #shopify-section-{{ section.id }} .tb__btn--ghost {
+    background: transparent; color: {{ s.btn2_text }}; border-color: {{ s.btn2_border }};
+  }
+  @media (max-width: 860px) {
+    #shopify-section-{{ section.id }} .tb__grid { grid-template-columns: 1fr; }
+  }
+{%- endstyle -%}
+
+<section class="section tb" id="brochure">
+  <div class="container">
+    <div class="tb__inner">
+      <div class="tb__grid">
+
+        {%- if s.cover != blank -%}
+          <div class="tb__cover">
+            {%- if s.pdf_url != blank -%}<a href="{{ s.pdf_url }}" target="_blank" rel="noopener">{%- endif -%}
+              <img src="{{ s.cover | image_url: width: 1200 }}"
+                   srcset="{{ s.cover | image_url: width: 600 }} 600w,
+                           {{ s.cover | image_url: width: 1200 }} 1200w"
+                   sizes="(max-width: 860px) 92vw, 46vw"
+                   width="{{ s.cover.width }}" height="{{ s.cover.height }}"
+                   alt="{{ s.cover.alt | default: 'Trade brochure' | escape }}"
+                   loading="lazy" decoding="async">
+            {%- if s.pdf_url != blank -%}</a>{%- endif -%}
+            {%- if s.cover_caption != blank -%}
+              <p class="tb__caption" style="color:{{ s.text_color }};">{{ s.cover_caption }}</p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        <div class="tb__copy">
+          {%- if s.eyebrow != blank -%}
+            <span class="section-eyebrow" style="color:{{ s.eyebrow_color }};">{{ s.eyebrow }}</span>
+          {%- endif -%}
+          {%- if s.heading != blank -%}
+            <h2 class="heading-xl" style="color:{{ s.heading_color }};">{{ s.heading | newline_to_br }}</h2>
+          {%- endif -%}
+          {%- if s.body != blank -%}
+            <div class="tb__body" style="color:{{ s.text_color }};">{{ s.body }}</div>
+          {%- endif -%}
+
+          {%- if s.contents != blank -%}
+            <ul class="tb__contents" style="color:{{ s.text_color }};">
+              {%- assign rows = s.contents | split: '|' -%}
+              {%- for row in rows -%}
+                <li>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{ s.eyebrow_color }}"
+                       stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  {{ row | strip }}
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+
+          <div class="tb__actions">
+            {%- if s.pdf_url != blank -%}
+              <a class="tb__btn tb__btn--primary" href="{{ s.pdf_url }}" target="_blank" rel="noopener">
+                {{ s.view_label | default: 'Read it now' }}
+              </a>
+              <a class="tb__btn tb__btn--ghost" href="{{ s.pdf_url }}" download>
+                {{ s.download_label | default: 'Download PDF' }}
+              </a>
+            {%- else -%}
+              <p class="tb__pending" style="color:{{ s.text_color }};">{{ s.pending_note }}</p>
+            {%- endif -%}
+          </div>
+
+          {%- if s.show_email -%}
+            <div class="tb__email">
+              {%- form 'contact', id: 'brochure-form', class: 'tb__form' -%}
+                {%- if form.posted_successfully? -%}
+                  <p class="tb__sent" role="status">{{ s.sent_message }}</p>
+                {%- else -%}
+                  <input type="hidden" name="contact[subject]" value="Brochure request">
+                  <label for="tb-email">{{ s.email_label }}</label>
+                  <div class="tb__email-row">
+                    <input type="email" id="tb-email" name="contact[email]"
+                           placeholder="{{ s.email_placeholder }}" required autocomplete="email">
+                    <button type="submit" class="tb__btn tb__btn--primary">{{ s.email_button }}</button>
+                  </div>
+                {%- endif -%}
+              {%- endform -%}
+            </div>
+          {%- endif -%}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trade brochure",
+  "tag": "section",
+  "class": "shopify-section-trade-brochure",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "THE TRADE BROCHURE"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Every number you need,\nin one document."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>Case packs, pallet configurations, margins and lead times vary by product, so they live in the brochure rather than scattered across a page.</p>"
+    },
+    {
+      "type": "textarea",
+      "id": "contents",
+      "label": "What is inside",
+      "info": "One per line, separated by | so a line can contain commas.",
+      "default": "Trade pricing and RRP by product|Case packs and pallet configuration|Carton dimensions and weights|Lead times and minimum orders|Ingredients, allergens and shelf life|Barcodes and product specifications"
+    },
+    {
+      "type": "header",
+      "content": "The document"
+    },
+    {
+      "type": "url",
+      "id": "pdf_url",
+      "label": "Brochure file",
+      "info": "Upload the PDF under Content then Files in Shopify admin, then paste its link here."
+    },
+    {
+      "type": "text",
+      "id": "view_label",
+      "label": "View button label",
+      "default": "Read it now"
+    },
+    {
+      "type": "text",
+      "id": "download_label",
+      "label": "Download button label",
+      "default": "Download PDF"
+    },
+    {
+      "type": "text",
+      "id": "pending_note",
+      "label": "Text shown before a file is added",
+      "default": "The brochure is being finalised. Use the form below and we will send it over."
+    },
+    {
+      "type": "header",
+      "content": "Cover"
+    },
+    {
+      "type": "image_picker",
+      "id": "cover",
+      "label": "Cover or sample spread"
+    },
+    {
+      "type": "text",
+      "id": "cover_caption",
+      "label": "Caption",
+      "default": "A page from the brochure"
+    },
+    {
+      "type": "range",
+      "id": "image_share",
+      "label": "Image share of the width",
+      "min": 30,
+      "max": 65,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Email it instead"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_email",
+      "label": "Offer to email the brochure",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Field label",
+      "default": "Or have it emailed to you"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Placeholder",
+      "default": "Your work email"
+    },
+    {
+      "type": "text",
+      "id": "email_button",
+      "label": "Button label",
+      "default": "Send it"
+    },
+    {
+      "type": "textarea",
+      "id": "sent_message",
+      "label": "Confirmation",
+      "default": "On its way. Check your inbox in the next few minutes."
+    },
+    {
+      "type": "header",
+      "content": "Layout and colour"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content width",
+      "min": 700,
+      "max": 1300,
+      "step": 20,
+      "unit": "px",
+      "default": 1120
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow and ticks",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text",
+      "default": "#4A4A4A"
+    },
+    {
+      "type": "color",
+      "id": "btn1_bg",
+      "label": "Primary button",
+      "default": "#6B1E3A"
+    },
+    {
+      "type": "color",
+      "id": "btn1_text",
+      "label": "Primary button text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "btn2_text",
+      "label": "Secondary button text",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "btn2_border",
+      "label": "Secondary button border",
+      "default": "#D8D0C6"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_desktop",
+      "label": "Padding top — desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "default": 112
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "label": "Padding bottom — desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "default": 112
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "label": "Padding top — mobile",
+      "min": 0,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "label": "Padding bottom — mobile",
+      "min": 0,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trade brochure"
+    }
+  ]
+}
+{% endschema %}

@@ -29,26 +29,35 @@
 <!-- ===== SHOP HERO ===== -->
 <section class="shop-hero">
   <div class="container">
-    <div class="breadcrumb">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="{{ routes.root_url }}">Home</a>
-      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-sep" aria-hidden="true">/</span>
       {%- unless is_all -%}
         <a href="{{ routes.all_products_collection_url }}">Shop</a>
-        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-sep" aria-hidden="true">/</span>
       {%- endunless -%}
-      <span>{{ collection.title }}</span>
-    </div>
-    <div class="shop-hero-content">
-      <span class="section-eyebrow">
-        {{ collection.metafields.custom.eyebrow | default: 'The Collection' }}
+      {%- comment -%}
+        /collections/all is Shopify's automatic collection, titled "Products",
+        while the curated one is "Shop All". Both render the same three items,
+        so the crumb reads the same on either URL.
+      {%- endcomment -%}
+      <span class="breadcrumb-current" aria-current="page">
+        {%- if is_all or collection.handle == 'all' or collection.handle == 'frontpage' -%}
+          Shop
+        {%- else -%}
+          {{ collection.title }}
+        {%- endif -%}
       </span>
-      <h1 class="heading-xl">
+    </nav>
+    <div class="shop-hero-content">
+      {%- comment -%}
+        The heading ran to four lines and promised "experiences worth dressing
+        up for", which is not something on sale here. Short enough that the
+        products start near the top of the screen.
+      {%- endcomment -%}
+      <h1 class="heading-xl shop-hero-title">
         {%- if is_all -%}
-          Playful rituals, sensory products<br> and experiences worth dressing up for.
-        {%- elsif is_drops -%}
-          Monthly Drops — Limited Editions<br> for modern couples.
-        {%- elsif is_consumables -%}
-          Sensory Consumables — Edible Rituals<br> designed for two.
+          {{ collection.metafields.custom.heading | default: 'Three ways to change the evening.' }}
         {%- else -%}
           {{ collection.title }}
         {%- endif -%}
@@ -57,81 +66,55 @@
         <p class="body-lg shop-hero-desc">{{ collection.description }}</p>
       {%- endif -%}
     </div>
+    {%- comment -%}
+      The "4.9 Avg. Rating" figure had no review source behind it, and a
+      product count is not a selling point at three SKUs. Only the shipping
+      promise is both true and useful here.
+    {%- endcomment -%}
     <div class="shop-hero-stats">
       <div class="shop-stat">
-        <span class="shop-stat-num">{{ collection.products_count }}</span>
-        <span class="shop-stat-label">Products</span>
-      </div>
-      <div class="shop-stat-divider"></div>
-      <div class="shop-stat">
-        <span class="shop-stat-num">4.9★</span>
-        <span class="shop-stat-label">Avg. Rating</span>
-      </div>
-      <div class="shop-stat-divider"></div>
-      <div class="shop-stat">
         <span class="shop-stat-num">Free</span>
-        <span class="shop-stat-label">Shipping over £{{ settings.cart_free_shipping_threshold | default: '60' }}</span>
+        <span class="shop-stat-label">Shipping over &pound;{{ settings.cart_free_shipping_threshold | default: '60' }}</span>
+      </div>
+      <div class="shop-stat-divider"></div>
+      <div class="shop-stat">
+        <span class="shop-stat-num">UK</span>
+        <span class="shop-stat-label">Designed &amp; made</span>
+      </div>
+      <div class="shop-stat-divider"></div>
+      <div class="shop-stat">
+        <span class="shop-stat-num">Plain</span>
+        <span class="shop-stat-label">Discreet packaging</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== FEATURED BANNER (All / Drops / Consumables) ===== -->
-{%- if is_all or is_drops or is_consumables -%}
-<section class="shop-featured-banner">
-  <div class="container">
-    <div class="shop-banner-grid">
-
-      <!-- Primary: Latest Drop -->
-      <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="shop-banner-card shop-banner-primary">
-        <div class="shop-banner-bg bg-dark">
-          <div class="shop-banner-inner">
-            <span class="badge badge-gold" style="margin-bottom:0.75rem;">Latest Drop</span>
-            <h2 class="shop-banner-title" style="color:var(--cream);">The Velvet Hour</h2>
-            <p class="shop-banner-sub">Limited drop — only 47 kits remaining</p>
-            <span class="btn btn-gold btn-sm">Shop Now — £68</span>
-          </div>
-          <div class="shop-banner-emoji">🍷</div>
-        </div>
-      </a>
-
-      <!-- Secondary: Sensory Consumables -->
-      <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="shop-banner-card shop-banner-secondary">
-        <div class="shop-banner-bg bg-warm">
-          <div class="shop-banner-inner">
-            <span class="badge badge-burgundy" style="margin-bottom:0.75rem;">Popular</span>
-            <h2 class="shop-banner-title" style="color:var(--espresso);">Sensory Consumables</h2>
-            <p class="shop-banner-sub" style="color:var(--text-muted);">Edible rituals from £18</p>
-            <span class="btn btn-primary btn-sm">Explore</span>
-          </div>
-          <div class="shop-banner-emoji">🍫</div>
-        </div>
-      </a>
-
-      <!-- Tertiary: Date Night Kits -->
-      <a href="{{ collections['date-night-kits'].url | default: '/collections/date-night-kits' }}" class="shop-banner-card shop-banner-tertiary">
-        <div class="shop-banner-bg bg-deep">
-          <div class="shop-banner-inner">
-            <span class="badge badge-cream" style="margin-bottom:0.75rem;">New In</span>
-            <h2 class="shop-banner-title" style="color:var(--cream);">Date Night Kits</h2>
-            <p class="shop-banner-sub">Full evenings from £58</p>
-            <span class="btn btn-ghost btn-sm">Shop Kits</span>
-          </div>
-          <div class="shop-banner-emoji">🌹</div>
-        </div>
-      </a>
-
-    </div>
-  </div>
-</section>
-{%- endif -%}
+{%- comment -%}
+  A three-tile category banner stood here promoting "The Velvet Hour" at
+  £68 with "only 47 kits remaining". That product does not exist, the count
+  and price were invented, and the other two tiles pointed at empty
+  collections using emoji in place of photography. Removed rather than
+  rewritten: with three products, the grid is the page.
+{%- endcomment -%}
 
 <!-- ===== MAIN SHOP LAYOUT: SIDEBAR + GRID ===== -->
 <section class="section shop-main">
   <div class="container">
-    <div class="shop-layout">
+    {%- comment -%}
+      Filters, sort and the result count are overhead until there is enough
+      catalogue to need them. Below the threshold the grid is the page; the
+      chrome comes back on its own as products are added.
+    {%- endcomment -%}
+    {%- assign filter_threshold = 8 -%}
+    {%- assign show_filters = false -%}
+    {%- if collection.all_products_count >= filter_threshold -%}
+      {%- assign show_filters = true -%}
+    {%- endif -%}
+    <div class="shop-layout{% unless show_filters %} shop-layout--nofilters{% endunless %}">
 
       <!-- ========= SIDEBAR ========= -->
+      {%- if show_filters -%}
       <aside class="shop-sidebar" id="shop-sidebar">
 
         <div class="sidebar-header">
@@ -263,7 +246,7 @@
             </li>
             <li>
               <a href="{{ collection.url }}/price-30-60" class="sidebar-filter-item radio{% if current_tags contains 'price-30-60' %} active{% endif %}">
-                <span class="sidebar-radio"></span> £30 — £60
+                <span class="sidebar-radio"></span> £30 to £60
               </a>
             </li>
             <li>
@@ -315,17 +298,19 @@
         <div class="sidebar-drop-cta">
           <p class="label" style="color:var(--gold);margin-bottom:0.5rem;">✦ Get Early Access</p>
           <p style="font-size:0.8125rem;color:rgba(245,239,230,0.7);margin-bottom:1rem;">Join the drop list for first access to new releases &amp; exclusive offers.</p>
-          <a href="{{ pages['monthly-drops'].url | default: '/pages/monthly-drops' }}" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">
+          <a href="/collections/frontpage" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">
             Join Drop List →
           </a>
         </div>
 
       </aside><!-- /.shop-sidebar -->
+      {%- endif -%}
 
       <!-- ========= MAIN CONTENT ========= -->
       <div class="shop-content">
 
         <!-- Top Bar -->
+        {%- if show_filters -%}
         <div class="shop-topbar">
           <div class="shop-topbar-left">
             <p class="shop-count-text" id="product-count">
@@ -356,7 +341,10 @@
           </div>
         </div>
 
+        {%- endif -%}
+
         <!-- Mobile Filter Chips -->
+        {%- if show_filters -%}
         <div class="mobile-filter-chips" id="mobile-chips">
           <button class="filter-btn{% unless current_tags %} active{% endunless %}" data-tag="" data-collection="{{ collection.url }}">All</button>
           <button class="filter-btn{% if current_tags contains 'consumables' %} active{% endif %}" data-tag="consumables" data-collection="{{ collection.url }}">Consumables</button>
@@ -366,6 +354,7 @@
           <button class="filter-btn{% if current_tags contains 'gifts' %} active{% endif %}" data-tag="gifts" data-collection="{{ collection.url }}">Gifts</button>
           <button class="filter-btn{% if current_tags contains 'ritual-add-ons' %} active{% endif %}" data-tag="ritual-add-ons" data-collection="{{ collection.url }}">Rituals</button>
         </div>
+        {%- endif -%}
 
         {%- comment -%} Products {%- endcomment -%}
         {%- if collection.products.size == 0 -%}
@@ -380,9 +369,13 @@
           </div>
         {%- else -%}
 
-          {%- comment -%} Section label for bestsellers {%- endcomment -%}
+          {%- comment -%}
+            A "Bestsellers" rule sat above the grid. With the whole range on
+            one screen it labels nothing, since there is no second group for
+            it to distinguish from. It returns once the catalogue does.
+          {%- endcomment -%}
           {%- unless current_tags.size > 0 -%}
-            {%- if is_all or collection.handle == 'all' -%}
+            {%- if show_filters and is_all -%}
               <div class="shop-section-label">
                 <span class="label">Bestsellers</span>
                 <span class="shop-label-line"></span>
@@ -444,19 +437,24 @@
   </div><!-- /.container -->
 </section>
 
-<!-- ===== MONTHLY DROP CTA ===== -->
+{%- comment -%}
+  A "Monthly Drops" band stood here promising a curated kit every month,
+  limited to 200 pairs, with a link to past drops. There is no drops
+  programme and the collection it linked to is empty. Replaced by the
+  newsletter, which is the promise the brand can actually keep.
+{%- endcomment -%}
 {%- if is_all -%}
 <section class="shop-drop-cta">
   <div class="container">
     <div class="shop-drop-inner">
       <div class="shop-drop-text">
-        <span class="section-eyebrow" style="color:var(--gold);">Monthly Drops</span>
-        <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--cream);margin:0.5rem 0 1rem;">Never miss a limited release</h2>
-        <p style="color:rgba(245,239,230,0.7);max-width:420px;">Each month we release a single curated kit — limited to 200 pairs. Join the list for early access, 24 hours before public release.</p>
+        <span class="section-eyebrow" style="color:var(--gold);">The list</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--cream);margin:0.5rem 0 1rem;">Hear it here first</h2>
+        <p style="color:rgba(245,239,230,0.7);max-width:420px;">New products, restocks and the occasional thing we only make once. No more than a couple of emails a month.</p>
       </div>
       <div class="shop-drop-cta-btns">
-        <a href="{{ pages['monthly-drops'].url | default: '/pages/monthly-drops' }}" class="btn btn-gold">Join Drop List</a>
-        <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="btn btn-ghost">See Past Drops</a>
+        <a href="/pages/sms-opt-in" class="btn btn-gold">Join the list</a>
+        <a href="/pages/stockists" class="btn btn-ghost">Become a stockist</a>
       </div>
     </div>
   </div>

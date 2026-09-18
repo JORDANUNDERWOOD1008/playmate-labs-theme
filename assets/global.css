@@ -77,6 +77,48 @@
 }
 
 /* ============================================
+   ACCESSIBILITY UTILITIES
+   ============================================ */
+/* theme.liquid renders the skip link with .visually-hidden, but the class was
+   never defined anywhere in the theme — so "Skip to content" has always been
+   plainly visible at the top of every page. It went unnoticed because the
+   opaque nav bar sat over it. */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* A skip link has to become visible when it is focused, or it helps nobody. */
+.skip-to-content-link:focus {
+  position: fixed !important;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10000;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.75rem 1.25rem;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  white-space: nowrap;
+  background: var(--burgundy);
+  color: var(--cream);
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ============================================
    RESET & BASE
    ============================================ */
 *, *::before, *::after {
@@ -223,7 +265,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .section {
-  padding: var(--space-2xl) 0;
+  /* Merchant-controlled via each section's Spacing settings; falls back to
+     the design-system default when a section exposes no control. */
+  padding-top: var(--sec-pad-top, var(--space-2xl));
+  padding-bottom: var(--sec-pad-bottom, var(--space-2xl));
 }
 
 .section-sm {
@@ -642,6 +687,11 @@ h1, h2, h3, h4, h5, h6 {
   text-decoration: none;
 }
 
+.nav-lockup {
+  /* vanishes from layout in the solid-bar style, so nothing moves there */
+  display: contents;
+}
+
 .nav-logo img {
   display: block;
   height: 40px;
@@ -1056,9 +1106,8 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.06em;
-  /* Fixed directly under the nav — always visible, never overlapping content */
   position: fixed;
-  top: var(--nav-height);
+  top: 0;
   left: 0;
   right: 0;
   z-index: 999;

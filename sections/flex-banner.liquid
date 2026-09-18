@@ -1,0 +1,833 @@
+{%- comment -%}
+  PLAYMATE LABS — IMAGE BANNER
+  A full-bleed photo with content laid over it. Separate desktop and
+  mobile images, height in vh per breakpoint, nine content positions,
+  and an individual colour for every piece of text and both buttons.
+  Everything is set in the theme editor; nothing here is hardcoded.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign img = s.image
+  assign img_m = s.image_mobile | default: img
+
+  case s.h_pos
+    when 'left'
+      assign justify = 'flex-start'
+    when 'right'
+      assign justify = 'flex-end'
+    else
+      assign justify = 'center'
+  endcase
+  case s.v_pos
+    when 'top'
+      assign align = 'flex-start'
+    when 'bottom'
+      assign align = 'flex-end'
+    else
+      assign align = 'center'
+  endcase
+  case s.h_pos_mobile
+    when 'left'
+      assign justify_m = 'flex-start'
+    when 'right'
+      assign justify_m = 'flex-end'
+    else
+      assign justify_m = 'center'
+  endcase
+  case s.v_pos_mobile
+    when 'top'
+      assign align_m = 'flex-start'
+    when 'bottom'
+      assign align_m = 'flex-end'
+    else
+      assign align_m = 'center'
+  endcase
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .fb {
+    position: relative;
+    display: flex;
+    align-items: {{ align }};
+    justify-content: {{ justify }};
+    min-height: {{ s.height_desktop }}vh;
+    overflow: hidden;
+    background: {{ s.image_bg }};
+  }
+  #shopify-section-{{ section.id }} .fb__img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: {{ s.image_fit }};
+    object-position: {{ s.image_pos_desktop }};
+  }
+  #shopify-section-{{ section.id }} .fb__scrim {
+    position: absolute; inset: 0; pointer-events: none;
+    {%- if s.scrim_style == 'solid' %}
+    background: {{ s.overlay_color }};
+    opacity: {{ s.overlay_opacity_desktop | divided_by: 100.0 }};
+    {%- else %}
+    background: linear-gradient(
+      {% case s.scrim_style %}{% when 'top' %}to bottom{% when 'bottom' %}to top{% when 'left' %}to right{% else %}to left{% endcase %},
+      {{ s.overlay_color }} 0%,
+      {{ s.overlay_color }} 22%,
+      transparent 78%);
+    opacity: {{ s.overlay_opacity_desktop | divided_by: 100.0 }};
+    {%- endif %}
+  }
+  #shopify-section-{{ section.id }} .fb__inner {
+    position: relative; z-index: 2;
+    width: 100%;
+    {%- comment -%}
+      content-box on purpose. The theme's reset makes everything border-box,
+      which meant the side padding was subtracted from Content width — set it
+      to 460 with 64px padding and the text only got 332px, so a heading that
+      should have fitted on one line wrapped. Here the setting is the width
+      the copy actually gets.
+    {%- endcomment -%}
+    box-sizing: content-box;
+    max-width: {{ s.copy_width }}px;
+    padding: {{ s.pad_top_desktop }}px {{ s.pad_side_desktop }}px {{ s.pad_bottom_desktop }}px;
+    text-align: {{ s.text_align }};
+    {%- if s.text_shadow %}text-shadow: 0 1px 24px rgba(0,0,0,0.45);{% endif %}
+  }
+  #shopify-section-{{ section.id }} .fb__eyebrow {
+    display: block;
+    font-size: {{ s.eyebrow_size }}px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 1rem;
+    color: {{ s.eyebrow_color }};
+  }
+  #shopify-section-{{ section.id }} .fb__heading {
+    font-size: clamp(2rem, 5vw, {{ s.heading_size }}px);
+    line-height: 1.1; margin-bottom: 1rem;
+    color: {{ s.heading_color }};
+  }
+  #shopify-section-{{ section.id }} .fb__sub {
+    font-size: clamp(1.05rem, 2vw, {{ s.sub_size }}px);
+    line-height: 1.35; margin-bottom: 1rem;
+    color: {{ s.sub_color }};
+  }
+  #shopify-section-{{ section.id }} .fb__body {
+    font-size: {{ s.body_size }}px; line-height: 1.65;
+    margin-bottom: 1.9rem; color: {{ s.body_color }};
+  }
+  #shopify-section-{{ section.id }} .fb__body > * + * { margin-top: 0.8rem; }
+  #shopify-section-{{ section.id }} .fb__actions {
+    display: flex; flex-wrap: wrap; gap: 0.85rem;
+    justify-content: {% case s.text_align %}{% when 'left' %}flex-start{% when 'right' %}flex-end{% else %}center{% endcase %};
+  }
+  {%- comment -%} Matches the theme's .btn: pill, uppercase, tracked out {%- endcomment -%}
+  #shopify-section-{{ section.id }} .fb__btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0.875rem 2rem;
+    border-radius: {{ s.btn_radius }}px;
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: all var(--transition-mid, .3s ease);
+    text-shadow: none;
+  }
+  #shopify-section-{{ section.id }} .fb__btn:hover { opacity: .88; transform: translateY(-1px); }
+  #shopify-section-{{ section.id }} .fb__btn--1 {
+    background: {{ s.btn1_bg }}; color: {{ s.btn1_label_color }};
+    border: 1px solid {{ s.btn1_border | default: s.btn1_bg }};
+  }
+  #shopify-section-{{ section.id }} .fb__btn--2 {
+    background: {{ s.btn2_bg }}; color: {{ s.btn2_label_color }};
+    border: 1px solid {{ s.btn2_border | default: s.btn2_label_color }};
+  }
+
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .fb {
+      min-height: {{ s.height_mobile }}vh;
+      align-items: {{ align_m }};
+      justify-content: {{ justify_m }};
+    }
+    #shopify-section-{{ section.id }} .fb__img { object-position: {{ s.image_pos_mobile }}; }
+    #shopify-section-{{ section.id }} .fb__scrim { opacity: {{ s.overlay_opacity_mobile | divided_by: 100.0 }}; }
+    #shopify-section-{{ section.id }} .fb__inner {
+      box-sizing: border-box;
+      max-width: 100%;
+      padding: {{ s.pad_top_mobile }}px {{ s.pad_side_mobile }}px {{ s.pad_bottom_mobile }}px;
+      text-align: {{ s.text_align_mobile }};
+    }
+    #shopify-section-{{ section.id }} .fb__actions {
+      justify-content: {% case s.text_align_mobile %}{% when 'left' %}flex-start{% when 'right' %}flex-end{% else %}center{% endcase %};
+      {%- if s.stack_buttons_mobile %}flex-direction: column; align-items: stretch;{% endif %}
+    }
+    {%- if s.stack_buttons_mobile %}
+    #shopify-section-{{ section.id }} .fb__btn { text-align: center; }
+    {%- endif %}
+  }
+{%- endstyle -%}
+
+<section class="fb">
+  {%- if img != blank -%}
+    <img class="fb__img fb__img--d"
+         src="{{ img | image_url: width: 2000 }}"
+         srcset="{{ img | image_url: width: 1000 }} 1000w,
+                 {{ img | image_url: width: 1600 }} 1600w,
+                 {{ img | image_url: width: 2000 }} 2000w"
+         sizes="100vw" width="{{ img.width }}" height="{{ img.height }}"
+         alt="{{ img.alt | escape }}"
+         loading="{% if s.eager_load %}eager{% else %}lazy{% endif %}"
+         {% if s.eager_load %}fetchpriority="high"{% endif %}
+         decoding="async">
+    {%- if img_m != img -%}
+      <img class="fb__img fb__img--m"
+           src="{{ img_m | image_url: width: 1200 }}"
+           srcset="{{ img_m | image_url: width: 700 }} 700w,
+                   {{ img_m | image_url: width: 1200 }} 1200w"
+           sizes="100vw" width="{{ img_m.width }}" height="{{ img_m.height }}"
+           alt="{{ img_m.alt | escape }}"
+           loading="{% if s.eager_load %}eager{% else %}lazy{% endif %}"
+           decoding="async" style="display:none">
+    {%- endif -%}
+  {%- else -%}
+    {{ 'lifestyle-1' | placeholder_svg_tag: 'fb__img' }}
+  {%- endif -%}
+
+  <div class="fb__scrim" aria-hidden="true"></div>
+
+  <div class="fb__inner">
+    {%- if s.eyebrow != blank -%}<span class="fb__eyebrow">{{ s.eyebrow }}</span>{%- endif -%}
+    {%- if s.heading != blank -%}<h2 class="fb__heading">{{ s.heading | newline_to_br }}</h2>{%- endif -%}
+    {%- if s.subheading != blank -%}<p class="fb__sub">{{ s.subheading | newline_to_br }}</p>{%- endif -%}
+    {%- if s.body != blank -%}<div class="fb__body">{{ s.body }}</div>{%- endif -%}
+    {%- if s.btn1_text != blank or s.btn2_text != blank -%}
+      <div class="fb__actions">
+        {%- if s.btn1_text != blank -%}
+          <a class="fb__btn fb__btn--1" href="{{ s.btn1_url | default: '#' }}">{{ s.btn1_text }}</a>
+        {%- endif -%}
+        {%- if s.btn2_text != blank -%}
+          <a class="fb__btn fb__btn--2" href="{{ s.btn2_url | default: '#' }}">{{ s.btn2_text }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{%- if img_m != img and img_m != blank -%}
+  {%- style -%}
+    @media (max-width: 768px) {
+      #shopify-section-{{ section.id }} .fb__img--d { display: none; }
+      #shopify-section-{{ section.id }} .fb__img--m { display: block !important; }
+    }
+  {%- endstyle -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Image Banner",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop image",
+      "info": "Landscape works best — 16:9 or wider."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image",
+      "info": "Optional but recommended. A 4:5 portrait crop reads far better on a phone."
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover — fill, crop the overflow"
+        },
+        {
+          "value": "contain",
+          "label": "Contain — show it all, never crop"
+        }
+      ],
+      "default": "cover",
+      "info": "Contain suits packshots on white; set the backdrop below to match."
+    },
+    {
+      "type": "color",
+      "id": "image_bg",
+      "label": "Backdrop",
+      "default": "#1A0A06",
+      "info": "Seen around the photo when using Contain, and while it loads."
+    },
+    {
+      "type": "select",
+      "id": "image_pos_desktop",
+      "label": "Focal point — desktop",
+      "options": [
+        {
+          "value": "center center",
+          "label": "Centre"
+        },
+        {
+          "value": "center top",
+          "label": "Top"
+        },
+        {
+          "value": "center bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left center",
+          "label": "Left"
+        },
+        {
+          "value": "right center",
+          "label": "Right"
+        },
+        {
+          "value": "left top",
+          "label": "Top left"
+        },
+        {
+          "value": "right top",
+          "label": "Top right"
+        },
+        {
+          "value": "left bottom",
+          "label": "Bottom left"
+        },
+        {
+          "value": "right bottom",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "select",
+      "id": "image_pos_mobile",
+      "label": "Focal point — mobile",
+      "options": [
+        {
+          "value": "center center",
+          "label": "Centre"
+        },
+        {
+          "value": "center top",
+          "label": "Top"
+        },
+        {
+          "value": "center bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left center",
+          "label": "Left"
+        },
+        {
+          "value": "right center",
+          "label": "Right"
+        }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "checkbox",
+      "id": "eager_load",
+      "label": "Load immediately",
+      "default": false,
+      "info": "Tick only for the first section on the page."
+    },
+    {
+      "type": "header",
+      "content": "📏 Height"
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Height — desktop",
+      "default": 85,
+      "info": "100 = fills the screen."
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Height — mobile",
+      "default": 90
+    },
+    {
+      "type": "header",
+      "content": "✍️ Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Press Enter to break the line where you want it — useful for fitting copy into a gap in the photo."
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "info": "Press Enter to break the line where you want it — useful for fitting copy into a gap in the photo."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body text"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Text colours"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "sub_color",
+      "label": "Subheading",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body",
+      "default": "#EDE4DA"
+    },
+    {
+      "type": "checkbox",
+      "id": "text_shadow",
+      "label": "Soft shadow behind text",
+      "default": true,
+      "info": "Keeps copy readable over a busy photo without darkening the whole image."
+    },
+    {
+      "type": "header",
+      "content": "🔤 Text sizes"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Eyebrow",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 28,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading (max)",
+      "default": 60,
+      "info": "Scales down on smaller screens."
+    },
+    {
+      "type": "range",
+      "id": "sub_size",
+      "min": 14,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading (max)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Body",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "🔘 Button 1"
+    },
+    {
+      "type": "text",
+      "id": "btn1_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "btn1_url",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "btn1_bg",
+      "label": "Background",
+      "default": "#6B1E3A"
+    },
+    {
+      "type": "color",
+      "id": "btn1_label_color",
+      "label": "Text colour",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "btn1_border",
+      "label": "Border",
+      "default": "#6B1E3A"
+    },
+    {
+      "type": "header",
+      "content": "🔘 Button 2"
+    },
+    {
+      "type": "text",
+      "id": "btn2_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "btn2_url",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "btn2_bg",
+      "label": "Background",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "btn2_label_color",
+      "label": "Text colour",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "btn2_border",
+      "label": "Border",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "btn_radius",
+      "label": "Corner style",
+      "options": [
+        {
+          "value": "999",
+          "label": "Pill — site standard"
+        },
+        {
+          "value": "8",
+          "label": "Rounded"
+        },
+        {
+          "value": "0",
+          "label": "Square"
+        }
+      ],
+      "default": "999"
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_buttons_mobile",
+      "label": "Stack buttons on mobile",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "🧭 Content position"
+    },
+    {
+      "type": "select",
+      "id": "h_pos",
+      "label": "Horizontal — desktop",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "v_pos",
+      "label": "Vertical — desktop",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "middle"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment — desktop",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "h_pos_mobile",
+      "label": "Horizontal — mobile",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "v_pos_mobile",
+      "label": "Vertical — mobile",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "bottom"
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Text alignment — mobile",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "copy_width",
+      "min": 320,
+      "max": 1100,
+      "step": 20,
+      "unit": "px",
+      "label": "Content width",
+      "default": 640,
+      "info": "The width the text itself gets. Side padding sits outside this."
+    },
+    {
+      "type": "header",
+      "content": "🌓 Overlay"
+    },
+    {
+      "type": "select",
+      "id": "scrim_style",
+      "label": "Style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Even wash"
+        },
+        {
+          "value": "bottom",
+          "label": "Fade from bottom"
+        },
+        {
+          "value": "top",
+          "label": "Fade from top"
+        },
+        {
+          "value": "left",
+          "label": "Fade from left"
+        },
+        {
+          "value": "right",
+          "label": "Fade from right"
+        }
+      ],
+      "default": "bottom",
+      "info": "A fade keeps the product visible while darkening only where the text sits."
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Strength — desktop",
+      "default": 55
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Strength — mobile",
+      "default": 65
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Colour",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "header",
+      "content": "📐 Padding"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Top — desktop",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom — desktop",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "pad_side_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Sides — desktop",
+      "default": 32,
+      "info": "Sits outside Content width, so widening it will not squeeze the copy."
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Top — mobile",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom — mobile",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pad_side_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Sides — mobile",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image Banner"
+    }
+  ]
+}
+{% endschema %}

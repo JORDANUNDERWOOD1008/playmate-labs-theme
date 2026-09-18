@@ -9,9 +9,11 @@
   /* Desktop: full viewport height — image fills the screen */
   position: relative;
   overflow: hidden;
-  background: #0c0408;
+  /* Backdrop shows wherever the photo does not reach — that is what makes
+     the white gutter on the left possible. */
+  background: var(--hero-backdrop, var(--sec-bg, #0c0408));
   width: 100%;
-  min-height: 100vh;
+  min-height: var(--sec-height, 100vh);
   display: flex;
   flex-direction: column;
 }
@@ -25,7 +27,13 @@
 /* ── Desktop background layer (landscape photo) ── */
 .hero-bg-desktop {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  /* Width and side are merchant-controlled; 100%/right reproduces the
+     original full-bleed behaviour. */
+  width: var(--hero-img-width, 100%);
+  left: var(--hero-img-left, 0);
+  right: var(--hero-img-right, 0);
   display: block;
 }
 
@@ -34,8 +42,8 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center center;
+  object-fit: var(--sec-image-fit, cover);
+  object-position: var(--sec-image-pos, center center);
 }
 
 /* ── Mobile background layer (tall portrait photo) ── */
@@ -50,8 +58,8 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
+  object-fit: var(--sec-image-fit, cover);
+  object-position: var(--sec-image-pos, center 30%);
   /* Prevent iOS Safari parallax scroll on the bg image */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
@@ -63,8 +71,10 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  /* Desktop: NO overlay — photo fully visible. Mobile overrides this below. */
-  background: none;
+  /* Overlay darkness is merchant-controlled; 0 by default on desktop. */
+  background: var(--sec-overlay-color, #1A0A06);
+  opacity: var(--sec-overlay-opacity, 0);
+  transition: opacity 0.2s ease;
 }
 
 .hero-particle,
@@ -77,10 +87,10 @@
 .hero-content-wrap {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: var(--sec-justify, center);
   justify-content: flex-start;
-  padding-top: calc(var(--nav-height, 72px) + 3rem);
-  padding-bottom: 6rem;
+  padding-top: var(--sec-pad-top, calc(var(--nav-height, 72px) + 3rem));
+  padding-bottom: var(--sec-pad-bottom, 6rem);
   position: relative;
   z-index: 2;
   width: 100%;
@@ -91,10 +101,12 @@
   grid-template-columns: 1fr;
   gap: 0;
   align-items: flex-start;
-  /* Override global .container centering — left-align copy, right half clear for product photo */
-  max-width: 48%;
-  margin-left: 4% !important;
-  margin-right: auto !important;
+  /* Width and alignment are merchant-controlled; defaults match the original
+     left-aligned layout with the right half clear for the product photo. */
+  max-width: var(--sec-content-width, 48%);
+  text-align: var(--sec-text-align, left);
+  margin-left: var(--sec-margin-left, 4%) !important;
+  margin-right: var(--sec-margin-right, auto) !important;
   padding-left: 0;
 }
 
@@ -103,7 +115,7 @@
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--hero-eyebrow-color, var(--gold));
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -121,39 +133,67 @@
 .hero-headline {
   font-family: var(--font-display);
   font-size: clamp(3rem, 6vw, 5.5rem);
-  font-weight: 300;
+  /* was a hardcoded 300. Futura PT's web kit carries 400 and 700 only, so a
+     300 request quietly resolves to Book and the Bold setting does nothing. */
+  font-weight: var(--font-heading-weight-custom, var(--font-heading-weight, 300));
   line-height: 1.05;
   letter-spacing: -0.03em;
-  color: var(--cream);
+  color: var(--hero-heading-color, var(--cream));
   margin-bottom: 1.5rem;
+}
+
+.hero-headline strong,
+.hero-headline b {
+  font-weight: inherit;
+  color: var(--hero-highlight-color, var(--gold));
+  /* Set by the section when the highlighter style is chosen. Defaults are
+     transparent/none so colour-only styling is unaffected. */
+  background: var(--hero-highlight-bg, transparent);
+  padding: var(--hero-highlight-pad, 0);
+  border-radius: var(--hero-highlight-radius, 0);
+  /* keeps the block intact when the phrase wraps onto a second line */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 .hero-headline em {
   font-style: italic;
-  color: var(--gold-light);
+  color: var(--hero-italic-color, var(--gold-light));
 }
 
 .hero-sub {
   font-size: 1.0625rem;
   line-height: 1.65;
-  color: rgba(245, 239, 230, 0.7);
+  color: var(--hero-sub-color, rgba(245, 239, 230, 0.7));
   margin-bottom: 2.5rem;
   max-width: 520px;
 }
 
 .hero-actions {
   display: flex;
-  gap: 1rem;
+  gap: var(--hero-btn-gap, 1rem);
   flex-wrap: wrap;
   margin-bottom: 2rem;
 }
 
+.hero-actions .btn {
+  padding: var(--hero-btn-padding, 0.875rem 2rem);
+  font-size: var(--hero-btn-fontsize, 0.8125rem);
+}
+
 .hero-trust {
+  text-shadow: var(--hero-trust-shadow, none);
+  display: inline-flex;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background: var(--hero-trust-pad-bg, transparent);
+  backdrop-filter: var(--hero-trust-blur, none);
   display: flex;
   align-items: center;
   gap: 1rem;
   font-size: 0.8125rem;
-  color: rgba(245, 239, 230, 0.5);
+  /* was a hardcoded translucent cream, invisible on a light photo */
+  color: var(--hero-trust-color, rgba(245, 239, 230, 0.5));
 }
 
 .hero-trust-item {
@@ -162,7 +202,10 @@
   gap: 0.375rem;
 }
 
-.hero-trust-item .star-rating { font-size: 0.75rem; }
+.hero-trust-item .star-rating {
+  font-size: 0.75rem;
+  color: var(--hero-stars-color, var(--gold));
+}
 
 .hero-trust-dot {
   opacity: 0.3;
@@ -288,7 +331,8 @@
    VALUE STRIP
    ============================================ */
 .value-strip {
-  padding: 1.75rem 0;
+  padding-top: var(--sec-pad-top, 1.75rem);
+  padding-bottom: var(--sec-pad-bottom, 1.75rem);
   background: var(--ivory);
   border-top: 1px solid var(--border-light);
   border-bottom: 1px solid var(--border-light);
@@ -305,11 +349,20 @@
 
 .value-strip-inner::-webkit-scrollbar { display: none; }
 
+/* flex-shrink:0 was fine for three pillars; a fourth then ran past the
+   container and could only be reached by scrolling sideways. Let them share
+   the row instead, and only fall back to a scroller when they genuinely
+   cannot fit. */
 .value-strip-item {
   display: flex;
   align-items: center;
   gap: 0.875rem;
-  flex-shrink: 0;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.value-strip-item p {
+  overflow-wrap: break-word;
 }
 
 .vs-icon {
@@ -431,35 +484,6 @@
 .featured-drop__content {
   grid-column: 2;
   padding-left: var(--space-xl);
-}
-
-/* ── High-res product overlay (covers blurry background product) ──── */
-/* z-index stack:
-   0 = .featured-drop__overlay (dark gradient — sits above product so edges blend)
-   1 = .featured-drop__product-overlay (high-res PNG)
-   2 = .featured-drop__inner (text content — always on top) */
-.featured-drop__product-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;   /* below gradient overlay so dark edges blend naturally */
-  overflow: hidden;
-}
-
-/* DESKTOP: full-width image, shifted up so it covers the background candle.
-   PNG is 659×1024 (portrait 0.644 ratio) — displayed tall.
-   left:25% = centre of the left 50% column.
-   top:30% = shifted well above vertical centre to cover the bg product. */
-.featured-drop__product-img {
-  position: absolute;
-  top: 50%;               /* full section height — vertically centred */
-  left: 26%;              /* covers the left half of the screen */
-  transform: translateX(-50%) translateY(-50%);
-  height: auto;           /* let width drive the size */
-  width: 54%;             /* wide enough for left edge to reach page edge */
-  max-width: none;
-  object-fit: contain;
-  image-rendering: -webkit-optimize-contrast;
 }
 
 /* Desktop: heading block inside __content is visible */
@@ -1228,20 +1252,6 @@
     display: none;
   }
 
-  /* MOBILE: product is centred horizontally across full width.
-     Mobile BG is 283×1024 stretched 100%×100%. Product occupies
-     roughly the centre vertical band. PNG at 78vw wide, centred. */
-  .featured-drop__product-overlay {
-    z-index: 1;
-  }
-  .featured-drop__product-img {
-    left: 50%;
-    top: 42%;
-    transform: translateX(-50%) translateY(-50%);
-    height: auto;
-    width: 100vw;           /* true full viewport width */
-    max-width: 100vw;
-  }
 
   /* Overlay: dark top (behind heading) + dark bottom (behind CTA),
      nearly clear in the middle (30%–65% of section) where candle sits */
@@ -1283,8 +1293,15 @@
 
 /* ── Layout helpers ── */
 .hero-copy-top,
+/* The two copy blocks move independently: nudging the headline should not
+   drag the buttons with it. Margin (not transform) so the section grows. */
+.hero-copy-top {
+  margin-top: var(--hero-text-offset, 0px);
+}
+
 .hero-copy-bottom {
   width: 100%;
+  margin-top: var(--hero-btn-offset, 0px);
 }
 
 @media (max-width: 768px) {
@@ -1294,6 +1311,9 @@
 
   /* Gradient: dark top band (covers copy), clear window (shows product), dark bottom band (covers buttons) */
   .hero-gradient {
+    /* Tuned mobile gradient: dark bands top/bottom, clear window for the
+       product. The slider scales it as a whole; 100% = as designed. */
+    opacity: var(--sec-overlay-opacity, 1);
     background: linear-gradient(
       180deg,
       rgba(8,2,4,0.88) 0%,
@@ -1337,20 +1357,34 @@
 
   /* CONTENT: plain block, sits in normal document flow on top of bg */
   .hero-content-wrap {
-    display: block;
+    /* Was display:block, which silently ignored the vertical-position
+       control. Flex column + justify-content makes it work on mobile too. */
+    display: flex;
+    flex-direction: column;
+    justify-content: var(--sec-justify, center);
     position: relative;
     z-index: 2;
-    padding: 0;
+    padding-top: var(--sec-pad-top, 0);
+    padding-bottom: var(--sec-pad-bottom, 0);
+    padding-left: 0;
+    padding-right: 0;
   }
   .hero-content-wrap > .container { display: block; }
-  .hero-inner  { display: block; text-align: center; max-width: 100%; }
+  .hero-inner  {
+    display: block;
+    text-align: var(--sec-text-align, center);
+    max-width: var(--sec-content-width, 100%);
+    margin-left: var(--sec-margin-left, auto) !important;
+    margin-right: var(--sec-margin-right, auto) !important;
+  }
   .hero-text   { display: block; width: 100%; }
 
-  /* TOP COPY: eyebrow + headline + description
-     padding-top pushes text down ~15% from top of image */
+  /* TOP COPY. The 15% was a hardcoded guess at where the headline should
+     sit; it is a control now, with the old value as the default. */
   .hero-copy-top {
     display: block;
-    padding: 15% 1.25rem 1.25rem;
+    padding: var(--hero-top-space, 15%) 1.25rem 1.25rem;
+    margin-top: var(--hero-text-offset, 0px);
   }
   .hero-eyebrow { justify-content: center; margin-bottom: 0.5rem; }
   .hero-eyebrow::before { display: none; }
@@ -1360,29 +1394,35 @@
     line-height: 1.6;
     margin: 0 auto;
     max-width: 300px;
-    color: rgba(245,239,230,0.82);
+    /* was a hardcoded rgba() that sat later in the file than the global
+       rule, so it silently beat the subheadline colour control on mobile */
+    color: var(--hero-sub-color, rgba(245,239,230,0.82));
     margin-bottom: 0;
   }
 
-  /* SPACER: % of section height pushes buttons lower so product is visible.
-     511x1024 image: 55% drops buttons well into the bottom dark band. */
+  /* SPACER that positions the buttons. Was a hardcoded 70%; now a control,
+     and independent of the headline nudge so one does not drag the other. */
   .hero-copy-bottom {
     display: block;
-    padding: 70% 1.25rem 0;
+    padding: var(--hero-btn-space, 70%) 1.25rem 0;
     padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    margin-top: var(--hero-btn-offset, 0px);
   }
 
   .hero-actions {
     display: flex;
-    flex-direction: column;
+    flex-direction: var(--hero-btn-direction, column);
     align-items: center;
-    gap: 0.75rem;
+    gap: var(--hero-btn-gap, 0.75rem);
     margin-bottom: 1rem;
     justify-content: center;
+    flex-wrap: wrap;
   }
   .hero-actions .btn {
-    width: 100%;
-    max-width: 300px;
+    width: var(--hero-btn-width, 100%);
+    max-width: var(--hero-btn-maxwidth, 300px);
+    padding: var(--hero-btn-padding, 0.875rem 2rem);
+    font-size: var(--hero-btn-fontsize, 0.8125rem);
     justify-content: center;
   }
   .hero-trust {
@@ -1398,6 +1438,12 @@
   .value-strip-inner {
     justify-content: flex-start;
     padding: 0 1rem;
+  }
+
+  /* Narrow screens: back to a swipeable row so each pillar keeps its width. */
+  .value-strip-item {
+    flex: 0 0 auto;
+    max-width: 78vw;
   }
 
   .products-grid {
@@ -1797,4 +1843,52 @@
    ============================================ */
 .hero-mobile-deco {
   display: none;
+}
+
+/* ── Highlighter sweep ────────────────────────────────────────────────────
+   The phrase starts in its own colour with no block behind it. A duplicate
+   of the text, drawn on the highlighter block, is revealed left to right, so
+   each letter flips colour as the block passes over it.
+
+   Every rule keys off [data-text], which is set by script. With JavaScript
+   off the static highlight above is what shows, rather than nothing. */
+.hero-headline--sweep strong[data-text],
+.hero-headline--sweep b[data-text] {
+  position: relative;
+  background: transparent;
+  color: var(--hero-hl-before, #1A1A1A);
+  /* a clipped overlay cannot straddle two lines, so keep the phrase together */
+  white-space: nowrap;
+}
+
+.hero-headline--sweep strong[data-text]::after,
+.hero-headline--sweep b[data-text]::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  padding: inherit;
+  box-sizing: border-box;
+  border-radius: inherit;
+  background: var(--hero-highlight-bg, transparent);
+  color: var(--hero-highlight-color, #FFF);
+  white-space: nowrap;
+  clip-path: inset(0 100% 0 0);
+  animation: heroHlSweep var(--hero-hl-dur, .9s) cubic-bezier(.65, 0, .35, 1)
+             var(--hero-hl-delay, .5s) forwards;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+@keyframes heroHlSweep {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+/* No sweep for anyone who asked not to have movement: show the finished state. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-headline--sweep strong[data-text]::after,
+  .hero-headline--sweep b[data-text]::after {
+    animation: none;
+    clip-path: inset(0 0 0 0);
+  }
 }

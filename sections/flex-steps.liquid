@@ -1,0 +1,179 @@
+{% render 'section-style', section: section %}
+{% comment %}
+  PLAYMATE LABS — STEPS
+  File: sections/flex-steps.liquid
+
+  Numbered columns for a process or a set of pillars. Each step can carry an
+  image, so the same section serves "how it is made" with photography and a
+  plain pillar strip without it.
+{% endcomment %}
+
+{%- liquid
+  assign s = section.settings
+  assign count = section.blocks.size
+  if count == 0
+    assign count = 1
+  endif
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .stp__grid {
+    display: grid;
+    grid-template-columns: repeat({{ s.columns }}, minmax(0, 1fr));
+    gap: {{ s.gap }}px;
+    max-width: {{ s.content_width }}px;
+    margin-inline: auto;
+  }
+  #shopify-section-{{ section.id }} .stp__num {
+    color: {{ s.number_color }};
+    font-size: {{ s.number_size }}px;
+    {%- if s.number_style == 'rule' %}
+    border-top: 1px solid {{ s.rule_color }};
+    padding-top: 14px;
+    display: block;
+    {%- elsif s.number_style == 'circle' %}
+    display: inline-flex; align-items: center; justify-content: center;
+    width: {{ s.number_size | times: 2.2 | round }}px;
+    height: {{ s.number_size | times: 2.2 | round }}px;
+    border: 1px solid {{ s.rule_color }};
+    border-radius: 50%;
+    {%- endif %}
+  }
+  #shopify-section-{{ section.id }} .stp__title { color: {{ s.title_color }}; font-size: {{ s.title_size }}px; }
+  #shopify-section-{{ section.id }} .stp__text  { color: {{ s.text_color }};  font-size: {{ s.text_size }}px; }
+  #shopify-section-{{ section.id }} .stp__media { aspect-ratio: {{ s.image_ratio }}; border-radius: {{ s.corner_radius }}px; }
+  #shopify-section-{{ section.id }} .stp__img   { object-fit: {{ s.image_fit }}; }
+
+  @media (max-width: 900px) {
+    #shopify-section-{{ section.id }} .stp__grid { grid-template-columns: repeat({{ s.columns_tablet }}, minmax(0, 1fr)); }
+  }
+  @media (max-width: 600px) {
+    #shopify-section-{{ section.id }} .stp__grid {
+      grid-template-columns: repeat({{ s.columns_mobile }}, minmax(0, 1fr));
+      gap: {{ s.gap_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .stp__num   { font-size: {{ s.number_size_mobile }}px; }
+    #shopify-section-{{ section.id }} .stp__title { font-size: {{ s.title_size_mobile }}px; }
+    #shopify-section-{{ section.id }} .stp__text  { font-size: {{ s.text_size_mobile }}px; }
+    #shopify-section-{{ section.id }} .stp__media { aspect-ratio: {{ s.image_ratio_mobile }}; }
+  }
+{%- endstyle -%}
+
+<section class="section stp" style="text-align:{{ s.text_align }};">
+  <div class="container">
+    {%- if s.eyebrow != blank or s.heading != blank -%}
+      <div class="section-header reveal" style="text-align:{{ s.heading_align }};">
+        {%- if s.eyebrow != blank -%}
+          <span class="section-eyebrow" style="color:{{ s.eyebrow_color }};">{{ s.eyebrow }}</span>
+        {%- endif -%}
+        {%- if s.heading != blank -%}
+          <h2 class="heading-xl" style="color:{{ s.heading_color }};">{{ s.heading | newline_to_br }}</h2>
+        {%- endif -%}
+        {%- if s.intro != blank -%}
+          <div class="stp__intro" style="color:{{ s.text_color }};">{{ s.intro }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="stp__grid reveal">
+      {%- for block in section.blocks -%}
+        <div class="stp__step" {{ block.shopify_attributes }}>
+          {%- if s.show_image and block.settings.image != blank -%}
+            <div class="stp__media">
+              <img class="stp__img"
+                   src="{{ block.settings.image | image_url: width: 900 }}"
+                   srcset="{{ block.settings.image | image_url: width: 500 }} 500w,
+                           {{ block.settings.image | image_url: width: 900 }} 900w"
+                   sizes="(max-width: 600px) 90vw, {{ 100 | divided_by: s.columns }}vw"
+                   width="{{ block.settings.image.width }}" height="{{ block.settings.image.height }}"
+                   alt="{{ block.settings.image.alt | default: block.settings.title | escape }}"
+                   loading="lazy" decoding="async">
+            </div>
+          {%- endif -%}
+          {%- if s.show_numbers -%}
+            <span class="stp__num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+          {%- endif -%}
+          {%- if block.settings.title != blank -%}
+            <h3 class="stp__title">{{ block.settings.title }}</h3>
+          {%- endif -%}
+          {%- if block.settings.text != blank -%}
+            <div class="stp__text">{{ block.settings.text }}</div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Steps",
+  "tag": "section",
+  "class": "shopify-section-steps",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "How it gets made" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Designed, prototyped, tested, released" },
+    { "type": "richtext", "id": "intro", "label": "Intro paragraph" },
+    { "type": "select", "id": "heading_align", "label": "Header alignment",
+      "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Centre" } ], "default": "center" },
+    { "type": "select", "id": "text_align", "label": "Step text alignment",
+      "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Centre" } ], "default": "left" },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "columns", "label": "Columns", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns_tablet", "label": "Columns — tablet", "min": 1, "max": 4, "step": 1, "default": 2 },
+    { "type": "range", "id": "columns_mobile", "label": "Columns — mobile", "min": 1, "max": 3, "step": 1, "default": 1 },
+    { "type": "range", "id": "gap", "label": "Gap", "min": 12, "max": 96, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "gap_mobile", "label": "Gap — mobile", "min": 12, "max": 72, "step": 4, "unit": "px", "default": 32 },
+    { "type": "range", "id": "content_width", "label": "Content width", "min": 700, "max": 1400, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "header", "content": "Step images" },
+    { "type": "checkbox", "id": "show_image", "label": "Show images", "default": true },
+    { "type": "text", "id": "image_ratio", "label": "Image ratio", "default": "4/5", "info": "For example 1/1, 4/5, 3/2." },
+    { "type": "text", "id": "image_ratio_mobile", "label": "Image ratio — mobile", "default": "3/2" },
+    { "type": "select", "id": "image_fit", "label": "Image fit",
+      "options": [ { "value": "cover", "label": "Fill" }, { "value": "contain", "label": "Fit whole image" } ], "default": "cover" },
+    { "type": "range", "id": "corner_radius", "label": "Corner radius", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 8 },
+    { "type": "header", "content": "Numbers" },
+    { "type": "checkbox", "id": "show_numbers", "label": "Show step numbers", "default": true },
+    { "type": "select", "id": "number_style", "label": "Number style",
+      "options": [
+        { "value": "plain", "label": "Plain" },
+        { "value": "rule", "label": "Rule above" },
+        { "value": "circle", "label": "In a circle" }
+      ], "default": "rule" },
+    { "type": "range", "id": "number_size", "label": "Number size", "min": 10, "max": 40, "step": 1, "unit": "px", "default": 13 },
+    { "type": "range", "id": "number_size_mobile", "label": "Number size — mobile", "min": 10, "max": 32, "step": 1, "unit": "px", "default": 12 },
+    { "type": "header", "content": "Type" },
+    { "type": "range", "id": "title_size", "label": "Step title size", "min": 14, "max": 36, "step": 1, "unit": "px", "default": 20 },
+    { "type": "range", "id": "title_size_mobile", "label": "Step title size — mobile", "min": 14, "max": 28, "step": 1, "unit": "px", "default": 18 },
+    { "type": "range", "id": "text_size", "label": "Step text size", "min": 12, "max": 20, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "text_size_mobile", "label": "Step text size — mobile", "min": 12, "max": 18, "step": 1, "unit": "px", "default": 14 },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FFFFFF" },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow", "default": "#C9A96E" },
+    { "type": "color", "id": "heading_color", "label": "Heading", "default": "#1A1A1A" },
+    { "type": "color", "id": "title_color", "label": "Step title", "default": "#1A1A1A" },
+    { "type": "color", "id": "text_color", "label": "Step text", "default": "#4A4A4A" },
+    { "type": "color", "id": "number_color", "label": "Number", "default": "#6B1E3A" },
+    { "type": "color", "id": "rule_color", "label": "Rule / circle", "default": "#E5DFD6" },
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "pad_top_desktop", "label": "Padding top — desktop", "min": 0, "max": 240, "step": 4, "unit": "px", "default": 112 },
+    { "type": "range", "id": "pad_bottom_desktop", "label": "Padding bottom — desktop", "min": 0, "max": 240, "step": 4, "unit": "px", "default": 112 },
+    { "type": "range", "id": "pad_top_mobile", "label": "Padding top — mobile", "min": 0, "max": 180, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "pad_bottom_mobile", "label": "Padding bottom — mobile", "min": 0, "max": 180, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Insight" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Describe this step.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Steps", "blocks": [ { "type": "step" }, { "type": "step" }, { "type": "step" }, { "type": "step" } ] }
+  ]
+}
+{% endschema %}

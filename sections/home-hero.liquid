@@ -1,4 +1,4 @@
-{%- if section.settings.section_hidden == false -%}
+{% render 'section-style', section: section %}
 {% comment %}
   PLAYMATE LABS — HOMEPAGE HERO SECTION
   File: sections/home-hero.liquid
@@ -12,18 +12,192 @@
 
   {%- comment -%} ── BACKGROUND LAYERS ── {%- endcomment -%}
   <div class="hero-bg" aria-hidden="true">
-    {%- comment -%} Desktop bg: always use the hardcoded landscape photo {%- endcomment -%}
+    {%- liquid
+  assign hs = section.settings
+  assign w = hs.bg_width_desktop
+  assign gutter = 100 | minus: w
+-%}
+{%- style -%}
+  #shopify-section-{{ section.id }} .hero-section {
+    --hero-backdrop: {{ hs.backdrop_color }};
+    --hero-eyebrow-color: {{ hs.eyebrow_color }};
+    --hero-heading-color: {{ hs.heading_text_color }};
+    --hero-italic-color: {{ hs.italic_color }};
+    --hero-sub-color: {{ hs.sub_color }};
+    --hero-highlight-color: {{ hs.highlight_color }};
+    --hero-hl-before: {{ hs.highlight_before_color }};
+    --hero-hl-dur: {{ hs.highlight_anim_duration | divided_by: 10.0 }}s;
+    --hero-hl-delay: {{ hs.highlight_anim_delay | divided_by: 10.0 }}s;
+    {%- if hs.highlight_style == 'block' %}
+    --hero-highlight-bg: {{ hs.highlight_bg }};
+    --hero-highlight-pad: {{ hs.highlight_pad_y }}px {{ hs.highlight_pad_x }}px;
+    --hero-highlight-radius: {{ hs.highlight_radius }}px;
+    {%- endif %}
+    --hero-trust-color: {{ hs.trust_color }};
+    {%- if hs.trust_shadow %}
+    --hero-trust-shadow: 0 1px 3px rgba(0,0,0,.55), 0 0 14px rgba(0,0,0,.35);
+    {%- else %}
+    --hero-trust-shadow: none;
+    {%- endif %}
+    {%- if hs.trust_scrim > 0 %}
+    --hero-trust-pad-bg: rgba(0,0,0,{{ hs.trust_scrim | divided_by: 100.0 }});
+    --hero-trust-blur: blur(6px);
+    {%- else %}
+    --hero-trust-pad-bg: transparent;
+    --hero-trust-blur: none;
+    {%- endif %}
+    --hero-stars-color: {{ hs.stars_color }};
+    --hero-text-offset: {{ hs.text_offset_desktop }}px;
+    --hero-btn-offset: {{ hs.btn_offset_desktop }}px;
+    --hero-btn-gap: {{ hs.btn_gap }}px;
+    --hero-btn-padding: {{ hs.btn_pad_y }}px {{ hs.btn_pad_x }}px;
+    --hero-btn-fontsize: {{ hs.btn_font_size }}px;
+  }
+  {%- comment -%} Buttons: the theme's .btn classes carry no colour controls,
+      so paint them here from the section's own settings. {%- endcomment -%}
+  #shopify-section-{{ section.id }} .hero-actions .btn-gold {
+    background-color: {{ hs.btn1_bg }};
+    color: {{ hs.btn1_label_color }};
+    border: 1px solid {{ hs.btn1_border | default: hs.btn1_bg }};
+  }
+  #shopify-section-{{ section.id }} .hero-actions .btn-ghost {
+    background-color: {{ hs.btn2_bg }};
+    color: {{ hs.btn2_label_color }};
+    border: 1px solid {{ hs.btn2_border | default: hs.btn2_label_color }};
+  }
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .hero-section {
+      {%- if hs.eyebrow_color_mobile != blank %}--hero-eyebrow-color: {{ hs.eyebrow_color_mobile }};{% endif %}
+      {%- if hs.heading_color_mobile != blank %}--hero-heading-color: {{ hs.heading_color_mobile }};{% endif %}
+      {%- if hs.italic_color_mobile != blank %}--hero-italic-color: {{ hs.italic_color_mobile }};{% endif %}
+      {%- if hs.sub_color_mobile != blank %}--hero-sub-color: {{ hs.sub_color_mobile }};{% endif %}
+      {%- if hs.highlight_color_mobile != blank %}--hero-highlight-color: {{ hs.highlight_color_mobile }};{% endif %}
+      {%- if hs.highlight_style == 'block' %}--hero-highlight-pad: {{ hs.highlight_pad_y_mobile }}px {{ hs.highlight_pad_x_mobile }}px;{% endif %}
+      {%- if hs.trust_color_mobile != blank %}--hero-trust-color: {{ hs.trust_color_mobile }};{% endif %}
+      {%- if hs.stars_color_mobile != blank %}--hero-stars-color: {{ hs.stars_color_mobile }};{% endif %}
+      --hero-text-offset: {{ hs.text_offset_mobile }}px;
+      --hero-btn-offset: {{ hs.btn_offset_mobile }}px;
+      --hero-top-space: {{ hs.top_space_mobile }}%;
+      --hero-btn-space: {{ hs.btn_space_mobile }}%;
+      {%- if hs.btn_side_by_side_mobile %}
+      --hero-btn-direction: row;
+      --hero-btn-width: auto;
+      --hero-btn-maxwidth: none;
+      {%- endif %}
+      --hero-btn-padding: {{ hs.btn_pad_y_mobile }}px {{ hs.btn_pad_x_mobile }}px;
+      --hero-btn-fontsize: {{ hs.btn_font_size_mobile }}px;
+    }
+  }
+  #shopify-section-{{ section.id }} .hero-bg-desktop {
+    --hero-img-width: {{ w }}%;
+    {%- if hs.bg_align_desktop == 'left' %}
+    --hero-img-left: 0; --hero-img-right: auto;
+    {%- else %}
+    --hero-img-left: auto; --hero-img-right: 0;
+    {%- endif %}
+  }
+  {%- comment -%}
+    Per-element visibility. Hiding with CSS rather than skipping the markup
+    keeps the copy in the theme editor and in the page source, so the desktop
+    version and search engines still see it.
+  {%- endcomment -%}
+  @media (max-width: 768px) {
+    {%- unless hs.show_eyebrow_mobile %}
+    #shopify-section-{{ section.id }} .hero-eyebrow { display: none; }
+    {%- endunless %}
+    {%- unless hs.show_sub_mobile %}
+    #shopify-section-{{ section.id }} .hero-sub { display: none; }
+    {%- endunless %}
+    {%- unless hs.show_trust_mobile %}
+    #shopify-section-{{ section.id }} .hero-trust { display: none; }
+    {%- endunless %}
+  }
+  @media (min-width: 769px) {
+    {%- unless hs.show_eyebrow_desktop %}
+    #shopify-section-{{ section.id }} .hero-eyebrow { display: none; }
+    {%- endunless %}
+    {%- unless hs.show_sub_desktop %}
+    #shopify-section-{{ section.id }} .hero-sub { display: none; }
+    {%- endunless %}
+    {%- unless hs.show_trust_desktop %}
+    #shopify-section-{{ section.id }} .hero-trust { display: none; }
+    {%- endunless %}
+  }
+
+  {%- comment -%}
+    Pinned mode. In normal block flow the buttons sit after the copy, so
+    nudging the copy down drags them with it — and past the bottom of the
+    photo. Stretching the copy column to the full height and pushing the two
+    blocks apart fixes the buttons to the bottom, leaving the headline free
+    to move independently above them.
+  {%- endcomment -%}
+  {%- if hs.pin_buttons_mobile -%}
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .hero-content-wrap { justify-content: stretch; }
+    #shopify-section-{{ section.id }} .hero-content-wrap > .container {
+      display: flex; flex-direction: column; flex: 1;
+    }
+    #shopify-section-{{ section.id }} .hero-inner { display: flex; flex-direction: column; flex: 1; }
+    #shopify-section-{{ section.id }} .hero-text {
+      display: flex; flex-direction: column; flex: 1;
+      justify-content: {{ hs.mobile_copy_distribution }};
+      {%- unless hs.mobile_copy_distribution == 'space-between' %}
+      gap: {{ hs.copy_gap_mobile }}px;
+      {%- endunless %}
+    }
+    {%- comment -%} the old 70% spacer is what pinning replaces {%- endcomment -%}
+    #shopify-section-{{ section.id }} .hero-copy-bottom { padding-top: 0; }
+    {%- if hs.mobile_copy_distribution == 'space-between' %}
+    #shopify-section-{{ section.id }} .hero-copy-bottom { padding-top: 1.25rem; }
+    {%- endif %}
+  }
+  {%- endif -%}
+
+  {%- comment -%} Mobile keeps the photo full-bleed {%- endcomment -%}
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .hero-bg-desktop {
+      --hero-img-width: 100%; --hero-img-left: 0; --hero-img-right: 0;
+    }
+  }
+{%- endstyle -%}
+
+{%- comment -%}
+      Desktop bg: merchant image when set, otherwise the packaged photo.
+      Served through Shopify's CDN with a srcset so large screens are not
+      handed the same file as small ones.
+    {%- endcomment -%}
     <div class="hero-bg-desktop">
-      <img class="hero-bg-img-desktop"
-           src="{{ 'hero-desktop-product.jpg' | asset_url }}"
-           alt="" width="1800" loading="eager" fetchpriority="high">
+      {%- if section.settings.hero_bg_image != blank -%}
+        {%- assign img = section.settings.hero_bg_image -%}
+        <img class="hero-bg-img-desktop"
+             src="{{ img | image_url: width: 1800 }}"
+             srcset="{{ img | image_url: width: 1000 }} 1000w,
+                     {{ img | image_url: width: 1400 }} 1400w,
+                     {{ img | image_url: width: 1800 }} 1800w,
+                     {{ img | image_url: width: 2400 }} 2400w"
+             sizes="100vw"
+             width="{{ img.width }}" height="{{ img.height }}"
+             alt="{{ img.alt | escape }}"
+             loading="eager" fetchpriority="high">
+      {%- else -%}
+        <img class="hero-bg-img-desktop"
+             src="{{ 'hero-desktop-product.jpg' | asset_url }}"
+             alt="" width="1800" loading="eager" fetchpriority="high">
+      {%- endif -%}
     </div>
     {%- comment -%} Mobile bg: tall portrait photo fills viewport {%- endcomment -%}
     <div class="hero-bg-mobile">
       {%- if section.settings.mobile_hero_image != blank -%}
+        {%- assign mimg = section.settings.mobile_hero_image -%}
         <img class="hero-bg-img-mobile"
-             src="{{ section.settings.mobile_hero_image | image_url: width: 900 }}"
-             alt="" width="900" loading="eager" fetchpriority="high">
+             src="{{ mimg | image_url: width: 900 }}"
+             srcset="{{ mimg | image_url: width: 600 }} 600w,
+                     {{ mimg | image_url: width: 900 }} 900w,
+                     {{ mimg | image_url: width: 1200 }} 1200w"
+             sizes="100vw"
+             width="{{ mimg.width }}" height="{{ mimg.height }}"
+             alt="{{ mimg.alt | escape }}"
+             loading="eager" fetchpriority="high">
       {%- else -%}
         <img class="hero-bg-img-mobile"
              src="{{ 'hero-mobile-product-xtall.jpg' | asset_url }}"
@@ -46,7 +220,7 @@
           <p class="hero-eyebrow animate-fadeInUp animate-delay-1">
             {{ section.settings.eyebrow | default: 'A new culture of connection' }}
           </p>
-          <h1 class="hero-headline animate-fadeInUp animate-delay-2">
+          <h1 class="hero-headline animate-fadeInUp animate-delay-2{% if hs.highlight_animate %} hero-headline--sweep{% endif %}">
             {{ section.settings.headline | default: 'Rewriting how <em>couples</em> do date night.' }}
           </h1>
           <p class="hero-sub animate-fadeInUp animate-delay-3">
@@ -57,10 +231,23 @@
         {%- comment -%} BOTTOM COPY — buttons + trust {%- endcomment -%}
         <div class="hero-copy-bottom animate-fadeInUp animate-delay-4">
           <div class="hero-actions">
-            <button type="button" class="btn btn-gold btn-xl" id="heroExpBtn"
-                    onclick="document.getElementById('expSignupModal').classList.add('exp-modal--open')">
-              {{ section.settings.cta_primary_text | default: 'Start the 5-Day Experience' }}
-            </button>
+            {%- comment -%}
+              Was hardwired to open the 5-Day Experience modal regardless of
+              what the button said — so a button reading "Shop all" opened a
+              sign-up for something that is not on sale. It follows its own
+              link now; tick the setting below to bring the modal back.
+            {%- endcomment -%}
+            {%- if section.settings.cta_primary_opens_modal -%}
+              <button type="button" class="btn btn-gold btn-xl" id="heroExpBtn"
+                      onclick="document.getElementById('expSignupModal').classList.add('exp-modal--open')">
+                {{ section.settings.cta_primary_text | default: 'Join the list' }}
+              </button>
+            {%- else -%}
+              <a href="{{ section.settings.cta_primary_url | default: '/collections/all' }}"
+                 class="btn btn-gold btn-xl">
+                {{ section.settings.cta_primary_text | default: 'Shop the range' }}
+              </a>
+            {%- endif -%}
             <a href="{{ section.settings.cta_secondary_url | default: '/collections/monthly-drops' }}"
                class="btn btn-ghost btn-xl">
               {{ section.settings.cta_secondary_text | default: 'Shop the Latest Drop' }}
@@ -71,13 +258,15 @@
               <div class="star-rating">★★★★★</div>
               <span>{{ section.settings.trust_rating | default: '4.9 / 5 — 2,400+ couples' }}</span>
             </div>
-            <span class="hero-trust-dot">·</span>
-            <div class="hero-trust-item">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-              </svg>
-              <span>{{ section.settings.trust_shipping | default: 'Free shipping over £60' }}</span>
-            </div>
+            {%- if section.settings.trust_shipping != blank -%}
+              <span class="hero-trust-dot">·</span>
+              <div class="hero-trust-item">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                </svg>
+                <span>{{ section.settings.trust_shipping }}</span>
+              </div>
+            {%- endif -%}
           </div>
         </div>
 
@@ -91,6 +280,18 @@
   <div class="hero-scroll-hint">
     <div class="scroll-dot"></div>
   </div>
+
+{%- if hs.highlight_animate -%}
+  <script>
+    (function () {
+      var h = document.querySelector('.hero-headline--sweep');
+      if (!h) return;
+      h.querySelectorAll('strong, b').forEach(function (el) {
+        el.setAttribute('data-text', el.textContent);
+      });
+    })();
+  </script>
+{%- endif -%}
 </section>
 
 <!-- ── 5-Day Experience Sign-Up Modal ─────────────────────────────── -->
@@ -125,7 +326,7 @@
       </div>
       <button type="submit" class="btn btn-gold btn-lg" style="width:100%;justify-content:center;">
         <i class="fas fa-unlock-alt" style="margin-right:0.5rem;"></i>
-        Unlock Free Experience
+        Join the list
       </button>
     </form>
 
@@ -209,24 +410,12 @@
   });
 })();
 </script>
-{%- endif -%}
 
 {% schema %}
 {
   "name": "Hero",
   "tag": "section",
   "settings": [
-    {
-      "type": "header",
-      "content": "⚙️ Section Visibility"
-    },
-    {
-      "type": "checkbox",
-      "id": "section_hidden",
-      "label": "Hide this section",
-      "default": false,
-      "info": "Tick to hide this section from the live site. Untick to show it again."
-    },
     {
       "type": "header",
       "content": "Background Images"
@@ -275,6 +464,13 @@
       "label": "Primary CTA URL"
     },
     {
+      "type": "checkbox",
+      "id": "cta_primary_opens_modal",
+      "label": "Primary button opens the sign-up modal",
+      "default": false,
+      "info": "Off: the button follows its link. On: it opens the 5-Day Experience modal."
+    },
+    {
       "type": "text",
       "id": "cta_secondary_text",
       "label": "Secondary CTA text",
@@ -299,7 +495,885 @@
     },
     {
       "type": "header",
-      "content": "Schema End"
+      "content": "🖼️ Photo panel (desktop)"
+    },
+    {
+      "type": "range",
+      "id": "bg_width_desktop",
+      "min": 40,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Photo width",
+      "default": 100,
+      "info": "Below 100% the backdrop shows through beside it — that is where the copy goes."
+    },
+    {
+      "type": "select",
+      "id": "bg_align_desktop",
+      "label": "Photo side",
+      "options": [
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "color",
+      "id": "backdrop_color",
+      "label": "Backdrop",
+      "default": "#0c0408",
+      "info": "Set this to white when the photo is a packshot on white."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Text colours"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow — desktop",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color_mobile",
+      "label": "Eyebrow — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "heading_text_color",
+      "label": "Headline — desktop",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "heading_color_mobile",
+      "label": "Headline — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "italic_color",
+      "label": "Headline italic word — desktop",
+      "default": "#DFC08A"
+    },
+    {
+      "type": "color",
+      "id": "italic_color_mobile",
+      "label": "Headline italic word — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "sub_color",
+      "label": "Subheadline — desktop",
+      "default": "#ADA69C"
+    },
+    {
+      "type": "color",
+      "id": "sub_color_mobile",
+      "label": "Subheadline — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "select",
+      "id": "highlight_style",
+      "label": "Highlighted word style",
+      "options": [
+        {
+          "value": "colour",
+          "label": "Coloured text"
+        },
+        {
+          "value": "block",
+          "label": "Highlighter block behind it"
+        }
+      ],
+      "default": "colour",
+      "info": "Bold a word in the headline (⌘B) to mark it."
+    },
+    {
+      "type": "color",
+      "id": "highlight_bg",
+      "label": "Highlighter colour",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "highlight_pad_x",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Highlighter width padding — desktop",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "highlight_pad_y",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Highlighter height padding — desktop",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "highlight_pad_x_mobile",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Highlighter width padding — mobile",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "highlight_pad_y_mobile",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Highlighter height padding — mobile",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "highlight_radius",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Highlighter corner radius",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Highlighted word — text",
+      "default": "#C9A96E",
+      "info": "Bold a word in the headline (⌘B) and it takes this colour. Italic (⌘I) takes the italic colour above."
+    },
+    {
+      "type": "checkbox",
+      "id": "highlight_animate",
+      "label": "Sweep the highlighter in on load",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "highlight_before_color",
+      "label": "Phrase colour before the sweep",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "range",
+      "id": "highlight_anim_duration",
+      "label": "Sweep speed",
+      "min": 3,
+      "max": 20,
+      "step": 1,
+      "default": 9,
+      "info": "Tenths of a second. 9 is 0.9s."
+    },
+    {
+      "type": "range",
+      "id": "highlight_anim_delay",
+      "label": "Sweep delay",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "color",
+      "id": "highlight_color_mobile",
+      "label": "Highlighted word — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "trust_color",
+      "label": "Trust line — desktop",
+      "default": "#6B6B6B",
+      "info": "The star rating and shipping line under the buttons."
+    },
+    {
+      "type": "checkbox",
+      "id": "trust_shadow",
+      "label": "Shadow behind the trust line",
+      "default": true,
+      "info": "Keeps small text readable wherever the photograph is light."
+    },
+    {
+      "type": "range",
+      "id": "trust_scrim",
+      "label": "Shade behind the trust line",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "default": 30,
+      "info": "A soft pill behind the text, for light areas of the photograph."
+    },
+    {
+      "type": "color",
+      "id": "trust_color_mobile",
+      "label": "Trust line — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "stars_color",
+      "label": "Stars — desktop",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "stars_color_mobile",
+      "label": "Stars — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "header",
+      "content": "🎚️ Fine positioning"
+    },
+    {
+      "type": "range",
+      "id": "text_offset_desktop",
+      "min": -200,
+      "max": 600,
+      "step": 8,
+      "unit": "px",
+      "label": "Nudge headline block — desktop",
+      "default": 0,
+      "info": "Moves the eyebrow, headline and subheadline only. Buttons stay put."
+    },
+    {
+      "type": "range",
+      "id": "text_offset_mobile",
+      "min": -200,
+      "max": 600,
+      "step": 8,
+      "unit": "px",
+      "label": "Nudge headline block — mobile",
+      "default": 0,
+      "info": "Moves the eyebrow, headline and subheadline only. Buttons stay put."
+    },
+    {
+      "type": "range",
+      "id": "btn_offset_desktop",
+      "min": -200,
+      "max": 600,
+      "step": 8,
+      "unit": "px",
+      "label": "Nudge buttons — desktop",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "btn_offset_mobile",
+      "min": -200,
+      "max": 600,
+      "step": 8,
+      "unit": "px",
+      "label": "Nudge buttons — mobile",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "👁️ Show on each screen"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_eyebrow_desktop",
+      "label": "Eyebrow — desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_eyebrow_mobile",
+      "label": "Eyebrow — mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sub_desktop",
+      "label": "Subheadline — desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sub_mobile",
+      "label": "Subheadline — mobile",
+      "default": true,
+      "info": "Untick to drop the subheadline on phones while keeping it on desktop."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_desktop",
+      "label": "Trust line — desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_mobile",
+      "label": "Trust line — mobile",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "📱 Mobile stacking"
+    },
+    {
+      "type": "checkbox",
+      "id": "pin_buttons_mobile",
+      "label": "Pin buttons to the bottom (mobile)",
+      "default": true,
+      "info": "Lets the copy column use the full height so the layout below can place the headline and buttons. Leave on."
+    },
+    {
+      "type": "select",
+      "id": "mobile_copy_distribution",
+      "label": "Headline & buttons — mobile",
+      "options": [
+        {
+          "value": "space-between",
+          "label": "Pushed apart — buttons pinned to the bottom"
+        },
+        {
+          "value": "flex-start",
+          "label": "Together, near the top"
+        },
+        {
+          "value": "center",
+          "label": "Together, centred"
+        },
+        {
+          "value": "flex-end",
+          "label": "Together, near the bottom"
+        }
+      ],
+      "default": "space-between",
+      "info": "The three 'Together' options keep the buttons snug under the headline and move the pair as one block. Use the nudge to fine-tune."
+    },
+    {
+      "type": "range",
+      "id": "copy_gap_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between headline and buttons",
+      "default": 24,
+      "info": "Only applies to the 'Together' options above."
+    },
+    {
+      "type": "range",
+      "id": "top_space_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Space above the headline",
+      "default": 15,
+      "info": "How far down the photo the headline starts. This is the main vertical control on mobile."
+    },
+    {
+      "type": "range",
+      "id": "btn_space_mobile",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "%",
+      "label": "Space above the buttons",
+      "default": 70,
+      "info": "Only applies when 'Pin buttons to the bottom' is off."
+    },
+    {
+      "type": "header",
+      "content": "📏 Button size"
+    },
+    {
+      "type": "checkbox",
+      "id": "btn_side_by_side_mobile",
+      "label": "Buttons side by side on mobile",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "btn_gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between buttons",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_y",
+      "min": 6,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Height padding — desktop",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_x",
+      "min": 10,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Width padding — desktop",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size — desktop",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_y_mobile",
+      "min": 6,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Height padding — mobile",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "btn_pad_x_mobile",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Width padding — mobile",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size_mobile",
+      "min": 9,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size — mobile",
+      "default": 11
+    },
+    {
+      "type": "header",
+      "content": "🔘 Buttons"
+    },
+    {
+      "type": "color",
+      "id": "btn1_bg",
+      "label": "Primary — background",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "btn1_label_color",
+      "label": "Primary — text",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "color",
+      "id": "btn1_border",
+      "label": "Primary — border",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "btn2_bg",
+      "label": "Secondary — background",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "btn2_label_color",
+      "label": "Secondary — text",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "btn2_border",
+      "label": "Secondary — border",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "header",
+      "content": "📐 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — desktop",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — mobile",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — mobile",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "🖼️ Image"
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "vh",
+      "label": "Section height — desktop",
+      "default": 100,
+      "info": "0 = size to content. Otherwise a percentage of screen height."
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "vh",
+      "label": "Section height — mobile",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "cover",
+          "label": "Cover — fill the area, crop the overflow"
+        },
+        {
+          "value": "contain",
+          "label": "Contain — show the whole image, never crop"
+        }
+      ],
+      "default": "",
+      "info": "Contain suits product shots on white — nothing gets cropped."
+    },
+    {
+      "type": "select",
+      "id": "image_fit_mobile",
+      "label": "Image fit — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Same as desktop"
+        },
+        {
+          "value": "cover",
+          "label": "Cover — fill, crop the overflow"
+        },
+        {
+          "value": "contain",
+          "label": "Contain — show it all, never crop"
+        }
+      ],
+      "default": "",
+      "info": "Contain leaves bands of backdrop above and below a photo that does not match the section shape. Cover avoids that on a phone."
+    },
+    {
+      "type": "select",
+      "id": "image_pos_desktop",
+      "label": "Focal point — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "center center",
+          "label": "Centre"
+        },
+        {
+          "value": "center top",
+          "label": "Top"
+        },
+        {
+          "value": "center bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left center",
+          "label": "Left"
+        },
+        {
+          "value": "right center",
+          "label": "Right"
+        },
+        {
+          "value": "left top",
+          "label": "Top left"
+        },
+        {
+          "value": "right top",
+          "label": "Top right"
+        },
+        {
+          "value": "left bottom",
+          "label": "Bottom left"
+        },
+        {
+          "value": "right bottom",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "",
+      "info": "Which part of the image stays in frame when it is cropped."
+    },
+    {
+      "type": "select",
+      "id": "image_pos_mobile",
+      "label": "Focal point — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "center center",
+          "label": "Centre"
+        },
+        {
+          "value": "center top",
+          "label": "Top"
+        },
+        {
+          "value": "center bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left center",
+          "label": "Left"
+        },
+        {
+          "value": "right center",
+          "label": "Right"
+        },
+        {
+          "value": "left top",
+          "label": "Top left"
+        },
+        {
+          "value": "right top",
+          "label": "Top right"
+        },
+        {
+          "value": "left bottom",
+          "label": "Bottom left"
+        },
+        {
+          "value": "right bottom",
+          "label": "Bottom right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay darkness — desktop",
+      "default": 0,
+      "info": "Desktop currently ships with no overlay so the photo reads fully."
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay darkness — mobile",
+      "default": 100,
+      "info": "Scales the tuned mobile gradient — dark bands top and bottom with a clear window for the product. 100% = as designed."
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay colour",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "header",
+      "content": "✍️ Text placement"
+    },
+    {
+      "type": "select",
+      "id": "text_align_desktop",
+      "label": "Alignment — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Alignment — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_desktop",
+      "label": "Vertical position — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_mobile",
+      "label": "Vertical position — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 0,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "label": "Max content width",
+      "default": 0,
+      "info": "0 = theme default."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Section colours"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color",
+      "label": "Background"
     }
   ],
   "presets": [

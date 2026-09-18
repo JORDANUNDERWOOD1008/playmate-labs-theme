@@ -8,7 +8,7 @@
     "theme_support_url": "https://playmate-labs.com/support"
   },
   {
-    "name": "\ud83c\udfa8 Brand Identity",
+    "name": "🎨 Brand Identity",
     "settings": [
       {
         "type": "header",
@@ -18,7 +18,7 @@
         "type": "image_picker",
         "id": "favicon",
         "label": "Favicon",
-        "info": "Recommend 32\u00d732px PNG"
+        "info": "Recommend 32×32px PNG"
       },
       {
         "type": "image_picker",
@@ -80,18 +80,18 @@
         "type": "image_picker",
         "id": "share_image",
         "label": "Default OG social share image",
-        "info": "1200\u00d7630px recommended"
+        "info": "1200×630px recommended"
       },
       {
         "type": "text",
         "id": "share_title_suffix",
         "label": "Page title suffix",
-        "default": "\u2014 Playmate Labs"
+        "default": "— Playmate Labs"
       }
     ]
   },
   {
-    "name": "\ud83c\udfa8 Colours \u2014 Global Palette",
+    "name": "🎨 Colours — Global Palette",
     "settings": [
       {
         "type": "header",
@@ -119,7 +119,7 @@
         "type": "color",
         "id": "color_espresso",
         "label": "Espresso (dark background)",
-        "default": "#1A0A06"
+        "default": "#2C1810"
       },
       {
         "type": "header",
@@ -141,7 +141,7 @@
         "type": "color",
         "id": "color_gold_light",
         "label": "Gold Light",
-        "default": "#D4B483"
+        "default": "#DFC08A"
       },
       {
         "type": "color",
@@ -163,19 +163,19 @@
         "type": "color",
         "id": "color_text_body",
         "label": "Body text",
-        "default": "#2C1810"
+        "default": "#1A1A1A"
       },
       {
         "type": "color",
         "id": "color_text_muted",
         "label": "Muted / secondary text",
-        "default": "#7A6055"
+        "default": "#6B6B6B"
       },
       {
         "type": "color",
         "id": "color_text_light",
         "label": "Light / tertiary text",
-        "default": "#B8A99A"
+        "default": "#9A9A9A"
       },
       {
         "type": "color",
@@ -243,13 +243,13 @@
         "type": "color",
         "id": "color_bg_dark",
         "label": "Dark section background",
-        "default": "#1A0A06"
+        "default": "#1C1C1E"
       },
       {
         "type": "color",
         "id": "color_bg_warm",
         "label": "Warm/ivory section background",
-        "default": "#FAF7F2"
+        "default": "#FEFCF8"
       },
       {
         "type": "color",
@@ -260,7 +260,7 @@
     ]
   },
   {
-    "name": "\u270d\ufe0f Keyword & Inline Text Highlights",
+    "name": "✍️ Keyword & Inline Text Highlights",
     "settings": [
       {
         "type": "header",
@@ -279,7 +279,7 @@
         "id": "highlight_word_color_2",
         "label": "Secondary keyword highlight colour",
         "default": "#8B2E4F",
-        "info": "Alternative highlight \u2014 used via Liquid snippet as needed"
+        "info": "Alternative highlight — used via Liquid snippet as needed"
       },
       {
         "type": "color",
@@ -477,7 +477,7 @@
     ]
   },
   {
-    "name": "\u270d\ufe0f Typography",
+    "name": "✍️ Typography",
     "settings": [
       {
         "type": "header",
@@ -493,13 +493,17 @@
         "type": "font_picker",
         "id": "font_body",
         "label": "Body font",
-        "default": "assistant_n4"
+        "default": "inter_n4"
       },
       {
         "type": "select",
         "id": "font_accent",
-        "label": "Accent font style",
+        "label": "Display font",
         "options": [
+          {
+            "value": "heading",
+            "label": "Same as heading font"
+          },
           {
             "value": "cormorant",
             "label": "Cormorant Garamond (Italic)"
@@ -517,7 +521,8 @@
             "label": "Georgia (System)"
           }
         ],
-        "default": "cormorant"
+        "default": "heading",
+        "info": "Used for the largest type — hero headline, prices, stat numbers."
       },
       {
         "type": "header",
@@ -551,7 +556,7 @@
         "step": 2,
         "unit": "px",
         "label": "H2 size (px)",
-        "default": 40
+        "default": 44
       },
       {
         "type": "range",
@@ -561,7 +566,7 @@
         "step": 0.5,
         "unit": "rem",
         "label": "H3 size",
-        "default": 1.5
+        "default": 2
       },
       {
         "type": "range",
@@ -570,7 +575,7 @@
         "max": 20,
         "step": 1,
         "unit": "/10",
-        "label": "Body line height (\u00f710)",
+        "label": "Body line height (÷10)",
         "default": 16
       },
       {
@@ -581,7 +586,7 @@
         "step": 1,
         "unit": "em",
         "label": "Heading letter spacing",
-        "default": 0
+        "default": -2
       },
       {
         "type": "range",
@@ -623,7 +628,7 @@
             "label": "Bold 700"
           }
         ],
-        "default": "400"
+        "default": "500"
       },
       {
         "type": "select",
@@ -644,11 +649,84 @@
           }
         ],
         "default": "400"
+      },
+      {
+        "type": "header",
+        "content": "🔤 Licensed web font"
+      },
+      {
+        "type": "paragraph",
+        "content": "For a font you hold a web licence for — Adobe Fonts, Monotype, Fontspring. Create a web project with the provider, then paste its stylesheet URL and family name here."
+      },
+      {
+        "type": "checkbox",
+        "id": "custom_font_enable",
+        "label": "Use a licensed web font for headings",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "custom_font_url",
+        "label": "Stylesheet URL",
+        "info": "Adobe Fonts gives you a link like https://use.typekit.net/abc1def.css"
+      },
+      {
+        "type": "text",
+        "id": "custom_font_family",
+        "label": "Family name",
+        "info": "Exactly as the provider names it — Adobe calls Futura PT \"futura-pt\"."
+      },
+      {
+        "type": "select",
+        "id": "custom_font_weight",
+        "label": "Weight",
+        "options": [
+          {
+            "value": "300",
+            "label": "Light 300"
+          },
+          {
+            "value": "400",
+            "label": "Book / Regular 400"
+          },
+          {
+            "value": "500",
+            "label": "Medium 500"
+          },
+          {
+            "value": "600",
+            "label": "Demi 600"
+          },
+          {
+            "value": "700",
+            "label": "Bold 700"
+          },
+          {
+            "value": "800",
+            "label": "Heavy 800"
+          }
+        ],
+        "default": "700",
+        "info": "Include this weight in the web project or it will not load."
+      },
+      {
+        "type": "text",
+        "id": "custom_font_fallback",
+        "label": "Fallback stack",
+        "default": "Jost, 'Century Gothic', sans-serif",
+        "info": "Shown while the font loads, and if it fails. Keep something geometric."
+      },
+      {
+        "type": "checkbox",
+        "id": "custom_font_body",
+        "label": "Use it for body text too",
+        "default": false,
+        "info": "Futura is a display face — it gets hard to read at paragraph sizes."
       }
     ]
   },
   {
-    "name": "\ud83d\udce2 Announcement Bar",
+    "name": "📢 Announcement Bar",
     "settings": [
       {
         "type": "checkbox",
@@ -702,13 +780,13 @@
         "type": "text",
         "id": "announcement_bar_text",
         "label": "Announcement message",
-        "default": "\u2726 New Drop: The Velvet Hour \u2014 Limited to 200 kits."
+        "default": "✦ New Drop: The Velvet Hour — Limited to 200 kits."
       },
       {
         "type": "text",
         "id": "announcement_bar_link_text",
         "label": "Link text",
-        "default": "Shop Now \u2192"
+        "default": "Shop Now →"
       },
       {
         "type": "url",
@@ -780,8 +858,15 @@
     ]
   },
   {
-    "name": "\ud83e\udded Header & Navigation",
+    "name": "🧭 Header & Navigation",
     "settings": [
+      {
+        "type": "checkbox",
+        "id": "header_is_pills",
+        "label": "Header uses the floating-pill style",
+        "default": false,
+        "info": "Must match the Style setting on the Header section. The layout needs to know before the header renders, and it cannot read a section setting."
+      },
       {
         "type": "header",
         "content": "Logo Sizes"
@@ -793,7 +878,7 @@
         "max": 300,
         "step": 5,
         "unit": "px",
-        "label": "Logo width \u2014 desktop",
+        "label": "Logo width — desktop",
         "default": 140
       },
       {
@@ -803,7 +888,7 @@
         "max": 200,
         "step": 5,
         "unit": "px",
-        "label": "Logo width \u2014 mobile",
+        "label": "Logo width — mobile",
         "default": 100
       },
       {
@@ -1002,7 +1087,7 @@
     ]
   },
   {
-    "name": "\ud83e\uddb6 Footer",
+    "name": "🦶 Footer",
     "settings": [
       {
         "type": "header",
@@ -1117,7 +1202,7 @@
         "type": "text",
         "id": "footer_newsletter_sub",
         "label": "Newsletter subtext",
-        "default": "New drops, exclusive events and date night inspiration \u2014 straight to your inbox."
+        "default": "New drops, exclusive events and date night inspiration — straight to your inbox."
       },
       {
         "type": "text",
@@ -1187,7 +1272,7 @@
         "type": "text",
         "id": "footer_copyright",
         "label": "Copyright text",
-        "default": "\u00a9 2025 Playmate Labs Ltd. All rights reserved."
+        "default": "© 2025 Playmate Labs Ltd. All rights reserved."
       },
       {
         "type": "link_list",
@@ -1209,7 +1294,7 @@
     ]
   },
   {
-    "name": "\ud83d\uded2 Cart & Checkout",
+    "name": "🛒 Cart & Checkout",
     "settings": [
       {
         "type": "header",
@@ -1264,20 +1349,20 @@
       {
         "type": "number",
         "id": "cart_free_shipping_threshold",
-        "label": "Free shipping threshold (\u00a3)",
+        "label": "Free shipping threshold (£)",
         "default": 60
       },
       {
         "type": "text",
         "id": "cart_free_shipping_message",
         "label": "Message when threshold not met",
-        "default": "You're \u00a3{amount} away from free shipping!"
+        "default": "You're £{amount} away from free shipping!"
       },
       {
         "type": "text",
         "id": "cart_free_shipping_achieved",
         "label": "Message when threshold met",
-        "default": "\ud83c\udf89 You've unlocked free shipping!"
+        "default": "🎉 You've unlocked free shipping!"
       },
       {
         "type": "color",
@@ -1339,7 +1424,7 @@
         "type": "text",
         "id": "cart_empty_subtext",
         "label": "Empty cart subtext",
-        "default": "Start with our latest drop \u2014 limited kits available."
+        "default": "Start with our latest drop — limited kits available."
       },
       {
         "type": "url",
@@ -1356,7 +1441,7 @@
     ]
   },
   {
-    "name": "\ud83d\udc8c Newsletter Popup",
+    "name": "💌 Newsletter Popup",
     "settings": [
       {
         "type": "checkbox",
@@ -1451,7 +1536,7 @@
         "type": "textarea",
         "id": "newsletter_popup_body",
         "label": "Popup body copy",
-        "default": "Join 14,000+ couples and unlock our free 5-day sensory experience \u2014 daily emails, ritual guides and curated playlists delivered to your inbox."
+        "default": "Join 14,000+ couples and unlock our free 5-day sensory experience — daily emails, ritual guides and curated playlists delivered to your inbox."
       },
       {
         "type": "text",
@@ -1467,36 +1552,36 @@
       },
       {
         "type": "header",
-        "content": "\ud83d\udd17 Klaviyo Integration"
+        "content": "🔗 Klaviyo Integration"
       },
       {
         "type": "text",
         "id": "klaviyo_public_api_key",
         "label": "Klaviyo Public API Key (Site ID)",
-        "info": "Find this in Klaviyo \u2192 Account \u2192 Settings \u2192 API Keys. Starts with a 6-character public key e.g. 'AbCd12'."
+        "info": "Find this in Klaviyo → Account → Settings → API Keys. Starts with a 6-character public key e.g. 'AbCd12'."
       },
       {
         "type": "text",
         "id": "klaviyo_popup_list_id",
-        "label": "Klaviyo List ID \u2014 Popup signups",
-        "info": "The List ID from Klaviyo \u2192 Lists & Segments \u2192 [your list] \u2192 Settings. e.g. 'XyZ123'. Leave blank to use Shopify contact form fallback."
+        "label": "Klaviyo List ID — Popup signups",
+        "info": "The List ID from Klaviyo → Lists & Segments → [your list] → Settings. e.g. 'XyZ123'. Leave blank to use Shopify contact form fallback."
       },
       {
         "type": "text",
         "id": "klaviyo_experience_list_id",
-        "label": "Klaviyo List ID \u2014 5-Day Experience signups",
+        "label": "Klaviyo List ID — 5-Day Experience signups",
         "info": "Separate list for the free experience signups so you can send the 5-day email sequence. Leave blank to share the same list as the popup."
       },
       {
         "type": "text",
         "id": "klaviyo_footer_list_id",
-        "label": "Klaviyo List ID \u2014 Footer newsletter",
+        "label": "Klaviyo List ID — Footer newsletter",
         "info": "Optional separate list for footer email signups."
       }
     ]
   },
   {
-    "name": "\ud83c\udfe0 Homepage \u2014 Hero Section",
+    "name": "🏠 Homepage — Hero Section",
     "settings": [
       {
         "type": "header",
@@ -1557,7 +1642,7 @@
         "type": "image_picker",
         "id": "hero_bg_image",
         "label": "Hero background image",
-        "info": "1920\u00d71080px+ recommended"
+        "info": "1920×1080px+ recommended"
       },
       {
         "type": "video",
@@ -1591,13 +1676,13 @@
       {
         "type": "color",
         "id": "hero_bg_color_from",
-        "label": "Background gradient \u2014 start",
+        "label": "Background gradient — start",
         "default": "#1A0A06"
       },
       {
         "type": "color",
         "id": "hero_bg_color_to",
-        "label": "Background gradient \u2014 end",
+        "label": "Background gradient — end",
         "default": "#2D1020"
       },
       {
@@ -1696,7 +1781,7 @@
         "type": "text",
         "id": "hero_stat_3_number",
         "label": "Stat 3 number",
-        "default": "4.9\u2605"
+        "default": "4.9★"
       },
       {
         "type": "text",
@@ -1719,7 +1804,7 @@
     ]
   },
   {
-    "name": "\ud83d\udce6 Homepage \u2014 Featured Drop",
+    "name": "📦 Homepage — Featured Drop",
     "settings": [
       {
         "type": "header",
@@ -1741,25 +1826,25 @@
         "type": "text",
         "id": "drop_tagline",
         "label": "Drop tagline",
-        "default": "Limited drop \u2014 47 kits remaining"
+        "default": "Limited drop — 47 kits remaining"
       },
       {
         "type": "text",
         "id": "drop_price",
         "label": "Drop price",
-        "default": "\u00a368"
+        "default": "£68"
       },
       {
         "type": "text",
         "id": "drop_original_price",
         "label": "Original price (struck through)",
-        "default": "\u00a382"
+        "default": "£82"
       },
       {
         "type": "text",
         "id": "drop_cta_text",
         "label": "Drop CTA text",
-        "default": "Grab Yours \u2192"
+        "default": "Grab Yours →"
       },
       {
         "type": "url",
@@ -1778,13 +1863,13 @@
       {
         "type": "color",
         "id": "drop_bg_from",
-        "label": "Banner gradient \u2014 start",
+        "label": "Banner gradient — start",
         "default": "#1A0A06"
       },
       {
         "type": "color",
         "id": "drop_bg_to",
-        "label": "Banner gradient \u2014 end",
+        "label": "Banner gradient — end",
         "default": "#2D1020"
       },
       {
@@ -1870,7 +1955,7 @@
     ]
   },
   {
-    "name": "\ud83d\udecd\ufe0f Product Grid & Cards",
+    "name": "🛍️ Product Grid & Cards",
     "settings": [
       {
         "type": "header",
@@ -2073,7 +2158,7 @@
     ]
   },
   {
-    "name": "\ud83c\udfea Shop / Collection Page",
+    "name": "🏪 Shop / Collection Page",
     "settings": [
       {
         "type": "header",
@@ -2255,7 +2340,7 @@
     ]
   },
   {
-    "name": "\ud83d\uded2 Product Page",
+    "name": "🛒 Product Page",
     "settings": [
       {
         "type": "header",
@@ -2499,7 +2584,7 @@
     ]
   },
   {
-    "name": "\ud83d\udca7 Monthly Drops Page",
+    "name": "💧 Monthly Drops Page",
     "settings": [
       {
         "type": "header",
@@ -2508,13 +2593,13 @@
       {
         "type": "color",
         "id": "drops_hero_bg_from",
-        "label": "Drops hero gradient \u2014 start",
+        "label": "Drops hero gradient — start",
         "default": "#1A0A06"
       },
       {
         "type": "color",
         "id": "drops_hero_bg_to",
-        "label": "Drops hero gradient \u2014 end",
+        "label": "Drops hero gradient — end",
         "default": "#2D1020"
       },
       {
@@ -2656,7 +2741,7 @@
     ]
   },
   {
-    "name": "\ud83c\udfaf 5-Day Experience Page",
+    "name": "🎯 5-Day Experience Page",
     "settings": [
       {
         "type": "header",
@@ -2665,13 +2750,13 @@
       {
         "type": "color",
         "id": "exp_hero_bg_from",
-        "label": "Experience hero gradient \u2014 start",
+        "label": "Experience hero gradient — start",
         "default": "#1A0A06"
       },
       {
         "type": "color",
         "id": "exp_hero_bg_to",
-        "label": "Experience hero gradient \u2014 end",
+        "label": "Experience hero gradient — end",
         "default": "#2D1020"
       },
       {
@@ -2837,7 +2922,7 @@
     ]
   },
   {
-    "name": "\ud83c\udfad Events Page",
+    "name": "🎭 Events Page",
     "settings": [
       {
         "type": "header",
@@ -3012,7 +3097,7 @@
     ]
   },
   {
-    "name": "\ud83d\udc65 Community Page",
+    "name": "👥 Community Page",
     "settings": [
       {
         "type": "header",
@@ -3021,13 +3106,13 @@
       {
         "type": "color",
         "id": "community_hero_bg_from",
-        "label": "Community hero gradient \u2014 start",
+        "label": "Community hero gradient — start",
         "default": "#1A0A06"
       },
       {
         "type": "color",
         "id": "community_hero_bg_to",
-        "label": "Community hero gradient \u2014 end",
+        "label": "Community hero gradient — end",
         "default": "#2D1020"
       },
       {
@@ -3252,7 +3337,7 @@
         "type": "text",
         "id": "community_stat_2_number",
         "label": "Stat 2 number",
-        "default": "4.9\u2605"
+        "default": "4.9★"
       },
       {
         "type": "text",
@@ -3275,7 +3360,7 @@
     ]
   },
   {
-    "name": "\ud83d\udcdd Journal / Blog",
+    "name": "📝 Journal / Blog",
     "settings": [
       {
         "type": "header",
@@ -3438,7 +3523,7 @@
     ]
   },
   {
-    "name": "\u2139\ufe0f About Page",
+    "name": "ℹ️ About Page",
     "settings": [
       {
         "type": "header",
@@ -3447,13 +3532,13 @@
       {
         "type": "color",
         "id": "about_hero_bg_from",
-        "label": "About hero gradient \u2014 start",
+        "label": "About hero gradient — start",
         "default": "#1A0A06"
       },
       {
         "type": "color",
         "id": "about_hero_bg_to",
-        "label": "About hero gradient \u2014 end",
+        "label": "About hero gradient — end",
         "default": "#3D1A2E"
       },
       {
@@ -3608,7 +3693,7 @@
     ]
   },
   {
-    "name": "\ud83d\udc64 Account & Rewards",
+    "name": "👤 Account & Rewards",
     "settings": [
       {
         "type": "header",
@@ -3635,13 +3720,13 @@
       {
         "type": "color",
         "id": "account_member_card_bg_from",
-        "label": "Member card gradient \u2014 start",
+        "label": "Member card gradient — start",
         "default": "#1A0A06"
       },
       {
         "type": "color",
         "id": "account_member_card_bg_to",
-        "label": "Member card gradient \u2014 end",
+        "label": "Member card gradient — end",
         "default": "#2D1020"
       },
       {
@@ -3703,13 +3788,13 @@
       {
         "type": "color",
         "id": "account_rewards_banner_from",
-        "label": "Rewards banner gradient \u2014 start",
+        "label": "Rewards banner gradient — start",
         "default": "#1A0A06"
       },
       {
         "type": "color",
         "id": "account_rewards_banner_to",
-        "label": "Rewards banner gradient \u2014 end",
+        "label": "Rewards banner gradient — end",
         "default": "#2D1020"
       },
       {
@@ -3767,7 +3852,7 @@
     ]
   },
   {
-    "name": "\ud83d\udd0d Search Page",
+    "name": "🔍 Search Page",
     "settings": [
       {
         "type": "header",
@@ -3836,7 +3921,7 @@
     ]
   },
   {
-    "name": "\u2753 FAQ Page",
+    "name": "❓ FAQ Page",
     "settings": [
       {
         "type": "header",
@@ -3911,7 +3996,7 @@
     ]
   },
   {
-    "name": "\ud83d\udcec Contact Page",
+    "name": "📬 Contact Page",
     "settings": [
       {
         "type": "header",
@@ -4014,7 +4099,7 @@
     ]
   },
   {
-    "name": "\ud83d\udccd Stockists Page",
+    "name": "📍 Stockists Page",
     "settings": [
       {
         "type": "header",
@@ -4095,7 +4180,7 @@
     ]
   },
   {
-    "name": "\ud83c\udf81 Gifts Page",
+    "name": "🎁 Gifts Page",
     "settings": [
       {
         "type": "header",
@@ -4104,13 +4189,13 @@
       {
         "type": "color",
         "id": "gifts_hero_bg_from",
-        "label": "Gifts hero gradient \u2014 start",
+        "label": "Gifts hero gradient — start",
         "default": "#1A0A06"
       },
       {
         "type": "color",
         "id": "gifts_hero_bg_to",
-        "label": "Gifts hero gradient \u2014 end",
+        "label": "Gifts hero gradient — end",
         "default": "#3D1A2E"
       },
       {
@@ -4188,7 +4273,7 @@
     ]
   },
   {
-    "name": "\ud83d\udd12 Privacy & Legal Pages",
+    "name": "🔒 Privacy & Legal Pages",
     "settings": [
       {
         "type": "header",
@@ -4257,7 +4342,7 @@
     ]
   },
   {
-    "name": "\ud83c\udfaa 404 Page",
+    "name": "🎪 404 Page",
     "settings": [
       {
         "type": "header",
@@ -4266,13 +4351,13 @@
       {
         "type": "color",
         "id": "error_page_bg_from",
-        "label": "404 page gradient \u2014 start",
+        "label": "404 page gradient — start",
         "default": "#1A0A06"
       },
       {
         "type": "color",
         "id": "error_page_bg_to",
-        "label": "404 page gradient \u2014 end",
+        "label": "404 page gradient — end",
         "default": "#2D1020"
       },
       {
@@ -4303,7 +4388,7 @@
         "type": "text",
         "id": "error_subtext",
         "label": "404 subtext",
-        "default": "That page doesn't exist \u2014 but the good stuff does. Try one of these instead."
+        "default": "That page doesn't exist — but the good stuff does. Try one of these instead."
       },
       {
         "type": "text",
@@ -4330,7 +4415,7 @@
     ]
   },
   {
-    "name": "\ud83d\udd10 Customer Login & Registration",
+    "name": "🔐 Customer Login & Registration",
     "settings": [
       {
         "type": "header",
@@ -4423,7 +4508,7 @@
     ]
   },
   {
-    "name": "\ud83d\uded2 Cart Page",
+    "name": "🛒 Cart Page",
     "settings": [
       {
         "type": "header",
@@ -4498,7 +4583,7 @@
     ]
   },
   {
-    "name": "\ud83d\udcf0 Article / Blog Post",
+    "name": "📰 Article / Blog Post",
     "settings": [
       {
         "type": "header",
@@ -4585,7 +4670,7 @@
     ]
   },
   {
-    "name": "\u26a1 Performance",
+    "name": "⚡ Performance",
     "settings": [
       {
         "type": "header",
@@ -4693,12 +4778,12 @@
         "type": "textarea",
         "id": "perf_body_end_scripts",
         "label": "Custom scripts before </body>",
-        "info": "Loaded last \u2014 least impact on page speed"
+        "info": "Loaded last — least impact on page speed"
       }
     ]
   },
   {
-    "name": "\ud83d\udd10 Compliance & Legal",
+    "name": "🔐 Compliance & Legal",
     "settings": [
       {
         "type": "header",
@@ -4837,6 +4922,526 @@
         "id": "allergen_notice_text",
         "label": "Allergen notice text",
         "default": "Some products contain nuts, dairy, soy and gluten. Full ingredient lists are on each product page."
+      }
+    ]
+  },
+  {
+    "name": "🎟️ Scratch Popup",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Behaviour"
+      },
+      {
+        "type": "checkbox",
+        "id": "scratch_popup_enable",
+        "label": "Enable the scratch popup",
+        "default": false,
+        "info": "Replaces nothing — the standard newsletter popup has its own setting. Never appears in the theme editor."
+      },
+      {
+        "type": "range",
+        "id": "scratch_delay",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "unit": "s",
+        "label": "Show after",
+        "default": 6
+      },
+      {
+        "type": "range",
+        "id": "scratch_days",
+        "min": 1,
+        "max": 90,
+        "step": 1,
+        "unit": "d",
+        "label": "Do not show again for",
+        "default": 14
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "image_picker",
+        "id": "scratch_logo",
+        "label": "Logo"
+      },
+      {
+        "type": "text",
+        "id": "scratch_heading",
+        "label": "Heading",
+        "default": "Try your luck"
+      },
+      {
+        "type": "text",
+        "id": "scratch_sub",
+        "label": "Subheading",
+        "default": "Scratch below to see what you get"
+      },
+      {
+        "type": "text",
+        "id": "scratch_hint",
+        "label": "Text on the foil",
+        "default": "SCRATCH HERE"
+      },
+      {
+        "type": "text",
+        "id": "scratch_prize_lead",
+        "label": "Reward lead-in",
+        "default": "You've got"
+      },
+      {
+        "type": "text",
+        "id": "scratch_prize",
+        "label": "Reward",
+        "default": "10% OFF",
+        "info": "Must match a discount that actually exists."
+      },
+      {
+        "type": "text",
+        "id": "scratch_code",
+        "label": "Discount code",
+        "info": "Shown once the card is scratched. Must be a code that already works at checkout."
+      },
+      {
+        "type": "text",
+        "id": "scratch_prize_note",
+        "label": "Reward note",
+        "default": "your first order"
+      },
+      {
+        "type": "text",
+        "id": "scratch_placeholder",
+        "label": "Email placeholder",
+        "default": "your@email.com"
+      },
+      {
+        "type": "text",
+        "id": "scratch_claim",
+        "label": "Step 1 button",
+        "default": "Claim"
+      },
+      {
+        "type": "text",
+        "id": "scratch_email_prompt",
+        "label": "Step 2 prompt",
+        "default": "Enter your email to get your deal"
+      },
+      {
+        "type": "text",
+        "id": "scratch_cta",
+        "label": "Step 2 button",
+        "default": "Continue"
+      },
+      {
+        "type": "textarea",
+        "id": "scratch_smallprint",
+        "label": "Small print",
+        "default": "One use per customer. By signing up you agree to receive marketing emails."
+      },
+      {
+        "type": "header",
+        "content": "🖼️ Background"
+      },
+      {
+        "type": "image_picker",
+        "id": "scratch_bg",
+        "label": "Desktop background",
+        "info": "Landscape. Leave clear space where the copy block sits."
+      },
+      {
+        "type": "image_picker",
+        "id": "scratch_bg_mobile",
+        "label": "Mobile background",
+        "info": "Portrait. Falls back to the desktop image."
+      },
+      {
+        "type": "select",
+        "id": "scratch_bg_pos",
+        "label": "Focal point — desktop",
+        "options": [
+          {
+            "value": "center center",
+            "label": "Centre"
+          },
+          {
+            "value": "center top",
+            "label": "Top"
+          },
+          {
+            "value": "center bottom",
+            "label": "Bottom"
+          },
+          {
+            "value": "left center",
+            "label": "Left"
+          },
+          {
+            "value": "right center",
+            "label": "Right"
+          }
+        ],
+        "default": "center center"
+      },
+      {
+        "type": "select",
+        "id": "scratch_bg_pos_m",
+        "label": "Focal point — mobile",
+        "options": [
+          {
+            "value": "center center",
+            "label": "Centre"
+          },
+          {
+            "value": "center top",
+            "label": "Top"
+          },
+          {
+            "value": "center bottom",
+            "label": "Bottom"
+          },
+          {
+            "value": "left center",
+            "label": "Left"
+          },
+          {
+            "value": "right center",
+            "label": "Right"
+          }
+        ],
+        "default": "center center"
+      },
+      {
+        "type": "select",
+        "id": "scratch_mobile_layout",
+        "label": "Mobile layout",
+        "options": [
+          {
+            "value": "split",
+            "label": "Photo below the copy"
+          },
+          {
+            "value": "fill",
+            "label": "Photo fills the screen"
+          }
+        ],
+        "default": "split",
+        "info": "A portrait product shot rarely has enough clear space to carry the copy over it."
+      },
+      {
+        "type": "range",
+        "id": "scratch_img_h_m",
+        "min": 30,
+        "max": 70,
+        "step": 2,
+        "unit": "%",
+        "label": "Photo height — mobile",
+        "default": 52
+      },
+      {
+        "type": "header",
+        "content": "🧭 Copy block"
+      },
+      {
+        "type": "select",
+        "id": "scratch_halign",
+        "label": "Horizontal — desktop",
+        "options": [
+          {
+            "value": "flex-start",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Centre"
+          },
+          {
+            "value": "flex-end",
+            "label": "Right"
+          }
+        ],
+        "default": "flex-start"
+      },
+      {
+        "type": "select",
+        "id": "scratch_valign",
+        "label": "Vertical — desktop",
+        "options": [
+          {
+            "value": "flex-start",
+            "label": "Top"
+          },
+          {
+            "value": "center",
+            "label": "Middle"
+          },
+          {
+            "value": "flex-end",
+            "label": "Bottom"
+          }
+        ],
+        "default": "center"
+      },
+      {
+        "type": "select",
+        "id": "scratch_valign_m",
+        "label": "Vertical — mobile",
+        "options": [
+          {
+            "value": "flex-start",
+            "label": "Top"
+          },
+          {
+            "value": "center",
+            "label": "Middle"
+          },
+          {
+            "value": "flex-end",
+            "label": "Bottom"
+          }
+        ],
+        "default": "flex-start"
+      },
+      {
+        "type": "select",
+        "id": "scratch_text_align",
+        "label": "Text alignment — desktop",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Centre"
+          }
+        ],
+        "default": "center"
+      },
+      {
+        "type": "select",
+        "id": "scratch_text_align_m",
+        "label": "Text alignment — mobile",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Centre"
+          }
+        ],
+        "default": "center"
+      },
+      {
+        "type": "range",
+        "id": "scratch_width",
+        "min": 300,
+        "max": 700,
+        "step": 10,
+        "unit": "px",
+        "label": "Copy block width",
+        "default": 420
+      },
+      {
+        "type": "range",
+        "id": "scratch_pad",
+        "min": 16,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "label": "Copy block padding — desktop",
+        "default": 48
+      },
+      {
+        "type": "range",
+        "id": "scratch_pad_m",
+        "min": 12,
+        "max": 80,
+        "step": 4,
+        "unit": "px",
+        "label": "Copy block padding — mobile",
+        "default": 32
+      },
+      {
+        "type": "header",
+        "content": "Colours & size"
+      },
+      {
+        "type": "color",
+        "id": "scratch_bg_color",
+        "label": "Background",
+        "default": "#FAF7F2"
+      },
+      {
+        "type": "color",
+        "id": "scratch_heading_color",
+        "label": "Heading",
+        "default": "#6B1E3A"
+      },
+      {
+        "type": "color",
+        "id": "scratch_sub_color",
+        "label": "Body text",
+        "default": "#4A4A4A"
+      },
+      {
+        "type": "color",
+        "id": "scratch_prize_color",
+        "label": "Reward text",
+        "default": "#6B1E3A"
+      },
+      {
+        "type": "color",
+        "id": "scratch_prize_bg",
+        "label": "Card surface under the foil",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "scratch_btn_bg",
+        "label": "Button background",
+        "default": "#6B1E3A"
+      },
+      {
+        "type": "color",
+        "id": "scratch_btn_text",
+        "label": "Button text",
+        "default": "#F5EFE6"
+      },
+      {
+        "type": "color",
+        "id": "scratch_foil_from",
+        "label": "Foil — light",
+        "default": "#E8D7AE"
+      },
+      {
+        "type": "color",
+        "id": "scratch_foil_to",
+        "label": "Foil — dark",
+        "default": "#B08D4F"
+      },
+      {
+        "type": "range",
+        "id": "scratch_heading_size",
+        "min": 24,
+        "max": 80,
+        "step": 2,
+        "unit": "px",
+        "label": "Heading size — desktop",
+        "default": 52
+      },
+      {
+        "type": "range",
+        "id": "scratch_heading_size_m",
+        "min": 20,
+        "max": 60,
+        "step": 2,
+        "unit": "px",
+        "label": "Heading size — mobile",
+        "default": 38
+      },
+      {
+        "type": "range",
+        "id": "scratch_brush",
+        "min": 10,
+        "max": 50,
+        "step": 2,
+        "unit": "px",
+        "label": "Scratch brush size",
+        "default": 22
+      },
+      {
+        "type": "range",
+        "id": "scratch_threshold",
+        "min": 20,
+        "max": 80,
+        "step": 5,
+        "unit": "%",
+        "label": "Reveal after this much is scratched",
+        "default": 45
+      },
+      {
+        "type": "range",
+        "id": "scratch_prize_size",
+        "min": 22,
+        "max": 72,
+        "step": 2,
+        "unit": "px",
+        "label": "Reward size — desktop",
+        "default": 40
+      },
+      {
+        "type": "range",
+        "id": "scratch_prize_size_m",
+        "min": 18,
+        "max": 56,
+        "step": 2,
+        "unit": "px",
+        "label": "Reward size — mobile",
+        "default": 32
+      },
+      {
+        "type": "header",
+        "content": "How it opens"
+      },
+      {
+        "type": "select",
+        "id": "scratch_trigger",
+        "label": "Trigger",
+        "options": [
+          {
+            "value": "tab",
+            "label": "Side tab only — never interrupts"
+          },
+          {
+            "value": "both",
+            "label": "Side tab + opens itself after the delay"
+          },
+          {
+            "value": "auto",
+            "label": "Opens itself only"
+          }
+        ],
+        "default": "tab",
+        "info": "The tab stays on screen until the reward is claimed."
+      },
+      {
+        "type": "text",
+        "id": "scratch_tab_label",
+        "label": "Tab label",
+        "default": "Try your luck?"
+      },
+      {
+        "type": "select",
+        "id": "scratch_tab_side",
+        "label": "Tab side",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ],
+        "default": "left"
+      },
+      {
+        "type": "color",
+        "id": "scratch_tab_bg",
+        "label": "Tab background",
+        "default": "#6B1E3A"
+      },
+      {
+        "type": "color",
+        "id": "scratch_tab_text",
+        "label": "Tab text",
+        "default": "#FFFFFF"
       }
     ]
   }

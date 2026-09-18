@@ -1,0 +1,100 @@
+{%- comment -%}
+  PLAYMATE LABS — FULL-SCREEN SCRATCH POPUP
+  A full-bleed background photograph with the copy block sitting in its empty
+  area. Scratch the foil to reveal the reward, then claim.
+
+  Accessibility: the scratch is decoration, never a gate. A Reveal button is
+  always present for keyboard and screen-reader users, and if canvas is
+  unavailable the panel starts revealed.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = settings
+  assign bg_m = s.scratch_bg_mobile | default: s.scratch_bg
+-%}
+{%- if s.scratch_popup_enable -%}
+{%- if s.scratch_trigger != 'auto' -%}
+  {%- comment -%}
+    A persistent edge tab rather than a modal that opens itself. The offer
+    stays one tap away without standing between a first-time visitor and the
+    product. Hidden while the popup is open, and once claimed.
+  {%- endcomment -%}
+  <button type="button" class="sp__tab" id="spTab"
+          data-side="{{ s.scratch_tab_side }}"
+          style="--sp-tab-bg:{{ s.scratch_tab_bg }};--sp-tab-fg:{{ s.scratch_tab_text }};"
+          aria-haspopup="dialog" aria-controls="scratchPopup" hidden>
+    {{ s.scratch_tab_label | default: 'Try your luck?' }}
+  </button>
+{%- endif -%}
+<div class="sp{% if s.scratch_mobile_layout == 'split' %} sp--split{% endif %}" id="scratchPopup" role="dialog" aria-modal="true"
+     aria-labelledby="spHeading" hidden>
+
+  {%- if s.scratch_bg != blank -%}
+    <img class="sp__bg sp__bg--d" src="{{ s.scratch_bg | image_url: width: 2000 }}"
+         srcset="{{ s.scratch_bg | image_url: width: 1200 }} 1200w,
+                 {{ s.scratch_bg | image_url: width: 2000 }} 2000w"
+         sizes="100vw" alt="" aria-hidden="true" decoding="async">
+    {%- if bg_m != s.scratch_bg -%}
+      <img class="sp__bg sp__bg--m" src="{{ bg_m | image_url: width: 1200 }}"
+           alt="" aria-hidden="true" decoding="async">
+    {%- endif -%}
+  {%- endif -%}
+
+  <button class="sp__close" id="spClose" aria-label="Close">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>
+    </svg>
+  </button>
+
+  <div class="sp__inner">
+    {%- if s.scratch_logo != blank -%}
+      <img class="sp__logo" src="{{ s.scratch_logo | image_url: height: 200 }}"
+           alt="{{ shop.name | escape }}" decoding="async">
+    {%- endif -%}
+
+    {%- comment -%} STEP 1 — scratch, then claim {%- endcomment -%}
+    <div class="sp__step" id="spStep1">
+      <h2 class="sp__heading" id="spHeading">{{ s.scratch_heading | default: 'Try your luck' }}</h2>
+      <p class="sp__sub">{{ s.scratch_sub | default: 'Scratch below to see what you get' }}</p>
+
+      <div class="sp__card" id="spCard">
+        <div class="sp__prize-peek">
+          <span class="sp__prize-value">{{ s.scratch_prize | default: 'Up to 60% off' }}</span>
+        </div>
+        <canvas class="sp__canvas" id="spCanvas" aria-hidden="true"></canvas>
+        <span class="sp__hint" id="spHint">{{ s.scratch_hint | default: 'SCRATCH HERE' }}</span>
+      </div>
+
+      <button type="button" class="sp__submit" id="spClaim" disabled>
+        {{ s.scratch_claim | default: 'Claim' }}
+      </button>
+      <button type="button" class="sp__reveal" id="spReveal">Reveal instead</button>
+    </div>
+
+    {%- comment -%} STEP 2 — reward, then email {%- endcomment -%}
+    <div class="sp__step" id="spStep2" hidden>
+      <p class="sp__prize-note">{{ s.scratch_prize_lead | default: "You've got" }}</p>
+      <h2 class="sp__heading sp__heading--prize">{{ s.scratch_prize | default: 'Up to 60% off' }}</h2>
+      <p class="sp__sub">{{ s.scratch_email_prompt | default: 'Enter your email to get your deal' }}</p>
+
+      <form class="sp__form" id="spForm" method="post" action="/contact#contact_form"
+            accept-charset="UTF-8">
+        <input type="hidden" name="form_type" value="customer">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="contact[tags]" value="newsletter,scratch-popup">
+        <label class="sp__label" for="spEmail">Email</label>
+        <input class="sp__input" id="spEmail" type="email" name="contact[email]"
+               placeholder="{{ s.scratch_placeholder | default: 'Your email address' }}" required>
+        <button class="sp__submit" type="submit">{{ s.scratch_cta | default: 'Continue' }}</button>
+        {%- if s.scratch_code != blank -%}
+          <p class="sp__prize-code">{{ s.scratch_code }}</p>
+        {%- endif -%}
+        {%- if s.scratch_smallprint != blank -%}
+          <p class="sp__small">{{ s.scratch_smallprint }}</p>
+        {%- endif -%}
+      </form>
+    </div>
+
+  </div>
+</div>
+{%- endif -%}

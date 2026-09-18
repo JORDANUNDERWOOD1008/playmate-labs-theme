@@ -14,7 +14,7 @@
     - Related products
 {% endcomment %}
 
-{{ 'global.css' | asset_url | stylesheet_tag }}
+{%- comment -%} global.css is loaded by the layout before theme-css-variables; loading it again here reverts every setting-driven variable. {%- endcomment -%}
 {{ 'components.css' | asset_url | stylesheet_tag }}
 {{ 'product.css' | asset_url | stylesheet_tag }}
 
@@ -57,13 +57,62 @@
 
   /* ── Gallery ── */
   .product-gallery { position: sticky; top: calc(var(--nav-height) + 1.5rem); }
-  .product-main-img { border-radius: var(--radius-xl); overflow: hidden; background: var(--ivory); aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; cursor: zoom-in; }
-  .product-main-img img { width: 100%; height: 100%; object-fit: cover; }
-  .product-main-img .img-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg,var(--espresso),#3D1A2E); display:flex;align-items:center;justify-content:center;font-size:6rem; }
+  .pg { position: relative; margin-bottom: 1rem; }
+  .pg__track {
+    display: flex; gap: 0; overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;
+    border-radius: var(--radius-xl); background: var(--ivory);
+  }
+  .pg__track::-webkit-scrollbar { display: none; }
+  .pg__track:focus-visible { outline: 2px solid var(--burgundy); outline-offset: 3px; }
+  .pg__slide {
+    flex: 0 0 100%; width: 100%; margin: 0; scroll-snap-align: center;
+    aspect-ratio: 1/1; background: var(--ivory);
+  }
+  .pg__slide img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
+  .pg__slide .img-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg,var(--espresso),#3D1A2E);
+    display: flex; align-items: center; justify-content: center; font-size: 6rem;
+  }
+
+  .pg__arrow {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+    width: 40px; height: 40px; border: 0; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.92); color: var(--espresso);
+    box-shadow: 0 1px 8px rgba(0,0,0,.14);
+    opacity: 0; transition: opacity .2s ease;
+  }
+  .pg:hover .pg__arrow, .pg__arrow:focus-visible { opacity: 1; }
+  .pg__arrow--prev { left: 12px; }
+  .pg__arrow--next { right: 12px; }
+  .pg__arrow[disabled] { opacity: 0 !important; pointer-events: none; }
+
+  .pg__dots {
+    position: absolute; bottom: 12px; left: 0; right: 0; z-index: 2;
+    display: none; justify-content: center; gap: 6px;
+  }
+  .pg__dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.55); transition: background .2s, transform .2s; }
+  .pg__dot.is-active { background: #fff; transform: scale(1.35); }
+
   .product-thumbs { display: flex; gap: 0.625rem; flex-wrap: wrap; }
-  .product-thumb { width: 72px; height: 72px; border-radius: var(--radius-md); overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; flex-shrink: 0; }
+  .product-thumb {
+    width: 72px; height: 72px; padding: 0; border-radius: var(--radius-md);
+    overflow: hidden; cursor: pointer; border: 2px solid transparent;
+    background: none; transition: border-color 0.2s; flex-shrink: 0;
+  }
   .product-thumb.active, .product-thumb:hover { border-color: var(--burgundy); }
-  .product-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .product-thumb:focus-visible { outline: 2px solid var(--burgundy); outline-offset: 2px; }
+  .product-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  @media (max-width: 900px) {
+    /* Touch: swipe the track, read position from the dots. Eight thumbnails
+       wrapped into a grid was taking most of a phone screen. */
+    .pg__dots { display: flex; }
+    .pg__arrow { display: none; }
+    .product-thumbs { display: none; }
+  }
 
   /* ── Product info ── */
   .product-info { padding-top: 0; }
@@ -116,6 +165,49 @@
   .product-accordion-item { border-bottom: 1px solid var(--border-light); }
   .product-accordion-btn { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; font-size: 0.9375rem; font-weight: 600; color: var(--prod-title); background: none; border: none; cursor: pointer; text-align: left; }
   .product-accordion-body { padding-bottom: 1rem; font-size: 0.875rem; color: var(--prod-desc-tx); line-height: 1.7; display: none; }
+
+  /* The description is rich text authored in Shopify, so it arrives with its
+     own headings, lists and bold runs and no styling of its own. Without
+     these it renders as one undifferentiated wall. */
+  .product-accordion-body { max-width: 68ch; }
+  .product-accordion-body > *:first-child { margin-top: 0; }
+  .product-accordion-body > *:last-child { margin-bottom: 0; }
+  .product-accordion-body p { margin: 0 0 0.9em; }
+  .product-accordion-body h1,
+  .product-accordion-body h2,
+  .product-accordion-body h3,
+  .product-accordion-body h4 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    color: var(--prod-desc-h);
+    margin: 1.75em 0 0.5em;
+  }
+  .product-accordion-body h2 { font-size: 1.1875rem; }
+  .product-accordion-body ul,
+  .product-accordion-body ol { margin: 0 0 1em; padding-left: 1.1rem; }
+  .product-accordion-body li { margin-bottom: 0.4em; }
+  .product-accordion-body strong { color: var(--prod-desc-h); font-weight: 600; }
+  .product-accordion-body a { color: var(--burgundy); text-decoration: underline; }
+  .product-accordion-body img { max-width: 100%; height: auto; border-radius: var(--radius-md); margin: 1em 0; }
+  .product-accordion-body table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.8125rem; }
+  .product-accordion-body th,
+  .product-accordion-body td { text-align: left; padding: 0.5em 0.6em; border-bottom: 1px solid var(--border-color, #E5DFD6); }
+
+  /* A long ingredient list is a reference, not a read. Cap it and let people
+     open it rather than pushing the rest of the page below a screen of text. */
+  .product-accordion-body.is-clamped { max-height: 22rem; overflow: hidden; position: relative; }
+  .product-accordion-body.is-clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 5rem;
+    background: linear-gradient(to bottom, transparent, var(--prod-bg, #FFF));
+    pointer-events: none;
+  }
+  .accordion-more {
+    display: inline-block; margin-top: 0.5rem; padding: 0; border: 0; background: none;
+    font-size: 0.8125rem; font-weight: 600; color: var(--burgundy); cursor: pointer;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
   .product-accordion-body.open { display: block; }
   .product-accordion-btn i { transition: transform 0.2s; }
   .product-accordion-btn.open i { transform: rotate(180deg); }
@@ -173,14 +265,20 @@
 <!-- ══════════ BREADCRUMB ══════════ -->
 <div style="padding:calc(var(--nav-height) + 1.25rem) 0 0;background:var(--prod-bg);">
   <div class="container">
-    <div class="breadcrumb">
+    {%- comment -%}
+      Uniform on every product. Picking the first "descriptive" collection gave
+      Choc Hearts three levels and the other two only two, because only one of
+      them happens to sit in a category collection. The shop is the real parent
+      of every product, so it is always the middle crumb.
+    {%- endcomment -%}
+    {%- assign shop = collections[section.settings.breadcrumb_collection] | default: collections['frontpage'] -%}
+    <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="{{ routes.root_url }}">Home</a>
-      <span class="breadcrumb-sep">›</span>
-      {%- if product.collections.size > 0 -%}
-        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
-        <span class="breadcrumb-sep">›</span>
-      {%- endif -%}
-      <span>{{ product.title }}</span>
+      <span class="breadcrumb-sep" aria-hidden="true">/</span>
+      <a href="{{ shop.url | default: routes.all_products_collection_url }}">{{ section.settings.breadcrumb_label | default: 'Shop' }}</a>
+      <span class="breadcrumb-sep" aria-hidden="true">/</span>
+      <span class="breadcrumb-current" aria-current="page">{{ product.title }}</span>
+    </nav>
     </div>
   </div>
 </div>
@@ -191,22 +289,57 @@
     <div class="product-grid">
 
       <!-- ── GALLERY ── -->
+      {%- comment -%}
+        A scroll-snap track rather than one image whose src gets swapped, so
+        the gallery can be swiped on touch and still driven by the thumbnails
+        on desktop. Keyboard and no-JS both fall back to plain scrolling.
+      {%- endcomment -%}
       <div class="product-gallery">
-        <!-- Main image -->
-        <div class="product-main-img" id="product-main-image" onclick="openLightbox()">
-          {%- if product.featured_image -%}
-            {{ product.featured_image | image_url: width: 800 | image_tag: id: 'main-product-img', loading: 'eager', alt: product.title }}
-          {%- else -%}
-            <div class="img-placeholder"><span>💫</span></div>
+        <div class="pg" id="pg">
+          <div class="pg__track" id="pgTrack" tabindex="0" role="group" aria-label="{{ product.title | escape }} images">
+            {%- if product.images.size > 0 -%}
+              {%- for image in product.images -%}
+                <figure class="pg__slide" data-index="{{ forloop.index0 }}">
+                  <img src="{{ image | image_url: width: 1000 }}"
+                       srcset="{{ image | image_url: width: 500 }} 500w,
+                               {{ image | image_url: width: 1000 }} 1000w,
+                               {{ image | image_url: width: 1400 }} 1400w"
+                       sizes="(max-width: 900px) 92vw, 45vw"
+                       width="{{ image.width }}" height="{{ image.height }}"
+                       alt="{{ image.alt | default: product.title | escape }}"
+                       loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                       decoding="async"
+                       data-full="{{ image | image_url: width: 1800 }}">
+                </figure>
+              {%- endfor -%}
+            {%- else -%}
+              <figure class="pg__slide"><div class="img-placeholder"><span>💫</span></div></figure>
+            {%- endif -%}
+          </div>
+
+          {%- if product.images.size > 1 -%}
+            <button type="button" class="pg__arrow pg__arrow--prev" id="pgPrev" aria-label="Previous image">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button type="button" class="pg__arrow pg__arrow--next" id="pgNext" aria-label="Next image">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <div class="pg__dots" id="pgDots" aria-hidden="true">
+              {%- for image in product.images -%}
+                <span class="pg__dot{% if forloop.first %} is-active{% endif %}"></span>
+              {%- endfor -%}
+            </div>
           {%- endif -%}
         </div>
-        <!-- Thumbnails -->
+
         {%- if product.images.size > 1 -%}
-          <div class="product-thumbs">
-            {%- for image in product.images limit: 8 -%}
-              <div class="product-thumb{% if forloop.first %} active{% endif %}" onclick="switchImage('{{ image | image_url: width: 800 }}', this)">
-                {{ image | image_url: width: 150 | image_tag: loading: 'lazy', alt: product.title }}
-              </div>
+          <div class="product-thumbs" id="pgThumbs">
+            {%- for image in product.images -%}
+              <button type="button" class="product-thumb{% if forloop.first %} active{% endif %}"
+                      data-index="{{ forloop.index0 }}"
+                      aria-label="Show image {{ forloop.index }} of {{ product.images.size }}">
+                {{ image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}
+              </button>
             {%- endfor -%}
           </div>
         {%- endif -%}
@@ -225,7 +358,7 @@
         <div class="product-tags">
           {%- if is_bestseller -%}<span class="product-tag" style="background:{{ settings.badge_bestseller_bg | default: 'var(--burgundy)' }};color:{{ settings.badge_bestseller_text | default: 'var(--cream)' }};border-color:transparent;">Bestseller</span>{%- endif -%}
           {%- if is_limited -%}<span class="product-tag" style="background:{{ settings.badge_limited_bg | default: 'var(--gold)' }};color:{{ settings.badge_limited_text | default: 'var(--espresso)' }};border-color:transparent;">Limited</span>{%- endif -%}
-          {%- if product.compare_at_price > product.price -%}<span class="product-tag" style="background:{{ settings.badge_sale_bg | default: '#8B2E4F' }};color:{{ settings.badge_sale_text | default: '#FFFFFF' }};border-color:transparent;">Sale</span>{%- endif -%}
+          {%- assign svar = product.selected_or_first_available_variant -%}{%- if svar.compare_at_price > svar.price -%}<span class="product-tag" style="background:{{ settings.badge_sale_bg | default: '#8B2E4F' }};color:{{ settings.badge_sale_text | default: '#FFFFFF' }};border-color:transparent;">Sale</span>{%- endif -%}
         </div>
 
         <h1 class="product-title">{{ product.title }}</h1>
@@ -236,23 +369,28 @@
         {%- comment -%} Value proposition — visible above the fold {%- endcomment -%}
         {%- if product.handle == 'playmate-chocolate' -%}
           <p class="product-subtitle" style="color:var(--espresso);font-weight:500;font-size:1rem;line-height:1.6;margin-bottom:1.25rem;">
-            A structured date night ritual in a box. Dark chocolate infused with maca &amp; ashwagandha, conversation cards, soy candle and a step-by-step ritual guide. Everything you need — nothing to plan.
+            A structured date night ritual in a box. Dark chocolate infused with maca &amp; ashwagandha, conversation cards, soy candle and a step-by-step ritual guide. Everything you need, nothing to plan.
           </p>
         {%- endif -%}
 
         <!-- Rating -->
+        {%- if product.metafields.reviews.rating != blank -%}
         <div class="product-rating-row">
           <div class="product-stars">★★★★★</div>
-          <span class="product-rating-num">4.9</span>
-          <a href="#product-reviews" class="product-review-count">{{ product.metafields.reviews.rating_count | default: '2,400+' }} reviews</a>
+          <span class="product-rating-num">{{ product.metafields.reviews.rating }}</span>
+          {%- if product.metafields.reviews.rating_count != blank -%}
+            <a href="#product-reviews" class="product-review-count">{{ product.metafields.reviews.rating_count }} reviews</a>
+          {%- endif -%}
         </div>
+        {%- endif -%}
 
         <!-- Price -->
         <div class="product-price-row">
-          <span class="product-price">{{ product.selected_or_first_available_variant.price | money }}</span>
-          {%- if product.compare_at_price > product.price -%}
-            <span class="product-compare-price">{{ product.compare_at_price | money }}</span>
-            <span class="product-save-badge">Save {{ product.compare_at_price | minus: product.price | money }}</span>
+          {%- assign pvar = product.selected_or_first_available_variant -%}
+          <span class="product-price">{{ pvar.price | money }}</span>
+          {%- if pvar.compare_at_price > pvar.price -%}
+            <span class="product-compare-price">{{ pvar.compare_at_price | money }}</span>
+            <span class="product-save-badge">Save {{ pvar.compare_at_price | minus: pvar.price | money }}</span>
           {%- endif -%}
         </div>
 
@@ -296,7 +434,7 @@
                 <label style="font-size:0.8125rem;font-weight:600;display:block;margin-bottom:0.375rem;">Delivery frequency</label>
                 <select id="sub-selling-plan" class="sub-frequency-select" style="padding:0.4rem 0.75rem;border-radius:var(--radius-md);border:1.5px solid var(--border-light);font-size:0.875rem;background:white;width:100%;">
                   {%- for alloc in product.selected_or_first_available_variant.selling_plan_allocations -%}
-                    <option value="{{ alloc.selling_plan.id }}">{{ alloc.selling_plan.name }} — {{ alloc.per_delivery_price | money }}</option>
+                    <option value="{{ alloc.selling_plan.id }}">{{ alloc.selling_plan.name }}, {{ alloc.per_delivery_price | money }}</option>
                   {%- endfor -%}
                 </select>
               </div>
@@ -324,12 +462,12 @@
         {%- if product.selected_or_first_available_variant.inventory_quantity > 0 and product.selected_or_first_available_variant.inventory_quantity < 20 -%}
           <div class="product-urgency">
             <div class="product-urgency-dot"></div>
-            <span>Only <strong>{{ product.selected_or_first_available_variant.inventory_quantity }}</strong> left — order soon</span>
+            <span>Only <strong>{{ product.selected_or_first_available_variant.inventory_quantity }}</strong> left, order soon</span>
           </div>
         {%- elsif is_limited -%}
           <div class="product-urgency">
             <div class="product-urgency-dot"></div>
-            <span>Limited edition — <strong>47 of 200</strong> kits remaining</span>
+            <span>Limited edition</span>
           </div>
         {%- endif -%}
 
@@ -348,7 +486,7 @@
             <button type="submit" class="product-atc-btn" id="atc-btn"
               {% unless product.available %}disabled{% endunless %}>
               <i class="fas fa-shopping-bag"></i>
-              {%- if product.available -%}<span id="atc-label">Add to Cart — {{ product.selected_or_first_available_variant.price | money }}</span>{%- else -%}Sold Out{%- endif -%}
+              {%- if product.available -%}<span id="atc-label">Add to Cart: {{ product.selected_or_first_available_variant.price | money }}</span>{%- else -%}Sold Out{%- endif -%}
             </button>
           </form>
         </div>
@@ -405,7 +543,7 @@
                 <div class="pcb-dropzone-idle" id="pcb-dropzone-idle">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(90,20,50,0.4)" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                   <span class="pcb-dropzone-text">{{ section.settings.pcb_upload_hint | default: 'Drop a photo here or click to browse' }}</span>
-                  <span class="pcb-dropzone-sub">JPG, PNG, PDF — max 10 MB</span>
+                  <span class="pcb-dropzone-sub">JPG, PNG or PDF, max 10 MB</span>
                 </div>
                 <div class="pcb-dropzone-preview" id="pcb-dropzone-preview" style="display:none;">
                   <img id="pcb-preview-img" src="" alt="Preview" style="display:none;">
@@ -642,9 +780,10 @@
             <button class="product-accordion-btn open" onclick="toggleAccordion(this)">
               About this product <i class="fas fa-chevron-up"></i>
             </button>
-            <div class="product-accordion-body open">
+            <div class="product-accordion-body open" id="prodDesc">
               {{ product.description }}
             </div>
+            <button type="button" class="accordion-more" id="prodDescMore" hidden>Read more</button>
           </div>
           <div class="product-accordion-item">
             <button class="product-accordion-btn" onclick="toggleAccordion(this)">
@@ -736,11 +875,11 @@
         </div>
         <div class="product-ritual-step">
           <div class="product-ritual-step-num">02</div>
-          <div><div class="product-ritual-step-title">Read the ritual guide together</div><div class="product-ritual-step-text">Open the guide and read the opening aloud — alternate paragraphs. This frames the evening and sets intentions. 10 minutes.</div></div>
+          <div><div class="product-ritual-step-title">Read the ritual guide together</div><div class="product-ritual-step-text">Open the guide and read the opening aloud, alternating paragraphs. This frames the evening and sets intentions. 10 minutes.</div></div>
         </div>
         <div class="product-ritual-step">
           <div class="product-ritual-step-num">03</div>
-          <div><div class="product-ritual-step-title">Break the chocolate</div><div class="product-ritual-step-text">Follow the tasting ritual in the guide — smell, snap, taste slowly. Use the prompt cards to guide your observations. 15–20 minutes.</div></div>
+          <div><div class="product-ritual-step-title">Break the chocolate</div><div class="product-ritual-step-text">Follow the tasting ritual in the guide: smell, snap, taste slowly. Use the prompt cards to guide your observations. 15–20 minutes.</div></div>
         </div>
         <div class="product-ritual-step">
           <div class="product-ritual-step-num">04</div>
@@ -756,48 +895,22 @@
 </section>
 {%- endif -%}
 
-<!-- ══════════ REVIEWS ══════════ -->
-<section class="product-reviews-section" id="product-reviews">
-  <div class="container">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
-      <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--prod-desc-h);">What couples say</h2>
-      <div class="product-reviews-summary">
-        <div class="product-reviews-overall">
-          <div class="product-reviews-score">4.9</div>
-          <div class="product-reviews-stars-large">★★★★★</div>
-          <p style="font-size:0.8125rem;color:var(--prod-desc-tx);">{{ product.metafields.reviews.rating_count | default: '2,400+' }} reviews</p>
-        </div>
-      </div>
-    </div>
+{%- comment -%}
+  REVIEWS — removed 2026-09-18.
 
-    {%- if product.metafields.reviews.rating_count > 0 -%}
-      {%- comment -%} Placeholder for actual review app integration (Judge.me, Okendo, etc.) {%- endcomment -%}
-      <div id="shopify-product-reviews" data-id="{{ product.id }}">{{ product.metafields.reviews.body }}</div>
-    {%- else -%}
-      <!-- Static fallback reviews -->
-      <div class="product-reviews-grid">
-        <div class="product-review-card">
-          <div class="product-review-stars">★★★★★</div>
-          <p class="product-review-text">"This genuinely changed how we spend our Friday evenings. The structure of the ritual guide is genius — we stayed up until 2am talking. Worth every penny."</p>
-          <div><div class="product-review-author">Sarah & James T.</div><div class="product-review-meta">Verified purchase · London · January 2025</div></div>
-        </div>
-        <div class="product-review-card">
-          <div class="product-review-stars">★★★★★</div>
-          <p class="product-review-text">"Bought as a Christmas gift for my partner. We both expected it to feel like a gimmick — it absolutely did not. The chocolate alone is extraordinary. The conversation cards were surprisingly deep."</p>
-          <div><div class="product-review-author">Priya M.</div><div class="product-review-meta">Verified purchase · Manchester · December 2024</div></div>
-        </div>
-        <div class="product-review-card">
-          <div class="product-review-stars">★★★★★</div>
-          <p class="product-review-text">"We're three years in and we needed something new. The Velvet Hour gave us a proper evening that felt intentional. The candle smells incredible and the kit is beautifully packaged."</p>
-          <div><div class="product-review-author">Chris & Dan K.</div><div class="product-review-meta">Verified purchase · Edinburgh · January 2025</div></div>
-        </div>
-      </div>
-      <div class="text-center" style="margin-top:2rem;">
-        <a href="#product-reviews" class="btn btn-secondary btn-lg" style="pointer-events:none;opacity:0.6;">2,400+ verified reviews</a>
-      </div>
-    {%- endif -%}
-  </div>
-</section>
+  This block rendered a hardcoded 4.9 score, a "2,400+ verified reviews"
+  figure and three invented testimonials carrying full names, cities, dates
+  and a "Verified purchase" label, on every product page. None of it was
+  sourced; no review app is installed on the store.
+
+  Presenting fabricated reviews as genuine is prohibited under the Digital
+  Markets, Competition and Consumers Act 2024, so this is not something to
+  leave switched off and forget about.
+
+  To bring reviews back, install a review app (Judge.me, Okendo, Loox) and
+  render its block here. The rating line beside the product title already
+  reads product.metafields.reviews.rating and stays hidden until that is set.
+{%- endcomment -%}
 
 <!-- ══════════ RELATED PRODUCTS ══════════ -->
 <section class="product-related section" style="background:white;">
@@ -807,26 +920,36 @@
       <h2 class="heading-lg">Complete your ritual</h2>
     </div>
     <div class="related-grid">
-      {%- assign related_collection = collections['ritual-add-ons'] | default: collections['all'] -%}
-      {%- for related in related_collection.products limit: 4 -%}
+      {%- comment -%}
+        collections['all'] contains every product in the store, duplicates and
+        all, which is how the same item appeared three times here. Read from
+        the curated collection instead, drop the product being viewed, and
+        de-duplicate by title so two Shopify products for the same physical
+        item cannot both appear.
+      {%- endcomment -%}
+      {%- assign related_collection = collections[section.settings.related_collection] -%}
+      {%- if related_collection == blank or related_collection.products.size == 0 -%}
+        {%- assign related_collection = collections['frontpage'] -%}
+      {%- endif -%}
+      {%- assign seen_titles = '' -%}
+      {%- assign shown = 0 -%}
+      {%- for related in related_collection.products -%}
+        {%- if shown >= section.settings.related_count -%}{%- break -%}{%- endif -%}
         {%- unless related.id == product.id -%}
-          {% render 'product-card', product: related %}
+          {%- assign key = related.title | downcase | strip | append: '||' -%}
+          {%- unless seen_titles contains key -%}
+            {%- assign seen_titles = seen_titles | append: key -%}
+            {%- assign shown = shown | plus: 1 -%}
+            {% render 'product-card', product: related,
+               show_badge: true, show_quick_add: true, show_cta: true %}
+          {%- endunless -%}
         {%- endunless -%}
-      {%- else -%}
-        <!-- Static placeholders -->
-        {%- for i in (1..4) -%}
-          <div style="background:var(--ivory);border-radius:var(--radius-xl);overflow:hidden;border:1px solid var(--border-light);">
-            <div style="height:180px;background:linear-gradient(135deg,#1A0A06,#3D1A2E);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">
-              {%- assign icons = '🍫,🕯️,🃏,📖' | split: ',' -%}{{ icons[forloop.index0] }}
-            </div>
-            <div style="padding:1rem;">
-              <p style="font-size:0.875rem;font-weight:600;margin-bottom:0.25rem;color:var(--espresso);">Ritual Add-On {{ i }}</p>
-              <p style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:0.75rem;">Perfect companion</p>
-              <p style="font-weight:600;color:var(--burgundy);">from £24</p>
-            </div>
-          </div>
-        {%- endfor -%}
       {%- endfor -%}
+      {%- comment -%}
+        A placeholder grid of invented "Ritual Add-On" cards priced "from £24"
+        stood here for the empty case. With a curated collection it never
+        fired, and a fake product is worse than an absent row.
+      {%- endcomment -%}
     </div>
   </div>
 </section>
@@ -843,13 +966,80 @@
 </div>
 
 <script>
-  // Gallery switcher
-  function switchImage(src, thumb) {
-    var img = document.getElementById('main-product-img');
-    if (img) img.src = src;
-    document.querySelectorAll('.product-thumb').forEach(function(t) { t.classList.remove('active'); });
-    if (thumb) thumb.classList.add('active');
-  }
+  // Clamp the description only when it is genuinely long, so short ones are
+  // not given a pointless "read more".
+  (function () {
+    var body = document.getElementById('prodDesc');
+    var btn  = document.getElementById('prodDescMore');
+    if (!body || !btn) return;
+    if (body.scrollHeight <= 352) return;            // 22rem
+    body.classList.add('is-clamped');
+    btn.hidden = false;
+    btn.addEventListener('click', function () {
+      var open = body.classList.toggle('is-clamped');
+      btn.textContent = open ? 'Read more' : 'Read less';
+    });
+  })();
+
+  // Gallery: the track is the source of truth. Thumbnails and arrows scroll it,
+  // and whatever it lands on updates them back, so swipe and click stay in sync.
+  (function () {
+    var track = document.getElementById('pgTrack');
+    if (!track) return;
+    var slides = [].slice.call(track.querySelectorAll('.pg__slide'));
+    var thumbs = [].slice.call(document.querySelectorAll('#pgThumbs .product-thumb'));
+    var dots   = [].slice.call(document.querySelectorAll('#pgDots .pg__dot'));
+    var prev   = document.getElementById('pgPrev');
+    var next   = document.getElementById('pgNext');
+    var current = 0;
+
+    function goTo(i, smooth) {
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      track.scrollTo({ left: slides[i].offsetLeft - track.offsetLeft,
+                       behavior: smooth === false ? 'auto' : 'smooth' });
+    }
+    function mark(i) {
+      if (i === current) return;
+      current = i;
+      thumbs.forEach(function (t, n) { t.classList.toggle('active', n === i); });
+      dots.forEach(function (d, n) { d.classList.toggle('is-active', n === i); });
+      if (prev) prev.disabled = (i === 0);
+      if (next) next.disabled = (i === slides.length - 1);
+    }
+
+    thumbs.forEach(function (t) {
+      t.addEventListener('click', function () { goTo(parseInt(t.dataset.index, 10)); });
+    });
+    if (prev) prev.addEventListener('click', function () { goTo(current - 1); });
+    if (next) next.addEventListener('click', function () { goTo(current + 1); });
+
+    track.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); goTo(current + 1); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(current - 1); }
+    });
+
+    // Report the slide nearest the middle of the viewport, so a half-swipe
+    // that snaps back does not leave the thumbnails pointing at the wrong one.
+    var tick;
+    track.addEventListener('scroll', function () {
+      clearTimeout(tick);
+      tick = setTimeout(function () {
+        var mid = track.scrollLeft + track.clientWidth / 2, best = 0, dist = Infinity;
+        slides.forEach(function (s, n) {
+          var c = s.offsetLeft - track.offsetLeft + s.offsetWidth / 2;
+          if (Math.abs(c - mid) < dist) { dist = Math.abs(c - mid); best = n; }
+        });
+        mark(best);
+      }, 90);
+    }, { passive: true });
+
+    track.addEventListener('click', function (e) {
+      if (e.target.tagName === 'IMG' && typeof openLightbox === 'function') openLightbox();
+    });
+
+    if (prev) prev.disabled = true;
+    if (next) next.disabled = slides.length < 2;
+  })();
 
   // Quantity adjuster
   function adjustQty(delta) {
@@ -917,9 +1107,9 @@
       // Update ATC button label price
       if (atcLabelEl) {
         if (isSubscription && freqSelect && planPrices[freqSelect.value]) {
-          atcLabelEl.textContent = 'Subscribe — ' + planPrices[freqSelect.value] + ' / delivery';
+          atcLabelEl.textContent = 'Subscribe: ' + planPrices[freqSelect.value] + ' / delivery';
         } else if (onetimePriceEl) {
-          atcLabelEl.textContent = 'Add to Cart — ' + onetimePriceEl.textContent;
+          atcLabelEl.textContent = 'Add to Cart: ' + onetimePriceEl.textContent;
         }
       }
     }
@@ -1030,7 +1220,7 @@ window.playmatelabsVariants = {{ product.variants | json }};
       "type": "text",
       "id": "pcb_message_placeholder",
       "label": "Message placeholder",
-      "default": "Write something meaningful\u2026"
+      "default": "Write something meaningful…"
     },
     {
       "type": "text",
@@ -1055,6 +1245,39 @@ window.playmatelabsVariants = {{ product.variants | json }};
       "id": "pcb_upload_hint",
       "label": "Upload dropzone hint",
       "default": "Drop a photo here or click to browse"
+    },
+    {
+      "type": "header",
+      "content": "Related products"
+    },
+    {
+      "type": "collection",
+      "id": "related_collection",
+      "label": "Suggest products from"
+    },
+    {
+      "type": "range",
+      "id": "related_count",
+      "label": "How many to show",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Breadcrumb"
+    },
+    {
+      "type": "collection",
+      "id": "breadcrumb_collection",
+      "label": "Parent collection"
+    },
+    {
+      "type": "text",
+      "id": "breadcrumb_label",
+      "label": "Parent label",
+      "default": "Shop"
     }
   ]
 }

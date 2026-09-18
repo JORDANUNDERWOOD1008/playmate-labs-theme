@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "current": {
     "favicon": "shopify://shop_images/PLAYMATE-WHITE.png",
@@ -15,24 +6,22 @@
     "color_cream": "#F5EFE6",
     "color_espresso": "#1A0A06",
     "announcement_bar_enable": true,
-    "announcement_bar_text": "✦ New Drop: The Velvet Hour — Limited to 200 kits.",
-    "announcement_bar_link_text": "Shop Now",
-    "announcement_bar_link": "/collections/monthly-drops",
+    "announcement_bar_text": "Free UK delivery over £60 · Plain, discreet packaging",
+    "announcement_bar_link_text": "Shop the range",
+    "announcement_bar_link": "/collections/all",
     "cart_cross_sell_enable": true,
     "newsletter_popup_enable": true,
     "newsletter_popup_delay": 8,
-    "newsletter_popup_heading": "Unlock Your Free Virtual Sensory Experience",
+    "newsletter_popup_heading": "Be first to the next drop",
     "klaviyo_public_api_key": "WRMcvT",
     "klaviyo_popup_list_id": "VjQk5W",
     "klaviyo_footer_list_id": "VjQk5W",
-    "newsletter_popup_subtext": "Plus early access to drops, exclusive events and rituals designed for modern relationships.",
-    "newsletter_popup_cta": "Unlock Free Experience",
+    "newsletter_popup_subtext": "Early access to new products, drops and events. Nothing else.",
+    "newsletter_popup_cta": "Join the list",
     "social_instagram_link": "",
     "social_tiktok_link": "",
     "social_pinterest_link": "",
     "social_spotify_link": "",
-    "type_header_font": "playfair_display_n4",
-    "type_body_font": "inter_n4",
     "products_per_row": "4",
     "quick_add_enable": true,
     "show_age_gate": false,
@@ -43,133 +32,36 @@
         "type": "header",
         "settings": {
           "section_hidden": false,
-          "logo_width": 120,
           "dark_style": true,
           "menu": "main-menu",
           "mobile_menu": "main-menu",
           "show_experience_cta": true,
           "url_experience": "",
-          "url_monthly_drops": ""
-        }
-      },
-      "home-hero": {
-        "type": "home-hero",
-        "settings": {
-          "section_hidden": false,
-          "hero_bg_image": "shopify://shop_images/6be86923-b928-4928-a089-c1f290f31af0.png",
-          "mobile_hero_image": "shopify://shop_images/ae3e7b79-5ecb-4bf8-b041-39c0c1d2714e.png",
-          "eyebrow": "A new culture of connection",
-          "headline": "<p>Rewriting how <em>couples</em> do date night.</p>",
-          "subheadline": "Novel intimate sensory experiences, monthly date night rituals for modern relationships.",
-          "cta_primary_text": "Claim free sensory experience",
-          "cta_primary_url": "",
-          "cta_secondary_text": "Shop the Latest Drop",
-          "cta_secondary_url": "shopify://products/playmate-chocolate",
-          "trust_rating": "25,000+ happy couples",
-          "trust_shipping": "Free shipping over £60"
-        }
-      },
-      "home-featured-drop": {
-        "type": "home-featured-drop",
-        "settings": {
-          "section_hidden": false,
-          "eyebrow": "This Month's Drop",
-          "heading": "The Velvet Hour",
-          "subheading": "An evening ritual for two. Dark chocolate, warm amber candlelight and a game that turns conversation into connection.",
-          "drop_product": "massage-candle",
-          "drop_badge": "Drop 08 — Jan 2025",
-          "limit_badge": "Limited 200 Kits",
-          "drop_tagline": "A ritual for modern romance.",
-          "drop_desc": "",
-          "drop_includes": "72% Madagascan Dark Chocolate Ritual Bar (120g)|Amber Vetiver Hand-poured Candle (150ml)|The Connection Game — 52 card deck|Velvet Hour Ritual Guide|Digital companion experience access|Luxury gift packaging",
-          "drop_price": "£68",
-          "cta_text": "",
-          "cta_url": "",
-          "hide_shop_cta": true,
-          "urgency_text": "47 kits remaining. Drop closes January 31st.",
-          "show_waitlist": true,
-          "waitlist_trigger_text": "Notify Me",
-          "waitlist_cta_text": "Join Waitlist",
-          "waitlist_email_placeholder": "Enter your email",
-          "waitlist_phone_placeholder": "Enter your phone number",
-          "waitlist_microcopy": "Be the first to know when this drop becomes available."
-        }
-      },
-      "home-product-grid": {
-        "type": "home-product-grid",
-        "settings": {
-          "section_hidden": false,
-          "eyebrow": "The Collection",
-          "heading": "Rituals worth staying in for.",
-          "collection": "",
-          "products_limit": 8,
-          "view_all_text": "View All Products",
-          "view_all_url": ""
-        }
-      },
-      "value-strip": {
-        "type": "value-strip",
-        "settings": {
-          "section_hidden": false
-        }
-      },
-      "how-it-works": {
-        "type": "how-it-works",
-        "settings": {
-          "section_hidden": false
-        }
-      },
-      "social-proof": {
-        "type": "social-proof",
-        "settings": {
-          "section_hidden": false
-        }
-      },
-      "experience-cta": {
-        "type": "experience-cta",
-        "settings": {
-          "section_hidden": false
-        }
-      },
-      "events-preview": {
-        "type": "events-preview",
-        "settings": {
-          "section_hidden": false,
-          "eyebrow": "Upcoming Experiences",
-          "heading": "Experiences worth dressing up for.",
-          "subheading": "IRL events, sensory pop-ups and couples experiences across the UK — and beyond.",
-          "view_all_url": "",
-          "view_all_label": "",
-          "hide_view_all": true,
-          "waitlist_cta_label": "Join Waitlist",
-          "modal_eyebrow": "Upcoming Experiences",
-          "modal_heading": "Upcoming Playmate Labs Experiences",
-          "modal_intro": "Be the first to know about our upcoming events, pop-ups and immersive experiences.",
-          "modal_email_placeholder": "Enter your email",
-          "modal_cta_text": "Join Event Waitlist",
-          "modal_microcopy": "You'll be the first to hear about Playmate Labs events, pop-ups and immersive experiences."
-        }
-      },
-      "journal-preview": {
-        "type": "journal-preview",
-        "settings": {
-          "section_hidden": false
-        }
-      },
-      "email-capture": {
-        "type": "email-capture",
-        "settings": {
-          "dark_bg": true,
-          "section_id": "email-capture",
-          "eyebrow": "Something Special For You",
-          "heading": "Unlock Your Free Virtual Sensory Experience",
-          "subtext": "",
-          "show_phone": true,
-          "email_placeholder": "Your email address",
-          "phone_placeholder": "Phone (for SMS drops — optional)",
-          "cta_text": "Unlock Free Experience",
-          "disclaimer": "No spam. Unsubscribe anytime.",
-          "success_message": "You're in! Check your inbox for your free experience."
+          "url_monthly_drops": "",
+          "logo_height": 40,
+          "logo_height_mobile": 32,
+          "pill_bg": "#020202",
+          "pill_text": "#FFFFFF",
+          "pill_logo_height": 26,
+          "pill_logo_height_mobile": 20,
+          "pill_height": 48,
+          "pill_height_mobile": 40,
+          "pill_inner_gap": 12,
+          "pill_cart_accent": true,
+          "pill_overlay": true,
+          "pill_hide_menu": true,
+          "pill_link_color": "#1A1A1A",
+          "pill_cta_bg": "#FFFFFF",
+          "pill_cta_text": "#000000",
+          "pill_cart_bg": "#FFFFFF",
+          "pill_cart_text": "#000000",
+          "pill_icon_color": "#FFFFFF",
+          "menu_collection": "frontpage",
+          "menu_shop_label": "Shop",
+          "menu_product_limit": 6,
+          "stockist_text": "Become a stockist",
+          "stockist_url": "/pages/stockists",
+          "menu_cart_label": "Cart"
         }
       },
       "footer": {
@@ -209,6 +101,47 @@
           "padding_top": 60,
           "padding_bottom": 60
         }
+      },
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "blocks": {
+          "m1": {
+            "type": "message",
+            "settings": {
+              "text": "Free shipping over £60",
+              "url": ""
+            }
+          },
+          "m2": {
+            "type": "message",
+            "settings": {
+              "text": "New here? Scratch for up to 60% off",
+              "url": ""
+            }
+          },
+          "m3": {
+            "type": "message",
+            "settings": {
+              "text": "Designed and made in the UK",
+              "url": ""
+            }
+          }
+        },
+        "block_order": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "settings": {
+          "show_arrows": true,
+          "rotate_seconds": 5,
+          "height": 40,
+          "height_mobile": 38,
+          "text_size": 12,
+          "text_size_mobile": 11,
+          "bg_color": "#1A0A06",
+          "text_color": "#F5EFE6"
+        }
       }
     },
     "content_for_index": [],
@@ -218,6 +151,56 @@
         "disabled": false,
         "settings": {}
       }
-    }
+    },
+    "font_heading": "jost_n4",
+    "font_body": "inter_n4",
+    "header_is_pills": true,
+    "scratch_popup_enable": true,
+    "scratch_bg": "shopify://shop_images/popup-scratch-bg-desktop.png",
+    "scratch_bg_mobile": "shopify://shop_images/popup-scratch-bg-mobile.png",
+    "scratch_bg_pos": "right center",
+    "scratch_bg_pos_m": "center bottom",
+    "scratch_halign": "flex-start",
+    "scratch_valign": "center",
+    "scratch_valign_m": "flex-start",
+    "scratch_text_align": "center",
+    "scratch_text_align_m": "center",
+    "scratch_width": 420,
+    "scratch_pad": 48,
+    "scratch_pad_m": 32,
+    "scratch_bg_color": "#FFFFFF",
+    "scratch_heading": "Try your luck",
+    "scratch_sub": "Scratch below to see what you get",
+    "scratch_prize_lead": "You've got",
+    "scratch_heading_color": "#6B1E3A",
+    "scratch_sub_color": "#4A4A4A",
+    "scratch_prize_color": "#6B1E3A",
+    "scratch_btn_bg": "#6B1E3A",
+    "scratch_btn_text": "#F5EFE6",
+    "scratch_foil_from": "#E8D7AE",
+    "scratch_foil_to": "#B08D4F",
+    "scratch_mobile_layout": "split",
+    "scratch_img_h_m": 52,
+    "font_accent": "heading",
+    "custom_font_enable": true,
+    "custom_font_url": "https://use.typekit.net/zmd5rwh.css",
+    "custom_font_family": "futura-pt",
+    "custom_font_weight": "700",
+    "custom_font_fallback": "Jost, 'Century Gothic', sans-serif",
+    "custom_font_body": false,
+    "scratch_prize_bg": "#F5EFE6",
+    "scratch_delay": 6,
+    "scratch_prize": "Up to 60% off",
+    "scratch_code": "WELCOME10",
+    "scratch_smallprint": "One use per customer. By signing up you agree to receive marketing emails.",
+    "scratch_claim": "Claim",
+    "scratch_cta": "Continue",
+    "scratch_email_prompt": "Enter your email to get your deal",
+    "scratch_placeholder": "Your email address",
+    "scratch_trigger": "tab",
+    "scratch_tab_label": "Try your luck?",
+    "scratch_tab_side": "right",
+    "scratch_tab_bg": "#6B1E3A",
+    "scratch_tab_text": "#FFFFFF"
   }
 }

@@ -1,18 +1,61 @@
-{%- if section.settings.section_hidden == false -%}
+{% render 'section-style', section: section %}
 {% comment %}
   PLAYMATE LABS — HOME PRODUCT GRID SECTION
   File: sections/home-product-grid.liquid
 {% endcomment %}
 
-<section class="section home-products" id="shop-preview">
+{%- style -%}
+  #shopify-section-{{ section.id }} .home-products {
+    --card-cols-mobile: {{ section.settings.mobile_columns }};
+    --card-gap-mobile: {{ section.settings.mobile_gap }}px;
+    --card-w-mobile: {{ section.settings.mobile_card_width }}vw;
+    --card-cta-bg: {{ section.settings.card_cta_bg }};
+    --card-cta-fg: {{ section.settings.card_cta_fg }};
+    --card-qa-bg: {{ section.settings.card_qa_bg }};
+    --card-qa-fg: {{ section.settings.card_qa_icon }};
+    --card-star-color: {{ section.settings.card_star_color }};
+    --card-viewall-bg: {{ section.settings.viewall_tile_bg }};
+    --card-viewall-fg: {{ section.settings.viewall_tile_text }};
+    --card-viewall-dot: {{ section.settings.viewall_tile_dot }};
+    --card-viewall-dot-fg: {{ section.settings.viewall_tile_dot_icon }};
+    --card-align: {{ section.settings.card_text_align }};
+    --card-align-flex: {% if section.settings.card_text_align == 'center' %}center{% elsif section.settings.card_text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
+  }
+  #shopify-section-{{ section.id }} .home-products .btn-secondary {
+    background-color: {{ section.settings.viewall_btn_bg }};
+    color: {{ section.settings.viewall_btn_label_color }};
+    border: 1px solid {{ section.settings.viewall_btn_border }};
+  }
+{%- endstyle -%}
+<section class="section home-products home-products--{{ section.settings.mobile_layout }}" id="shop-preview">
   <div class="container">
-    <div class="section-header reveal">
-      <span class="section-eyebrow">{{ section.settings.eyebrow | default: 'The Collection' }}</span>
-      <h2 class="heading-xl">{{ section.settings.heading | default: 'Rituals worth staying in for.' }}</h2>
-      <div class="section-divider"></div>
-    </div>
+    {%- comment -%}
+      No `default:` fallback here on purpose: clearing the fields in the
+      editor has to actually remove the header, not silently restore
+      placeholder copy.
+    {%- endcomment -%}
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+      <div class="section-header reveal">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="heading-xl">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.show_divider -%}<div class="section-divider"></div>{%- endif -%}
+      </div>
+    {%- endif -%}
 
     {%- comment -%} Category Pills {%- endcomment -%}
+    {%- comment -%}
+      Only worth showing once there is something to filter between. With no
+      category blocks this rendered a single "All" pill, which is noise.
+    {%- endcomment -%}
+    {%- assign category_blocks = 0 -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'category' -%}{%- assign category_blocks = category_blocks | plus: 1 -%}{%- endif -%}
+    {%- endfor -%}
+    {%- if category_blocks > 0 -%}
     <div class="shop-category-pills">
       <button class="category-pill active" data-filter="all">All</button>
       {%- for block in section.blocks -%}
@@ -23,30 +66,59 @@
         {%- endif -%}
       {%- endfor -%}
     </div>
+    {%- endif -%}
 
-    <div class="product-grid product-grid-4">
-      {%- assign grid_collection = collections[section.settings.collection] -%}
-      {%- if grid_collection != blank -%}
-        {%- for product in grid_collection.products limit: section.settings.products_limit -%}
-          {% render 'product-card', product: product, show_badge: true, show_quick_add: true %}
-        {%- endfor -%}
-      {%- else -%}
-        {%- comment -%} Fallback: show from all products {%- endcomment -%}
-        {%- for product in collections.all.products limit: 8 -%}
-          {% render 'product-card', product: product %}
-        {%- endfor -%}
+    {%- liquid
+      assign grid_collection = collections[section.settings.collection]
+      assign grid_products = collections.all.products
+      assign grid_limit = 8
+      if grid_collection != blank
+        assign grid_products = grid_collection.products
+        assign grid_limit = section.settings.products_limit
+      endif
+      assign viewall_href = section.settings.view_all_url | default: routes.all_products_collection_url
+    -%}
+
+    <div class="product-grid product-grid-{{ section.settings.desktop_columns }}">
+      {%- for product in grid_products limit: grid_limit -%}
+        {% render 'product-card',
+           product: product,
+           show_badge: section.settings.card_show_badge,
+           show_quick_add: section.settings.card_show_quick_add,
+           show_cat: section.settings.card_show_category,
+           show_desc: section.settings.card_show_desc,
+           show_rating: section.settings.card_show_rating,
+           show_cta: section.settings.card_show_cta,
+           cta_text: section.settings.card_cta_text %}
+      {%- endfor -%}
+
+      {%- comment -%}
+        "View all" rides in the grid as its own tile rather than a separate
+        band underneath, which is what was leaving a dead strip on mobile.
+      {%- endcomment -%}
+      {%- if section.settings.viewall_style == 'tile' -%}
+        <article class="product-card product-card--viewall">
+          <a href="{{ viewall_href }}" class="product-card-link">
+            <span class="viewall-arrow" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </span>
+            <span class="viewall-label">{{ section.settings.view_all_text | default: 'View all products' }}</span>
+          </a>
+        </article>
       {%- endif -%}
     </div>
 
-    <div style="text-align:center;margin-top:3rem;" class="reveal">
-      <a href="{{ section.settings.view_all_url | default: routes.all_products_collection_url }}"
-         class="btn btn-secondary btn-lg">
-        {{ section.settings.view_all_text | default: 'View All Products' }}
-      </a>
-    </div>
+    {%- if section.settings.viewall_style == 'button' -%}
+      <div style="text-align:center;margin-top:3rem;" class="reveal">
+        <a href="{{ viewall_href }}" class="btn btn-secondary btn-lg">
+          {{ section.settings.view_all_text | default: 'View All Products' }}
+        </a>
+      </div>
+    {%- endif -%}
   </div>
 </section>
-{%- endif -%}
 
 {% schema %}
 {
@@ -73,27 +145,24 @@
   ],
   "settings": [
     {
-      "type": "header",
-      "content": "⚙️ Section Visibility"
-    },
-    {
-      "type": "checkbox",
-      "id": "section_hidden",
-      "label": "Hide this section",
-      "default": false,
-      "info": "Tick to hide this section from the live site. Untick to show it again."
-    },
-    {
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow",
-      "default": "The Collection"
+      "default": "The Collection",
+      "info": "Leave blank to hide the section header entirely."
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Rituals worth staying in for."
+      "default": "Rituals worth staying in for.",
+      "info": "Leave blank to hide the section header entirely."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider under the header",
+      "default": true
     },
     {
       "type": "collection",
@@ -119,6 +188,419 @@
       "type": "url",
       "id": "view_all_url",
       "label": "View all link URL"
+    },
+    {
+      "type": "header",
+      "content": "🔘 View-all button"
+    },
+    {
+      "type": "color",
+      "id": "viewall_btn_bg",
+      "label": "Background",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "viewall_btn_label_color",
+      "label": "Text",
+      "default": "#6B1E3A"
+    },
+    {
+      "type": "color",
+      "id": "viewall_btn_border",
+      "label": "Border",
+      "default": "#6B1E3A"
+    },
+    {
+      "type": "header",
+      "content": "📐 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — mobile",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — mobile",
+      "default": 96
+    },
+    {
+      "type": "header",
+      "content": "✍️ Text placement"
+    },
+    {
+      "type": "select",
+      "id": "text_align_desktop",
+      "label": "Alignment — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Alignment — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_desktop",
+      "label": "Vertical position — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_mobile",
+      "label": "Vertical position — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 0,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "label": "Max content width",
+      "default": 0,
+      "info": "0 = theme default."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Section colours"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color",
+      "label": "Background — desktop"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color_mobile",
+      "label": "Background — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text — desktop"
+    },
+    {
+      "type": "color",
+      "id": "text_color_mobile",
+      "label": "Body text — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Headings — desktop"
+    },
+    {
+      "type": "color",
+      "id": "heading_color_mobile",
+      "label": "Headings — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_badge",
+      "label": "Show sale / sold-out badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_quick_add",
+      "label": "Show quick-add button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_category",
+      "label": "Show category line above title",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_desc",
+      "label": "Show short description",
+      "info": "Uses the product's custom.short_desc metafield. Nothing shows if it is empty.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_rating",
+      "label": "Show star rating",
+      "info": "Uses custom.rating and custom.rating_count. Nothing shows if they are empty.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "card_show_cta",
+      "label": "Show \"Shop now\" button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "card_cta_text",
+      "label": "Button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "select",
+      "id": "card_text_align",
+      "label": "Card text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "card_cta_bg",
+      "label": "Button background",
+      "default": "#6B1E3A"
+    },
+    {
+      "type": "color",
+      "id": "card_cta_fg",
+      "label": "Button text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_qa_bg",
+      "label": "Quick-add background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_qa_icon",
+      "label": "Quick-add icon",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "card_star_color",
+      "label": "Stars",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "range",
+      "id": "desktop_columns",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid — everything visible"
+        },
+        {
+          "value": "carousel",
+          "label": "Carousel — swipe sideways"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "select",
+      "id": "mobile_columns",
+      "label": "Columns on mobile (grid)",
+      "options": [
+        {
+          "value": "1",
+          "label": "One"
+        },
+        {
+          "value": "2",
+          "label": "Two"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "Gap on mobile",
+      "min": 6,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_width",
+      "label": "Card width on mobile (carousel)",
+      "min": 50,
+      "max": 90,
+      "step": 2,
+      "unit": "%",
+      "default": 72
+    },
+    {
+      "type": "select",
+      "id": "viewall_style",
+      "label": "Show \"view all\" as",
+      "options": [
+        {
+          "value": "tile",
+          "label": "A tile in the grid"
+        },
+        {
+          "value": "button",
+          "label": "A button underneath"
+        },
+        {
+          "value": "none",
+          "label": "Hidden"
+        }
+      ],
+      "default": "tile"
+    },
+    {
+      "type": "color",
+      "id": "viewall_tile_bg",
+      "label": "Tile background",
+      "default": "#F4F1EC"
+    },
+    {
+      "type": "color",
+      "id": "viewall_tile_text",
+      "label": "Tile text",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "viewall_tile_dot",
+      "label": "Tile arrow circle",
+      "default": "#6B1E3A"
+    },
+    {
+      "type": "color",
+      "id": "viewall_tile_dot_icon",
+      "label": "Tile arrow",
+      "default": "#FFFFFF"
     }
   ],
   "presets": [

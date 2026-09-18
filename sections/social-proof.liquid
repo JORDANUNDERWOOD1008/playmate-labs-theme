@@ -1,4 +1,4 @@
-{%- if section.settings.section_hidden == false -%}
+{% render 'section-style', section: section %}
 <!-- SOCIAL PROOF / TESTIMONIALS -->
 <section class="section social-proof" id="social-proof">
   <div class="container">
@@ -8,48 +8,41 @@
       <div class="section-divider"></div>
     </div>
 
+    {%- comment -%}
+      Block-driven so the quotes can be kept current. Three of them cited
+      products that are no longer on sale, and being hardcoded there was no way
+      to fix that without a deploy.
+    {%- endcomment -%}
     <div class="testimonials-grid">
-      <div class="testimonial-card reveal" data-delay="0">
-        <div class="star-rating" style="margin-bottom:1rem;font-size:1rem;">★★★★★</div>
-        <p class="testimonial-quote">We've tried every date night box on the market. Nothing comes close. The Velvet Hour didn't just give us things to do — it gave us a reason to actually be present with each other again.</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">S+J</div>
-          <div>
-            <p class="testimonial-name">Sophie &amp; James</p>
-            <p class="testimonial-detail">London · Velvet Hour Kit</p>
+      {%- for block in section.blocks -%}
+        <div class="testimonial-card reveal" data-delay="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+          {%- if block.settings.stars > 0 -%}
+            <div class="star-rating" style="margin-bottom:1rem;font-size:1rem;">
+              {%- for i in (1..block.settings.stars) -%}★{%- endfor -%}
+            </div>
+          {%- endif -%}
+          {%- if block.settings.quote != blank -%}
+            <p class="testimonial-quote">{{ block.settings.quote }}</p>
+          {%- endif -%}
+          <div class="testimonial-author">
+            {%- if block.settings.initials != blank -%}
+              <div class="testimonial-avatar">{{ block.settings.initials }}</div>
+            {%- endif -%}
+            <div>
+              {%- if block.settings.name != blank -%}
+                <p class="testimonial-name">{{ block.settings.name }}</p>
+              {%- endif -%}
+              {%- if block.settings.detail != blank -%}
+                <p class="testimonial-detail">{{ block.settings.detail }}</p>
+              {%- endif -%}
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="testimonial-card reveal" data-delay="1">
-        <div class="star-rating" style="margin-bottom:1rem;font-size:1rem;">★★★★★</div>
-        <p class="testimonial-quote">I bought this as a Valentine's gift thinking it was just a nice box. It turned into the best conversation we'd had in two years. Now we subscribe monthly.</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">M</div>
-          <div>
-            <p class="testimonial-name">Marcus D.</p>
-            <p class="testimonial-detail">Manchester · Monthly Subscriber</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card reveal" data-delay="2">
-        <div class="star-rating" style="margin-bottom:1rem;font-size:1rem;">★★★★★</div>
-        <p class="testimonial-quote">The 5-Day Experience was honestly better than therapy for us. Low stakes, high reward. We look forward to it every morning — it's genuinely changed our relationship.</p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">A+K</div>
-          <div>
-            <p class="testimonial-name">Aisha &amp; Kai</p>
-            <p class="testimonial-detail">Birmingham · 5-Day Experience</p>
-          </div>
-        </div>
-      </div>
+      {%- endfor -%}
     </div>
-
 
   </div>
 </section>
-{%- endif -%}
 
 {% schema %}
 {
@@ -57,20 +50,252 @@
   "settings": [
     {
       "type": "header",
-      "content": "⚙️ Section Visibility"
+      "content": "📐 Spacing"
     },
     {
-      "type": "checkbox",
-      "id": "section_hidden",
-      "label": "Hide this section",
-      "default": false,
-      "info": "Tick to hide this section from the live site. Untick to show it again."
+      "type": "range",
+      "id": "pad_top_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — mobile",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — mobile",
+      "default": 96
+    },
+    {
+      "type": "header",
+      "content": "✍️ Text placement"
+    },
+    {
+      "type": "select",
+      "id": "text_align_desktop",
+      "label": "Alignment — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Alignment — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_desktop",
+      "label": "Vertical position — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_mobile",
+      "label": "Vertical position — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 0,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "label": "Max content width",
+      "default": 0,
+      "info": "0 = theme default."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Section colours"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color",
+      "label": "Background — desktop"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color_mobile",
+      "label": "Background — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text — desktop"
+    },
+    {
+      "type": "color",
+      "id": "text_color_mobile",
+      "label": "Body text — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Headings — desktop"
+    },
+    {
+      "type": "color",
+      "id": "heading_color_mobile",
+      "label": "Headings — mobile",
+      "info": "Leave blank to use the desktop colour."
     }
   ],
   "presets": [
     {
       "name": "Social Proof",
-      "category": "Content"
+      "blocks": [
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 9,
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "limit": 9,
+      "settings": [
+        {
+          "type": "range",
+          "id": "stars",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "label": "Stars",
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote"
+        },
+        {
+          "type": "text",
+          "id": "initials",
+          "label": "Initials",
+          "info": "Shown in the circle, e.g. S+J"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name"
+        },
+        {
+          "type": "text",
+          "id": "detail",
+          "label": "Detail",
+          "info": "City and what they bought."
+        }
+      ]
     }
   ]
 }

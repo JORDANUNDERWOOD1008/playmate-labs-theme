@@ -1,10 +1,45 @@
+{% render 'section-style', section: section %}
 {% comment %}
   PLAYMATE LABS — EMAIL/SMS CAPTURE SECTION
   File: sections/email-capture.liquid
 {% endcomment %}
 
+{%- liquid
+  assign bg = section.settings.bg_image
+  assign bg_m = section.settings.bg_image_mobile | default: bg
+-%}
+{%- if bg != blank -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} .email-capture-section {
+      background-image: url({{ bg | image_url: width: 2000 }});
+      background-size: var(--sec-image-fit, cover);
+      background-position: var(--sec-image-pos, center center);
+      background-repeat: no-repeat;
+    }
+    @media (max-width: 768px) {
+      #shopify-section-{{ section.id }} .email-capture-section {
+        background-image: url({{ bg_m | image_url: width: 1000 }});
+      }
+    }
+    #shopify-section-{{ section.id }} .email-capture-section { position: relative; }
+    #shopify-section-{{ section.id }} .email-capture-section > .container { position: relative; z-index: 2; }
+    #shopify-section-{{ section.id }} .section-bg-overlay {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: var(--sec-overlay-color, #1A0A06);
+      opacity: var(--sec-overlay-opacity, 0.4);
+    }
+  {%- endstyle -%}
+{%- endif -%}
+{%- style -%}
+  #shopify-section-{{ section.id }} .email-capture-section .btn-gold {
+    background-color: {{ section.settings.submit_btn_bg }};
+    color: {{ section.settings.submit_btn_label_color }};
+    border: 1px solid {{ section.settings.submit_btn_border }};
+  }
+{%- endstyle -%}
 <section class="section email-capture-section" id="{{ section.settings.section_id | default: 'email-capture' }}"
   style="background:{% if section.settings.dark_bg %}var(--espresso){% else %}var(--cream){% endif %};">
+  {%- if section.settings.bg_image != blank -%}<div class="section-bg-overlay" aria-hidden="true"></div>{%- endif -%}
   <div class="container">
     <div class="email-capture-inner reveal">
       <div class="email-capture-content">
@@ -14,7 +49,7 @@
         <h2 style="font-family:var(--font-serif);font-size:clamp(1.75rem,3vw,2.5rem);
           color:{% if section.settings.dark_bg %}var(--cream){% else %}var(--espresso){% endif %};
           margin:0.75rem 0 1rem;line-height:1.15;">
-          {{ section.settings.heading | default: 'Unlock Your Free Virtual Sensory Experience' }}
+          {{ section.settings.heading | default: 'Be first to the next drop' }}
         </h2>
         <p style="font-size:0.9375rem;color:{% if section.settings.dark_bg %}rgba(245,239,230,0.65){% else %}var(--text-muted){% endif %};
           max-width:520px;margin-bottom:2rem;">
@@ -40,7 +75,7 @@
           {%- endif -%}
           <div style="margin-top:0.75rem;">
             <button type="submit" class="btn btn-gold btn-lg" style="width:100%;max-width:320px;">
-              {{ section.settings.cta_text | default: 'Unlock Free Experience' }}
+              {{ section.settings.cta_text | default: 'Join the list' }}
             </button>
           </div>
         </div>
@@ -65,6 +100,22 @@
   "name": "Email / SMS Capture",
   "settings": [
     {
+      "type": "header",
+      "content": "🖼️ Background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Desktop background",
+      "info": "Optional. Leave blank to keep the current gradient."
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image_mobile",
+      "label": "Mobile background",
+      "info": "Optional. Falls back to the desktop image."
+    },
+    {
       "type": "checkbox",
       "id": "dark_bg",
       "label": "Dark background",
@@ -86,7 +137,7 @@
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Unlock Your Free Virtual Sensory Experience"
+      "default": "Be first to the next drop"
     },
     {
       "type": "textarea",
@@ -115,7 +166,7 @@
       "type": "text",
       "id": "cta_text",
       "label": "CTA button text",
-      "default": "Unlock Free Experience"
+      "default": "Join the list"
     },
     {
       "type": "text",
@@ -128,6 +179,411 @@
       "id": "success_message",
       "label": "Success message",
       "default": "You're in! Check your inbox for your free experience."
+    },
+    {
+      "type": "header",
+      "content": "🔘 Submit button"
+    },
+    {
+      "type": "color",
+      "id": "submit_btn_bg",
+      "label": "Background",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "submit_btn_label_color",
+      "label": "Text",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "color",
+      "id": "submit_btn_border",
+      "label": "Border",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "header",
+      "content": "📐 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — mobile",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — mobile",
+      "default": 96
+    },
+    {
+      "type": "header",
+      "content": "🖼️ Image"
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "vh",
+      "label": "Section height — desktop",
+      "default": 0,
+      "info": "0 = size to content. Otherwise a percentage of screen height."
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "vh",
+      "label": "Section height — mobile",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "cover",
+          "label": "Cover — fill the area, crop the overflow"
+        },
+        {
+          "value": "contain",
+          "label": "Contain — show the whole image, never crop"
+        }
+      ],
+      "default": "",
+      "info": "Contain suits product shots on white — nothing gets cropped."
+    },
+    {
+      "type": "select",
+      "id": "image_fit_mobile",
+      "label": "Image fit — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Same as desktop"
+        },
+        {
+          "value": "cover",
+          "label": "Cover — fill, crop the overflow"
+        },
+        {
+          "value": "contain",
+          "label": "Contain — show it all, never crop"
+        }
+      ],
+      "default": "",
+      "info": "Contain leaves bands of backdrop above and below a photo that does not match the section shape. Cover avoids that on a phone."
+    },
+    {
+      "type": "select",
+      "id": "image_pos_desktop",
+      "label": "Focal point — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "center center",
+          "label": "Centre"
+        },
+        {
+          "value": "center top",
+          "label": "Top"
+        },
+        {
+          "value": "center bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left center",
+          "label": "Left"
+        },
+        {
+          "value": "right center",
+          "label": "Right"
+        },
+        {
+          "value": "left top",
+          "label": "Top left"
+        },
+        {
+          "value": "right top",
+          "label": "Top right"
+        },
+        {
+          "value": "left bottom",
+          "label": "Bottom left"
+        },
+        {
+          "value": "right bottom",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "",
+      "info": "Which part of the image stays in frame when it is cropped."
+    },
+    {
+      "type": "select",
+      "id": "image_pos_mobile",
+      "label": "Focal point — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "center center",
+          "label": "Centre"
+        },
+        {
+          "value": "center top",
+          "label": "Top"
+        },
+        {
+          "value": "center bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left center",
+          "label": "Left"
+        },
+        {
+          "value": "right center",
+          "label": "Right"
+        },
+        {
+          "value": "left top",
+          "label": "Top left"
+        },
+        {
+          "value": "right top",
+          "label": "Top right"
+        },
+        {
+          "value": "left bottom",
+          "label": "Bottom left"
+        },
+        {
+          "value": "right bottom",
+          "label": "Bottom right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay darkness — desktop",
+      "default": 0,
+      "info": "Darkens the image behind text. 0 = none."
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay darkness — mobile",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay colour",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "header",
+      "content": "✍️ Text placement"
+    },
+    {
+      "type": "select",
+      "id": "text_align_desktop",
+      "label": "Alignment — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Alignment — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_desktop",
+      "label": "Vertical position — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_mobile",
+      "label": "Vertical position — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 0,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "label": "Max content width",
+      "default": 0,
+      "info": "0 = theme default."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Section colours"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color",
+      "label": "Background — desktop"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color_mobile",
+      "label": "Background — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text — desktop"
+    },
+    {
+      "type": "color",
+      "id": "text_color_mobile",
+      "label": "Body text — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Headings — desktop"
+    },
+    {
+      "type": "color",
+      "id": "heading_color_mobile",
+      "label": "Headings — mobile",
+      "info": "Leave blank to use the desktop colour."
     }
   ],
   "presets": [

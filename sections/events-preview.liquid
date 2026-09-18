@@ -1,4 +1,4 @@
-{%- if section.settings.section_hidden == false -%}
+{% render 'section-style', section: section %}
 <!-- EVENTS PREVIEW -->
 <section class="section bg-ivory" id="events-preview">
   <div class="container">
@@ -76,7 +76,7 @@
                     <span class="ep-notify-label">Notify Me</span>
                   </button>
                 {%- else -%}
-                  <a href="{{ block.settings.rsvp_url | default: '/pages/events' }}" class="btn btn-sm {% if block.settings.badge_style == 'gold' %}btn-primary{% else %}btn-secondary{% endif %}">
+                  <a href="{{ block.settings.rsvp_url | default: '/collections/frontpage' }}" class="btn btn-sm {% if block.settings.badge_style == 'gold' %}btn-primary{% else %}btn-secondary{% endif %}">
                     {{ block.settings.cta_label | default: 'RSVP' }}
                   </a>
                 {%- endif -%}
@@ -99,7 +99,7 @@
       <!-- View all + waitlist CTA row -->
       <div class="ep-footer-actions">
         {%- unless section.settings.hide_view_all -%}
-        <a href="{{ section.settings.view_all_url | default: '/pages/events' }}" class="btn btn-secondary btn-lg">
+        <a href="{{ section.settings.view_all_url | default: '/collections/frontpage' }}" class="btn btn-secondary btn-lg">
           {{ section.settings.view_all_label | default: 'View All Events' }}
         </a>
         {%- endunless -%}
@@ -1006,24 +1006,12 @@
 })();
 </script>
 
-{%- endif -%}
 
 {% schema %}
 {
   "name": "Events Preview",
   "tag": "section",
   "settings": [
-    {
-      "type": "header",
-      "content": "⚙️ Section Visibility"
-    },
-    {
-      "type": "checkbox",
-      "id": "section_hidden",
-      "label": "Hide this section",
-      "default": false,
-      "info": "Tick to hide this section from the live site. Untick to show it again."
-    },
     {
       "type": "text",
       "id": "eyebrow",
@@ -1106,6 +1094,198 @@
       "id": "modal_microcopy",
       "label": "Microcopy below button",
       "default": "You'll be the first to hear about Playmate Labs events, pop-ups and immersive experiences."
+    },
+    {
+      "type": "header",
+      "content": "📐 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — mobile",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — mobile",
+      "default": 96
+    },
+    {
+      "type": "header",
+      "content": "✍️ Text placement"
+    },
+    {
+      "type": "select",
+      "id": "text_align_desktop",
+      "label": "Alignment — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Alignment — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_desktop",
+      "label": "Vertical position — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_mobile",
+      "label": "Vertical position — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 0,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "label": "Max content width",
+      "default": 0,
+      "info": "0 = theme default."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Section colours"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color",
+      "label": "Background — desktop"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color_mobile",
+      "label": "Background — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text — desktop"
+    },
+    {
+      "type": "color",
+      "id": "text_color_mobile",
+      "label": "Body text — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Headings — desktop"
+    },
+    {
+      "type": "color",
+      "id": "heading_color_mobile",
+      "label": "Headings — mobile",
+      "info": "Leave blank to use the desktop colour."
     }
   ],
   "blocks": [
@@ -1198,8 +1378,14 @@
           "id": "badge_style",
           "label": "Date badge & button style",
           "options": [
-            { "value": "burgundy", "label": "Burgundy (default)" },
-            { "value": "gold",     "label": "Gold (flagship)" }
+            {
+              "value": "burgundy",
+              "label": "Burgundy (default)"
+            },
+            {
+              "value": "gold",
+              "label": "Gold (flagship)"
+            }
           ],
           "default": "burgundy"
         },

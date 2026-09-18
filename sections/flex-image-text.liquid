@@ -1,0 +1,590 @@
+{% render 'section-style', section: section %}
+{%- comment -%}
+  PLAYMATE LABS — IMAGE + TEXT
+  A photo on one side, copy on the other. Image side, ratio, crop and
+  every spacing value are merchant-controlled on desktop and mobile
+  independently. Built for product photography on white.
+{%- endcomment -%}
+
+{%- liquid
+  assign img = section.settings.image
+  assign img_m = section.settings.image_mobile | default: img
+  assign ratio = section.settings.image_ratio
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .fit-wrap {
+    display: grid;
+    grid-template-columns: {{ section.settings.image_width }}fr {{ 100 | minus: section.settings.image_width }}fr;
+    gap: {{ section.settings.gap }}px;
+    align-items: {% case section.settings.vertical_align %}{% when 'top' %}start{% when 'bottom' %}end{% else %}center{% endcase %};
+    {%- if section.settings.image_side == 'right' %} direction: rtl;{% endif %}
+  }
+  #shopify-section-{{ section.id }} .fit-wrap > * { direction: ltr; }
+  #shopify-section-{{ section.id }} .fit-media {
+    {%- if ratio != 'natural' %} aspect-ratio: {{ ratio }};{% endif %}
+    overflow: hidden;
+    border-radius: {{ section.settings.corner_radius }}px;
+    background: {{ section.settings.image_bg }};
+  }
+  #shopify-section-{{ section.id }} .fit-media img {
+    width: 100%; height: 100%; display: block;
+    object-fit: var(--sec-image-fit, {{ section.settings.fit_default }});
+    object-position: var(--sec-image-pos, center center);
+  }
+  #shopify-section-{{ section.id }} .fit-copy { text-align: var(--sec-text-align, left); }
+  #shopify-section-{{ section.id }} .fit-eyebrow {
+    display: block; font-size: 0.75rem; letter-spacing: 0.18em;
+    text-transform: uppercase; margin-bottom: 1rem; color: var(--gold);
+  }
+  #shopify-section-{{ section.id }} .fit-heading { margin-bottom: 1rem; }
+  #shopify-section-{{ section.id }} .fit-body { line-height: 1.7; margin-bottom: 1.75rem; }
+  #shopify-section-{{ section.id }} .fit-body > * + * { margin-top: 0.85rem; }
+
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .fit-wrap {
+      grid-template-columns: 1fr;
+      direction: ltr;
+      gap: {{ section.settings.gap_mobile }}px;
+      {%- if section.settings.mobile_image_first == false %} grid-auto-flow: dense;{% endif %}
+    }
+    {%- if section.settings.mobile_image_first == false %}
+    #shopify-section-{{ section.id }} .fit-media { order: 2; }
+    #shopify-section-{{ section.id }} .fit-copy  { order: 1; }
+    {%- endif %}
+    {%- if section.settings.image_ratio_mobile != 'inherit' %}
+    #shopify-section-{{ section.id }} .fit-media { aspect-ratio: {{ section.settings.image_ratio_mobile }}; }
+    {%- endif %}
+    #shopify-section-{{ section.id }} .fit-copy { text-align: var(--sec-text-align, center); }
+  }
+{%- endstyle -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .fit-copy .btn {
+    background-color: {{ section.settings.cta_btn_bg }};
+    color: {{ section.settings.cta_btn_label_color }};
+    border: 1px solid {{ section.settings.cta_btn_border }};
+  }
+{%- endstyle -%}
+<section class="section flex-image-text">
+  <div class="container">
+    <div class="fit-wrap">
+
+      <div class="fit-media">
+        {%- if img != blank -%}
+          <img src="{{ img | image_url: width: 1200 }}"
+               srcset="{{ img | image_url: width: 600 }} 600w,
+                       {{ img | image_url: width: 900 }} 900w,
+                       {{ img | image_url: width: 1200 }} 1200w,
+                       {{ img | image_url: width: 1600 }} 1600w"
+               sizes="(max-width: 768px) 92vw, {{ section.settings.image_width }}vw"
+               width="{{ img.width }}" height="{{ img.height }}"
+               alt="{{ img.alt | escape }}" loading="lazy" decoding="async"
+               class="fit-img-desktop">
+          {%- if img_m != img -%}
+            <img src="{{ img_m | image_url: width: 900 }}"
+                 width="{{ img_m.width }}" height="{{ img_m.height }}"
+                 alt="{{ img_m.alt | escape }}" loading="lazy" decoding="async"
+                 class="fit-img-mobile" style="display:none">
+          {%- endif -%}
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </div>
+
+      <div class="fit-copy">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="fit-eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="fit-heading heading-lg">{{ section.settings.heading | newline_to_br }}</h2>
+        {%- endif -%}
+        {%- if section.settings.body != blank -%}
+          <div class="fit-body">{{ section.settings.body }}</div>
+        {%- endif -%}
+        {%- if section.settings.cta_text != blank -%}
+          <a href="{{ section.settings.cta_url | default: '#' }}"
+             class="btn {{ section.settings.cta_style }}">{{ section.settings.cta_text }}</a>
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{%- if img_m != img and img_m != blank -%}
+  {%- style -%}
+    @media (max-width: 768px) {
+      #shopify-section-{{ section.id }} .fit-img-desktop { display: none; }
+      #shopify-section-{{ section.id }} .fit-img-mobile  { display: block !important; }
+    }
+  {%- endstyle -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Image + Text",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼️ Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image",
+      "info": "Optional. Falls back to the main image."
+    },
+    {
+      "type": "select",
+      "id": "image_side",
+      "label": "Image side (desktop)",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_image_first",
+      "label": "Image above text on mobile",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "min": 25,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "label": "Image width (desktop)",
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image shape (desktop)",
+      "options": [
+        {
+          "value": "natural",
+          "label": "Natural — no crop"
+        },
+        {
+          "value": "1/1",
+          "label": "Square"
+        },
+        {
+          "value": "4/5",
+          "label": "Portrait 4:5"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait 3:4"
+        },
+        {
+          "value": "4/3",
+          "label": "Landscape 4:3"
+        },
+        {
+          "value": "16/9",
+          "label": "Wide 16:9"
+        }
+      ],
+      "default": "4/5"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio_mobile",
+      "label": "Image shape (mobile)",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "Same as desktop"
+        },
+        {
+          "value": "1/1",
+          "label": "Square"
+        },
+        {
+          "value": "4/5",
+          "label": "Portrait 4:5"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait 3:4"
+        },
+        {
+          "value": "4/3",
+          "label": "Landscape 4:3"
+        }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "select",
+      "id": "fit_default",
+      "label": "Default crop behaviour",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover — fill the shape, crop overflow"
+        },
+        {
+          "value": "contain",
+          "label": "Contain — show it all, never crop"
+        }
+      ],
+      "default": "cover",
+      "info": "Contain suits packshots on white. The Image group below can override it."
+    },
+    {
+      "type": "color",
+      "id": "image_bg",
+      "label": "Behind the image",
+      "default": "#FAF7F2",
+      "info": "Shows around the photo when using Contain."
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Corner radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "✍️ Copy"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Made for shared moments",
+      "info": "Press Enter to break the line where you want it — useful for fitting copy into a gap in the photo."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>Tell the story behind the product — what it is, who it's for, and why it belongs on the table tonight.</p>"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        {
+          "value": "btn-primary",
+          "label": "Primary"
+        },
+        {
+          "value": "btn-secondary",
+          "label": "Secondary"
+        },
+        {
+          "value": "btn-gold",
+          "label": "Gold"
+        }
+      ],
+      "default": "btn-primary"
+    },
+    {
+      "type": "header",
+      "content": "🔘 Button colours"
+    },
+    {
+      "type": "color",
+      "id": "cta_btn_bg",
+      "label": "Background",
+      "default": "#6B1E3A"
+    },
+    {
+      "type": "color",
+      "id": "cta_btn_label_color",
+      "label": "Text",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "cta_btn_border",
+      "label": "Border",
+      "default": "#6B1E3A"
+    },
+    {
+      "type": "header",
+      "content": "📐 Columns"
+    },
+    {
+      "type": "select",
+      "id": "vertical_align",
+      "label": "Vertical alignment",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "middle"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap — desktop",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap — mobile",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "📐 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — mobile",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — mobile",
+      "default": 56
+    },
+    {
+      "type": "header",
+      "content": "🖼️ Image framing"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "image_pos_desktop",
+      "label": "Focal point — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "center center",
+          "label": "Centre"
+        },
+        {
+          "value": "center top",
+          "label": "Top"
+        },
+        {
+          "value": "center bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left center",
+          "label": "Left"
+        },
+        {
+          "value": "right center",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "image_pos_mobile",
+      "label": "Focal point — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "center center",
+          "label": "Centre"
+        },
+        {
+          "value": "center top",
+          "label": "Top"
+        },
+        {
+          "value": "center bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "✍️ Text placement"
+    },
+    {
+      "type": "select",
+      "id": "text_align_desktop",
+      "label": "Alignment — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Alignment — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "🎨 Section colours"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color",
+      "label": "Background"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Headings"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image + Text"
+    }
+  ]
+}
+{% endschema %}

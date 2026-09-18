@@ -1,4 +1,4 @@
-{%- if section.settings.section_hidden == false -%}
+{% render 'section-style', section: section %}
 {% comment %}
   PLAYMATE LABS — HOME FEATURED DROP SECTION
   File: sections/home-featured-drop.liquid
@@ -32,18 +32,6 @@
 <section class="section featured-drop bg-dark featured-drop--bg" id="featured-drop">
 
   <div class="featured-drop__overlay"></div>
-
-  <!-- High-res product overlay — covers the low-res background product exactly -->
-  <div class="featured-drop__product-overlay" aria-hidden="true">
-    <img
-      src="{{ 'velvet-hour-product.png' | asset_url }}"
-      alt=""
-      class="featured-drop__product-img"
-      draggable="false"
-      loading="eager"
-      decoding="async"
-    >
-  </div>
 
   <div class="container featured-drop__inner">
 
@@ -372,23 +360,11 @@
   }
 })();
 </script>
-{%- endif -%}
 
 {% schema %}
 {
   "name": "Featured Drop",
   "settings": [
-    {
-      "type": "header",
-      "content": "⚙️ Section Visibility"
-    },
-    {
-      "type": "checkbox",
-      "id": "section_hidden",
-      "label": "Hide this section",
-      "default": false,
-      "info": "Tick to hide this section from the live site. Untick to show it again."
-    },
     {
       "type": "header",
       "content": "Background Images"
@@ -533,6 +509,390 @@
       "id": "waitlist_microcopy",
       "label": "Microcopy below button",
       "default": "Be the first to know when this drop becomes available."
+    },
+    {
+      "type": "header",
+      "content": "📐 Spacing"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_top_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top — mobile",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_desktop",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — desktop",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_mobile",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom — mobile",
+      "default": 96
+    },
+    {
+      "type": "header",
+      "content": "🖼️ Image"
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "vh",
+      "label": "Section height — desktop",
+      "default": 0,
+      "info": "0 = size to content. Otherwise a percentage of screen height."
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "vh",
+      "label": "Section height — mobile",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "cover",
+          "label": "Cover — fill the area, crop the overflow"
+        },
+        {
+          "value": "contain",
+          "label": "Contain — show the whole image, never crop"
+        }
+      ],
+      "default": "",
+      "info": "Contain suits product shots on white — nothing gets cropped."
+    },
+    {
+      "type": "select",
+      "id": "image_fit_mobile",
+      "label": "Image fit — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Same as desktop"
+        },
+        {
+          "value": "cover",
+          "label": "Cover — fill, crop the overflow"
+        },
+        {
+          "value": "contain",
+          "label": "Contain — show it all, never crop"
+        }
+      ],
+      "default": "",
+      "info": "Contain leaves bands of backdrop above and below a photo that does not match the section shape. Cover avoids that on a phone."
+    },
+    {
+      "type": "select",
+      "id": "image_pos_desktop",
+      "label": "Focal point — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "center center",
+          "label": "Centre"
+        },
+        {
+          "value": "center top",
+          "label": "Top"
+        },
+        {
+          "value": "center bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left center",
+          "label": "Left"
+        },
+        {
+          "value": "right center",
+          "label": "Right"
+        },
+        {
+          "value": "left top",
+          "label": "Top left"
+        },
+        {
+          "value": "right top",
+          "label": "Top right"
+        },
+        {
+          "value": "left bottom",
+          "label": "Bottom left"
+        },
+        {
+          "value": "right bottom",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "",
+      "info": "Which part of the image stays in frame when it is cropped."
+    },
+    {
+      "type": "select",
+      "id": "image_pos_mobile",
+      "label": "Focal point — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "center center",
+          "label": "Centre"
+        },
+        {
+          "value": "center top",
+          "label": "Top"
+        },
+        {
+          "value": "center bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left center",
+          "label": "Left"
+        },
+        {
+          "value": "right center",
+          "label": "Right"
+        },
+        {
+          "value": "left top",
+          "label": "Top left"
+        },
+        {
+          "value": "right top",
+          "label": "Top right"
+        },
+        {
+          "value": "left bottom",
+          "label": "Bottom left"
+        },
+        {
+          "value": "right bottom",
+          "label": "Bottom right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay darkness — desktop",
+      "default": 100,
+      "info": "Scales the section's tuned scrim — dark where the text sits, clear over the product. 100% = as designed."
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay darkness — mobile",
+      "default": 100,
+      "info": "Scales the section's tuned scrim — dark where the text sits, clear over the product. 100% = as designed."
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay colour",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "header",
+      "content": "✍️ Text placement"
+    },
+    {
+      "type": "select",
+      "id": "text_align_desktop",
+      "label": "Alignment — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Alignment — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_desktop",
+      "label": "Vertical position — desktop",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "text_valign_mobile",
+      "label": "Vertical position — mobile",
+      "options": [
+        {
+          "value": "",
+          "label": "Theme default"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 0,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "label": "Max content width",
+      "default": 0,
+      "info": "0 = theme default."
+    },
+    {
+      "type": "header",
+      "content": "🎨 Section colours"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color",
+      "label": "Background — desktop"
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color_mobile",
+      "label": "Background — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text — desktop"
+    },
+    {
+      "type": "color",
+      "id": "text_color_mobile",
+      "label": "Body text — mobile",
+      "info": "Leave blank to use the desktop colour."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Headings — desktop"
+    },
+    {
+      "type": "color",
+      "id": "heading_color_mobile",
+      "label": "Headings — mobile",
+      "info": "Leave blank to use the desktop colour."
     }
   ],
   "presets": [

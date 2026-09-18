@@ -40,7 +40,7 @@
     <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
   {%- endif -%}
 
-  {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
+  {%- unless settings.font_heading.system? and settings.font_body.system? -%}
     <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
   {%- endunless -%}
 
@@ -128,19 +128,24 @@
 
   {{ content_for_header }}
 
-  {%- liquid
-    assign body_font_bold = settings.type_body_font | font_modify: 'weight', 'bold'
-    assign body_font_italic = settings.type_body_font | font_modify: 'style', 'italic'
-    assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
-  %}
+  {%- comment -%}
+    Heading and body faces are chosen in Theme settings → Typography and are
+    served from Shopify's own CDN by 'theme-css-variables' below, so there is
+    no Google Fonts round-trip for them.
 
-  {%- comment -%} Preload critical fonts {%- endcomment -%}
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" as="style">
-
-  {%- comment -%} Google Fonts — Playmate Labs design system {%- endcomment -%}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+    Cormorant Garamond is the one face Shopify's library does not carry, so it
+    is fetched from Google only when the accent style actually asks for it.
+  {%- endcomment -%}
+  {%- if settings.font_accent == 'cormorant' -%}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" media="print" onload="this.media='all'"
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap">
+    <noscript>
+      <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap">
+    </noscript>
+  {%- endif -%}
 
   {%- comment -%} Minimal icon styles — replaces full Font Awesome CDN (~70KB saved) {%- endcomment -%}
   <style>
@@ -162,6 +167,46 @@
   {{ 'components.css' | asset_url | stylesheet_tag }}
   {{ 'theme-extra.css' | asset_url | stylesheet_tag }}
 
+  {%- comment -%}
+    Theme settings → CSS custom properties. Must come after global.css so the
+    merchant's choices override the design-system defaults.
+  {%- endcomment -%}
+  {% render 'theme-css-variables' %}
+
+  {%- comment -%}
+    A font the shop holds a web licence for, served by its provider. Loaded
+    before the variables snippet so the family is available when the custom
+    properties are set.
+  {%- endcomment -%}
+  {%- if settings.custom_font_enable and settings.custom_font_url != blank -%}
+    <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+    <link rel="stylesheet" href="{{ settings.custom_font_url }}">
+  {%- endif -%}
+
+  {%- comment -%}
+    Scroll-reveal safety net. `.reveal` starts at opacity:0 and waits for JS
+    to un-hide it, and the animate-* helpers use fill-mode `both`, so they
+    also hold their from-state. If that JS never runs the copy stays
+    invisible — and inside the theme editor it is frequently caught
+    mid-fade, which makes it impossible to judge text colour.
+  {%- endcomment -%}
+  {%- if request.design_mode -%}
+    <style>
+      .reveal, .reveal-left, .reveal-right, .reveal-scale {
+        opacity: 1 !important; transform: none !important; transition: none !important;
+      }
+      [class*="animate-"] { animation: none !important; opacity: 1 !important; }
+    </style>
+  {%- endif -%}
+  <noscript>
+    <style>
+      .reveal, .reveal-left, .reveal-right, .reveal-scale {
+        opacity: 1 !important; transform: none !important;
+      }
+      [class*="animate-"] { animation: none !important; opacity: 1 !important; }
+    </style>
+  </noscript>
+
   {%- comment -%} Header overlap fix — neutralise Shopify's section wrapper {%- endcomment -%}
   <style>
     /*
@@ -171,6 +216,12 @@
      */
 
     /* 1. Neutralise the Shopify section wrapper — must be static */
+    {%- comment -%}
+      Skipped in floating-pill mode: pinning the header section to static with
+      auto height is exactly what leaves a band of page above the hero, and it
+      carries !important so the section cannot override it from its own styles.
+    {%- endcomment -%}
+    {%- unless settings.header_is_pills -%}
     #shopify-section-header,
     .shopify-section.site-header,
     .playmate-header-section {
@@ -178,6 +229,7 @@
       height: auto !important;
       z-index: auto !important;
     }
+    {%- endunless -%}
 
     /* 2. Only the inner nav element is fixed */
     #main-nav.site-nav {
@@ -189,17 +241,24 @@
       height: var(--nav-height, 72px);
     }
 
-    /* 3. Announcement bar — fixed, sitting flush under the nav */
-    .announcement-bar {
-      position: fixed !important;
-      top: var(--nav-height, 72px);
-      left: 0;
-      right: 0;
-      z-index: 999;
+    /* 3. Announcement bar sits above everything, including the pill header,
+          and the header drops by exactly its height. --bar-height is emitted
+          by the section itself, and is 0px when the bar has no messages. */
+    :root { --bar-height: 0px; }
+
+    /* .site-nav is position:fixed, so offsetting the section around it does
+       nothing; the nav itself has to drop by the bar's height. */
+    .site-nav,
+    .site-nav.nav-pills,
+    .shopify-section-group-header-group,
+    #shopify-section-header {
+      top: var(--bar-height, 0px) !important;
     }
 
+    /* The search panel slides out of the nav, so it starts below it too. */
+    .search-bar { top: calc(var(--nav-height, 72px) + var(--bar-height, 0px)) !important; }
+
     /* 4. No global padding on MainContent */
-    :root { --bar-height: 38px; }
     #MainContent {
       padding-top: 0;
     }
@@ -294,13 +353,19 @@
   {% section 'header' %}
 
   {%- comment -%} Announcement Bar rendered inside normal flow so nav overlay is clean {%- endcomment -%}
-  {% render 'announcement-bar' %}
+  {% section 'announcement-bar' %}
 
   {%- comment -%} Cart Drawer {%- endcomment -%}
   {% render 'cart-drawer' %}
 
-  {%- comment -%} Newsletter Popup {%- endcomment -%}
-  {% render 'newsletter-popup' %}
+  {%- comment -%}
+    Newsletter Popup — RETIRED 2026-09-17.
+    It and the exit-intent popup inside the same snippet fired on top of the
+    scratch popup, so a first-time mobile visitor met three modals before
+    seeing a product. The scratch popup is now the only interruption, and it
+    asks for the email itself. Re-enable only if the scratch popup goes away.
+  {%- endcomment -%}
+  {%- comment -%}{% render 'newsletter-popup' %}{%- endcomment -%}
 
   {%- comment -%} Toast Notification {%- endcomment -%}
   <div id="toast-container" class="toast-container" aria-live="polite"></div>
@@ -322,6 +387,56 @@
   {%- comment -%} Global JS {%- endcomment -%}
   <script src="{{ 'main.js' | asset_url }}" defer></script>
   <script src="{{ 'cart-api.js' | asset_url }}" defer></script>
+
+  {%- comment -%} Page-specific JS {%- endcomment -%}
+  {%- if template.name == 'index' -%}
+    <script src="{{ 'home.js' | asset_url }}" defer></script>
+  {%- endif -%}
+
+  {%- comment -%} Full-screen scratch popup {%- endcomment -%}
+  {%- if settings.scratch_popup_enable -%}
+    {{ 'scratch-popup.css' | asset_url | stylesheet_tag }}
+    {%- style -%}
+      .sp {
+        --sp-bg: {{ settings.scratch_bg_color | default: '#FAF7F2' }};
+        --sp-bg-pos: {{ settings.scratch_bg_pos }};
+        --sp-bg-pos-m: {{ settings.scratch_bg_pos_m }};
+        --sp-halign: {{ settings.scratch_halign }};
+        --sp-valign: {{ settings.scratch_valign }};
+        --sp-valign-m: {{ settings.scratch_valign_m }};
+        --sp-text-align: {{ settings.scratch_text_align }};
+        --sp-text-align-m: {{ settings.scratch_text_align_m }};
+        --sp-width: {{ settings.scratch_width }}px;
+        --sp-pad: {{ settings.scratch_pad }}px;
+        --sp-pad-m: {{ settings.scratch_pad_m }}px;
+        --sp-heading-color: {{ settings.scratch_heading_color }};
+        --sp-sub-color: {{ settings.scratch_sub_color }};
+        --sp-prize-color: {{ settings.scratch_prize_color }};
+        --sp-prize-bg: {{ settings.scratch_prize_bg | default: '#FFFFFF' }};
+        --sp-btn-bg: {{ settings.scratch_btn_bg }};
+        --sp-btn-text: {{ settings.scratch_btn_text }};
+        --sp-heading-size: {{ settings.scratch_heading_size }}px;
+        --sp-heading-size-m: {{ settings.scratch_heading_size_m }}px;
+        --sp-prize-size: {{ settings.scratch_prize_size }}px;
+        --sp-prize-size-m: {{ settings.scratch_prize_size_m }}px;
+        --sp-img-h-m: {{ settings.scratch_img_h_m }}%;
+      }
+    {%- endstyle -%}
+    {% render 'scratch-popup' %}
+    <script>
+      window.PM_SCRATCH = {
+        delay: {{ settings.scratch_delay }},
+        trigger: {{ settings.scratch_trigger | json }},
+        days: {{ settings.scratch_days }},
+        brush: {{ settings.scratch_brush }},
+        threshold: {{ settings.scratch_threshold | divided_by: 100.0 }},
+        foilFrom: {{ settings.scratch_foil_from | json }},
+        foilMid: {{ settings.scratch_foil_from | json }},
+        foilTo: {{ settings.scratch_foil_to | json }}
+      };
+    </script>
+    <script src="{{ 'scratch-popup.js' | asset_url }}" defer></script>
+  {%- endif -%}
 
   {%- comment -%} Cookie Consent Banner {%- endcomment -%}
   {% render 'consent-banner' %}

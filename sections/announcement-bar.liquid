@@ -1,0 +1,255 @@
+{% comment %}
+  PLAYMATE LABS — ANNOUNCEMENT BAR
+  File: sections/announcement-bar.liquid
+
+  Sits above everything, including the floating pill header. Messages rotate
+  on a timer and can be stepped through with the arrows; nothing auto-advances
+  while a message has keyboard focus or the viewer prefers reduced motion.
+
+  --bar-height is what the rest of the layout offsets against, so it is set to
+  0 when the bar is off and the header falls back flush to the top.
+{% endcomment %}
+
+{%- liquid
+  assign s = section.settings
+  assign count = section.blocks.size
+-%}
+
+{%- if count > 0 -%}
+  {%- style -%}
+    :root { --bar-height: {{ s.height }}px; }
+    @media (max-width: 768px) { :root { --bar-height: {{ s.height_mobile }}px; } }
+
+    .ab {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1001;                    /* above the pill header */
+      height: var(--bar-height);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0 0.5rem;
+      background: {{ s.bg_color }};
+      color: {{ s.text_color }};
+      font-family: var(--font-sans);
+      font-size: {{ s.text_size }}px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ab__viewport { position: relative; flex: 1 1 auto; height: 100%; overflow: hidden; }
+
+    .ab__msg {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 0.25rem;
+      opacity: 0;
+      transition: opacity .35s ease;
+      pointer-events: none;
+    }
+
+    .ab__msg.is-active { opacity: 1; pointer-events: auto; }
+    .ab__msg a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+    .ab__arrow {
+      flex: 0 0 auto;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: 0; padding: 0;
+      color: inherit; cursor: pointer; opacity: .75;
+      transition: opacity .2s;
+    }
+    .ab__arrow:hover { opacity: 1; }
+    .ab__arrow:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 4px; }
+
+    @media (max-width: 480px) {
+      .ab { font-size: {{ s.text_size_mobile }}px; letter-spacing: 0.06em; }
+      .ab__arrow { width: 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) { .ab__msg { transition: none; } }
+  {%- endstyle -%}
+
+  <div class="ab" id="announcementBar" role="region" aria-label="Announcements">
+    {%- if count > 1 and s.show_arrows -%}
+      <button type="button" class="ab__arrow" data-ab-prev aria-label="Previous announcement">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+    {%- endif -%}
+
+    <div class="ab__viewport">
+      {%- for block in section.blocks -%}
+        <div class="ab__msg{% if forloop.first %} is-active{% endif %}" {{ block.shopify_attributes }}>
+          {%- if block.settings.url != blank -%}
+            <a href="{{ block.settings.url }}">{{ block.settings.text }}</a>
+          {%- else -%}
+            <span>{{ block.settings.text }}</span>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if count > 1 and s.show_arrows -%}
+      <button type="button" class="ab__arrow" data-ab-next aria-label="Next announcement">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    {%- endif -%}
+  </div>
+
+  {%- if count > 1 -%}
+    <script>
+      (function () {
+        var bar = document.getElementById('announcementBar');
+        if (!bar) return;
+        var msgs = [].slice.call(bar.querySelectorAll('.ab__msg'));
+        if (msgs.length < 2) return;
+        var i = 0, timer = null;
+        var delay = {{ s.rotate_seconds }} * 1000;
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function show(n) {
+          i = (n + msgs.length) % msgs.length;
+          msgs.forEach(function (m, k) { m.classList.toggle('is-active', k === i); });
+        }
+        function start() { if (!reduce && delay > 0) timer = setInterval(function () { show(i + 1); }, delay); }
+        function stop()  { if (timer) { clearInterval(timer); timer = null; } }
+
+        var prev = bar.querySelector('[data-ab-prev]');
+        var next = bar.querySelector('[data-ab-next]');
+        if (prev) prev.addEventListener('click', function () { stop(); show(i - 1); start(); });
+        if (next) next.addEventListener('click', function () { stop(); show(i + 1); start(); });
+
+        // Do not rotate a message out from under someone reading or tabbing it
+        bar.addEventListener('mouseenter', stop);
+        bar.addEventListener('mouseleave', start);
+        bar.addEventListener('focusin', stop);
+        bar.addEventListener('focusout', start);
+        document.addEventListener('visibilitychange', function () {
+          document.hidden ? stop() : start();
+        });
+
+        start();
+      })();
+    </script>
+  {%- endif -%}
+{%- else -%}
+  {%- style -%}:root { --bar-height: 0px; }{%- endstyle -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show arrows",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rotate_seconds",
+      "label": "Seconds per message",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "default": 5,
+      "info": "0 stops the rotation."
+    },
+    {
+      "type": "header",
+      "content": "Size and colour"
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "label": "Height",
+      "min": 28,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "label": "Height — mobile",
+      "min": 28,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 38
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Text size — mobile",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#1A0A06"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#F5EFE6"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free shipping over £60"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar",
+      "blocks": [
+        {
+          "type": "message"
+        },
+        {
+          "type": "message"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
