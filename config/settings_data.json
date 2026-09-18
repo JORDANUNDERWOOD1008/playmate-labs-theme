@@ -55,7 +55,13 @@
           "pill_cta_text": "#FFFFFF",
           "pill_cart_bg": "#D92B2B",
           "pill_cart_text": "#FFFFFF",
-          "pill_icon_color": "#FFFFFF"
+          "pill_icon_color": "#FFFFFF",
+          "menu_collection": "frontpage",
+          "menu_shop_label": "Shop",
+          "menu_product_limit": 6,
+          "stockist_text": "Become a stockist",
+          "stockist_url": "/pages/contact",
+          "menu_cart_label": "Cart"
         }
       },
       "footer": {

@@ -297,31 +297,62 @@
 {%- comment -%} Mobile Overlay {%- endcomment -%}
 <div class="mobile-menu-overlay" id="mobile-overlay"></div>
 
-{%- comment -%} Mobile Menu {%- endcomment -%}
+{%- comment -%}
+  Mobile Menu
+
+  Products first, as rows with their own photography, then the pages. A menu
+  that lists only page names asks someone to guess what is behind them; at
+  this catalogue size the products can simply be the menu.
+{%- endcomment -%}
 <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation">
-  <ul class="mobile-nav-links">
-    {%- for link in linklists[section.settings.mobile_menu].links -%}
-      <li>
-        <a href="{{ link.url }}"
-           class="mobile-nav-link"
-           {% if link.current %}aria-current="page"{% endif %}>
-          {{ link.title }} <span>→</span>
-        </a>
-      </li>
-    {%- endfor -%}
-  </ul>
-  <div class="mobile-menu-footer">
-    <a href="{{ section.settings.cta_url | default: '#newsletter' }}"
-       class="btn btn-primary"
-       style="width:100%;justify-content:center;margin-bottom:0.75rem;">
-      {{ section.settings.cta_text | default: 'Join the list' }}
-    </a>
-    <a href="{{ section.settings.url_monthly_drops | default: '/collections/all' }}"
-       class="btn btn-ghost"
-       style="width:100%;justify-content:center;">
-      {{ section.settings.cta2_text | default: 'Shop the range' }}
-    </a>
-    <div style="margin-top:1.5rem;display:flex;gap:1rem;justify-content:center;">
+  <div class="mobile-menu-scroll">
+
+    {%- assign menu_collection = collections[section.settings.menu_collection] -%}
+    {%- if menu_collection != blank and menu_collection.products.size > 0 -%}
+      <p class="mobile-menu-heading">{{ section.settings.menu_shop_label | default: 'Shop' }}</p>
+      <ul class="mobile-product-list">
+        {%- for product in menu_collection.products limit: section.settings.menu_product_limit -%}
+          {%- assign m_img = product.metafields.custom.card_image.value | default: product.featured_image -%}
+          <li>
+            <a href="{{ product.url }}" class="mobile-product-row">
+              <span class="mobile-product-thumb">
+                {%- if m_img -%}
+                  <img src="{{ m_img | image_url: width: 160 }}" width="160" height="160"
+                       alt="" loading="lazy" decoding="async">
+                {%- endif -%}
+              </span>
+              <span class="mobile-product-name">{{ product.title }}</span>
+              {%- unless product.available -%}
+                <span class="mobile-product-flag">Sold out</span>
+              {%- endunless -%}
+              <svg class="mobile-product-chev" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <ul class="mobile-nav-links">
+      {%- for link in linklists[section.settings.mobile_menu].links -%}
+        <li>
+          <a href="{{ link.url }}" class="mobile-nav-link"
+             {% if link.current %}aria-current="page"{% endif %}>
+            {{ link.title }}
+          </a>
+        </li>
+      {%- endfor -%}
+      {%- if section.settings.stockist_text != blank -%}
+        <li>
+          <a href="{{ section.settings.stockist_url | default: '/pages/contact' }}" class="mobile-nav-link">
+            {{ section.settings.stockist_text }}
+          </a>
+        </li>
+      {%- endif -%}
+    </ul>
+
+    {%- if settings.social_instagram_link != blank or settings.social_tiktok_link != blank -%}
+    <div class="mobile-menu-social">
       {%- if settings.social_instagram_link != blank -%}
         <a href="{{ settings.social_instagram_link }}" class="footer-social-link" aria-label="Instagram" target="_blank" rel="noopener">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
@@ -333,6 +364,15 @@
         </a>
       {%- endif -%}
     </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Pinned so the cart is reachable without scrolling back. {%- endcomment -%}
+  <div class="mobile-menu-footer">
+    <a href="{{ routes.cart_url }}" class="btn btn-primary mobile-menu-cart">
+      {{ section.settings.menu_cart_label | default: 'Cart' }}
+      <span class="mobile-menu-cart-count" data-cart-count>{{ cart.item_count }}</span>
+    </a>
   </div>
 </nav>
 
@@ -645,6 +685,47 @@
       "label": "Hide search on mobile in this style",
       "default": true,
       "info": "Keeps the right-hand pill from overflowing a narrow screen."
+    },
+    {
+      "type": "header",
+      "content": "Mobile menu"
+    },
+    {
+      "type": "collection",
+      "id": "menu_collection",
+      "label": "Products to list in the menu"
+    },
+    {
+      "type": "text",
+      "id": "menu_shop_label",
+      "label": "Products heading",
+      "default": "Shop"
+    },
+    {
+      "type": "range",
+      "id": "menu_product_limit",
+      "label": "How many products",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "text",
+      "id": "stockist_text",
+      "label": "Trade link label",
+      "default": "Become a stockist"
+    },
+    {
+      "type": "url",
+      "id": "stockist_url",
+      "label": "Trade link"
+    },
+    {
+      "type": "text",
+      "id": "menu_cart_label",
+      "label": "Cart button label",
+      "default": "Cart"
     }
   ]
 }
