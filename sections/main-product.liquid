@@ -265,25 +265,20 @@
 <!-- ══════════ BREADCRUMB ══════════ -->
 <div style="padding:calc(var(--nav-height) + 1.25rem) 0 0;background:var(--prod-bg);">
   <div class="container">
-    <div class="breadcrumb">
+    {%- comment -%}
+      Uniform on every product. Picking the first "descriptive" collection gave
+      Choc Hearts three levels and the other two only two, because only one of
+      them happens to sit in a category collection. The shop is the real parent
+      of every product, so it is always the middle crumb.
+    {%- endcomment -%}
+    {%- assign shop = collections[section.settings.breadcrumb_collection] | default: collections['frontpage'] -%}
+    <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="{{ routes.root_url }}">Home</a>
-      <span class="breadcrumb-sep">›</span>
-      {%- comment -%}
-        collections.first is whatever Shopify returns, which here is an
-        internal one-letter collection. Prefer a real, descriptive one.
-      {%- endcomment -%}
-      {%- assign crumb = null -%}
-      {%- for c in product.collections -%}
-        {%- if c.title.size > 3 and c.handle != 'frontpage' and c.handle != 'available' -%}
-          {%- assign crumb = c -%}
-          {%- break -%}
-        {%- endif -%}
-      {%- endfor -%}
-      {%- if crumb -%}
-        <a href="{{ crumb.url }}">{{ crumb.title }}</a>
-        <span class="breadcrumb-sep">›</span>
-      {%- endif -%}
-      <span>{{ product.title }}</span>
+      <span class="breadcrumb-sep" aria-hidden="true">/</span>
+      <a href="{{ shop.url | default: routes.all_products_collection_url }}">{{ section.settings.breadcrumb_label | default: 'Shop' }}</a>
+      <span class="breadcrumb-sep" aria-hidden="true">/</span>
+      <span class="breadcrumb-current" aria-current="page">{{ product.title }}</span>
+    </nav>
     </div>
   </div>
 </div>
@@ -1268,6 +1263,21 @@ window.playmatelabsVariants = {{ product.variants | json }};
       "max": 4,
       "step": 1,
       "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Breadcrumb"
+    },
+    {
+      "type": "collection",
+      "id": "breadcrumb_collection",
+      "label": "Parent collection"
+    },
+    {
+      "type": "text",
+      "id": "breadcrumb_label",
+      "label": "Parent label",
+      "default": "Shop"
     }
   ]
 }

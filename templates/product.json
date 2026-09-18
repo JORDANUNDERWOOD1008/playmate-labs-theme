@@ -25,7 +25,9 @@
         "pcb_upload_label": "Upload a photo or file",
         "pcb_upload_hint": "Drop a photo here or click to browse",
         "related_collection": "frontpage",
-        "related_count": 2
+        "related_count": 2,
+        "breadcrumb_collection": "frontpage",
+        "breadcrumb_label": "Shop"
       }
     },
     "product-page-banner": {
