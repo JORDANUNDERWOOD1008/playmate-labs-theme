@@ -165,6 +165,49 @@
   .product-accordion-item { border-bottom: 1px solid var(--border-light); }
   .product-accordion-btn { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; font-size: 0.9375rem; font-weight: 600; color: var(--prod-title); background: none; border: none; cursor: pointer; text-align: left; }
   .product-accordion-body { padding-bottom: 1rem; font-size: 0.875rem; color: var(--prod-desc-tx); line-height: 1.7; display: none; }
+
+  /* The description is rich text authored in Shopify, so it arrives with its
+     own headings, lists and bold runs and no styling of its own. Without
+     these it renders as one undifferentiated wall. */
+  .product-accordion-body { max-width: 68ch; }
+  .product-accordion-body > *:first-child { margin-top: 0; }
+  .product-accordion-body > *:last-child { margin-bottom: 0; }
+  .product-accordion-body p { margin: 0 0 0.9em; }
+  .product-accordion-body h1,
+  .product-accordion-body h2,
+  .product-accordion-body h3,
+  .product-accordion-body h4 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    color: var(--prod-desc-h);
+    margin: 1.75em 0 0.5em;
+  }
+  .product-accordion-body h2 { font-size: 1.1875rem; }
+  .product-accordion-body ul,
+  .product-accordion-body ol { margin: 0 0 1em; padding-left: 1.1rem; }
+  .product-accordion-body li { margin-bottom: 0.4em; }
+  .product-accordion-body strong { color: var(--prod-desc-h); font-weight: 600; }
+  .product-accordion-body a { color: var(--burgundy); text-decoration: underline; }
+  .product-accordion-body img { max-width: 100%; height: auto; border-radius: var(--radius-md); margin: 1em 0; }
+  .product-accordion-body table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 0.8125rem; }
+  .product-accordion-body th,
+  .product-accordion-body td { text-align: left; padding: 0.5em 0.6em; border-bottom: 1px solid var(--border-color, #E5DFD6); }
+
+  /* A long ingredient list is a reference, not a read. Cap it and let people
+     open it rather than pushing the rest of the page below a screen of text. */
+  .product-accordion-body.is-clamped { max-height: 22rem; overflow: hidden; position: relative; }
+  .product-accordion-body.is-clamped::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 5rem;
+    background: linear-gradient(to bottom, transparent, var(--prod-bg, #FFF));
+    pointer-events: none;
+  }
+  .accordion-more {
+    display: inline-block; margin-top: 0.5rem; padding: 0; border: 0; background: none;
+    font-size: 0.8125rem; font-weight: 600; color: var(--burgundy); cursor: pointer;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
   .product-accordion-body.open { display: block; }
   .product-accordion-btn i { transition: transform 0.2s; }
   .product-accordion-btn.open i { transform: rotate(180deg); }
@@ -742,9 +785,10 @@
             <button class="product-accordion-btn open" onclick="toggleAccordion(this)">
               About this product <i class="fas fa-chevron-up"></i>
             </button>
-            <div class="product-accordion-body open">
+            <div class="product-accordion-body open" id="prodDesc">
               {{ product.description }}
             </div>
+            <button type="button" class="accordion-more" id="prodDescMore" hidden>Read more</button>
           </div>
           <div class="product-accordion-item">
             <button class="product-accordion-btn" onclick="toggleAccordion(this)">
@@ -917,6 +961,21 @@
 </div>
 
 <script>
+  // Clamp the description only when it is genuinely long, so short ones are
+  // not given a pointless "read more".
+  (function () {
+    var body = document.getElementById('prodDesc');
+    var btn  = document.getElementById('prodDescMore');
+    if (!body || !btn) return;
+    if (body.scrollHeight <= 352) return;            // 22rem
+    body.classList.add('is-clamped');
+    btn.hidden = false;
+    btn.addEventListener('click', function () {
+      var open = body.classList.toggle('is-clamped');
+      btn.textContent = open ? 'Read more' : 'Read less';
+    });
+  })();
+
   // Gallery: the track is the source of truth. Thumbnails and arrows scroll it,
   // and whatever it lands on updates them back, so swipe and click stay in sync.
   (function () {
