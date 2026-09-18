@@ -112,8 +112,7 @@
           "pill_logo_height_mobile": 20,
           "pill_bg": "#020202",
           "pill_text": "#ffffff",
-          "pill_hide_menu": true,
-          "pill_link_color": "#1a1a1a",
+          "pill_link_color": "#FFFFFF",
           "pill_cta_bg": "#ffffff",
           "pill_cta_text": "#000000",
           "pill_cart_bg": "#ffffff",
@@ -138,7 +137,12 @@
           "pill_cart_label": "Cart",
           "pill_label_size": 12,
           "pill_show_search": false,
-          "pill_cart_inset": 5
+          "pill_cart_inset": 5,
+          "pill_menu_style": "links",
+          "pill_menu_breakpoint": 900,
+          "pill_link_size": 12,
+          "pill_link_gap": 22,
+          "pill_show_cta": false
         }
       },
       "footer": {
