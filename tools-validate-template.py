@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 """Validate templates/index.json against the section schemas. Exits 1 on failure."""
 import json, re, pathlib, sys
-t = json.loads(pathlib.Path('templates/index.json').read_text())
+import re as _re
+def _load_json(path):
+    """Shopify writes a banner comment into synced JSON templates."""
+    raw = pathlib.Path(path).read_text()
+    return json.loads(_re.sub(r"^/\*.*?\*/\s*", "", raw, flags=_re.S))
+t = _load_json('templates/index.json')
 bad = []
 for name, sec in t['sections'].items():
     src = pathlib.Path(f"sections/{sec['type']}.liquid").read_text()
@@ -37,6 +42,11 @@ for f in sorted(pathlib.Path('sections').glob('*.liquid')):
             if not isinstance(x, dict) or x.get('type') != 'range': continue
             lo, hi, st = x['min'], x['max'], x.get('step', 1)
             if (hi-lo)/st > 100: bad.append(f"{f.name}:{x['id']}{where} range exceeds 101 steps")
+            if (hi-lo)/st + 1 < 3: bad.append(f"{f.name}:{x['id']}{where} range spans fewer than 3 steps")
+            for k in ('min','max','step','default'):
+                val=x.get(k)
+                if isinstance(val,float) and len(str(val).split('.')[-1])>1:
+                    bad.append(f"{f.name}:{x['id']}{where} range {k}={val} has more than 1 decimal digit")
             u = x.get('unit', '')
             if len(u) > 3: bad.append(f"{f.name}:{x['id']}{where} unit {u!r} over 3 chars")
             d = x.get('default')
