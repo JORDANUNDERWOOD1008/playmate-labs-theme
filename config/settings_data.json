@@ -60,7 +60,7 @@
           "menu_shop_label": "Shop",
           "menu_product_limit": 6,
           "stockist_text": "Become a stockist",
-          "stockist_url": "/pages/contact",
+          "stockist_url": "/pages/stockists",
           "menu_cart_label": "Cart"
         }
       },

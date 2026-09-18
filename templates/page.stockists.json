@@ -1,0 +1,269 @@
+{
+  "sections": {
+    "hero": {
+      "type": "flex-banner",
+      "settings": {
+        "image": "shopify://shop_images/lab-packing-bench-landscape.png",
+        "image_mobile": "shopify://shop_images/lab-packing-bench-landscape.png",
+        "image_fit": "cover",
+        "image_bg": "#FFFFFF",
+        "image_pos_desktop": "center center",
+        "image_pos_mobile": "center center",
+        "eager_load": true,
+        "height_desktop": 60,
+        "height_mobile": 65,
+        "eyebrow": "WHOLESALE",
+        "heading": "Stock Playmate Labs",
+        "body": "<p>Design-led sexual wellness, made in the UK. Soft enough for your marketing team to talk about in public, distinctive enough to be worth the shelf.</p>",
+        "eyebrow_color": "#B4472F",
+        "heading_color": "#1A1A1A",
+        "body_color": "#3A3A3A",
+        "h_pos": "left",
+        "v_pos": "middle",
+        "text_align": "left",
+        "h_pos_mobile": "left",
+        "v_pos_mobile": "bottom",
+        "text_align_mobile": "left",
+        "copy_width": 520,
+        "heading_size": 54,
+        "scrim_style": "left",
+        "overlay_opacity_desktop": 45,
+        "overlay_opacity_mobile": 60,
+        "overlay_color": "#FFFFFF",
+        "btn1_text": "Enquire now",
+        "btn1_url": "#trade-enquiry",
+        "btn1_bg": "#6B1E3A",
+        "btn1_label_color": "#FFFFFF",
+        "btn1_border": "#6B1E3A",
+        "btn_radius": "999",
+        "pad_top_desktop": 120,
+        "pad_bottom_desktop": 64,
+        "pad_top_mobile": 96,
+        "pad_bottom_mobile": 48
+      }
+    },
+    "why": {
+      "type": "flex-steps",
+      "blocks": {
+        "w1": {
+          "type": "step",
+          "settings": {
+            "title": "It has sold before",
+            "text": "<p>Our first listing with a major UK retailer opened at 50 units, sold through in a week, and moved to repeat orders in the thousands across the Christmas peak.</p>"
+          }
+        },
+        "w2": {
+          "type": "step",
+          "settings": {
+            "title": "It photographs well",
+            "text": "<p>Designed in-house and shot in our own studio. Every product comes with retail-ready assets, so your team is not building a listing from a packshot and a paragraph.</p>"
+          }
+        },
+        "w3": {
+          "type": "step",
+          "settings": {
+            "title": "It is talkable in public",
+            "text": "<p>Sexual wellness that a marketing team can actually promote. No explicit packaging, nothing that has to be hidden behind a click-through.</p>"
+          }
+        },
+        "w4": {
+          "type": "step",
+          "settings": {
+            "title": "It is made here",
+            "text": "<p>Formulated and produced in the UK in small runs, with full ingredient and allergen documentation available for your compliance team.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "w1",
+        "w2",
+        "w3",
+        "w4"
+      ],
+      "settings": {
+        "eyebrow": "WHY CARRY IT",
+        "heading": "Four reasons buyers say yes",
+        "intro": "",
+        "heading_align": "center",
+        "text_align": "left",
+        "columns": 4,
+        "columns_tablet": 2,
+        "columns_mobile": 1,
+        "gap": 40,
+        "gap_mobile": 32,
+        "content_width": 1200,
+        "show_image": false,
+        "image_ratio": "4/5",
+        "image_ratio_mobile": "3/2",
+        "image_fit": "cover",
+        "corner_radius": 8,
+        "show_numbers": true,
+        "number_style": "rule",
+        "number_size": 13,
+        "number_size_mobile": 12,
+        "title_size": 20,
+        "title_size_mobile": 18,
+        "text_size": 15,
+        "text_size_mobile": 14,
+        "bg_color": "#FFFFFF",
+        "eyebrow_color": "#C9A96E",
+        "heading_color": "#1A1A1A",
+        "title_color": "#1A1A1A",
+        "text_color": "#4A4A4A",
+        "number_color": "#6B1E3A",
+        "rule_color": "#E5DFD6",
+        "pad_top_desktop": 112,
+        "pad_bottom_desktop": 96,
+        "pad_top_mobile": 64,
+        "pad_bottom_mobile": 56
+      }
+    },
+    "linecard": {
+      "type": "home-product-grid",
+      "settings": {
+        "eyebrow": "THE LINE",
+        "heading": "What you would be stocking",
+        "collection": "frontpage",
+        "products_limit": 8,
+        "desktop_columns": 3,
+        "mobile_layout": "grid",
+        "mobile_columns": "2",
+        "mobile_gap": 14,
+        "viewall_style": "none",
+        "card_show_badge": false,
+        "card_show_quick_add": false,
+        "card_show_category": false,
+        "card_show_desc": false,
+        "card_show_rating": false,
+        "card_show_cta": false,
+        "card_text_align": "left",
+        "pad_top_desktop": 0,
+        "pad_bottom_desktop": 96,
+        "pad_top_mobile": 0,
+        "pad_bottom_mobile": 56
+      }
+    },
+    "terms": {
+      "type": "faq-accordion",
+      "blocks": {
+        "t1": {
+          "type": "faq",
+          "settings": {
+            "question": "What is the minimum order?",
+            "answer": "<p>TO CONFIRM: state your MOQ, by product and in total.</p>",
+            "open_by_default": false
+          }
+        },
+        "t2": {
+          "type": "faq",
+          "settings": {
+            "question": "What are your trade terms and margin?",
+            "answer": "<p>TO CONFIRM: wholesale price or discount off RRP, and your standard payment terms.</p>",
+            "open_by_default": false
+          }
+        },
+        "t3": {
+          "type": "faq",
+          "settings": {
+            "question": "Case quantities and pallet configuration",
+            "answer": "<p>TO CONFIRM: units per outer case, cases per layer and per pallet, case dimensions and weight.</p>",
+            "open_by_default": false
+          }
+        },
+        "t4": {
+          "type": "faq",
+          "settings": {
+            "question": "Lead times",
+            "answer": "<p>TO CONFIRM: lead time from purchase order for stock held, and for a production run.</p>",
+            "open_by_default": false
+          }
+        },
+        "t5": {
+          "type": "faq",
+          "settings": {
+            "question": "Shelf life and storage",
+            "answer": "<p>TO CONFIRM: shelf life from production, and storage conditions. Chocolate needs a temperature range stating.</p>",
+            "open_by_default": false
+          }
+        },
+        "t6": {
+          "type": "faq",
+          "settings": {
+            "question": "Barcodes, compliance and documentation",
+            "answer": "<p>Every unit carries its own barcode. Full ingredient, allergen and nutritional declarations are available, along with product specifications for your compliance team.</p>",
+            "open_by_default": false
+          }
+        },
+        "t7": {
+          "type": "faq",
+          "settings": {
+            "question": "Can we get samples?",
+            "answer": "<p>Yes. Tell us what you are considering and we will send samples with trade pricing.</p>",
+            "open_by_default": false
+          }
+        },
+        "t8": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you supply outside the UK?",
+            "answer": "<p>TO CONFIRM: which territories you can ship to, and whether the formulation is compliant in the EU.</p>",
+            "open_by_default": false
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "t5",
+        "t6",
+        "t7",
+        "t8"
+      ],
+      "settings": {
+        "eyebrow": "THE COMMERCIALS",
+        "heading": "Everything a buyer asks first",
+        "heading_align": "center",
+        "single_open": true,
+        "content_width": 820,
+        "list_align": "center",
+        "bg_color": "#FAF7F2",
+        "pad_top_desktop": 112,
+        "pad_bottom_desktop": 112,
+        "pad_top_mobile": 64,
+        "pad_bottom_mobile": 64,
+        "footer_text": "Need something not covered here? ",
+        "footer_link_text": "Ask us.",
+        "footer_link_url": "#trade-enquiry"
+      }
+    },
+    "form": {
+      "type": "trade-form",
+      "settings": {
+        "eyebrow": "TRADE ENQUIRIES",
+        "heading": "Tell us about your shop",
+        "intro": "<p>Send this over and we will come back with trade pricing, case quantities and lead times, usually within two working days.</p>",
+        "heading_align": "center",
+        "form_width": 760,
+        "bg_color": "#FFFFFF",
+        "eyebrow_color": "#C9A96E",
+        "heading_color": "#1A1A1A",
+        "text_color": "#4A4A4A",
+        "btn_bg": "#6B1E3A",
+        "btn_text": "#FFFFFF",
+        "pad_top_desktop": 112,
+        "pad_bottom_desktop": 112,
+        "pad_top_mobile": 64,
+        "pad_bottom_mobile": 64
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "why",
+    "linecard",
+    "terms",
+    "form"
+  ]
+}

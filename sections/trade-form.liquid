@@ -1,0 +1,156 @@
+{% render 'section-style', section: section %}
+{% comment %}
+  PLAYMATE LABS — TRADE ENQUIRY FORM
+  File: sections/trade-form.liquid
+
+  Uses Shopify's native {% form 'contact' %}, so submissions arrive at the
+  store's contact email with no third-party dependency. Every field is
+  prefixed in the subject line so trade enquiries can be filtered from
+  customer support.
+{% endcomment %}
+
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .tf { --tf-fg: {{ s.text_color }}; }
+  #shopify-section-{{ section.id }} .tf__inner { max-width: {{ s.form_width }}px; }
+  #shopify-section-{{ section.id }} .tf__submit {
+    background: {{ s.btn_bg }};
+    color: {{ s.btn_text }};
+  }
+{%- endstyle -%}
+
+<section class="section tf" id="trade-enquiry">
+  <div class="container">
+    <div class="tf__inner">
+
+      {%- if s.eyebrow != blank or s.heading != blank -%}
+        <div class="section-header" style="text-align:{{ s.heading_align }};">
+          {%- if s.eyebrow != blank -%}
+            <span class="section-eyebrow" style="color:{{ s.eyebrow_color }};">{{ s.eyebrow }}</span>
+          {%- endif -%}
+          {%- if s.heading != blank -%}
+            <h2 class="heading-xl" style="color:{{ s.heading_color }};">{{ s.heading | newline_to_br }}</h2>
+          {%- endif -%}
+          {%- if s.intro != blank -%}
+            <div class="tf__intro" style="color:{{ s.text_color }};">{{ s.intro }}</div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- form 'contact', id: 'trade-form', class: 'tf__form' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="tf__success" role="status">{{ s.success_message | default: 'Thank you. We will come back to you within two working days.' }}</p>
+        {%- elsif form.errors -%}
+          <p class="tf__error" role="alert">{{ form.errors | default_errors }}</p>
+        {%- endif -%}
+
+        {%- comment -%} Marks the enquiry so it can be filtered from support mail {%- endcomment -%}
+        <input type="hidden" name="contact[subject]" value="Trade enquiry">
+
+        <div class="tf__grid">
+          <div class="tf__field">
+            <label for="tf-company">Business name</label>
+            <input type="text" id="tf-company" name="contact[Business name]" required autocomplete="organization">
+          </div>
+          <div class="tf__field">
+            <label for="tf-website">Website or social</label>
+            <input type="text" id="tf-website" name="contact[Website]" autocomplete="url">
+          </div>
+          <div class="tf__field">
+            <label for="tf-name">Your name</label>
+            <input type="text" id="tf-name" name="contact[Name]" required autocomplete="name">
+          </div>
+          <div class="tf__field">
+            <label for="tf-email">Email</label>
+            <input type="email" id="tf-email" name="contact[email]" value="{{ form.email }}" required autocomplete="email">
+          </div>
+          <div class="tf__field">
+            <label for="tf-phone">Phone</label>
+            <input type="tel" id="tf-phone" name="contact[Phone]" autocomplete="tel">
+          </div>
+          <div class="tf__field">
+            <label for="tf-type">Type of business</label>
+            <select id="tf-type" name="contact[Business type]">
+              {%- assign types = s.business_types | split: ',' -%}
+              {%- for t in types -%}
+                <option value="{{ t | strip | escape }}">{{ t | strip }}</option>
+              {%- endfor -%}
+            </select>
+          </div>
+          <div class="tf__field">
+            <label for="tf-locations">Number of locations</label>
+            <input type="text" id="tf-locations" name="contact[Locations]" inputmode="numeric">
+          </div>
+          <div class="tf__field">
+            <label for="tf-country">Country</label>
+            <input type="text" id="tf-country" name="contact[Country]" value="United Kingdom" autocomplete="country-name">
+          </div>
+        </div>
+
+        <div class="tf__field tf__field--full">
+          <label for="tf-products">Which products are you interested in?</label>
+          <input type="text" id="tf-products" name="contact[Products of interest]" placeholder="{{ s.products_placeholder }}">
+        </div>
+
+        <div class="tf__field tf__field--full">
+          <label for="tf-message">Anything else we should know?</label>
+          <textarea id="tf-message" name="contact[body]" rows="5" placeholder="{{ s.message_placeholder }}"></textarea>
+        </div>
+
+        <button type="submit" class="tf__submit">{{ s.submit_label | default: 'Send enquiry' }}</button>
+
+        {%- if s.smallprint != blank -%}
+          <p class="tf__smallprint" style="color:{{ s.text_color }};">{{ s.smallprint }}</p>
+        {%- endif -%}
+      {%- endform -%}
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trade enquiry form",
+  "tag": "section",
+  "class": "shopify-section-trade-form",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "TRADE ENQUIRIES" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Tell us about your shop" },
+    { "type": "richtext", "id": "intro", "label": "Intro",
+      "default": "<p>Send this over and we will come back with trade pricing, case quantities and lead times.</p>" },
+    { "type": "select", "id": "heading_align", "label": "Header alignment",
+      "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Centre" } ], "default": "center" },
+    { "type": "header", "content": "Fields" },
+    { "type": "text", "id": "business_types", "label": "Business types",
+      "info": "Comma separated. Becomes the dropdown.",
+      "default": "Independent retailer, Department store, Online retailer, Pharmacy or wellness, Hotel or hospitality, Distributor, Corporate or gifting, Other" },
+    { "type": "text", "id": "products_placeholder", "label": "Products field placeholder",
+      "default": "Chocolates, Hot Choc Spoons, Nude. Stacked" },
+    { "type": "text", "id": "message_placeholder", "label": "Message placeholder",
+      "default": "Timings, volumes, or anything you want us to price up" },
+    { "type": "text", "id": "submit_label", "label": "Button label", "default": "Send enquiry" },
+    { "type": "textarea", "id": "success_message", "label": "Success message",
+      "default": "Thank you. We will come back to you within two working days." },
+    { "type": "textarea", "id": "smallprint", "label": "Small print",
+      "default": "We only use these details to answer your enquiry." },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "form_width", "label": "Form width", "min": 480, "max": 1000, "step": 20, "unit": "px", "default": 760 },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FAF7F2" },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow", "default": "#C9A96E" },
+    { "type": "color", "id": "heading_color", "label": "Heading", "default": "#1A1A1A" },
+    { "type": "color", "id": "text_color", "label": "Body text", "default": "#4A4A4A" },
+    { "type": "color", "id": "btn_bg", "label": "Button background", "default": "#6B1E3A" },
+    { "type": "color", "id": "btn_text", "label": "Button text", "default": "#FFFFFF" },
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "pad_top_desktop", "label": "Padding top — desktop", "min": 0, "max": 240, "step": 4, "unit": "px", "default": 112 },
+    { "type": "range", "id": "pad_bottom_desktop", "label": "Padding bottom — desktop", "min": 0, "max": 240, "step": 4, "unit": "px", "default": 112 },
+    { "type": "range", "id": "pad_top_mobile", "label": "Padding top — mobile", "min": 0, "max": 180, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "pad_bottom_mobile", "label": "Padding bottom — mobile", "min": 0, "max": 180, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "presets": [ { "name": "Trade enquiry form" } ]
+}
+{% endschema %}

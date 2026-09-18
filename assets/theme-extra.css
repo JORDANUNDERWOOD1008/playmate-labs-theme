@@ -1686,3 +1686,88 @@
   font-size: 0.6875rem;
   font-weight: 600;
 }
+
+/* ============================================
+   TRADE ENQUIRY FORM
+   ============================================ */
+.tf__inner { margin-inline: auto; }
+
+.tf__intro { max-width: 56ch; margin: 1rem auto 0; line-height: 1.7; }
+.tf__intro p { margin: 0; }
+
+.tf__form { margin-top: 2.5rem; }
+
+.tf__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.125rem 1.25rem;
+}
+
+.tf__field { display: flex; flex-direction: column; }
+.tf__field--full { margin-top: 1.125rem; }
+
+.tf__field label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tf-fg, #4A4A4A);
+  margin-bottom: 0.4rem;
+}
+
+.tf__field input,
+.tf__field select,
+.tf__field textarea {
+  width: 100%;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--border-color, #E5DFD6);
+  border-radius: 8px;
+  background: var(--white, #FFF);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: var(--text-dark, #1A1A1A);
+  transition: border-color 0.15s;
+}
+
+.tf__field textarea { resize: vertical; min-height: 120px; }
+
+.tf__field input:focus,
+.tf__field select:focus,
+.tf__field textarea:focus {
+  outline: none;
+  border-color: var(--burgundy, #6B1E3A);
+}
+
+.tf__submit {
+  margin-top: 1.75rem;
+  width: 100%;
+  padding: 0.95rem 2rem;
+  border: 0;
+  border-radius: var(--radius-full, 999px);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.tf__submit:hover { filter: brightness(1.1); }
+
+.tf__smallprint { margin-top: 1rem; font-size: 0.75rem; text-align: center; }
+
+.tf__success,
+.tf__error {
+  padding: 0.875rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9375rem;
+}
+
+.tf__success { background: #EDF6EE; color: #1F5B2B; border: 1px solid #CBE6D0; }
+.tf__error   { background: #FBEDED; color: #7A1F1F; border: 1px solid #EFCFCF; }
+
+@media (max-width: 640px) {
+  .tf__grid { grid-template-columns: 1fr; }
+}
