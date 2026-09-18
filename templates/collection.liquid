@@ -46,7 +46,6 @@
         {%- if is_all -%}
           Playful rituals, sensory products<br> and experiences worth dressing up for.
         {%- elsif is_drops -%}
-          Monthly Drops: Limited Editions<br> for modern couples.
         {%- elsif is_consumables -%}
           Sensory Consumables: Edible Rituals<br> designed for two.
         {%- else -%}
@@ -424,19 +423,24 @@
   </div><!-- /.container -->
 </section>
 
-<!-- ===== MONTHLY DROP CTA ===== -->
+{%- comment -%}
+  A "Monthly Drops" band stood here promising a curated kit every month,
+  limited to 200 pairs, with a link to past drops. There is no drops
+  programme and the collection it linked to is empty. Replaced by the
+  newsletter, which is the promise the brand can actually keep.
+{%- endcomment -%}
 {%- if is_all -%}
 <section class="shop-drop-cta">
   <div class="container">
     <div class="shop-drop-inner">
       <div class="shop-drop-text">
-        <span class="section-eyebrow" style="color:var(--gold);">Monthly Drops</span>
-        <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--cream);margin:0.5rem 0 1rem;">Never miss a limited release</h2>
-        <p style="color:rgba(245,239,230,0.7);max-width:420px;">Each month we release a single curated kit, limited to 200 pairs. Join the list for early access, 24 hours before public release.</p>
+        <span class="section-eyebrow" style="color:var(--gold);">The list</span>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--cream);margin:0.5rem 0 1rem;">Hear it here first</h2>
+        <p style="color:rgba(245,239,230,0.7);max-width:420px;">New products, restocks and the occasional thing we only make once. No more than a couple of emails a month.</p>
       </div>
       <div class="shop-drop-cta-btns">
-        <a href="/collections/frontpage" class="btn btn-gold">Join Drop List</a>
-        <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="btn btn-ghost">See Past Drops</a>
+        <a href="/pages/sms-opt-in" class="btn btn-gold">Join the list</a>
+        <a href="/pages/stockists" class="btn btn-ghost">Become a stockist</a>
       </div>
     </div>
   </div>
