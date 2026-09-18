@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "favicon": "shopify://shop_images/PLAYMATE-WHITE.png",
@@ -32,7 +41,7 @@
     "scratch_sub": "Scratch below to see what you get",
     "scratch_prize_lead": "You've got",
     "scratch_prize": "Up to 60% off",
-    "scratch_code": "WELCOME10",
+    "scratch_code": "",
     "scratch_placeholder": "Your email address",
     "scratch_claim": "Claim",
     "scratch_email_prompt": "Enter your email to get your deal",
