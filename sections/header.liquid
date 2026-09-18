@@ -182,14 +182,39 @@
   #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-icon-btn {
     color: {{ section.settings.pill_icon_color }};
   }
-  {%- if section.settings.pill_hide_menu -%}
-  {%- comment -%} Hamburger at every width, as the reference does {%- endcomment -%}
-  #shopify-section-{{ section.id }} .nav-pills .nav-links { display: none; }
-  {%- else -%}
+  {%- comment -%}
+    The link list now lives inside the left capsule. .nav-lockup is
+    display:contents in the solid-bar style, so the links still lay out as
+    direct children of .nav-inner there and that style is unaffected.
+  {%- endcomment -%}
   #shopify-section-{{ section.id }} .nav-pills .nav-links .nav-link {
     color: {{ section.settings.pill_link_color }};
+    font-size: {{ section.settings.pill_link_size }}px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  {%- if section.settings.pill_menu_style == 'hamburger' -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-links { display: none; }
+  {%- else -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-links {
+    display: flex;
+    align-items: center;
+    gap: {{ section.settings.pill_link_gap }}px;
+    margin: 0 0 0 {{ section.settings.pill_link_gap }}px;
+    padding: 0;
+    list-style: none;
+  }
+  #shopify-section-{{ section.id }} .nav-pills .nav-toggle { display: none !important; }
+  @media (max-width: {{ section.settings.pill_menu_breakpoint }}px) {
+    #shopify-section-{{ section.id }} .nav-pills .nav-links { display: none; }
+    #shopify-section-{{ section.id }} .nav-pills .nav-toggle { display: flex !important; }
   }
   {%- endif -%}
+  {%- unless section.settings.pill_show_cta -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-cta { display: none; }
+  {%- endunless -%}
   #shopify-section-{{ section.id }} .nav-pills .nav-toggle span {
     background: {{ section.settings.pill_text }};
   }
@@ -256,24 +281,24 @@
       <button class="nav-toggle" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu">
         <span></span><span></span><span></span>
       </button>
+    {%- comment -%} Desktop Navigation {%- endcomment -%}
+      <ul class="nav-links" role="list">
+        {%- for link in linklists[section.settings.menu].links -%}
+          {%- if link.links != blank -%}
+            <li class="nav-item nav-item--has-dropdown">
+              <button class="nav-link nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+                {{ link.title }}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:0.25rem;">
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </button>
+              <ul class="nav-dropdown" role="list">
+                {%- for childlink in link.links -%}
+                  <li><a href="{{ childlink.url }}" class="nav-dropdown-link"{% if childlink.current %} aria-current="page"{% endif %}>{{ childlink.title }}</a></li>
+                {%- endfor -%}
+              </ul>
     </div>
 
-    {%- comment -%} Desktop Navigation {%- endcomment -%}
-    <ul class="nav-links" role="list">
-      {%- for link in linklists[section.settings.menu].links -%}
-        {%- if link.links != blank -%}
-          <li class="nav-item nav-item--has-dropdown">
-            <button class="nav-link nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
-              {{ link.title }}
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:0.25rem;">
-                <path d="M6 9l6 6 6-6"/>
-              </svg>
-            </button>
-            <ul class="nav-dropdown" role="list">
-              {%- for childlink in link.links -%}
-                <li><a href="{{ childlink.url }}" class="nav-dropdown-link"{% if childlink.current %} aria-current="page"{% endif %}>{{ childlink.title }}</a></li>
-              {%- endfor -%}
-            </ul>
           </li>
         {%- else -%}
           <li class="nav-item">
@@ -701,11 +726,56 @@
       "default": "#1A1A1A"
     },
     {
+      "type": "select",
+      "id": "pill_menu_style",
+      "label": "Left capsule menu",
+      "options": [
+        {
+          "value": "links",
+          "label": "Links on desktop, hamburger on mobile"
+        },
+        {
+          "value": "hamburger",
+          "label": "Hamburger at every width"
+        }
+      ],
+      "default": "links"
+    },
+    {
+      "type": "range",
+      "id": "pill_menu_breakpoint",
+      "label": "Switch to hamburger below",
+      "min": 600,
+      "max": 1100,
+      "step": 20,
+      "unit": "px",
+      "default": 900
+    },
+    {
+      "type": "range",
+      "id": "pill_link_size",
+      "label": "Link size",
+      "min": 9,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "pill_link_gap",
+      "label": "Gap between links",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 22
+    },
+    {
       "type": "checkbox",
-      "id": "pill_hide_menu",
-      "label": "Hamburger at all screen sizes",
-      "default": true,
-      "info": "Hides the inline desktop menu, as the reference design does. Untick to keep the links and colour them below."
+      "id": "pill_show_cta",
+      "label": "Show the call-to-action button",
+      "default": true
     },
     {
       "type": "color",
