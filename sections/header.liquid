@@ -91,9 +91,18 @@
   }
   {%- endif -%}
   #shopify-section-{{ section.id }} .nav-pills .nav-inner {
+    {%- comment -%}
+      The two capsules belong at opposite edges. Relying on the gap alone put
+      them shoulder to shoulder once the links moved into the left one and it
+      grew wide enough to close the distance.
+    {%- endcomment -%}
+    display: flex;
+    justify-content: space-between;
     gap: {{ section.settings.pill_gap }}px;
     align-items: center;
   }
+  #shopify-section-{{ section.id }} .nav-pills .nav-lockup { margin-right: auto; }
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions { margin-left: auto; }
   {%- comment -%} The logo needs its own size here — it is no longer sharing a
       bar with the nav links, so the bar height stops constraining it. {%- endcomment -%}
   #shopify-section-{{ section.id }} .nav-pills .nav-logo span {
