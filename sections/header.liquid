@@ -108,26 +108,33 @@
     Two capsules: logo + hamburger on the left, actions on the right, both the
     same height so they cannot drift apart.
   {%- endcomment -%}
+  {%- comment -%} Shared capsule shape; the two differ only in height and padding {%- endcomment -%}
   #shopify-section-{{ section.id }} .nav-pills .nav-lockup,
   #shopify-section-{{ section.id }} .nav-pills .nav-actions {
     display: flex;
     align-items: center;
     gap: {{ section.settings.pill_inner_gap }}px;
     box-sizing: border-box;
-    {%- comment -%}
-      The right capsule is deliberately shorter than the left, and in label
-      mode its right padding shrinks so the cart capsule finishes flush with
-      the end of the pill rather than floating inside it.
-    {%- endcomment -%}
-    height: {{ section.settings.pill_height_actions | default: section.settings.pill_height }}px;
     background: {{ section.settings.pill_bg }};
     border-radius: 999px;
+    box-shadow: 0 2px 16px rgba(0,0,0,{{ section.settings.pill_shadow | divided_by: 100.0 }});
+  }
+  #shopify-section-{{ section.id }} .nav-pills .nav-lockup {
+    height: {{ section.settings.pill_height }}px;
+    padding: 0 {{ section.settings.pill_pad_x }}px;
+  }
+  {%- comment -%}
+    The right capsule is deliberately shorter than the left, and in label mode
+    its right padding shrinks so the cart capsule finishes flush with the end
+    of the pill rather than floating inside it.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions {
+    height: {{ section.settings.pill_height_actions | default: section.settings.pill_height }}px;
     {%- if section.settings.pill_show_labels %}
     padding: 0 {{ section.settings.pill_cart_inset }}px 0 {{ section.settings.pill_pad_x | plus: 6 }}px;
     {%- else %}
     padding: 0 {{ section.settings.pill_pad_x }}px;
     {%- endif %}
-    box-shadow: 0 2px 16px rgba(0,0,0,{{ section.settings.pill_shadow | divided_by: 100.0 }});
   }
   #shopify-section-{{ section.id }} .nav-pills .nav-logo {
     display: flex;
@@ -325,6 +332,7 @@
             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
             <circle cx="12" cy="7" r="4"/>
           </svg>
+          <span class="nav-btn-label">{{ section.settings.pill_account_label | default: 'My account' }}</span>
         </a>
       {%- endif -%}
 
