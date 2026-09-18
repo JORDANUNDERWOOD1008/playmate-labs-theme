@@ -42,7 +42,7 @@
   {{ sel }} {
     {%- if s.pad_top_desktop != blank %}    --sec-pad-top: {{ s.pad_top_desktop }}px;{% endif -%}
     {%- if s.pad_bottom_desktop != blank %} --sec-pad-bottom: {{ s.pad_bottom_desktop }}px;{% endif -%}
-    {%- if s.height_desktop != blank and s.height_desktop > 0 %} --sec-height: {{ s.height_desktop }}vh;{% endif -%}
+    {%- if s.height_desktop != blank and s.height_desktop > 0 %} --sec-height: calc({{ s.height_desktop }}svh - var(--bar-height, 0px));{% endif -%}
     {%- if s.height_desktop == 0 %} --sec-height: auto;{% endif -%}
     {%- if s.content_width != blank and s.content_width > 0 %} --sec-content-width: {{ s.content_width }}px;{% endif -%}
     {%- if s.text_align_desktop != blank %} --sec-text-align: {{ s.text_align_desktop }};{% endif -%}
@@ -155,7 +155,7 @@
     {{ sel }} {
       {%- if s.pad_top_mobile != blank %}    --sec-pad-top: {{ s.pad_top_mobile }}px;{% endif -%}
       {%- if s.pad_bottom_mobile != blank %} --sec-pad-bottom: {{ s.pad_bottom_mobile }}px;{% endif -%}
-      {%- if s.height_mobile != blank and s.height_mobile > 0 %} --sec-height: {{ s.height_mobile }}vh;{% endif -%}
+      {%- if s.height_mobile != blank and s.height_mobile > 0 %} --sec-height: calc({{ s.height_mobile }}svh - var(--bar-height, 0px));{% endif -%}
       {%- if s.height_mobile == 0 %} --sec-height: auto;{% endif -%}
       {%- if s.text_align_mobile != blank -%}
         --sec-text-align: {{ s.text_align_mobile }};
