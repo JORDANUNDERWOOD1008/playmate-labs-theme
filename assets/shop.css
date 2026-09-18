@@ -743,3 +743,8 @@
   .shop-products-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
   .shop-hero-stats { gap: 1rem; }
 }
+
+/* Below the filter threshold the sidebar is not rendered, so the grid takes
+   the full width instead of leaving a column of empty space. */
+.shop-layout--nofilters { grid-template-columns: 1fr !important; display: block; }
+.shop-layout--nofilters .shop-content { width: 100%; }

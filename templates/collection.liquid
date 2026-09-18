@@ -92,9 +92,20 @@
 <!-- ===== MAIN SHOP LAYOUT: SIDEBAR + GRID ===== -->
 <section class="section shop-main">
   <div class="container">
-    <div class="shop-layout">
+    {%- comment -%}
+      Filters, sort and the result count are overhead until there is enough
+      catalogue to need them. Below the threshold the grid is the page; the
+      chrome comes back on its own as products are added.
+    {%- endcomment -%}
+    {%- assign filter_threshold = 8 -%}
+    {%- assign show_filters = false -%}
+    {%- if collection.all_products_count >= filter_threshold -%}
+      {%- assign show_filters = true -%}
+    {%- endif -%}
+    <div class="shop-layout{% unless show_filters %} shop-layout--nofilters{% endunless %}">
 
       <!-- ========= SIDEBAR ========= -->
+      {%- if show_filters -%}
       <aside class="shop-sidebar" id="shop-sidebar">
 
         <div class="sidebar-header">
@@ -284,11 +295,13 @@
         </div>
 
       </aside><!-- /.shop-sidebar -->
+      {%- endif -%}
 
       <!-- ========= MAIN CONTENT ========= -->
       <div class="shop-content">
 
         <!-- Top Bar -->
+        {%- if show_filters -%}
         <div class="shop-topbar">
           <div class="shop-topbar-left">
             <p class="shop-count-text" id="product-count">
@@ -319,7 +332,10 @@
           </div>
         </div>
 
+        {%- endif -%}
+
         <!-- Mobile Filter Chips -->
+        {%- if show_filters -%}
         <div class="mobile-filter-chips" id="mobile-chips">
           <button class="filter-btn{% unless current_tags %} active{% endunless %}" data-tag="" data-collection="{{ collection.url }}">All</button>
           <button class="filter-btn{% if current_tags contains 'consumables' %} active{% endif %}" data-tag="consumables" data-collection="{{ collection.url }}">Consumables</button>
@@ -329,6 +345,7 @@
           <button class="filter-btn{% if current_tags contains 'gifts' %} active{% endif %}" data-tag="gifts" data-collection="{{ collection.url }}">Gifts</button>
           <button class="filter-btn{% if current_tags contains 'ritual-add-ons' %} active{% endif %}" data-tag="ritual-add-ons" data-collection="{{ collection.url }}">Rituals</button>
         </div>
+        {%- endif -%}
 
         {%- comment -%} Products {%- endcomment -%}
         {%- if collection.products.size == 0 -%}
