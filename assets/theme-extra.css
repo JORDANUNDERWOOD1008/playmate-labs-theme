@@ -1876,3 +1876,6 @@
   .tb__grid { gap: 2.25rem; }
   .tb__cover { order: -1; }
 }
+
+/* Labels in the header capsule are hidden unless the section turns them on. */
+.nav-btn-label { display: none; }

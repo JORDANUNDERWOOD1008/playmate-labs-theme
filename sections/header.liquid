@@ -34,6 +34,31 @@
   @media (max-width: 768px) {
     #shopify-section-{{ section.id }} .nav-logo-img { --nav-logo-h: {{ logo_h_m }}px; }
   }
+  {%- comment -%} Label mode: words instead of icons in the right capsule {%- endcomment -%}
+  {%- if section.settings.pill_show_labels %}
+  #shopify-section-{{ section.id }} .nav-pills .nav-btn-label {
+    display: inline;
+    font-family: var(--font-sans);
+    font-size: {{ section.settings.pill_label_size }}px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-icon-btn svg { display: none; }
+  #shopify-section-{{ section.id }} .nav-pills [data-cart-open] svg { display: none; }
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-icon-btn { width: auto; }
+  {%- unless section.settings.pill_show_search %}
+  #shopify-section-{{ section.id }} .nav-pills .nav-search-btn { display: none; }
+  {%- endunless %}
+  @media (max-width: 768px) {
+    {%- unless section.settings.pill_labels_mobile %}
+    #shopify-section-{{ section.id }} .nav-pills .nav-btn-label { display: none; }
+    #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-icon-btn svg,
+    #shopify-section-{{ section.id }} .nav-pills [data-cart-open] svg { display: block; }
+    {%- endunless %}
+  }
+  {%- endif %}
 {%- endstyle -%}
 
 {%- comment -%}
@@ -89,10 +114,19 @@
     align-items: center;
     gap: {{ section.settings.pill_inner_gap }}px;
     box-sizing: border-box;
-    height: {{ section.settings.pill_height }}px;
+    {%- comment -%}
+      The right capsule is deliberately shorter than the left, and in label
+      mode its right padding shrinks so the cart capsule finishes flush with
+      the end of the pill rather than floating inside it.
+    {%- endcomment -%}
+    height: {{ section.settings.pill_height_actions | default: section.settings.pill_height }}px;
     background: {{ section.settings.pill_bg }};
     border-radius: 999px;
+    {%- if section.settings.pill_show_labels %}
+    padding: 0 {{ section.settings.pill_cart_inset }}px 0 {{ section.settings.pill_pad_x | plus: 6 }}px;
+    {%- else %}
     padding: 0 {{ section.settings.pill_pad_x }}px;
+    {%- endif %}
     box-shadow: 0 2px 16px rgba(0,0,0,{{ section.settings.pill_shadow | divided_by: 100.0 }});
   }
   #shopify-section-{{ section.id }} .nav-pills .nav-logo {
@@ -116,10 +150,12 @@
     background: {{ section.settings.pill_cart_bg }};
     color: {{ section.settings.pill_cart_text }};
     border-radius: 999px;
-    height: {{ section.settings.pill_height | minus: 14 }}px;
-    padding: 0 14px;
+    {%- assign ah = section.settings.pill_height_actions | default: section.settings.pill_height -%}
+    height: {{ ah | minus: section.settings.pill_cart_inset | minus: section.settings.pill_cart_inset }}px;
+    padding: 0 {% if section.settings.pill_show_labels %}18{% else %}14{% endif %}px;
     display: flex;
     align-items: center;
+    gap: 7px;
   }
   {%- endif -%}
   {%- comment -%} Icons must not push the capsule taller than its set height {%- endcomment -%}
@@ -255,7 +291,7 @@
       {%- endif -%}
 
       {%- comment -%} Search {%- endcomment -%}
-      <button class="nav-icon-btn" id="search-toggle" aria-label="Search">
+      <button class="nav-icon-btn nav-search-btn" id="search-toggle" aria-label="Search">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
@@ -268,6 +304,7 @@
           <line x1="3" y1="6" x2="21" y2="6"/>
           <path d="M16 10a4 4 0 01-8 0"/>
         </svg>
+        <span class="nav-btn-label">{{ section.settings.pill_cart_label | default: 'Cart' }}</span>
         <span class="cart-count" {% if cart.item_count == 0 %}style="display:none;"{% endif %}>
           {{ cart.item_count }}
         </span>
@@ -280,6 +317,7 @@
             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
             <circle cx="12" cy="7" r="4"/>
           </svg>
+          <span class="nav-btn-label">{{ section.settings.pill_account_label | default: 'My account' }}</span>
         </a>
       {%- else -%}
         <a href="{{ routes.account_login_url }}" class="nav-icon-btn" aria-label="Sign In">
@@ -554,6 +592,73 @@
       "unit": "px",
       "label": "Pill height — mobile",
       "default": 40
+    },
+    {
+      "type": "range",
+      "id": "pill_height_actions",
+      "label": "Right capsule height",
+      "min": 28,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 42,
+      "info": "Set it below the left capsule height so the logo pill reads as the larger of the two."
+    },
+    {
+      "type": "header",
+      "content": "Right capsule contents"
+    },
+    {
+      "type": "checkbox",
+      "id": "pill_show_labels",
+      "label": "Use words instead of icons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "pill_labels_mobile",
+      "label": "Words on mobile too",
+      "default": false,
+      "info": "Off keeps icons on narrow screens, where words crowd the logo."
+    },
+    {
+      "type": "text",
+      "id": "pill_account_label",
+      "label": "Account label",
+      "default": "My account"
+    },
+    {
+      "type": "text",
+      "id": "pill_cart_label",
+      "label": "Cart label",
+      "default": "Cart"
+    },
+    {
+      "type": "range",
+      "id": "pill_label_size",
+      "label": "Label size",
+      "min": 9,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "pill_show_search",
+      "label": "Keep the search icon",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "pill_cart_inset",
+      "label": "Cart capsule inset",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 5,
+      "info": "Gap between the cart capsule and the edge of the pill."
     },
     {
       "type": "range",
