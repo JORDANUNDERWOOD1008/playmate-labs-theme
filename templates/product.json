@@ -23,7 +23,9 @@
         "pcb_message_hint": "Printed on a card inside your box.",
         "pcb_message_max": 200,
         "pcb_upload_label": "Upload a photo or file",
-        "pcb_upload_hint": "Drop a photo here or click to browse"
+        "pcb_upload_hint": "Drop a photo here or click to browse",
+        "related_collection": "frontpage",
+        "related_count": 2
       }
     },
     "product-page-banner": {

@@ -925,26 +925,36 @@
       <h2 class="heading-lg">Complete your ritual</h2>
     </div>
     <div class="related-grid">
-      {%- assign related_collection = collections['ritual-add-ons'] | default: collections['all'] -%}
-      {%- for related in related_collection.products limit: 4 -%}
+      {%- comment -%}
+        collections['all'] contains every product in the store, duplicates and
+        all, which is how the same item appeared three times here. Read from
+        the curated collection instead, drop the product being viewed, and
+        de-duplicate by title so two Shopify products for the same physical
+        item cannot both appear.
+      {%- endcomment -%}
+      {%- assign related_collection = collections[section.settings.related_collection] -%}
+      {%- if related_collection == blank or related_collection.products.size == 0 -%}
+        {%- assign related_collection = collections['frontpage'] -%}
+      {%- endif -%}
+      {%- assign seen_titles = '' -%}
+      {%- assign shown = 0 -%}
+      {%- for related in related_collection.products -%}
+        {%- if shown >= section.settings.related_count -%}{%- break -%}{%- endif -%}
         {%- unless related.id == product.id -%}
-          {% render 'product-card', product: related %}
+          {%- assign key = related.title | downcase | strip | append: '||' -%}
+          {%- unless seen_titles contains key -%}
+            {%- assign seen_titles = seen_titles | append: key -%}
+            {%- assign shown = shown | plus: 1 -%}
+            {% render 'product-card', product: related,
+               show_badge: true, show_quick_add: true, show_cta: true %}
+          {%- endunless -%}
         {%- endunless -%}
-      {%- else -%}
-        <!-- Static placeholders -->
-        {%- for i in (1..4) -%}
-          <div style="background:var(--ivory);border-radius:var(--radius-xl);overflow:hidden;border:1px solid var(--border-light);">
-            <div style="height:180px;background:linear-gradient(135deg,#1A0A06,#3D1A2E);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">
-              {%- assign icons = '🍫,🕯️,🃏,📖' | split: ',' -%}{{ icons[forloop.index0] }}
-            </div>
-            <div style="padding:1rem;">
-              <p style="font-size:0.875rem;font-weight:600;margin-bottom:0.25rem;color:var(--espresso);">Ritual Add-On {{ i }}</p>
-              <p style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:0.75rem;">Perfect companion</p>
-              <p style="font-weight:600;color:var(--burgundy);">from £24</p>
-            </div>
-          </div>
-        {%- endfor -%}
       {%- endfor -%}
+      {%- comment -%}
+        A placeholder grid of invented "Ritual Add-On" cards priced "from £24"
+        stood here for the empty case. With a curated collection it never
+        fired, and a fake product is worse than an absent row.
+      {%- endcomment -%}
     </div>
   </div>
 </section>
@@ -1215,7 +1225,7 @@ window.playmatelabsVariants = {{ product.variants | json }};
       "type": "text",
       "id": "pcb_message_placeholder",
       "label": "Message placeholder",
-      "default": "Write something meaningful\u2026"
+      "default": "Write something meaningful…"
     },
     {
       "type": "text",
@@ -1240,6 +1250,24 @@ window.playmatelabsVariants = {{ product.variants | json }};
       "id": "pcb_upload_hint",
       "label": "Upload dropzone hint",
       "default": "Drop a photo here or click to browse"
+    },
+    {
+      "type": "header",
+      "content": "Related products"
+    },
+    {
+      "type": "collection",
+      "id": "related_collection",
+      "label": "Suggest products from"
+    },
+    {
+      "type": "range",
+      "id": "related_count",
+      "label": "How many to show",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 2
     }
   ]
 }
