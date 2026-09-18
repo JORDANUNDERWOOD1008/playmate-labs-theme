@@ -76,7 +76,7 @@
                     <span class="ep-notify-label">Notify Me</span>
                   </button>
                 {%- else -%}
-                  <a href="{{ block.settings.rsvp_url | default: '/pages/events' }}" class="btn btn-sm {% if block.settings.badge_style == 'gold' %}btn-primary{% else %}btn-secondary{% endif %}">
+                  <a href="{{ block.settings.rsvp_url | default: '/collections/frontpage' }}" class="btn btn-sm {% if block.settings.badge_style == 'gold' %}btn-primary{% else %}btn-secondary{% endif %}">
                     {{ block.settings.cta_label | default: 'RSVP' }}
                   </a>
                 {%- endif -%}
@@ -99,7 +99,7 @@
       <!-- View all + waitlist CTA row -->
       <div class="ep-footer-actions">
         {%- unless section.settings.hide_view_all -%}
-        <a href="{{ section.settings.view_all_url | default: '/pages/events' }}" class="btn btn-secondary btn-lg">
+        <a href="{{ section.settings.view_all_url | default: '/collections/frontpage' }}" class="btn btn-secondary btn-lg">
           {{ section.settings.view_all_label | default: 'View All Events' }}
         </a>
         {%- endunless -%}

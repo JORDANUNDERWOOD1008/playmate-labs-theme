@@ -25,11 +25,11 @@
     <div class="about-hero-inner" style="max-width:700px;">
       <span class="section-eyebrow" style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_eyebrow | default: 'Our Story' }}</span>
       <h1 style="font-family:var(--font-serif);font-size:clamp(2rem,5vw,3.25rem);color:{{ settings.about_hero_heading_color | default: 'var(--cream)' }};margin:0.75rem 0 1.5rem;line-height:1.2;">
-        {{ settings.about_hero_heading_1 | default: 'We\' }}<br>
+        {{ settings.about_hero_heading_1 | default: 'We are rewriting' }}<br>
         {{ settings.about_hero_heading_2 | default: 'how couples do' }}<br>
         <em style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_hero_heading_italic | default: 'date night.' }}</em>
       </h1>
-      <p style="font-size:1.0625rem;color:rgba(245,239,230,0.8);line-height:1.7;max-width:580px;">{{ settings.about_hero_sub | default: 'Playmate Labs is the cultural platform for modern relationships — built on sensory products, monthly drops, immersive events and digital rituals.' }}</p>
+      <p style="font-size:1.0625rem;color:rgba(245,239,230,0.8);line-height:1.7;max-width:580px;">{{ settings.about_hero_sub | default: 'Playmate Labs is a product development studio for modern relationships. We design objects that make it easy for two people to find their way back to each other.' }}</p>
     </div>
   </div>
 </section>
@@ -40,24 +40,17 @@
     <div class="about-problem-grid">
       <div class="about-problem-text">
         <span class="section-eyebrow" style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_problem_eyebrow | default: 'The Problem' }}</span>
-        <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ settings.about_heading_color | default: 'var(--espresso)' }};margin:0.75rem 0 1.25rem;">{{ settings.about_problem_heading | default: 'Modern relationships lose novelty. We fix that.' }}</h2>
-        <p style="color:var(--text-body);line-height:1.75;margin-bottom:1rem;">{{ settings.about_problem_para_1 | default: 'Research consistently shows that novel shared experiences are the single strongest predictor of long-term relationship satisfaction. But modern life makes novelty hard. We fall into habits. We run out of ideas. Date night becomes dinner and the same TV show.' }}</p>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;color:{{ settings.about_heading_color | default: 'var(--espresso)' }};margin:0.75rem 0 1.25rem;">{{ settings.about_problem_heading | default: 'Great relationships keep finding new things to do together.' }}</h2>
+        <p style="color:var(--text-body);line-height:1.75;margin-bottom:1rem;">{{ settings.about_problem_para_1 | default: 'Novelty and emotional safety are the two things that most reliably keep a couple close. Both are easy to mean and hard to schedule, which is why the good intentions usually outlast the ideas.' }}</p>
         <p style="color:var(--text-body);line-height:1.75;">
-          {{ settings.about_problem_para_2_prefix | default: 'We built Playmate Labs to solve this. Not with therapy or advice — but with' }}
+          {{ settings.about_problem_para_2_prefix | default: 'So we build the ideas as objects. Not therapy, not advice, but' }}
           <strong style="color:{{ settings.about_accent_color | default: 'var(--burgundy)' }};">{{ settings.about_problem_para_2_bold | default: 'beautiful products, curated experiences and a world worth exploring together.' }}</strong>
         </p>
       </div>
-      <div class="about-stats-column">
-        {%- assign default_stat_nums = '67%,94%,3×' | split: ',' -%}
-        {%- assign default_stat_descs = 'of couples report that date nights become predictable within the first 2 years.,of couples who introduced novel sensory rituals reported higher relationship satisfaction after 30 days.,Couples who regularly do structured play are 3x more likely to report relationship satisfaction.' | split: ',' -%}
-        {%- for i in (1..3) -%}
-          {%- assign s_num = 'about_stat_' | append: i | append: '_num' -%}
-          {%- assign s_desc = 'about_stat_' | append: i | append: '_desc' -%}
-          <div class="about-stat-item">
-            <span class="about-stat-num" style="color:{{ settings.about_accent_color | default: 'var(--burgundy)' }};">{{ settings[s_num] | default: default_stat_nums[forloop.index0] }}</span>
-            <p class="about-stat-desc">{{ settings[s_desc] | default: default_stat_descs[forloop.index0] }}</p>
-          </div>
-        {%- endfor -%}
+      {%- comment -%}
+        A statistics column stood here with three figures and no citation for
+        any of them. Reinstate only alongside a published source per figure.
+      {%- endcomment -%}
       </div>
     </div>
   </div>
@@ -68,7 +61,7 @@
   <div class="container" style="max-width:680px;">
     <span class="section-eyebrow" style="color:{{ settings.about_accent_color | default: 'var(--gold)' }};">{{ settings.about_mission_eyebrow | default: 'Our Mission' }}</span>
     <blockquote style="font-family:var(--font-serif);font-size:clamp(1.5rem,4vw,2.25rem);color:{{ settings.about_mission_quote_color | default: 'var(--cream)' }};line-height:1.4;margin:1.5rem 0;font-style:italic;">
-      "{{ settings.about_mission_quote | default: 'To make novelty the default in modern relationships — not the exception.' }}"
+      "{{ settings.about_mission_quote | default: 'To make novelty the default in modern relationships, not the exception.' }}"
     </blockquote>
     <p style="color:rgba(245,239,230,0.7);font-size:1rem;line-height:1.75;max-width:580px;margin:0 auto;">{{ settings.about_mission_desc | default: 'We do this through products you can taste and smell and feel. Through drops that arrive like a monthly cultural release. Through events worth dressing up for. And through digital rituals that make intimacy feel playful again.' }}</p>
   </div>
@@ -84,7 +77,7 @@
     <div class="about-pillars-grid">
       {%- assign default_pillar_icons = '🍫,📦,✨,🎮' | split: ',' -%}
       {%- assign default_pillar_titles = 'Sensory Products,Monthly Drops,Immersive Events,Digital Play' | split: ',' -%}
-      {%- assign default_pillar_descs = 'Consumables ritual kits and beautiful objects designed to create shared sensory experiences.,Limited themed date night kits released like a cultural product. 200 kits. A new theme every month.,IRL experiences — sensory date nights couples mixers and pop-ups across the UK and beyond.,The 5-day experience digital rituals companion app access and a growing world of playful digital intimacy tools.' | split: ',' -%}
+      {%- assign default_pillar_descs = 'Consumables ritual kits and beautiful objects designed to create shared sensory experiences.,Limited themed date night kits released like a cultural product. 200 kits. A new theme every month.,IRL experiences: sensory date nights, couples mixers and pop-ups across the UK and beyond.,The 5-day experience digital rituals companion app access and a growing world of playful digital intimacy tools.' | split: ',' -%}
       {%- for i in (1..4) -%}
         {%- assign p_icon = 'about_pillar_' | append: i | append: '_icon' -%}
         {%- assign p_title = 'about_pillar_' | append: i | append: '_title' -%}
@@ -125,7 +118,7 @@
             {{ page.content | replace: '<h1', '<h2' | replace: '</h1>', '</h2>' }}
           {%- else -%}
             <p>{{ settings.about_founders_para_1 | default: 'Playmate Labs started as a conversation between two people who loved each other and had run out of interesting things to do about it. We\', the }}</p>
-            <p>{{ settings.about_founders_para_2 | default: 'We started experimenting — with sensory rituals, with structured play, with small ceremonies built around taste and touch. The evenings we remember most weren\' }}</p>
+            <p>{{ settings.about_founders_para_2 | default: 'We started experimenting with sensory rituals, with structured play, with small ceremonies built around taste and touch. The evenings we remember most weren\' }}</p>
             <p>{{ settings.about_founders_para_3 | default: 'So we built a brand around that instinct. Products with ritual built in. Drops that arrive like a cultural moment. Events that feel like nothing else. A community of people who believe that relationships are worth the effort of doing them well.' }}</p>
             <p><strong style="color:{{ settings.about_accent_color | default: 'var(--burgundy)' }};">{{ settings.about_founders_sign_off | default: 'Welcome to Playmate Labs. Let\' }}</strong></p>
           {%- endif -%}
@@ -151,7 +144,7 @@
     </div>
     <div class="about-values-grid">
       {%- assign default_val_titles = 'Intentional,Sensory,Sustainable,Honest' | split: ',' -%}
-      {%- assign default_val_descs = 'Every product is designed with a specific ritual in mind — not just aesthetically pleasing but experientially purposeful.,We work with all five senses to create moments that are truly felt not just experienced.,Eco packaging ethically sourced ingredients carbon-neutral shipping.,No greenwashing no empty claims. Everything we make works because we test it ourselves first.' | split: ',' -%}
+      {%- assign default_val_descs = 'Every product is designed with a specific ritual in mind, not just aesthetically pleasing but experientially purposeful.,We work with all five senses to create moments that are truly felt not just experienced.,Eco packaging ethically sourced ingredients carbon-neutral shipping.,No greenwashing no empty claims. Everything we make works because we test it ourselves first.' | split: ',' -%}
       {%- for i in (1..4) -%}
         {%- assign v_title = 'about_value_' | append: i | append: '_title' -%}
         {%- assign v_desc = 'about_value_' | append: i | append: '_desc' -%}
@@ -172,7 +165,7 @@
     <h2 style="font-family:var(--font-serif);font-size:1.875rem;color:{{ settings.about_cta_heading_color | default: 'var(--cream)' }};margin-bottom:1rem;">{{ settings.about_cta_heading | default: 'Start here.' }}</h2>
     <p style="color:rgba(245,239,230,0.7);margin-bottom:2rem;">{{ settings.about_cta_sub | default: 'Free 5-day experience. Or shop the latest drop. Either way, you\' }}</p>
     <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-      <a href="{{ pages['experience'].url | default: '/pages/5-day-experience' }}" class="btn btn-gold">{{ settings.about_cta_primary | default: 'Try Free Experience' }}</a>
+      <a href="/collections/frontpage" class="btn btn-gold">{{ settings.about_cta_primary | default: 'Shop the range' }}</a>
       <a href="{{ routes.all_products_collection_url }}" class="btn btn-ghost">{{ settings.about_cta_secondary | default: 'Shop the Latest Drop' }}</a>
     </div>
   </div>

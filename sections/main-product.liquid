@@ -331,7 +331,7 @@
         {%- comment -%} Value proposition — visible above the fold {%- endcomment -%}
         {%- if product.handle == 'playmate-chocolate' -%}
           <p class="product-subtitle" style="color:var(--espresso);font-weight:500;font-size:1rem;line-height:1.6;margin-bottom:1.25rem;">
-            A structured date night ritual in a box. Dark chocolate infused with maca &amp; ashwagandha, conversation cards, soy candle and a step-by-step ritual guide. Everything you need — nothing to plan.
+            A structured date night ritual in a box. Dark chocolate infused with maca &amp; ashwagandha, conversation cards, soy candle and a step-by-step ritual guide. Everything you need, nothing to plan.
           </p>
         {%- endif -%}
 
@@ -396,7 +396,7 @@
                 <label style="font-size:0.8125rem;font-weight:600;display:block;margin-bottom:0.375rem;">Delivery frequency</label>
                 <select id="sub-selling-plan" class="sub-frequency-select" style="padding:0.4rem 0.75rem;border-radius:var(--radius-md);border:1.5px solid var(--border-light);font-size:0.875rem;background:white;width:100%;">
                   {%- for alloc in product.selected_or_first_available_variant.selling_plan_allocations -%}
-                    <option value="{{ alloc.selling_plan.id }}">{{ alloc.selling_plan.name }} — {{ alloc.per_delivery_price | money }}</option>
+                    <option value="{{ alloc.selling_plan.id }}">{{ alloc.selling_plan.name }}, {{ alloc.per_delivery_price | money }}</option>
                   {%- endfor -%}
                 </select>
               </div>
@@ -424,12 +424,12 @@
         {%- if product.selected_or_first_available_variant.inventory_quantity > 0 and product.selected_or_first_available_variant.inventory_quantity < 20 -%}
           <div class="product-urgency">
             <div class="product-urgency-dot"></div>
-            <span>Only <strong>{{ product.selected_or_first_available_variant.inventory_quantity }}</strong> left — order soon</span>
+            <span>Only <strong>{{ product.selected_or_first_available_variant.inventory_quantity }}</strong> left, order soon</span>
           </div>
         {%- elsif is_limited -%}
           <div class="product-urgency">
             <div class="product-urgency-dot"></div>
-            <span>Limited edition — <strong>47 of 200</strong> kits remaining</span>
+            <span>Limited edition</span>
           </div>
         {%- endif -%}
 
@@ -448,7 +448,7 @@
             <button type="submit" class="product-atc-btn" id="atc-btn"
               {% unless product.available %}disabled{% endunless %}>
               <i class="fas fa-shopping-bag"></i>
-              {%- if product.available -%}<span id="atc-label">Add to Cart — {{ product.selected_or_first_available_variant.price | money }}</span>{%- else -%}Sold Out{%- endif -%}
+              {%- if product.available -%}<span id="atc-label">Add to Cart: {{ product.selected_or_first_available_variant.price | money }}</span>{%- else -%}Sold Out{%- endif -%}
             </button>
           </form>
         </div>
@@ -505,7 +505,7 @@
                 <div class="pcb-dropzone-idle" id="pcb-dropzone-idle">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(90,20,50,0.4)" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                   <span class="pcb-dropzone-text">{{ section.settings.pcb_upload_hint | default: 'Drop a photo here or click to browse' }}</span>
-                  <span class="pcb-dropzone-sub">JPG, PNG, PDF — max 10 MB</span>
+                  <span class="pcb-dropzone-sub">JPG, PNG or PDF, max 10 MB</span>
                 </div>
                 <div class="pcb-dropzone-preview" id="pcb-dropzone-preview" style="display:none;">
                   <img id="pcb-preview-img" src="" alt="Preview" style="display:none;">
@@ -836,11 +836,11 @@
         </div>
         <div class="product-ritual-step">
           <div class="product-ritual-step-num">02</div>
-          <div><div class="product-ritual-step-title">Read the ritual guide together</div><div class="product-ritual-step-text">Open the guide and read the opening aloud — alternate paragraphs. This frames the evening and sets intentions. 10 minutes.</div></div>
+          <div><div class="product-ritual-step-title">Read the ritual guide together</div><div class="product-ritual-step-text">Open the guide and read the opening aloud, alternating paragraphs. This frames the evening and sets intentions. 10 minutes.</div></div>
         </div>
         <div class="product-ritual-step">
           <div class="product-ritual-step-num">03</div>
-          <div><div class="product-ritual-step-title">Break the chocolate</div><div class="product-ritual-step-text">Follow the tasting ritual in the guide — smell, snap, taste slowly. Use the prompt cards to guide your observations. 15–20 minutes.</div></div>
+          <div><div class="product-ritual-step-title">Break the chocolate</div><div class="product-ritual-step-text">Follow the tasting ritual in the guide: smell, snap, taste slowly. Use the prompt cards to guide your observations. 15–20 minutes.</div></div>
         </div>
         <div class="product-ritual-step">
           <div class="product-ritual-step-num">04</div>
@@ -856,48 +856,22 @@
 </section>
 {%- endif -%}
 
-<!-- ══════════ REVIEWS ══════════ -->
-<section class="product-reviews-section" id="product-reviews">
-  <div class="container">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
-      <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--prod-desc-h);">What couples say</h2>
-      <div class="product-reviews-summary">
-        <div class="product-reviews-overall">
-          <div class="product-reviews-score">4.9</div>
-          <div class="product-reviews-stars-large">★★★★★</div>
-          <p style="font-size:0.8125rem;color:var(--prod-desc-tx);">{{ product.metafields.reviews.rating_count | default: '2,400+' }} reviews</p>
-        </div>
-      </div>
-    </div>
+{%- comment -%}
+  REVIEWS — removed 2026-09-18.
 
-    {%- if product.metafields.reviews.rating_count > 0 -%}
-      {%- comment -%} Placeholder for actual review app integration (Judge.me, Okendo, etc.) {%- endcomment -%}
-      <div id="shopify-product-reviews" data-id="{{ product.id }}">{{ product.metafields.reviews.body }}</div>
-    {%- else -%}
-      <!-- Static fallback reviews -->
-      <div class="product-reviews-grid">
-        <div class="product-review-card">
-          <div class="product-review-stars">★★★★★</div>
-          <p class="product-review-text">"This genuinely changed how we spend our Friday evenings. The structure of the ritual guide is genius — we stayed up until 2am talking. Worth every penny."</p>
-          <div><div class="product-review-author">Sarah & James T.</div><div class="product-review-meta">Verified purchase · London · January 2025</div></div>
-        </div>
-        <div class="product-review-card">
-          <div class="product-review-stars">★★★★★</div>
-          <p class="product-review-text">"Bought as a Christmas gift for my partner. We both expected it to feel like a gimmick — it absolutely did not. The chocolate alone is extraordinary. The conversation cards were surprisingly deep."</p>
-          <div><div class="product-review-author">Priya M.</div><div class="product-review-meta">Verified purchase · Manchester · December 2024</div></div>
-        </div>
-        <div class="product-review-card">
-          <div class="product-review-stars">★★★★★</div>
-          <p class="product-review-text">"We're three years in and we needed something new. The Velvet Hour gave us a proper evening that felt intentional. The candle smells incredible and the kit is beautifully packaged."</p>
-          <div><div class="product-review-author">Chris & Dan K.</div><div class="product-review-meta">Verified purchase · Edinburgh · January 2025</div></div>
-        </div>
-      </div>
-      <div class="text-center" style="margin-top:2rem;">
-        <a href="#product-reviews" class="btn btn-secondary btn-lg" style="pointer-events:none;opacity:0.6;">2,400+ verified reviews</a>
-      </div>
-    {%- endif -%}
-  </div>
-</section>
+  This block rendered a hardcoded 4.9 score, a "2,400+ verified reviews"
+  figure and three invented testimonials carrying full names, cities, dates
+  and a "Verified purchase" label, on every product page. None of it was
+  sourced; no review app is installed on the store.
+
+  Presenting fabricated reviews as genuine is prohibited under the Digital
+  Markets, Competition and Consumers Act 2024, so this is not something to
+  leave switched off and forget about.
+
+  To bring reviews back, install a review app (Judge.me, Okendo, Loox) and
+  render its block here. The rating line beside the product title already
+  reads product.metafields.reviews.rating and stays hidden until that is set.
+{%- endcomment -%}
 
 <!-- ══════════ RELATED PRODUCTS ══════════ -->
 <section class="product-related section" style="background:white;">
@@ -1069,9 +1043,9 @@
       // Update ATC button label price
       if (atcLabelEl) {
         if (isSubscription && freqSelect && planPrices[freqSelect.value]) {
-          atcLabelEl.textContent = 'Subscribe — ' + planPrices[freqSelect.value] + ' / delivery';
+          atcLabelEl.textContent = 'Subscribe: ' + planPrices[freqSelect.value] + ' / delivery';
         } else if (onetimePriceEl) {
-          atcLabelEl.textContent = 'Add to Cart — ' + onetimePriceEl.textContent;
+          atcLabelEl.textContent = 'Add to Cart: ' + onetimePriceEl.textContent;
         }
       }
     }

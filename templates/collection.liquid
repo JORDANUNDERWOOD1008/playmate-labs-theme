@@ -46,9 +46,9 @@
         {%- if is_all -%}
           Playful rituals, sensory products<br> and experiences worth dressing up for.
         {%- elsif is_drops -%}
-          Monthly Drops — Limited Editions<br> for modern couples.
+          Monthly Drops: Limited Editions<br> for modern couples.
         {%- elsif is_consumables -%}
-          Sensory Consumables — Edible Rituals<br> designed for two.
+          Sensory Consumables: Edible Rituals<br> designed for two.
         {%- else -%}
           {{ collection.title }}
         {%- endif -%}
@@ -57,74 +57,37 @@
         <p class="body-lg shop-hero-desc">{{ collection.description }}</p>
       {%- endif -%}
     </div>
+    {%- comment -%}
+      The "4.9 Avg. Rating" figure had no review source behind it, and a
+      product count is not a selling point at three SKUs. Only the shipping
+      promise is both true and useful here.
+    {%- endcomment -%}
     <div class="shop-hero-stats">
       <div class="shop-stat">
-        <span class="shop-stat-num">{{ collection.products_count }}</span>
-        <span class="shop-stat-label">Products</span>
-      </div>
-      <div class="shop-stat-divider"></div>
-      <div class="shop-stat">
-        <span class="shop-stat-num">4.9★</span>
-        <span class="shop-stat-label">Avg. Rating</span>
-      </div>
-      <div class="shop-stat-divider"></div>
-      <div class="shop-stat">
         <span class="shop-stat-num">Free</span>
-        <span class="shop-stat-label">Shipping over £{{ settings.cart_free_shipping_threshold | default: '60' }}</span>
+        <span class="shop-stat-label">Shipping over &pound;{{ settings.cart_free_shipping_threshold | default: '60' }}</span>
+      </div>
+      <div class="shop-stat-divider"></div>
+      <div class="shop-stat">
+        <span class="shop-stat-num">UK</span>
+        <span class="shop-stat-label">Designed &amp; made</span>
+      </div>
+      <div class="shop-stat-divider"></div>
+      <div class="shop-stat">
+        <span class="shop-stat-num">Plain</span>
+        <span class="shop-stat-label">Discreet packaging</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== FEATURED BANNER (All / Drops / Consumables) ===== -->
-{%- if is_all or is_drops or is_consumables -%}
-<section class="shop-featured-banner">
-  <div class="container">
-    <div class="shop-banner-grid">
-
-      <!-- Primary: Latest Drop -->
-      <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="shop-banner-card shop-banner-primary">
-        <div class="shop-banner-bg bg-dark">
-          <div class="shop-banner-inner">
-            <span class="badge badge-gold" style="margin-bottom:0.75rem;">Latest Drop</span>
-            <h2 class="shop-banner-title" style="color:var(--cream);">The Velvet Hour</h2>
-            <p class="shop-banner-sub">Limited drop — only 47 kits remaining</p>
-            <span class="btn btn-gold btn-sm">Shop Now — £68</span>
-          </div>
-          <div class="shop-banner-emoji">🍷</div>
-        </div>
-      </a>
-
-      <!-- Secondary: Sensory Consumables -->
-      <a href="{{ collections['consumables'].url | default: '/collections/consumables' }}" class="shop-banner-card shop-banner-secondary">
-        <div class="shop-banner-bg bg-warm">
-          <div class="shop-banner-inner">
-            <span class="badge badge-burgundy" style="margin-bottom:0.75rem;">Popular</span>
-            <h2 class="shop-banner-title" style="color:var(--espresso);">Sensory Consumables</h2>
-            <p class="shop-banner-sub" style="color:var(--text-muted);">Edible rituals from £18</p>
-            <span class="btn btn-primary btn-sm">Explore</span>
-          </div>
-          <div class="shop-banner-emoji">🍫</div>
-        </div>
-      </a>
-
-      <!-- Tertiary: Date Night Kits -->
-      <a href="{{ collections['date-night-kits'].url | default: '/collections/date-night-kits' }}" class="shop-banner-card shop-banner-tertiary">
-        <div class="shop-banner-bg bg-deep">
-          <div class="shop-banner-inner">
-            <span class="badge badge-cream" style="margin-bottom:0.75rem;">New In</span>
-            <h2 class="shop-banner-title" style="color:var(--cream);">Date Night Kits</h2>
-            <p class="shop-banner-sub">Full evenings from £58</p>
-            <span class="btn btn-ghost btn-sm">Shop Kits</span>
-          </div>
-          <div class="shop-banner-emoji">🌹</div>
-        </div>
-      </a>
-
-    </div>
-  </div>
-</section>
-{%- endif -%}
+{%- comment -%}
+  A three-tile category banner stood here promoting "The Velvet Hour" at
+  £68 with "only 47 kits remaining". That product does not exist, the count
+  and price were invented, and the other two tiles pointed at empty
+  collections using emoji in place of photography. Removed rather than
+  rewritten: with three products, the grid is the page.
+{%- endcomment -%}
 
 <!-- ===== MAIN SHOP LAYOUT: SIDEBAR + GRID ===== -->
 <section class="section shop-main">
@@ -263,7 +226,7 @@
             </li>
             <li>
               <a href="{{ collection.url }}/price-30-60" class="sidebar-filter-item radio{% if current_tags contains 'price-30-60' %} active{% endif %}">
-                <span class="sidebar-radio"></span> £30 — £60
+                <span class="sidebar-radio"></span> £30 to £60
               </a>
             </li>
             <li>
@@ -315,7 +278,7 @@
         <div class="sidebar-drop-cta">
           <p class="label" style="color:var(--gold);margin-bottom:0.5rem;">✦ Get Early Access</p>
           <p style="font-size:0.8125rem;color:rgba(245,239,230,0.7);margin-bottom:1rem;">Join the drop list for first access to new releases &amp; exclusive offers.</p>
-          <a href="{{ pages['monthly-drops'].url | default: '/pages/monthly-drops' }}" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">
+          <a href="/collections/frontpage" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">
             Join Drop List →
           </a>
         </div>
@@ -452,10 +415,10 @@
       <div class="shop-drop-text">
         <span class="section-eyebrow" style="color:var(--gold);">Monthly Drops</span>
         <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--cream);margin:0.5rem 0 1rem;">Never miss a limited release</h2>
-        <p style="color:rgba(245,239,230,0.7);max-width:420px;">Each month we release a single curated kit — limited to 200 pairs. Join the list for early access, 24 hours before public release.</p>
+        <p style="color:rgba(245,239,230,0.7);max-width:420px;">Each month we release a single curated kit, limited to 200 pairs. Join the list for early access, 24 hours before public release.</p>
       </div>
       <div class="shop-drop-cta-btns">
-        <a href="{{ pages['monthly-drops'].url | default: '/pages/monthly-drops' }}" class="btn btn-gold">Join Drop List</a>
+        <a href="/collections/frontpage" class="btn btn-gold">Join Drop List</a>
         <a href="{{ collections['monthly-drops'].url | default: '/collections/monthly-drops' }}" class="btn btn-ghost">See Past Drops</a>
       </div>
     </div>

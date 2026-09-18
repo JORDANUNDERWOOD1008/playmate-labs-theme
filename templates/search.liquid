@@ -190,7 +190,7 @@
       <div class="search-featured-collections">
         <h2 style="font-family:var(--font-serif);margin-bottom:1.5rem;">Browse by category</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;">
-          {%- assign browse_links = 'Monthly Drops|/collections/monthly-drops|📦,Date Night Kits|/collections/all|🌹,Ritual Add-Ons|/collections/ritual-add-ons|🕯️,The Experience|/pages/5-day-experience|🎁' | split: ',' -%}
+          {%- assign browse_links = 'All products|/collections/frontpage|🛍,Chocolates|/collections/consumables|🍫,About us|/pages/about|✦,FAQ|/pages/faq|?' | split: ',' -%}
           {%- for link_item in browse_links -%}
             {%- assign link_parts = link_item | split: '|' -%}
             <a href="{{ link_parts[1] }}" class="search-browse-card">

@@ -638,16 +638,19 @@
 }
 .shop-stat { text-align: center; }
 .shop-stat-num { display: block; font-family: var(--font-serif); font-size: 1.5rem; color: var(--gold, #C9A96E); }
-.shop-stat-label { display: block; font-size: 0.8125rem; color: rgba(245,239,230,0.65); margin-top: 0.2rem; }
-.shop-stat-divider { width: 1px; height: 36px; background: rgba(245,239,230,0.2); }
+/* Default to dark text: this hero only has a light background when a hero
+   image is set, and the rule above already handles that case. Cream-on-cream
+   made these labels all but invisible. */
+.shop-stat-label { display: block; font-size: 0.8125rem; color: var(--text-muted, #6B625A); margin-top: 0.2rem; }
+.shop-stat-divider { width: 1px; height: 36px; background: var(--border-color, #E5DFD6); }
 
 /* Shop hero desc */
-.shop-hero-desc { max-width: 560px; margin-top: 1rem; color: rgba(245,239,230,0.75); }
+.shop-hero-desc { max-width: 560px; margin-top: 1rem; color: var(--text-body, #4A4A4A); }
 
 /* Banner emoji */
 .shop-banner-emoji { font-size: 6rem; opacity: 0.15; position: absolute; right: 1.5rem; bottom: 1rem; }
 .shop-banner-title { font-family: var(--font-serif); font-size: 1.75rem; margin-bottom: 0.75rem; }
-.shop-banner-sub { font-size: 0.875rem; color: rgba(245,239,230,0.65); margin-bottom: 1.25rem; }
+.shop-banner-sub { font-size: 0.875rem; color: var(--text-muted, #6B625A); margin-bottom: 1.25rem; }
 
 /* Banner bg variants */
 .shop-banner-bg.bg-warm { background: linear-gradient(135deg, #EDE0D0, var(--cream)); }
