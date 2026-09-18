@@ -13,7 +13,8 @@
      the white gutter on the left possible. */
   background: var(--hero-backdrop, var(--sec-bg, #0c0408));
   width: 100%;
-  min-height: var(--sec-height, 100vh);
+  /* less the announcement bar, which is fixed above the page */
+  min-height: calc(var(--sec-height, 100svh) - var(--bar-height, 0px));
   display: flex;
   flex-direction: column;
 }
@@ -1333,7 +1334,10 @@
     width: 100%;
     aspect-ratio: 511 / 1024;
     height: auto;
-    min-height: 0;
+    /* The ratio alone left the hero short of the screen on tall phones. Let it
+       grow to whatever is left under the bar; the photo is absolutely
+       positioned and covers, so the crop simply opens up. */
+    min-height: calc(100svh - var(--bar-height, 0px));
     overflow: hidden;
     position: relative;
     background: #0c0408;

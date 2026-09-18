@@ -258,9 +258,10 @@
     /* The search panel slides out of the nav, so it starts below it too. */
     .search-bar { top: calc(var(--nav-height, 72px) + var(--bar-height, 0px)) !important; }
 
-    /* 4. No global padding on MainContent */
+    /* 4. The bar is fixed, so the page has to start below it rather than
+          underneath it. --bar-height is 0px when the bar has no messages. */
     #MainContent {
-      padding-top: 0;
+      padding-top: var(--bar-height, 0px);
     }
 
     /* 5. Non-hero pages get a simple spacer */
@@ -274,7 +275,7 @@
     /* 6. Mobile */
     @media (max-width: 768px) {
       #MainContent {
-        padding-top: 0;
+        padding-top: var(--bar-height, 0px);
       }
       #MainContent > .shopify-section:first-child > .page-hero-minimal,
       #MainContent > .shopify-section:first-child > .contact-hero,
