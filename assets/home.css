@@ -182,6 +182,12 @@
 }
 
 .hero-trust {
+  text-shadow: var(--hero-trust-shadow, none);
+  display: inline-flex;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background: var(--hero-trust-pad-bg, transparent);
+  backdrop-filter: var(--hero-trust-blur, none);
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -1837,4 +1843,52 @@
    ============================================ */
 .hero-mobile-deco {
   display: none;
+}
+
+/* ── Highlighter sweep ────────────────────────────────────────────────────
+   The phrase starts in its own colour with no block behind it. A duplicate
+   of the text, drawn on the highlighter block, is revealed left to right, so
+   each letter flips colour as the block passes over it.
+
+   Every rule keys off [data-text], which is set by script. With JavaScript
+   off the static highlight above is what shows, rather than nothing. */
+.hero-headline--sweep strong[data-text],
+.hero-headline--sweep b[data-text] {
+  position: relative;
+  background: transparent;
+  color: var(--hero-hl-before, #1A1A1A);
+  /* a clipped overlay cannot straddle two lines, so keep the phrase together */
+  white-space: nowrap;
+}
+
+.hero-headline--sweep strong[data-text]::after,
+.hero-headline--sweep b[data-text]::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  padding: inherit;
+  box-sizing: border-box;
+  border-radius: inherit;
+  background: var(--hero-highlight-bg, transparent);
+  color: var(--hero-highlight-color, #FFF);
+  white-space: nowrap;
+  clip-path: inset(0 100% 0 0);
+  animation: heroHlSweep var(--hero-hl-dur, .9s) cubic-bezier(.65, 0, .35, 1)
+             var(--hero-hl-delay, .5s) forwards;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+@keyframes heroHlSweep {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+/* No sweep for anyone who asked not to have movement: show the finished state. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-headline--sweep strong[data-text]::after,
+  .hero-headline--sweep b[data-text]::after {
+    animation: none;
+    clip-path: inset(0 0 0 0);
+  }
 }

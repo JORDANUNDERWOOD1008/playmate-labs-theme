@@ -101,6 +101,47 @@
           "padding_top": 60,
           "padding_bottom": 60
         }
+      },
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "blocks": {
+          "m1": {
+            "type": "message",
+            "settings": {
+              "text": "Free shipping over £60",
+              "url": ""
+            }
+          },
+          "m2": {
+            "type": "message",
+            "settings": {
+              "text": "New here? Scratch for up to 60% off",
+              "url": ""
+            }
+          },
+          "m3": {
+            "type": "message",
+            "settings": {
+              "text": "Designed and made in the UK",
+              "url": ""
+            }
+          }
+        },
+        "block_order": [
+          "m1",
+          "m2",
+          "m3"
+        ],
+        "settings": {
+          "show_arrows": true,
+          "rotate_seconds": 5,
+          "height": 40,
+          "height_mobile": 38,
+          "text_size": 12,
+          "text_size_mobile": 11,
+          "bg_color": "#1A0A06",
+          "text_color": "#F5EFE6"
+        }
       }
     },
     "content_for_index": [],

@@ -241,17 +241,24 @@
       height: var(--nav-height, 72px);
     }
 
-    /* 3. Announcement bar — fixed, sitting flush under the nav */
-    .announcement-bar {
-      position: fixed !important;
-      top: var(--nav-height, 72px);
-      left: 0;
-      right: 0;
-      z-index: 999;
+    /* 3. Announcement bar sits above everything, including the pill header,
+          and the header drops by exactly its height. --bar-height is emitted
+          by the section itself, and is 0px when the bar has no messages. */
+    :root { --bar-height: 0px; }
+
+    /* .site-nav is position:fixed, so offsetting the section around it does
+       nothing; the nav itself has to drop by the bar's height. */
+    .site-nav,
+    .site-nav.nav-pills,
+    .shopify-section-group-header-group,
+    #shopify-section-header {
+      top: var(--bar-height, 0px) !important;
     }
 
+    /* The search panel slides out of the nav, so it starts below it too. */
+    .search-bar { top: calc(var(--nav-height, 72px) + var(--bar-height, 0px)) !important; }
+
     /* 4. No global padding on MainContent */
-    :root { --bar-height: 38px; }
     #MainContent {
       padding-top: 0;
     }
@@ -346,7 +353,7 @@
   {% section 'header' %}
 
   {%- comment -%} Announcement Bar rendered inside normal flow so nav overlay is clean {%- endcomment -%}
-  {% render 'announcement-bar' %}
+  {% section 'announcement-bar' %}
 
   {%- comment -%} Cart Drawer {%- endcomment -%}
   {% render 'cart-drawer' %}

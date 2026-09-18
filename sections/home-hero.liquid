@@ -25,12 +25,27 @@
     --hero-italic-color: {{ hs.italic_color }};
     --hero-sub-color: {{ hs.sub_color }};
     --hero-highlight-color: {{ hs.highlight_color }};
+    --hero-hl-before: {{ hs.highlight_before_color }};
+    --hero-hl-dur: {{ hs.highlight_anim_duration | divided_by: 10.0 }}s;
+    --hero-hl-delay: {{ hs.highlight_anim_delay | divided_by: 10.0 }}s;
     {%- if hs.highlight_style == 'block' %}
     --hero-highlight-bg: {{ hs.highlight_bg }};
     --hero-highlight-pad: {{ hs.highlight_pad_y }}px {{ hs.highlight_pad_x }}px;
     --hero-highlight-radius: {{ hs.highlight_radius }}px;
     {%- endif %}
     --hero-trust-color: {{ hs.trust_color }};
+    {%- if hs.trust_shadow %}
+    --hero-trust-shadow: 0 1px 3px rgba(0,0,0,.55), 0 0 14px rgba(0,0,0,.35);
+    {%- else %}
+    --hero-trust-shadow: none;
+    {%- endif %}
+    {%- if hs.trust_scrim > 0 %}
+    --hero-trust-pad-bg: rgba(0,0,0,{{ hs.trust_scrim | divided_by: 100.0 }});
+    --hero-trust-blur: blur(6px);
+    {%- else %}
+    --hero-trust-pad-bg: transparent;
+    --hero-trust-blur: none;
+    {%- endif %}
     --hero-stars-color: {{ hs.stars_color }};
     --hero-text-offset: {{ hs.text_offset_desktop }}px;
     --hero-btn-offset: {{ hs.btn_offset_desktop }}px;
@@ -205,7 +220,7 @@
           <p class="hero-eyebrow animate-fadeInUp animate-delay-1">
             {{ section.settings.eyebrow | default: 'A new culture of connection' }}
           </p>
-          <h1 class="hero-headline animate-fadeInUp animate-delay-2">
+          <h1 class="hero-headline animate-fadeInUp animate-delay-2{% if hs.highlight_animate %} hero-headline--sweep{% endif %}">
             {{ section.settings.headline | default: 'Rewriting how <em>couples</em> do date night.' }}
           </h1>
           <p class="hero-sub animate-fadeInUp animate-delay-3">
@@ -243,13 +258,15 @@
               <div class="star-rating">★★★★★</div>
               <span>{{ section.settings.trust_rating | default: '4.9 / 5 — 2,400+ couples' }}</span>
             </div>
-            <span class="hero-trust-dot">·</span>
-            <div class="hero-trust-item">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-              </svg>
-              <span>{{ section.settings.trust_shipping | default: 'Free shipping over £60' }}</span>
-            </div>
+            {%- if section.settings.trust_shipping != blank -%}
+              <span class="hero-trust-dot">·</span>
+              <div class="hero-trust-item">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                </svg>
+                <span>{{ section.settings.trust_shipping }}</span>
+              </div>
+            {%- endif -%}
           </div>
         </div>
 
@@ -263,6 +280,18 @@
   <div class="hero-scroll-hint">
     <div class="scroll-dot"></div>
   </div>
+
+{%- if hs.highlight_animate -%}
+  <script>
+    (function () {
+      var h = document.querySelector('.hero-headline--sweep');
+      if (!h) return;
+      h.querySelectorAll('strong, b').forEach(function (el) {
+        el.setAttribute('data-text', el.textContent);
+      });
+    })();
+  </script>
+{%- endif -%}
 </section>
 
 <!-- ── 5-Day Experience Sign-Up Modal ─────────────────────────────── -->
@@ -635,6 +664,37 @@
       "info": "Bold a word in the headline (⌘B) and it takes this colour. Italic (⌘I) takes the italic colour above."
     },
     {
+      "type": "checkbox",
+      "id": "highlight_animate",
+      "label": "Sweep the highlighter in on load",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "highlight_before_color",
+      "label": "Phrase colour before the sweep",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "range",
+      "id": "highlight_anim_duration",
+      "label": "Sweep speed",
+      "min": 3,
+      "max": 20,
+      "step": 1,
+      "default": 9,
+      "info": "Tenths of a second. 9 is 0.9s."
+    },
+    {
+      "type": "range",
+      "id": "highlight_anim_delay",
+      "label": "Sweep delay",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 5
+    },
+    {
       "type": "color",
       "id": "highlight_color_mobile",
       "label": "Highlighted word — mobile",
@@ -646,6 +706,24 @@
       "label": "Trust line — desktop",
       "default": "#6B6B6B",
       "info": "The star rating and shipping line under the buttons."
+    },
+    {
+      "type": "checkbox",
+      "id": "trust_shadow",
+      "label": "Shadow behind the trust line",
+      "default": true,
+      "info": "Keeps small text readable wherever the photograph is light."
+    },
+    {
+      "type": "range",
+      "id": "trust_scrim",
+      "label": "Shade behind the trust line",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "default": 30,
+      "info": "A soft pill behind the text, for light areas of the photograph."
     },
     {
       "type": "color",

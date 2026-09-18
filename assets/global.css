@@ -1106,9 +1106,8 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.06em;
-  /* Fixed directly under the nav — always visible, never overlapping content */
   position: fixed;
-  top: var(--nav-height);
+  top: 0;
   left: 0;
   right: 0;
   z-index: 999;
