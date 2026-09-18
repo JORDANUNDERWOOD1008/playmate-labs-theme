@@ -39,7 +39,8 @@
         "pad_top_desktop": 120,
         "pad_bottom_desktop": 64,
         "pad_top_mobile": 96,
-        "pad_bottom_mobile": 48
+        "pad_bottom_mobile": 48,
+        "heading_tag": "h1"
       }
     },
     "why": {

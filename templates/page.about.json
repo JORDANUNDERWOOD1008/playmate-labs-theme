@@ -38,7 +38,8 @@
         "pad_top_desktop": 120,
         "pad_bottom_desktop": 64,
         "heading_size": 54,
-        "pad_top_mobile": 96
+        "pad_top_mobile": 96,
+        "heading_tag": "h1"
       }
     },
     "studio": {
