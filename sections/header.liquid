@@ -111,6 +111,7 @@
   }
   {%- comment -%} Cart as its own accent capsule nested in the right one {%- endcomment -%}
   {%- if section.settings.pill_cart_accent -%}
+  #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-icon-btn[data-cart-open],
   #shopify-section-{{ section.id }} .nav-pills [data-cart-open] {
     background: {{ section.settings.pill_cart_bg }};
     color: {{ section.settings.pill_cart_text }};
@@ -172,7 +173,8 @@
       padding: 0 {{ section.settings.pill_pad_x_mobile }}px;
     }
     {%- if section.settings.pill_cart_accent %}
-    #shopify-section-{{ section.id }} .nav-pills [data-cart-open] {
+    #shopify-section-{{ section.id }} .nav-pills .nav-actions .nav-icon-btn[data-cart-open],
+  #shopify-section-{{ section.id }} .nav-pills [data-cart-open] {
       height: {{ section.settings.pill_height_mobile | minus: 12 }}px;
       padding: 0 11px;
     }
