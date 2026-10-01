@@ -65,10 +65,15 @@
         {{ blog.title }} | Playmate Labs
       {%- endif -%}
     {%- elsif template == 'article' -%}
-      {%- if article.title.size > 53 -%}
-        {{ article.title | truncate: 70, '' }}
+      {%- comment -%} page_title = the SEO title set in admin, falling back to the article title.
+      Never chop mid-word; only append the brand when the result still fits in a SERP. {%- endcomment -%}
+      {%- assign seo_title = page_title | default: article.title -%}
+      {%- if seo_title contains 'Playmate Labs' -%}
+        {{ seo_title }}
+      {%- elsif seo_title.size <= 43 -%}
+        {{ seo_title }} | Playmate Labs
       {%- else -%}
-        {{ article.title }} | Playmate Labs
+        {{ seo_title }}
       {%- endif -%}
     {%- elsif template contains 'product' -%}
       {%- if product.title.size > 53 -%}
@@ -94,8 +99,12 @@
   {% elsif template == 'blog' %}
     <meta name="description" content="{{ blog.title | escape }} — expert guides on aphrodisiac ingredients, date night ideas, intimacy tips and couples wellness from Playmate Labs.">
   {% elsif template == 'article' %}
-    {% if article.excerpt_or_content != blank %}
-      <meta name="description" content="{{ article.excerpt_or_content | strip_html | truncatewords: 25 | escape }}">
+    {%- comment -%} The admin-set description wins. The excerpt is a fallback only, and uses the
+    hand-written excerpt rather than the body, so it never cuts off mid-sentence. {%- endcomment -%}
+    {% if page_description != blank %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% elsif article.excerpt != blank %}
+      <meta name="description" content="{{ article.excerpt | strip_html | strip_newlines | escape }}">
     {% else %}
       <meta name="description" content="{{ article.title | escape }} — read more on The Playmate Journal by Playmate Labs.">
     {% endif %}
@@ -120,7 +129,9 @@
   {% endif %}
 
   {%- comment -%} ══ NOINDEX — non-content utility pages ══ {%- endcomment -%}
-  {%- if template == '404' or template == 'cart' or request.path contains '/policies/' -%}
+  {%- comment -%} current_tags = a blog tag page: thin, duplicate listings of posts that are
+  already indexed on their own. ~20 of these were in the index earning 1-13 impressions each. {%- endcomment -%}
+  {%- if template == '404' or template == 'cart' or request.path contains '/policies/' or current_tags -%}
     <meta name="robots" content="noindex, follow">
   {%- endif -%}
 
