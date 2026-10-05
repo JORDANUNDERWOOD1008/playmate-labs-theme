@@ -255,8 +255,7 @@
           </div>
           <div class="hero-trust animate-fadeInUp animate-delay-5">
             <div class="hero-trust-item">
-              <div class="star-rating">★★★★★</div>
-              <span>{{ section.settings.trust_rating | default: '4.9 / 5 — 2,400+ couples' }}</span>
+              <span>{{ section.settings.trust_rating | default: '25,000+ happy couples' }}</span>
             </div>
             {%- if section.settings.trust_shipping != blank -%}
               <span class="hero-trust-dot">·</span>
@@ -307,7 +306,7 @@
 
     <p class="label" style="color:var(--gold);margin-bottom:0.5rem;">It's Free. It's For You.</p>
     <h3 style="font-family:var(--font-serif);font-size:1.75rem;color:var(--cream);margin-bottom:0.25rem;">Unlock the<br>5-Day Experience</h3>
-    <p style="font-size:0.875rem;color:rgba(245,239,230,0.6);margin-bottom:1.5rem;">Join 14,000+ couples who've already started.</p>
+    <p style="font-size:0.875rem;color:rgba(245,239,230,0.6);margin-bottom:1.5rem;">Free, five days, straight to your inbox.</p>
 
     <form class="exp-form" data-form="experience-modal">
       <div class="form-group" style="margin-bottom:0.75rem;">
@@ -485,7 +484,7 @@
       "type": "text",
       "id": "trust_rating",
       "label": "Trust signal — rating",
-      "default": "4.9 / 5 — 2,400+ couples"
+      "default": "25,000+ happy couples"
     },
     {
       "type": "text",

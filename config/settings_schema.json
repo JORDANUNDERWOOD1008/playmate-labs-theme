@@ -1536,7 +1536,7 @@
         "type": "textarea",
         "id": "newsletter_popup_body",
         "label": "Popup body copy",
-        "default": "Join 14,000+ couples and unlock our free 5-day sensory experience — daily emails, ritual guides and curated playlists delivered to your inbox."
+        "default": "Unlock our free 5-day sensory experience: daily emails, ritual guides and curated playlists delivered to your inbox."
       },
       {
         "type": "text",
@@ -1757,7 +1757,7 @@
         "type": "text",
         "id": "hero_stat_1_number",
         "label": "Stat 1 number",
-        "default": "14,000+"
+        "default": "25,000+"
       },
       {
         "type": "text",
@@ -1781,13 +1781,13 @@
         "type": "text",
         "id": "hero_stat_3_number",
         "label": "Stat 3 number",
-        "default": "4.9★"
+        "default": "3"
       },
       {
         "type": "text",
         "id": "hero_stat_3_label",
         "label": "Stat 3 label",
-        "default": "Average Rating"
+        "default": "Products"
       },
       {
         "type": "text",
@@ -3325,13 +3325,13 @@
         "type": "text",
         "id": "community_stat_1_number",
         "label": "Stat 1 number",
-        "default": "14,000+"
+        "default": "25,000+"
       },
       {
         "type": "text",
         "id": "community_stat_1_label",
         "label": "Stat 1 label",
-        "default": "Couples in the community"
+        "default": "Couples who've bought"
       },
       {
         "type": "text",
