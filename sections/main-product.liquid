@@ -806,15 +806,8 @@
               {{ product.metafields.custom.ingredients }}
             </div>
           </div>
-          {%- else -%}
-          <div class="product-accordion-item">
-            <button class="product-accordion-btn" onclick="toggleAccordion(this)">
-              Ingredients & allergens <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="product-accordion-body">
-              <p>Dark chocolate: Cocoa mass, cocoa butter, raw cane sugar (min. 72% cocoa). May contain traces of milk, nuts, soy. Candle: Soy wax, fragrance oils (amber, vetiver), cotton wick. Not edible. Keep away from children.</p>
-            </div>
-          </div>
+          {%- comment -%} No fallback: a hard-coded candle-kit ingredient list used to show on every
+          product without its own ingredients metafield (Melt'd, Nude Stack'd). {%- endcomment -%}
           {%- endif -%}
         </div>
 

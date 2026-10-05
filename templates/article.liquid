@@ -146,34 +146,53 @@
     </div>
   </section>
 
-  <!-- A/B TEST: PRODUCT CTA CARD (Variant B only — hidden by default, shown via JS) -->
-  <section class="article-cta-card-section" id="ab-cta-card" style="display:none;" data-test="blog-cta-v1">
+  <!-- A/B TEST: PRODUCT CTA CARD (Variant B only — hidden by default, shown via JS).
+       Built from live product data: Nude Stack'd when it is in stock, otherwise Snap'd.
+       The old hard-coded card sold Melt'd at a wrong price while it was sold out. -->
+  {%- assign cta_product = all_products['nude-stacked'] -%}
+  {%- if cta_product == blank or cta_product.available == false -%}
+    {%- assign cta_product = all_products['playmate-chocolate'] -%}
+  {%- endif -%}
+  {%- if cta_product.handle == 'nude-stacked' -%}
+    {%- assign cta_name = "Nude Stack'd" -%}
+    {%- assign cta_desc = "54 wooden blocks and a deck of prompts for two. Play for five minutes or two hours. The game does the asking." -%}
+  {%- else -%}
+    {%- assign cta_name = "Snap'd" -%}
+    {%- assign cta_desc = "Three Colombian milk chocolate hearts with Liboost®, zinc, B6 and selenium. Break one in half, share it, and let the evening start there." -%}
+  {%- endif -%}
+  {%- if cta_product != blank and cta_product.available -%}
+  <section class="article-cta-card-section" id="ab-cta-card" style="display:none;" data-test="blog-cta-v2" data-product="{{ cta_product.handle }}">
     <div class="container">
       <div class="article-cta-card">
         <div class="article-cta-card-img">
+          {%- if cta_product.featured_image -%}
           <img
-            src="https://cdn.shopify.com/s/files/1/0637/2176/7068/files/newbright1.png?v=1762956658&width=400"
-            alt="Aphrodisiac Hot Choc Spoons by Playmate Labs"
+            src="{{ cta_product.featured_image | image_url: width: 400 }}"
+            alt="{{ cta_product.featured_image.alt | default: cta_name | escape }}"
             loading="lazy"
             width="400"
-            height="533"
+            height="{{ 400 | divided_by: cta_product.featured_image.aspect_ratio | round }}"
           >
+          {%- endif -%}
         </div>
         <div class="article-cta-card-content">
           <span class="article-cta-card-eyebrow">Enjoyed this article?</span>
-          <h3 class="article-cta-card-title">Aphrodisiac Hot Choc Spoons</h3>
-          <p class="article-cta-card-desc">Stir real dark chocolate and aphrodisiac botanicals into warm milk. Three flavours. Science-backed ingredients. The perfect excuse to slow down together.</p>
+          <h3 class="article-cta-card-title">{{ cta_name }}</h3>
+          <p class="article-cta-card-desc">{{ cta_desc }}</p>
           <div class="article-cta-card-price">
-            <span class="article-cta-card-price-current">From £14.99</span>
-            <span class="article-cta-card-price-compare">£29.98</span>
+            <span class="article-cta-card-price-current">{% if cta_product.price_varies %}From {% endif %}{{ cta_product.price_min | money }}</span>
+            {%- if cta_product.compare_at_price_min > cta_product.price_min -%}
+              <span class="article-cta-card-price-compare">{{ cta_product.compare_at_price_min | money }}</span>
+            {%- endif -%}
           </div>
-          <a href="/products/aphrodisiac-hot-choc-spoons" class="btn btn-primary article-cta-card-btn" id="ab-cta-btn">
-            Shop Hot Choc Spoons
+          <a href="{{ cta_product.url }}" class="btn btn-primary article-cta-card-btn" id="ab-cta-btn">
+            Shop {{ cta_name }}
           </a>
         </div>
       </div>
     </div>
   </section>
+  {%- endif -%}
 
   <!-- RELATED ARTICLES -->
   {%- if blog.articles.size > 1 -%}
@@ -219,7 +238,7 @@
 <!-- A/B TEST: Blog CTA Card v1 — variant assignment + GA4 tracking -->
 <script>
 (function(){
-  var TEST_NAME = 'blog_cta_v1';
+  var TEST_NAME = 'blog_cta_v2';
   var COOKIE_NAME = 'ab_' + TEST_NAME;
   var EXPIRY_DAYS = 42;
 
@@ -266,7 +285,7 @@
         gaEvent('ab_cta_click', {
           test_name: TEST_NAME,
           variant: variant,
-          product: 'aphrodisiac-hot-choc-spoons',
+          product: (card && card.getAttribute('data-product')) || '',
           page_path: window.location.pathname
         });
       });
