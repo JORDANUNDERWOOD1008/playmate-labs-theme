@@ -76,10 +76,16 @@
         {{ seo_title }}
       {%- endif -%}
     {%- elsif template contains 'product' -%}
-      {%- if product.title.size > 53 -%}
-        {{ product.title | truncate: 53, '' }} | Playmate Labs
+      {%- comment -%} Same rule as articles: the admin SEO title wins, never chop mid-word,
+      and only append the brand when it still fits. Previously the admin title was ignored,
+      so Snap'd showed as "Snap'd - Choc Hearts" while ranking 3.8 for "aphrodisiac chocolate". {%- endcomment -%}
+      {%- assign seo_title = page_title | default: product.title -%}
+      {%- if seo_title contains 'Playmate Labs' -%}
+        {{ seo_title }}
+      {%- elsif seo_title.size <= 43 -%}
+        {{ seo_title }} | Playmate Labs
       {%- else -%}
-        {{ product.title }} | Playmate Labs
+        {{ seo_title }}
       {%- endif -%}
     {%- else -%}
       {{ page_title }}
