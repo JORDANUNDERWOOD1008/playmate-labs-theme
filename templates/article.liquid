@@ -181,9 +181,6 @@
           <p class="article-cta-card-desc">{{ cta_desc }}</p>
           <div class="article-cta-card-price">
             <span class="article-cta-card-price-current">{% if cta_product.price_varies %}From {% endif %}{{ cta_product.price_min | money }}</span>
-            {%- if cta_product.compare_at_price_min > cta_product.price_min -%}
-              <span class="article-cta-card-price-compare">{{ cta_product.compare_at_price_min | money }}</span>
-            {%- endif -%}
           </div>
           <a href="{{ cta_product.url }}" class="btn btn-primary article-cta-card-btn" id="ab-cta-btn">
             Shop {{ cta_name }}
