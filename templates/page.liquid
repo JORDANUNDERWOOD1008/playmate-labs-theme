@@ -1,0 +1,25 @@
+{% comment %} PLAYMATE LABS — Default page template.
+Pages without a custom template (e.g. /pages/jordan-underwood, the article author page)
+returned 404 because no default existed. Reuses the journal styling. {% endcomment %}
+{{ 'journal.css' | asset_url | stylesheet_tag }}
+
+<article class="article-page">
+  <section class="article-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span class="breadcrumb-sep">›</span>
+        <span>{{ page.title | truncate: 40 }}</span>
+      </div>
+      <h1 class="article-hero-title">{{ page.title }}</h1>
+    </div>
+  </section>
+
+  <section class="article-content-section">
+    <div class="container">
+      <div class="article-body">
+        {{ page.content | replace: '<h1', '<h2' | replace: '</h1>', '</h2>' }}
+      </div>
+    </div>
+  </section>
+</article>
