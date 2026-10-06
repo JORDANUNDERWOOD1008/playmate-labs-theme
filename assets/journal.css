@@ -621,3 +621,9 @@
     justify-content: center;
   }
 }
+
+/* Wide tables scroll inside themselves on phones instead of breaking the page. */
+@media (max-width: 749px) {
+  .article-body table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: normal; }
+  .article-body th, .article-body td { min-width: 120px; }
+}

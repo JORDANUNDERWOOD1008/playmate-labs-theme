@@ -62,8 +62,11 @@
           {{ collection.title }}
         {%- endif -%}
       </h1>
+      {%- comment -%} Collection copy can carry a "<!-- split -->" marker: the intro shows here and
+      the buying guide/FAQ renders under the product grid, so products stay above the fold. {%- endcomment -%}
+      {%- assign desc_parts = collection.description | split: '<!-- split' -%}
       {%- if collection.description != blank -%}
-        <p class="body-lg shop-hero-desc">{{ collection.description }}</p>
+        <div class="body-lg shop-hero-desc">{{ desc_parts[0] }}</div>
       {%- endif -%}
     </div>
     {%- comment -%}
@@ -436,6 +439,16 @@
     </div><!-- /.shop-layout -->
   </div><!-- /.container -->
 </section>
+
+{%- if desc_parts.size > 1 -%}
+  {%- assign desc_rest = desc_parts[1] | split: '-->' -%}
+  {{ 'journal.css' | asset_url | stylesheet_tag }}
+  <section class="section collection-guide">
+    <div class="container" style="max-width:760px">
+      <div class="article-body">{{ desc_rest | slice: 1, 50 | join: '-->' }}</div>
+    </div>
+  </section>
+{%- endif -%}
 
 {%- comment -%}
   A "Monthly Drops" band stood here promising a curated kit every month,
