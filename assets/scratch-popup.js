@@ -159,6 +159,15 @@
 
   if (tab) tab.addEventListener('click', open);
 
+  // Any link or button with data-scratch-open opens it too (the hero's
+  // Sign up). Their href stays as a no-JS fallback.
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-scratch-open]');
+    if (!t) return;
+    e.preventDefault();
+    open();
+  });
+
   // ?popup=1 forces it open for previewing — ignores design mode, the delay
   // and the already-seen record, and never sets that record itself.
   var forced = /[?&]popup=1/.test(window.location.search);

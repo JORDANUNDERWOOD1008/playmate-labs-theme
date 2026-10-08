@@ -275,8 +275,8 @@
                 {{ section.settings.cta_primary_text | default: 'Shop the range' }}
               </a>
             {%- endif -%}
-            <a href="{{ section.settings.cta_secondary_url | default: '/collections/monthly-drops' }}"
-               class="btn btn-ghost btn-xl">
+            <a href="{% if section.settings.cta_secondary_opens_scratch %}?popup=1{% else %}{{ section.settings.cta_secondary_url | default: '/collections/monthly-drops' }}{% endif %}"
+               class="btn btn-ghost btn-xl"{% if section.settings.cta_secondary_opens_scratch %} data-scratch-open{% endif %}>
               {{ section.settings.cta_secondary_text | default: 'Shop the Latest Drop' }}
             </a>
           </div>
@@ -326,7 +326,7 @@
     <div class="hero-mart__actions">
       <a class="hero-mart__btn" href="{{ section.settings.cta_primary_url | default: '/collections/all' }}">{{ section.settings.cta_primary_text | default: 'Shop all' }}</a>
       {%- if section.settings.cta_secondary_text != blank -%}
-      <a class="hero-mart__link" href="{{ section.settings.cta_secondary_url }}">{{ section.settings.cta_secondary_text }}</a>
+      <a class="hero-mart__link" href="{% if section.settings.cta_secondary_opens_scratch %}?popup=1{% else %}{{ section.settings.cta_secondary_url }}{% endif %}"{% if section.settings.cta_secondary_opens_scratch %} data-scratch-open{% endif %}>{{ section.settings.cta_secondary_text }}</a>
       {%- endif -%}
     </div>
   </div>
@@ -550,6 +550,13 @@
       "type": "url",
       "id": "cta_secondary_url",
       "label": "Secondary CTA URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "cta_secondary_opens_scratch",
+      "label": "Secondary button opens the scratch card pop-up",
+      "info": "When ticked, the link above is ignored.",
+      "default": false
     },
     {
       "type": "text",

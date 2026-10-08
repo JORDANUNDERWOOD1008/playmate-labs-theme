@@ -23,6 +23,7 @@
         "cta_primary_opens_modal": false,
         "cta_secondary_text": "SIGN UP",
         "cta_secondary_url": "shopify://products/playmate-chocolate",
+        "cta_secondary_opens_scratch": true,
         "trust_rating": "25,000+ happy couples",
         "trust_shipping": "",
         "bg_width_desktop": 52,
