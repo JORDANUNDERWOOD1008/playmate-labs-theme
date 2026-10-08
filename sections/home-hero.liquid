@@ -340,7 +340,7 @@
 
   {%- if hs.mobile_art_headline or hs.desktop_art_headline -%}
   <div class="hero-mart">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@900&display=swap&text=rewitdanigh.%20">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@900&display=swap&text=rewitdanigh.%20">
     <div class="hero-mart__headline" aria-hidden="true"><span>rewrite</span><span>date night.</span></div>
     <div class="hero-mart__actions">
       <a class="hero-mart__btn" href="{{ section.settings.cta_primary_url | default: '/collections/all' }}">{{ section.settings.cta_primary_text | default: 'Shop all' }}</a>
@@ -352,14 +352,14 @@
   <style>
     .hero-mart { display: none; position: absolute; inset: 0; z-index: 3; pointer-events: none; }
     .hero-mart__headline {
-      position: absolute; top: 17vw; left: 4.2vw;
-      font-family: 'Figtree', var(--font-sans, sans-serif); font-weight: 900;
-      font-size: 19.6vw; line-height: 0.74; letter-spacing: -0.04em;
+      position: absolute; top: 15.2vw; left: 4.2vw;
+      font-family: 'Poppins', var(--font-sans, sans-serif); font-weight: 900;
+      font-size: 17vw; line-height: 0.9; letter-spacing: -0.035em;
       color: #690913; white-space: nowrap;
     }
     .hero-mart__headline span { display: block; }
     .hero-mart__actions {
-      position: absolute; top: 48.4vw; left: 5.1vw;
+      position: absolute; top: 50.5vw; left: 5.1vw;
       display: flex; align-items: center; gap: 5.5vw; pointer-events: auto;
     }
     .hero-mart__btn, .hero-mart__link {
@@ -373,8 +373,8 @@
     }
     .hero-mart__link { padding: 6px 0; border-bottom: 2px solid #690913; line-height: 1; }
     @media (min-width: 769px) {
-      .hero-mart__headline { top: 7.85vw; left: 3.6vw; font-size: 11.8vw; line-height: 0.66; }
-      .hero-mart__actions { top: 25.7vw; left: 3.6vw; gap: 2.7vw; }
+      .hero-mart__headline { top: 7.3vw; left: 3.6vw; font-size: 10.2vw; }
+      .hero-mart__actions { top: 26.5vw; left: 3.6vw; gap: 2.7vw; }
       .hero-mart__btn, .hero-mart__link { font-size: clamp(11px, 1vw, 16px); }
       .hero-mart__btn { width: 20vw; height: 4.3vw; min-height: 40px; }
     }
