@@ -14,6 +14,7 @@
       "settings": {
         "hero_bg_image": "shopify://shop_images/IMG_0049.png",
         "mobile_hero_image": "shopify://shop_images/playmate-mobile-hero.png",
+        "mobile_art_headline": true,
         "eyebrow": "A new culture of connection",
         "headline": "<p>Rewrite </p><p><em><strong>Datenight.</strong></em></p>",
         "subheadline": "Novel intimate sensory experiences, monthly date night rituals for modern relationships.",

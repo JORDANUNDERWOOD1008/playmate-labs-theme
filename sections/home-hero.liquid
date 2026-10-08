@@ -159,6 +159,31 @@
       --hero-img-width: 100%; --hero-img-left: 0; --hero-img-right: 0;
     }
   }
+
+  {%- comment -%}
+    Artwork mode (mobile). The headline is the brand's own lettering as an
+    SVG, laid over the cream top of the portrait photo with the buttons under
+    it. The section takes the photo's exact ratio so nothing is cropped, and
+    everything is placed in vw so it lands in the same spot on every phone.
+    The live h1 stays in the page, visually hidden, for search engines and
+    screen readers.
+  {%- endcomment -%}
+  {%- if hs.mobile_art_headline -%}
+  @media (max-width: 768px) {
+    #shopify-section-{{ section.id }} .hero-section {
+      aspect-ratio: 941 / 1672; min-height: 0; background: #fefaf4;
+    }
+    #shopify-section-{{ section.id }} .hero-gradient { display: none; }
+    #shopify-section-{{ section.id }} .hero-bg-img-mobile { object-fit: cover; object-position: center top; }
+    #shopify-section-{{ section.id }} .hero-copy-bottom,
+    #shopify-section-{{ section.id }} .hero-scroll-hint { display: none; }
+    #shopify-section-{{ section.id }} .hero-content-wrap {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; padding: 0;
+    }
+    #shopify-section-{{ section.id }} .hero-mart { display: block; }
+  }
+  {%- endif -%}
 {%- endstyle -%}
 
 {%- comment -%}
@@ -291,6 +316,37 @@
     })();
   </script>
 {%- endif -%}
+
+  {%- if hs.mobile_art_headline -%}
+  <div class="hero-mart">
+    <img class="hero-mart__headline" src="{{ 'hero-headline-rewrite-date-night.svg' | asset_url }}"
+         alt="" width="924" height="458" loading="eager" fetchpriority="high">
+    <div class="hero-mart__actions">
+      <a class="hero-mart__btn" href="{{ section.settings.cta_primary_url | default: '/collections/all' }}">{{ section.settings.cta_primary_text | default: 'Shop all' }}</a>
+      {%- if section.settings.cta_secondary_text != blank -%}
+      <a class="hero-mart__link" href="{{ section.settings.cta_secondary_url }}">{{ section.settings.cta_secondary_text }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+  <style>
+    .hero-mart { display: none; position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+    .hero-mart__headline { position: absolute; top: 9.5vw; left: 2.5vw; width: 96.4vw; height: auto; }
+    .hero-mart__actions {
+      position: absolute; top: 59vw; left: 5.1vw;
+      display: flex; align-items: center; gap: 5.5vw; pointer-events: auto;
+    }
+    .hero-mart__btn, .hero-mart__link {
+      font-family: var(--font-sans, inherit); font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.22em; font-size: clamp(11px, 2.9vw, 15px); color: #690913; text-decoration: none;
+    }
+    .hero-mart__btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 37.7vw; height: 8.6vw; min-height: 40px; border-radius: 999px;
+      background: #690913; color: #fff;
+    }
+    .hero-mart__link { padding: 6px 0; border-bottom: 2px solid #690913; line-height: 1; }
+  </style>
+  {%- endif -%}
 </section>
 
 <!-- ── 5-Day Experience Sign-Up Modal ─────────────────────────────── -->
@@ -428,6 +484,13 @@
       "type": "image_picker",
       "id": "mobile_hero_image",
       "label": "Mobile background image (portrait, optional override)"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_art_headline",
+      "label": "Mobile: headline artwork over the photo",
+      "info": "Shows the 'rewrite date night.' lettering with Shop all and Sign up under it, over the cream top of the mobile photo. The text headline stays in the page for search.",
+      "default": false
     },
     {
       "type": "header",
