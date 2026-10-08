@@ -186,6 +186,25 @@
     #shopify-section-{{ section.id }} .hero-mart { display: block; }
   }
   {%- endif -%}
+
+  {%- comment -%} Artwork mode (desktop): same idea as mobile, over the landscape photo. {%- endcomment -%}
+  {%- if hs.desktop_art_headline -%}
+  @media (min-width: 769px) {
+    #shopify-section-{{ section.id }} .hero-section {
+      aspect-ratio: 1920 / 1103 !important; height: auto !important; min-height: 0 !important; background: #fefaf4;
+    }
+    #shopify-section-{{ section.id }} .hero-bg-desktop { width: 100%; left: 0; right: 0; top: 1.2vw; bottom: auto; }
+    #shopify-section-{{ section.id }} .hero-bg-img-desktop { position: static; width: 100%; height: auto; object-fit: initial; }
+    #shopify-section-{{ section.id }} .hero-gradient,
+    #shopify-section-{{ section.id }} .hero-copy-bottom,
+    #shopify-section-{{ section.id }} .hero-scroll-hint { display: none; }
+    #shopify-section-{{ section.id }} .hero-content-wrap {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; padding: 0;
+    }
+    #shopify-section-{{ section.id }} .hero-mart { display: block; }
+  }
+  {%- endif -%}
 {%- endstyle -%}
 
 {%- comment -%}
@@ -319,7 +338,7 @@
   </script>
 {%- endif -%}
 
-  {%- if hs.mobile_art_headline -%}
+  {%- if hs.mobile_art_headline or hs.desktop_art_headline -%}
   <div class="hero-mart">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@900&display=swap&text=rewitdanigh.%20">
     <div class="hero-mart__headline" aria-hidden="true"><span>rewrite</span><span>date night.</span></div>
@@ -353,6 +372,12 @@
       background: #690913; color: #fff;
     }
     .hero-mart__link { padding: 6px 0; border-bottom: 2px solid #690913; line-height: 1; }
+    @media (min-width: 769px) {
+      .hero-mart__headline { top: 7.85vw; left: 3.6vw; font-size: 11.8vw; line-height: 0.66; }
+      .hero-mart__actions { top: 25.7vw; left: 3.6vw; gap: 2.7vw; }
+      .hero-mart__btn, .hero-mart__link { font-size: clamp(11px, 1vw, 16px); }
+      .hero-mart__btn { width: 20vw; height: 4.3vw; min-height: 40px; }
+    }
   </style>
   {%- endif -%}
 </section>
@@ -498,6 +523,13 @@
       "id": "mobile_art_headline",
       "label": "Mobile: headline artwork over the photo",
       "info": "Shows big 'rewrite date night.' lettering with Shop all and Sign up under it, over the cream top of the mobile photo. The text headline stays in the page for search.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "desktop_art_headline",
+      "label": "Desktop: headline artwork over the photo",
+      "info": "Big 'rewrite date night.' lettering with Shop all and Sign up under it, top left over the desktop photo.",
       "default": false
     },
     {

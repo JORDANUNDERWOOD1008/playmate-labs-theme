@@ -12,7 +12,8 @@
     "home-hero": {
       "type": "home-hero",
       "settings": {
-        "hero_bg_image": "shopify://shop_images/IMG_0049.png",
+        "hero_bg_image": "shopify://shop_images/playmate-desktop-hero.png",
+        "desktop_art_headline": true,
         "mobile_hero_image": "shopify://shop_images/playmate-mobile-hero.png",
         "mobile_art_headline": true,
         "eyebrow": "A new culture of connection",
