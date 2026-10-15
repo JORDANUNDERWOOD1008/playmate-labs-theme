@@ -82,6 +82,18 @@
   function getCookie(n){var m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null}
   function setCookie(n,v,d){var e=new Date();e.setTime(e.getTime()+d*864e5);document.cookie=n+'='+v+';expires='+e.toUTCString()+';path=/;SameSite=Lax'}
 
+  function shopifyConsent(analytics,marketing){
+    function send(){
+      try{
+        window.Shopify.customerPrivacy.setTrackingConsent({analytics:analytics,marketing:marketing,preferences:analytics,sale_of_data:marketing},function(){});
+      }catch(e){}
+    }
+    if(window.Shopify&&window.Shopify.customerPrivacy){send();}
+    else if(window.Shopify&&typeof window.Shopify.loadFeatures==='function'){
+      window.Shopify.loadFeatures([{name:'consent-tracking-api',version:'0.1'}],function(err){if(!err)send();});
+    }
+  }
+
   function updateConsent(analytics,marketing){
     if(typeof gtag==='function'){
       gtag('consent','update',{
@@ -91,6 +103,8 @@
         'ad_personalization':marketing?'granted':'denied'
       });
     }
+    // Tell Shopify's Customer Privacy API too, so Shopify pixels (GA4 ecommerce, Google, Meta) follow this choice
+    shopifyConsent(analytics,marketing);
     // Dispatch event for other scripts to listen to
     window.dispatchEvent(new CustomEvent('pl:consent',{detail:{analytics:analytics,marketing:marketing}}));
   }
