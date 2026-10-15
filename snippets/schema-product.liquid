@@ -21,6 +21,14 @@
     "@type": "Organization",
     "name": "Playmate Labs"
   },
+  {%- if product.metafields.reviews.rating_count.value > 0 %}
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": {{ product.metafields.reviews.rating.value.rating | json }},
+    "bestRating": 5,
+    "ratingCount": {{ product.metafields.reviews.rating_count.value | json }}
+  },
+  {%- endif %}
   "category": {{ product.type | json }},
   {%- if product.variants.size == 1 -%}
   "offers": {
@@ -29,16 +37,28 @@
     "priceCurrency": "{{ shop.currency }}",
     "price": "{{ product.price | money_without_currency | strip_html }}",
     "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    {%- if product.selected_or_first_available_variant.barcode != blank %}"gtin13": {{ product.selected_or_first_available_variant.barcode | json }},{% endif %}
     "seller": {
       "@type": "Organization",
       "name": "Playmate Labs"
     },
     "shippingDetails": {
       "@type": "OfferShippingDetails",
-      "shippingDestination": {
-        "@type": "DefinedRegion",
-        "addressCountry": "GB"
+      "shippingRate": { "@type": "MonetaryAmount", "value": "{% if product.price >= 6000 %}0{% else %}5.99{% endif %}", "currency": "GBP" },
+      "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "GB" },
+      "deliveryTime": {
+        "@type": "ShippingDeliveryTime",
+        "handlingTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY" },
+        "transitTime": { "@type": "QuantitativeValue", "minValue": 2, "maxValue": 5, "unitCode": "DAY" }
       }
+    },
+    "hasMerchantReturnPolicy": {
+      "@type": "MerchantReturnPolicy",
+      "applicableCountry": "GB",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 30,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "merchantReturnLink": "{{ shop.url }}/policies/refund-policy"
     }
   }
   {%- else -%}
@@ -52,9 +72,28 @@
       "availability": "{% if variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
       "sku": {{ variant.sku | json }},
       "name": {{ variant.title | json }},
+      {%- if variant.barcode != blank %}"gtin13": {{ variant.barcode | json }},{% endif %}
       "seller": {
         "@type": "Organization",
         "name": "Playmate Labs"
+      },
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingRate": { "@type": "MonetaryAmount", "value": "{% if variant.price >= 6000 %}0{% else %}5.99{% endif %}", "currency": "GBP" },
+        "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "GB" },
+        "deliveryTime": {
+          "@type": "ShippingDeliveryTime",
+          "handlingTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY" },
+          "transitTime": { "@type": "QuantitativeValue", "minValue": 2, "maxValue": 5, "unitCode": "DAY" }
+        }
+      },
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "applicableCountry": "GB",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+        "merchantReturnDays": 30,
+        "returnMethod": "https://schema.org/ReturnByMail",
+        "merchantReturnLink": "{{ shop.url }}/policies/refund-policy"
       }
     }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
