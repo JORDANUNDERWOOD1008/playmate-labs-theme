@@ -52,7 +52,7 @@
         <div class="faq-category-group" data-category="orders-shipping">
           <h2 class="faq-category-title">Orders &amp; Shipping</h2>
           <div class="faq-list accordion-list">
-            {%- assign faq_orders = 'How long does shipping take?|Standard delivery takes 3-5 working days. Express options available at checkout. Free standard shipping on orders over £60.|How do I track my order?|You will receive a tracking email once your order has shipped. You can also check your order status in your account under Order History.|Can I change or cancel my order?|We process orders quickly. Please contact us within 1 hour of placing your order to make changes. After this, we cannot guarantee modifications.|Do you ship internationally?|Currently we ship within the UK. International shipping is coming soon. Sign up to our newsletter to be notified.' | split: '|' -%}
+            {%- assign faq_orders = 'How long does shipping take?|Standard delivery takes 3-5 working days. Express options available at checkout. Free standard shipping on orders of £49 or more.|How do I track my order?|You will receive a tracking email once your order has shipped. You can also check your order status in your account under Order History.|Can I change or cancel my order?|We process orders quickly. Please contact us within 1 hour of placing your order to make changes. After this, we cannot guarantee modifications.|Do you ship internationally?|Currently we ship within the UK. International shipping is coming soon. Sign up to our newsletter to be notified.' | split: '|' -%}
             {%- assign i = 0 -%}
             {%- for faq_item in faq_orders -%}
               {%- assign mod = i | modulo: 2 -%}

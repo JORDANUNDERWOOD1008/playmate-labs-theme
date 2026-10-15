@@ -794,7 +794,7 @@
           "type": "faq",
           "settings": {
             "question": "When will it arrive?",
-            "answer": "<p>UK orders are dispatched within one working day and typically arrive in two to three. Free shipping over &pound;60.</p>",
+            "answer": "<p>UK orders are dispatched within one working day and typically arrive in two to three. Free shipping from &pound;49.</p>",
             "open_by_default": false
           }
         },

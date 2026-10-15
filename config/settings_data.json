@@ -24,7 +24,7 @@
     "custom_font_fallback": "Jost, 'Century Gothic', sans-serif",
     "custom_font_body": false,
     "announcement_bar_enable": true,
-    "announcement_bar_text": "Free UK delivery over £60 · Plain, discreet packaging",
+    "announcement_bar_text": "Free UK delivery from £49 · Plain, discreet packaging",
     "announcement_bar_link_text": "Shop the range",
     "announcement_bar_link": "/collections/all",
     "header_is_pills": true,
@@ -189,7 +189,7 @@
           "m1": {
             "type": "message",
             "settings": {
-              "text": "Free shipping over £60",
+              "text": "Free shipping from £49",
               "url": ""
             }
           },
