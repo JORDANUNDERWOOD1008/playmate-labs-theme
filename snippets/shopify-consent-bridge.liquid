@@ -1,0 +1,43 @@
+{% comment %}
+  PLAYMATE LABS: Shopify cookie banner -> Google Consent Mode v2
+  File: snippets/shopify-consent-bridge.liquid
+  Shopify's own cookie banner (Settings > Customer privacy) collects consent and Shopify's pixels follow it.
+  This passes the same choice to Google (GTM, GA4, Google Ads), whose defaults are set to denied in theme.liquid.
+  Replaces the old custom banner (snippets/consent-banner.liquid, no longer rendered).
+{% endcomment %}
+<script>
+(function(){
+  function apply(analytics, marketing){
+    if (typeof gtag === 'function') {
+      gtag('consent', 'update', {
+        'analytics_storage': analytics ? 'granted' : 'denied',
+        'ad_storage': marketing ? 'granted' : 'denied',
+        'ad_user_data': marketing ? 'granted' : 'denied',
+        'ad_personalization': marketing ? 'granted' : 'denied'
+      });
+    }
+    // Same event the old banner sent, for any script that listens for it
+    window.dispatchEvent(new CustomEvent('pl:consent', {detail: {analytics: analytics, marketing: marketing}}));
+  }
+
+  function applyCurrent(){
+    try {
+      var cp = window.Shopify.customerPrivacy;
+      apply(cp.analyticsProcessingAllowed(), cp.marketingAllowed());
+    } catch (e) {}
+  }
+
+  // A visitor makes or changes a choice in Shopify's banner
+  document.addEventListener('visitorConsentCollected', function(event){
+    var d = event.detail || {};
+    apply(!!d.analyticsAllowed, !!d.marketingAllowed);
+  });
+
+  // Returning visitors (and regions where consent is not required): apply what Shopify already knows
+  if (window.Shopify && window.Shopify.customerPrivacy) {
+    applyCurrent();
+  } else if (window.Shopify && typeof window.Shopify.loadFeatures === 'function') {
+    window.Shopify.loadFeatures([{name: 'consent-tracking-api', version: '0.1'}], function(err){ if (!err) applyCurrent(); });
+  }
+})();
+</script>
