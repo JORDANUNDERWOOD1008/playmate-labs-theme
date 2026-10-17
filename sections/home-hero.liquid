@@ -270,7 +270,7 @@
             {{ section.settings.headline | default: 'Rewriting how <em>couples</em> do date night.' }}
           </h1>
           <p class="hero-sub animate-fadeInUp animate-delay-3">
-            {{ section.settings.subheadline | default: 'Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships.' }}
+            {{ section.settings.subheadline | default: 'Aphrodisiac chocolates and playful date-night games for modern relationships.' }}
           </p>
         </div>
 
@@ -296,7 +296,7 @@
             {%- endif -%}
             <a href="{% if section.settings.cta_secondary_opens_scratch %}?popup=1{% else %}{{ section.settings.cta_secondary_url | default: '/collections/monthly-drops' }}{% endif %}"
                class="btn btn-ghost btn-xl"{% if section.settings.cta_secondary_opens_scratch %} data-scratch-open{% endif %}>
-              {{ section.settings.cta_secondary_text | default: 'Shop the Latest Drop' }}
+              {{ section.settings.cta_secondary_text | default: 'Shop now' }}
             </a>
           </div>
           <div class="hero-trust animate-fadeInUp animate-delay-5">
@@ -402,7 +402,7 @@
         <input class="form-input form-input-dark" type="email" name="email" placeholder="Your email address" required>
       </div>
       <div class="form-group" style="margin-bottom:0.75rem;">
-        <input class="form-input form-input-dark" type="tel" name="phone" placeholder="Phone number (optional SMS drops)">
+        <input class="form-input form-input-dark" type="tel" name="phone" placeholder="Phone number (optional, for SMS updates)">
       </div>
       <div class="form-group" style="margin-bottom:1.25rem;">
         <select class="form-input form-input-dark form-select" name="status">
@@ -552,7 +552,7 @@
       "type": "textarea",
       "id": "subheadline",
       "label": "Subheadline",
-      "default": "Novel intimate sensory experiences, monthly date night drops, immersive events and playful rituals for modern relationships."
+      "default": "Aphrodisiac chocolates and playful date-night games for modern relationships."
     },
     {
       "type": "text",
@@ -576,7 +576,7 @@
       "type": "text",
       "id": "cta_secondary_text",
       "label": "Secondary CTA text",
-      "default": "Shop the Latest Drop"
+      "default": "Shop now"
     },
     {
       "type": "url",

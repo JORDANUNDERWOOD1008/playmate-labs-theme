@@ -31,7 +31,7 @@
     "cart_cross_sell_enable": true,
     "newsletter_popup_enable": true,
     "newsletter_popup_delay": 8,
-    "newsletter_popup_heading": "Be first to the next drop",
+    "newsletter_popup_heading": "Be first to hear what's new",
     "klaviyo_public_api_key": "WRMcvT",
     "klaviyo_popup_list_id": "VjQk5W",
     "klaviyo_footer_list_id": "VjQk5W",
@@ -75,7 +75,7 @@
     "scratch_tab_side": "right",
     "scratch_tab_bg": "#6B1E3A",
     "scratch_tab_text": "#FFFFFF",
-    "newsletter_popup_subtext": "Early access to new products, drops and events. Nothing else.",
+    "newsletter_popup_subtext": "Early access to new products and offers. Nothing else.",
     "newsletter_popup_cta": "Join the list",
     "social_instagram_link": "",
     "social_tiktok_link": "",
@@ -149,7 +149,7 @@
         "type": "footer",
         "settings": {
           "section_hidden": false,
-          "footer_tagline": "Rewriting how couples do date night. Novel sensory products, monthly drops, immersive events and digital rituals for modern relationships.",
+          "footer_tagline": "Rewriting how couples do date night, with aphrodisiac chocolates and playful date-night games for two.",
           "footer_heading_1": "Shop",
           "footer_menu_1": "",
           "footer_heading_2": "Explore",
@@ -158,7 +158,7 @@
           "footer_menu_3": "",
           "show_footer_email": true,
           "footer_newsletter_heading": "Stay in the loop",
-          "footer_newsletter_sub": "Early access to drops, events and rituals.",
+          "footer_newsletter_sub": "Early access to new products and offers.",
           "footer_newsletter_btn": "Subscribe",
           "footer_bottom_menu": ""
         }
