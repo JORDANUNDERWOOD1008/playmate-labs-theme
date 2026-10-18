@@ -12,7 +12,7 @@
     "home-hero": {
       "type": "home-hero",
       "settings": {
-        "hero_bg_image": "shopify://shop_images/playmate-desktop-hero.png",
+        "hero_bg_image": "shopify://shop_images/hero-wall-texture-test.png",
         "desktop_art_headline": true,
         "mobile_hero_image": "shopify://shop_images/playmate-mobile-hero.png",
         "mobile_art_headline": true,
