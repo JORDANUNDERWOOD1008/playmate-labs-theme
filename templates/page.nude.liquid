@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#DD1D3E">
+  <meta name="age-de-meta-label" content="age=18 hash: v=1.0 kind=sl protocol=all">
+  <meta name="rating" content="adult">
   <title>Nude Stack'd</title>
   <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 96, height: 96 }}">
   <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
@@ -14,8 +16,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@700&family=Poppins:wght@400;600;700&display=swap">
   {{ 'nude-app.css' | asset_url | stylesheet_tag }}
+  {%- comment -%} Card text is only sent to signed-in customers; it is never in a public asset. {%- endcomment -%}
+  {%- if customer -%}
+  <script>window.NUDE_USER = {{ customer.email | json }}; window.NUDE_CARDS = {% render 'nude-cards' %};</script>
+  {%- endif -%}
+  {%- assign rt = page.url | url_encode -%}
   <script>
     window.NUDE_CONFIG = {
+      mode: 'game',
+      login: {{ '/customer_authentication/login?return_to=' | append: rt | json }},
+      logout: {{ routes.account_logout_url | json }},
+      privacy: '/policies/privacy-policy',
+      rulesUrl: '/pages/nude-rules',
+      gameUrl: '/pages/nude',
+      shopUrl: '/products/nude-stacked',
+      klaviyo: 'WRMcvT',
+      list: 'Tazk8N',
       icons: {{ 'nude-icons.svg' | asset_url | json }},
       content: {
         en: {{ 'nude-content-en.json' | asset_url | json }},

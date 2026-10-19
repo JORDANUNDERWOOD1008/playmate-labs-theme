@@ -11,6 +11,9 @@
     ['cs', 'Čeština'], ['el', 'Ελληνικά'], ['ro', 'Română'], ['hu', 'Magyar'], ['tr', 'Türkçe'], ['ja', '日本語'],
     ['ko', '한국어'], ['zh-CN', '中文'], ['ar', 'العربية'], ['hi', 'हिन्दी']
   ];
+  var MODE = CFG.mode || 'game';           // 'game' (sign-in needed) or 'rules' (open, no cards)
+  var USER = window.NUDE_USER || null;     // customer email, only set by Liquid when signed in
+  var CARDS = window.NUDE_CARDS || {};     // card text, only rendered by Liquid when signed in
   var app = document.getElementById('app');
   var C = null;                            // loaded content for the current language
   var cache = {};
@@ -44,7 +47,7 @@
   function load(lang) {
     if (cache[lang]) return Promise.resolve(cache[lang]);
     return fetch(CFG.content[lang]).then(function (r) { if (!r.ok) throw new Error('content ' + r.status); return r.json(); })
-      .then(function (j) { cache[lang] = j; return j; });
+      .then(function (j) { j.cards = CARDS[lang] || []; cache[lang] = j; return j; });
   }
 
   function setLang(lang) {
@@ -66,24 +69,71 @@
   }
   function mtNote() { return C.game.reviewed ? '' : '<p class="note-mt">' + esc(t('machineNote')) + '</p>'; }
 
+  // Sign-in gate. Signed out: confirm 18+, optional marketing, then Shopify's email-code login.
+  // Signed in on a new device: the same confirmation, then play.
   function viewGate() {
     var chips = LANGS.map(function (l) { return '<button class="chip" data-setlang="' + l[0] + '" aria-pressed="' + (l[0] === state.lang) + '">' + esc(l[1]) + '</button>'; }).join('');
+    var pend = store.get('pending', {});
+    var foot = USER ? esc(t('signedInAs', { email: USER })) : esc(t('codeNote'));
     return '<main class="screen screen--red gate">' +
       '<div class="lockup"><span class="lockup__nude">Nude.</span><span class="lockup__stacked">STACKED</span></div>' +
-      '<div><span class="badge18">18+</span></div>' +
-      '<h1>' + esc(t('gateTitle')) + '</h1><p>' + esc(t('gateBody')) + '</p>' +
+      '<h1>' + esc(t('gateTitle')) + '</h1><p>' + esc(t('gateBody')) + (USER ? '' : ' ' + esc(t('gateLogin'))) + '</p>' +
       '<div class="gate__langs" role="group" aria-label="' + esc(t('language')) + '">' + chips + '</div>' +
-      '<div class="home__actions"><button class="btn btn--white" data-act="adult">' + esc(t('gateYes')) + '</button>' +
-      '<a class="btn btn--ghost" href="https://www.google.com">' + esc(t('gateNo')) + '</a></div></main>';
+      '<div class="ticks">' +
+      '<label class="tick"><input type="checkbox" id="age"' + (pend.adult ? ' checked' : '') + '><span>' + esc(t('gateYes')) + '</span></label>' +
+      '<label class="tick tick--soft"><input type="checkbox" id="optin"' + (pend.optin ? ' checked' : '') + '><span>' + esc(t('optin')) + '</span></label>' +
+      '<p class="gate__err" id="err" role="alert"></p></div>' +
+      '<div class="home__actions"><button class="btn btn--white" data-act="' + (USER ? 'confirm' : 'signin') + '">' + esc(t(USER ? 'startPlaying' : 'continueEmail')) + '</button>' +
+      '<p class="gate__small">' + foot + ' <a href="' + esc(CFG.privacy) + '">' + esc(t('privacy')) + '</a></p>' +
+      '<a class="linkbtn" href="' + esc(CFG.rulesUrl) + '">' + esc(t('rulesOnly')) + '</a></div></main>';
+  }
+
+  function ticks() {
+    var age = document.getElementById('age'), optin = document.getElementById('optin');
+    if (!age.checked) { document.getElementById('err').textContent = t('ageRequired'); age.focus(); return null; }
+    return { adult: true, optin: !!(optin && optin.checked), at: new Date().toISOString() };
+  }
+
+  // Lead capture in Klaviyo (public client API). Marketing consent is separate and optional.
+  function capture(p) {
+    if (!CFG.klaviyo || !USER) return;
+    var base = 'https://a.klaviyo.com/client/', q = '/?company_id=' + CFG.klaviyo;
+    var h = { 'Content-Type': 'application/vnd.api+json', revision: '2025-01-15' };
+    var prof = { type: 'profile', attributes: { email: USER } };
+    function post(path, body) { return fetch(base + path + q, { method: 'POST', headers: h, body: JSON.stringify(body) }).catch(function () {}); }
+    post('profiles', { data: { type: 'profile', attributes: { email: USER, properties: {
+      nude_app_owner: true, nude_age_confirmed_at: p.at, nude_app_language: state.lang, nude_marketing_optin: p.optin } } } });
+    post('events', { data: { type: 'event', attributes: { properties: { language: state.lang, marketing_optin: p.optin },
+      metric: { data: { type: 'metric', attributes: { name: "Nude Stack'd app sign-in" } } }, profile: { data: prof } } } });
+    if (p.optin && CFG.list) post('subscriptions', { data: { type: 'subscription', attributes: {
+      custom_source: "Nude Stack'd app", profile: { data: { type: 'profile', attributes: { email: USER,
+        subscriptions: { email: { marketing: { consent: 'SUBSCRIBED' } } } } } } },
+      relationships: { list: { data: { type: 'list', id: CFG.list } } } } });
+  }
+  function confirmed(p) {
+    capture(p);
+    state.adult = USER; store.set('adult', USER); store.set('pending', null);
+  }
+
+  function viewRulesHome() {
+    return '<main class="screen screen--red home">' + bar({}) +
+      '<div class="home__middle"><div class="lockup"><span class="lockup__nude">Nude.</span><span class="lockup__stacked">STACKED</span></div>' +
+      '<p class="home__tag">' + esc(t('tagline')) + '</p><span class="badge18" aria-label="18+">18+</span></div>' +
+      '<div><div class="home__actions"><button class="btn btn--white" data-go="how">' + esc(t('howTo')) + '</button>' +
+      '<a class="btn btn--ghost" href="' + esc(CFG.shopUrl) + '">' + esc(t('getGame')) + '</a></div>' +
+      '<div class="home__links"><button data-go="safety">' + esc(t('safety')) + '</button></div>' +
+      '<p style="text-align:center;margin:6px 0 0"><a class="linkbtn" href="' + esc(CFG.gameUrl) + '">' + esc(t('ownIt')) + '</a></p></div></main>';
   }
 
   function viewHome() {
+    if (MODE === 'rules') return viewRulesHome();
     return '<main class="screen screen--red home">' + bar({}) +
       '<div class="home__middle"><div class="lockup"><span class="lockup__nude">Nude.</span><span class="lockup__stacked">STACKED</span></div>' +
       '<p class="home__tag">' + esc(t('tagline')) + '</p><span class="badge18" aria-label="18+">18+</span></div>' +
       '<div><div class="home__actions"><button class="btn btn--white" data-go="play">' + esc(t('play')) + '</button>' +
       '<button class="btn btn--ghost" data-go="how">' + esc(t('howTo')) + '</button></div>' +
-      '<div class="home__links"><button data-go="safety">' + esc(t('safety')) + '</button></div>' +
+      '<div class="home__links"><button data-go="safety">' + esc(t('safety')) + '</button>' +
+      '<a href="' + esc(CFG.logout) + '">' + esc(t('signOut')) + '</a></div>' +
       '<p class="xoxo">XOXO</p></div></main>';
   }
 
@@ -134,7 +184,9 @@
       '<div class="lvlrow"><div>1 · ' + esc(names[0]) + '</div><div>2 · ' + esc(names[1]) + '</div><div>3 · ' + esc(names[2]) + '</div></div>' +
       '<h2>' + esc(t('categoriesTitle')) + '</h2><ul class="catlist">' + cats + '</ul>' +
       '<p style="margin-top:22px;font-weight:600;color:var(--red)">' + esc(C.readyLine) + '</p>' +
-      '<div class="cta"><button class="btn btn--red" data-go="play">' + esc(t('play')) + '</button>' +
+      '<div class="cta">' + (MODE === 'rules'
+        ? '<a class="btn btn--red" href="' + esc(CFG.shopUrl) + '">' + esc(t('getGame')) + '</a>'
+        : '<button class="btn btn--red" data-go="play">' + esc(t('play')) + '</button>') +
       '<p style="text-align:center"><button class="linkbtn" data-go="safety">' + esc(t('safety')) + '</button></p></div>' + mtNote() + '</main>';
   }
 
@@ -196,14 +248,15 @@
   function route() { return (location.hash.replace(/^#\/?/, '') || '').split('/')[0]; }
   function render() {
     if (!C) return;
-    var r = route(), html;
-    if (!state.adult) html = viewGate();
+    var r = route(), html, open = MODE === 'rules' || (USER && state.adult === USER);
+    if (MODE === 'rules' && (r === 'play' || r === 'card')) r = '';
+    if (!open) html = viewGate();
     else if (r === 'play') html = viewPick();
     else if (r === 'card') html = viewCard();
     else if (r === 'how') html = viewHow();
     else if (r === 'safety') html = viewSafety();
     else html = viewHome();
-    var light = state.adult && (r === 'how' || r === 'safety');
+    var light = open && (r === 'how' || r === 'safety');
     document.body.classList.toggle('is-light', light);
     document.querySelector('meta[name="theme-color"]').setAttribute('content', light ? '#FFFFFF' : '#DD1D3E');
     app.innerHTML = html;
@@ -222,7 +275,8 @@
     if (b.hasAttribute('data-go')) { location.hash = '#/' + b.getAttribute('data-go'); return; }
     if (b.hasAttribute('data-cat')) { deal(b.getAttribute('data-cat')); return; }
     if (b.hasAttribute('data-setlang')) {
-      var lang = b.getAttribute('data-setlang'), sh = document.querySelector('.sheet-wrap');
+      var lang = b.getAttribute('data-setlang'), sh = document.querySelector('.sheet-wrap'), ag = document.getElementById('age');
+      if (ag) store.set('pending', { adult: ag.checked, optin: document.getElementById('optin').checked, at: new Date().toISOString() });
       setLang(lang).then(function () { if (sh) sh.remove(); render(); });
       return;
     }
@@ -235,7 +289,12 @@
       return;
     }
     var a = b.getAttribute('data-act');
-    if (a === 'adult') { state.adult = true; store.set('adult', true); render(); }
+    if (a === 'signin') {
+      var p = ticks(); if (!p) return;
+      store.set('pending', p);
+      location.href = CFG.login;
+    }
+    else if (a === 'confirm') { var q = ticks(); if (!q) return; confirmed(q); render(); }
     else if (a === 'lang') sheet();
     else if (a === 'pull') pull();
     else if (a === 'skip') { var cd = card(state.current.id); deal(cd.category); }
@@ -249,7 +308,12 @@
   fetch(CFG.icons).then(function (r) { return r.text(); }).then(function (svg) {
     var d = document.createElement('div'); d.innerHTML = svg; document.body.insertBefore(d.firstElementChild, document.body.firstChild);
   }).catch(function () { /* icons are decoration; the app still works */ });
-  setLang(state.lang || guessLang()).then(render).catch(function () {
+  setLang(state.lang || guessLang()).then(function () {
+    // back from the email-code login with the 18+ box already ticked: record it once and go straight in
+    var pend = store.get('pending', null);
+    if (MODE === 'game' && USER && pend && pend.adult && state.adult !== USER) confirmed(pend);
+    render();
+  }).catch(function () {
     app.innerHTML = '<main class="screen screen--red gate"><h1>Nude.</h1><p>The game could not load. Check your connection and refresh the page.</p></main>';
   });
 })();
