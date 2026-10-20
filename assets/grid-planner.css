@@ -216,7 +216,7 @@ input.field{width:100%;border:1px solid var(--line);border-radius:8px;padding:10
 .dot::before{content:"";width:7px;height:7px;border-radius:50%;background:#3ccf6b}
 .dot.busy::before{background:#f5b301}
 .dot.warn::before{background:#ed4956}
-.vstrip~.app .topbar{top:33px}
+.vstrip:not(.hide)~.app .topbar{top:33px}
 .chevb{display:grid;place-items:center;padding:4px;margin-left:-4px}
 .bar .hi{background:#fff;color:#111}
 .bar .hi:hover{background:#e8e8e8}
