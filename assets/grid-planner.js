@@ -618,6 +618,22 @@ function nameSheet(onDone) {
     h('footer', {}, h('button', {class: 'btn primary grow', onclick: go}, 'Continue'))));
   el.dataset.modal = '1'; openLayer(el); setTimeout(() => inp.focus(), 50);
 }
+function teamSheet(err) {
+  return new Promise(res => {
+    const inp = h('input', {class: 'field', placeholder: 'Team code or team link', 'aria-label': 'Team code'});
+    const go = () => {
+      const v = inp.value.trim(); if (!v) { inp.focus(); return; }
+      const m = v.match(/team=([\w-]+)/); const code = m ? m[1] : v;
+      ls.set('gp-team', code); closeTop(); res(code);
+    };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+    const el = h('div', {class: 'shade', 'data-modal': '1'}, h('div', {class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Join the team planner'},
+      h('header', {}, h('h2', {}, 'Join the team planner')),
+      h('div', {class: 'body'}, h('p', {}, err || 'Paste the team link or code Jordan sent you. Your grids then save where everyone can see them.'), inp),
+      h('footer', {}, h('button', {class: 'btn', onclick: () => { closeTop(); res(null); }}, 'Just this device'), h('button', {class: 'btn primary grow', onclick: go}, 'Join'))));
+    openLayer(el); setTimeout(() => inp.focus(), 50);
+  });
+}
 function askSheet(title, text, yes, no) {
   return new Promise(res => {
     const el = h('div', {class: 'shade', 'data-modal': '1'}, h('div', {class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': title},
@@ -715,7 +731,7 @@ function renderBar() {
 }
 async function shareLink() {
   let link;
-  if (online && VIEW) link = `${location.origin}${location.pathname}#team=${TEAM}&view=${VIEW.id}`;
+  if (online && VIEW) link = `${location.origin}${location.pathname}?team=${TEAM}&view=${VIEW.id}`;
   else link = location.origin + location.pathname + '#p=' + await encode(S);
   try { await navigator.clipboard.writeText(link); toast(online ? 'Link copied. It opens this view, and anyone with it can join the planning.' : 'Link copied. Anyone with it sees this exact plan.'); }
   catch (e) { prompt('Copy this link:', link); }
@@ -769,17 +785,22 @@ async function boot() {
   document.body.append(status, app, bar);
   LIB = Array.isArray(CFG.library) ? CFG.library : await fetch(CFG.library).then(r => r.json()).catch(() => []);
   LIB.forEach(i => BYID[i.id] = i);
-  const hash = new URLSearchParams(location.hash.slice(1));
-  if (hash.get('team')) ls.set('gp-team', hash.get('team'));
+  const hash = new URLSearchParams(location.hash.slice(1)), query = new URLSearchParams(location.search);
+  const teamIn = hash.get('team') || query.get('team');
+  if (teamIn) ls.set('gp-team', teamIn);
   TEAM = ls.get('gp-team');
-  const wantView = hash.get('view'), snap = hash.get('p');
-  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  const wantView = hash.get('view') || query.get('view'), snap = hash.get('p');
+  if (location.hash || teamIn) { query.delete('team'); query.delete('view'); const q = query.toString(); history.replaceState(null, '', location.pathname + (q ? '?' + q : '')); }
+  if (API && !TEAM) TEAM = await teamSheet();
   let local = null; try { local = JSON.parse(ls.get(KEY)); } catch (e) {}
   let shared = null; if (snap) { try { shared = await decode(snap); } catch (e) { toast('That share link is broken or incomplete.'); } }
 
   if (API && TEAM) {
     try { await api('GET', '/views'); online = true; }
-    catch (e) { toast(e.status === 401 ? 'This team link has expired. Ask Jordan for a new one.' : 'Can\'t reach the shared views right now, so this is saving on this device only.'); }
+    catch (e) {
+      if (e.status === 401) { ls.set('gp-team', ''); TEAM = await teamSheet('That team code didn\'t work. Check it and try again.'); if (TEAM) { try { await api('GET', '/views'); online = true; } catch (e2) { toast('That code didn\'t work either, so this is saving on this device only.'); } } }
+      else toast('Can\'t reach the shared views right now, so this is saving on this device only.');
+    }
   }
   if (!online) {
     if (local && local.v === 1) S = local;
