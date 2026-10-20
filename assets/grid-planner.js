@@ -1,4 +1,4 @@
-/* Grid planner. Config: window.GP_CONFIG = {library: [..] | url, store: 'gp-plan'} */
+/* Grid planner. Config: window.GP_CONFIG = {library: [..] | url, api: 'https://…workers.dev' (optional), store: 'gp-plan'} */
 (() => {
 'use strict';
 const CFG = window.GP_CONFIG || {};
@@ -17,7 +17,18 @@ const h = (tag, attrs = {}, ...kids) => {
   return el;
 };
 const uid = () => Math.random().toString(36).slice(2, 9);
-const clone = o => JSON.parse(JSON.stringify(o));
+const ls = {
+  get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} }
+};
+const ago = t => {
+  if (!t) return '';
+  const s = (Date.now() - t) / 1000;
+  if (s < 45) return 'just now';
+  if (s < 3600) return Math.round(s / 60) + ' min ago';
+  if (s < 86400) return Math.round(s / 3600) + ' h ago';
+  return new Date(t).toLocaleDateString('en-GB', {day: 'numeric', month: 'short'});
+};
 
 /* ---------- icons ---------- */
 const I = {
@@ -29,7 +40,6 @@ const I = {
   tagged: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M10 18l2 3 2-3h5a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z"/><circle cx="12" cy="9" r="2.5"/><path d="M7.5 15c1-2 2.5-3 4.5-3s3.5 1 4.5 3"/></svg>',
   multi: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 7V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2V9a2 2 0 012-2z"/><rect x="8" y="8" width="13" height="13" rx="2"/></svg>',
   reel: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7a4 4 0 00-4 4v10a4 4 0 004 4h10a4 4 0 004-4V7a4 4 0 00-4-4zm-7 5.5l5 3.5-5 3.5z"/></svg>',
-  play: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg>',
   heart: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7.5-4.5-9.3-9.2C1.4 7.3 3.6 4 7 4c2.1 0 3.5 1.2 5 3 1.5-1.8 2.9-3 5-3 3.4 0 5.6 3.3 4.3 6.8C19.5 15.5 12 20 12 20z"/></svg>',
   comment: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.7 16.6A9 9 0 1117 4.4a9 9 0 013.7 12.2L22 22z"/></svg>',
   send: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 3L9.2 10.1M22 3l-7 18-5.8-10.9L2 7z"/></svg>',
@@ -41,11 +51,13 @@ const I = {
   right: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
   caption: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h16v2H4zm0 6h16v2H4zm0 6h10v2H4z"/></svg>',
   undo: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg>',
-  link: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg>'
+  link: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg>',
+  layers: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>',
+  copy: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2h3"/></svg>'
 };
 const icon = (n, cls) => h('span', {class: cls, html: I[n], 'aria-hidden': 'true'});
 
-/* ---------- library ---------- */
+/* ---------- library & media ---------- */
 let LIB = [], BYID = {};
 const isWide = img => img && img.w / img.h >= 1.25;
 function url(img, w) {
@@ -53,22 +65,40 @@ function url(img, w) {
   if (img.local || !w) return img.src;
   return img.src + (img.src.includes('?') ? '&' : '?') + 'width=' + w;
 }
-/* A slide/cover reference: {img: id, part: 'full'|'L'|'R'} */
-function media(ref, {w = 640, fit = false, cls = ''} = {}) {
+/* ref: {img, part: 'full'|'L'|'R', x, y, z}. x/y shift the image (fraction of its size), z zooms. */
+function cropTransform(ref) {
+  const x = ref.x || 0, y = ref.y || 0, z = ref.z || 1;
+  return `translate(-50%,-50%) translate(${x * 100}%,${y * 100}%) scale(${z})`;
+}
+function media(ref, {w = 640, fit = false, cls = '', pan = true} = {}) {
   const img = ref && BYID[ref.img];
   const box = h('div', {class: 'm ' + (fit ? 'fit ' : '') + cls});
   if (!img) return box;
   const half = ref.part === 'L' || ref.part === 'R';
-  const ra = (img.w / img.h) / (half ? 2 : 1);
-  box.style.setProperty('--ra', ra);
+  box.style.setProperty('--ra', (img.w / img.h) / (half ? 2 : 1));
   box.style.setProperty('--rs', half ? 2 : 1);
   box.style.setProperty('--ro', ref.part === 'R' ? 1 : 0);
   const crop = h('div', {class: 'crop'});
-  const src = url(img, half ? w * 2 : w);
+  if (pan && !fit && (ref.x || ref.y || (ref.z && ref.z !== 1))) crop.style.transform = cropTransform(ref);
+  const z = pan && ref.z > 1 ? ref.z : 1;
   if (img.kind === 'video') crop.append(h('video', {src: img.src + '#t=0.5', muted: true, playsinline: true, preload: 'metadata', loop: true}));
-  else crop.append(h('img', {src, alt: img.name, decoding: 'async', draggable: 'false'}));
+  else crop.append(h('img', {src: url(img, Math.min(2160, Math.round((half ? w * 2 : w) * z))), alt: img.name, decoding: 'async', draggable: 'false'}));
   box.append(crop);
   return box;
+}
+/* a 9:16 story frame, as Instagram shows it */
+function storyNode(item, {w = 540} = {}) {
+  const fr = h('div', {class: 'sframe'});
+  if (!item || !BYID[item.img]) return fr;
+  const fitMode = item.fit || 'blur';
+  if (fitMode === 'fill') fr.append(media(item, {w}));
+  else {
+    if (fitMode === 'color') fr.style.background = item.bg || '#111';
+    else fr.append(h('div', {class: 'sblur'}, media({img: item.img, part: item.part}, {w: 160, pan: false})));
+    fr.append(media({img: item.img, part: item.part}, {w, fit: true, pan: false}));
+  }
+  if (item.text) fr.append(h('div', {class: 'stext ' + (item.textStyle || 'plain'), style: `top:${Math.round((item.ty ?? 0.72) * 100)}%`}, h('span', {}, item.text)));
+  return fr;
 }
 
 /* ---------- state ---------- */
@@ -81,46 +111,91 @@ const fresh = () => ({
 let S = fresh(), mode = 'plan', undoStack = [];
 const isEmpty = p => !p.slides.length && !p.cover;
 const coverOf = p => p.cover || p.slides[0] || null;
+const hlCover = x => x.cover || x.items[0] || null;
+const hasContent = P => P && (P.posts.some(p => !isEmpty(p)) || P.highlights.length);
+
+/* ---------- sync: shared views over the API, or this device only ---------- */
+const API = (CFG.api || '').replace(/\/$/, '');
+let TEAM = null, ME = ls.get('gp-me') || '', VIEW = null, VIEWS = [], online = false;
+let pending = false, saving = false, saveT = null, lastSync = 0, syncErr = false;
+const canEdit = () => !online || (VIEW && VIEW.owner === ME);
+async function api(method, path, body) {
+  const r = await fetch(API + path, {method, headers: {'Content-Type': 'application/json', 'X-Team-Key': TEAM}, body: body ? JSON.stringify(body) : undefined, cache: 'no-store'});
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(d.error || r.status); e.status = r.status; e.data = d; throw e; }
+  return d;
+}
+const summary = P => ({n: P.posts.filter(p => !isEmpty(p)).length, h: P.highlights.length,
+  c: P.posts.slice(0, 9).map(p => { const c = coverOf(p); return c ? {img: c.img, part: c.part, x: c.x, y: c.y, z: c.z} : null; })});
 
 function commit(fn, {render: r = true} = {}) {
+  if (!canEdit()) { if (VIEW) toast('This is ' + VIEW.owner + '\'s view. Duplicate it to make changes.'); return; }
   undoStack.push(JSON.stringify(S)); if (undoStack.length > 60) undoStack.shift();
   fn(); save(); if (r) render();
 }
 function undo() {
-  if (!undoStack.length) return;
+  if (!undoStack.length || !canEdit()) return;
   S = JSON.parse(undoStack.pop()); save(); render(); closeAll(); toast('Undone');
 }
-let saveT;
 function save() {
-  clearTimeout(saveT);
-  saveT = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }, 250);
+  if (!online) { clearTimeout(saveT); saveT = setTimeout(() => ls.set(KEY, JSON.stringify(S)), 250); return; }
+  pending = true; renderStatus();
+  clearTimeout(saveT); saveT = setTimeout(pushSave, 900);
 }
-function load() {
-  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) S = s; } catch (e) {}
-}
-
-/* share links: plan JSON, deflated, base64url, in the hash */
-async function encode(obj) {
-  const bytes = new TextEncoder().encode(JSON.stringify(obj));
-  let out = bytes;
-  if (window.CompressionStream) {
-    const s = new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'));
-    out = new Uint8Array(await new Response(s).arrayBuffer());
+async function pushSave() {
+  if (saving) { saveT = setTimeout(pushSave, 400); return; }
+  if (!VIEW || !canEdit()) { pending = false; return; }
+  saving = true; pending = false;
+  const id = VIEW.id;
+  try {
+    const r = await api('PUT', '/views/' + id, {plan: S, summary: summary(S), baseVersion: VIEW.version, editor: ME});
+    if (VIEW && VIEW.id === id) { VIEW.version = r.version; VIEW.updated_at = r.updated_at; VIEW.updated_by = ME; }
+    syncErr = false; lastSync = Date.now();
+  } catch (e) {
+    if (e.status === 409 && VIEW && VIEW.id === id) {
+      VIEW.version = e.data.version; S = e.data.plan; undoStack = [];
+      render(); toast('This view was changed on another device, so it has reloaded. Your last change may not have saved.');
+    } else { syncErr = true; pending = true; saveT = setTimeout(pushSave, 5000); }
   }
-  let bin = ''; out.forEach(b => bin += String.fromCharCode(b));
-  return (window.CompressionStream ? 'z' : 'j') + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  saving = false; renderStatus();
 }
-async function decode(str) {
-  const kind = str[0], b64 = str.slice(1).replace(/-/g, '+').replace(/_/g, '/');
-  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-  if (kind === 'j') return JSON.parse(new TextDecoder().decode(bytes));
-  const s = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
-  return JSON.parse(await new Response(s).text());
+async function poll() {
+  if (!online || !VIEW || document.hidden || pending || saving) return;
+  if (canEdit() && layers.length) return; // don't swap the plan under an open editor
+  const id = VIEW.id;
+  try {
+    const r = await api('GET', `/views/${id}?v=${VIEW.version}`);
+    syncErr = false; lastSync = Date.now();
+    if (!r.unchanged && VIEW && VIEW.id === id && !pending && !saving) {
+      Object.assign(VIEW, {version: r.version, name: r.name, updated_at: r.updated_at, updated_by: r.updated_by});
+      S = r.plan; render();
+    }
+  } catch (e) {
+    if (e.status === 404) { toast('This view was deleted.'); VIEW = null; await pickView(); }
+    else syncErr = true;
+  }
+  renderStatus();
 }
-async function shareLink() {
-  const link = location.origin + location.pathname + '#p=' + await encode(S);
-  try { await navigator.clipboard.writeText(link); toast('Link copied. Anyone with it sees this exact plan.'); }
-  catch (e) { prompt('Copy this link:', link); }
+async function loadViews() { VIEWS = (await api('GET', '/views')).views; return VIEWS; }
+async function openView(id) {
+  const r = await api('GET', '/views/' + id);
+  VIEW = {id: r.id, name: r.name, owner: r.owner, version: r.version, updated_at: r.updated_at, updated_by: r.updated_by};
+  S = r.plan && r.plan.v === 1 ? r.plan : fresh();
+  undoStack = []; ls.set('gp-view', id);
+  mode = canEdit() ? 'plan' : 'preview';
+  closeAll(); render();
+}
+async function createView(name, plan) {
+  const r = await api('POST', '/views', {name, owner: ME, plan, summary: summary(plan)});
+  await loadViews(); await openView(r.id);
+  return r.id;
+}
+async function pickView(preferId) {
+  await loadViews();
+  const id = [preferId, ls.get('gp-view')].find(i => i && VIEWS.some(v => v.id === i))
+    || (VIEWS.find(v => v.owner === ME) || VIEWS[0] || {}).id;
+  if (id) await openView(id);
+  else await createView(ME + '\'s grid', fresh());
 }
 
 /* ---------- small UI helpers ---------- */
@@ -128,12 +203,12 @@ let toastT;
 function toast(msg) {
   document.querySelectorAll('.toast').forEach(t => t.remove());
   const t = h('div', {class: 'toast', role: 'status'}, msg); document.body.append(t);
-  clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 2800);
+  clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 3200);
 }
 const layers = [];
 function openLayer(el, onClose) {
   document.body.append(el); layers.push({el, onClose}); document.body.style.overflow = 'hidden';
-  el.addEventListener('click', e => { if (e.target === el) closeTop(); });
+  el.addEventListener('click', e => { if (e.target === el && !el.dataset.modal) closeTop(); });
   return el;
 }
 function closeTop() {
@@ -143,7 +218,7 @@ function closeTop() {
 }
 function closeAll() { while (layers.length) closeTop(); }
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && layers.length) { e.preventDefault(); closeTop(); }
+  if (e.key === 'Escape' && layers.length && !layers[layers.length - 1].el.dataset.modal) { e.preventDefault(); closeTop(); }
   if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName) && !document.activeElement.isContentEditable) { e.preventDefault(); undo(); }
 });
 function sheet(title, body, footer, cls = '') {
@@ -165,24 +240,25 @@ function usage() {
 }
 
 /* ---------- picker ---------- */
-/* opts: {title, multi, filter: 'all', onPick(imgs[])} */
-function picker({title = 'Choose from library', multi = false, onPick, allowVideo = true}) {
+function picker({title = 'Choose from library', multi = false, onPick, allowVideo = true, extra = null}) {
   let filter = 'all', q = '', chosen = [];
   const used = usage();
   const lib = h('div', {class: 'lib'});
   const addBtn = h('button', {class: 'btn primary grow', disabled: true, onclick: () => { closeTop(); onPick(chosen.map(id => BYID[id])); }}, 'Add');
   const hasVideo = LIB.some(i => i.kind === 'video');
-  const tabs = [['all', 'All'], ['product', 'Product'], ['lifestyle', 'Lifestyle'], ['wide', 'Wide (2-slide)'], ...(hasVideo && allowVideo ? [['video', 'Video']] : []), ['unused', 'Not used yet']];
+  const tabs = [...(extra ? [['extra', extra.label]] : []), ['all', 'All'], ['product', 'Product'], ['lifestyle', 'Lifestyle'], ['wide', 'Wide (2-slide)'], ...(hasVideo && allowVideo ? [['video', 'Video']] : []), ['unused', 'Not used yet']];
+  if (extra) filter = 'extra';
   const chips = tabs.map(([k, label]) => h('button', {class: 'chip' + (k === filter ? ' on' : ''), onclick: e => { filter = k; chips.forEach(c => c.classList.remove('on')); e.currentTarget.classList.add('on'); draw(); }}, label));
   function draw() {
     lib.replaceChildren();
-    const items = LIB.filter(i => (allowVideo || i.kind !== 'video') &&
-      (filter === 'all' || i.cat === filter || (filter === 'wide' && isWide(i)) || (filter === 'video' && i.kind === 'video') || (filter === 'unused' && !used[i.id])) &&
+    const extraIds = extra ? extra.ids : [];
+    const items = (filter === 'extra' ? extraIds.map(id => BYID[id]).filter(Boolean) : LIB).filter(i => (allowVideo || i.kind !== 'video') &&
+      (filter === 'all' || filter === 'extra' || i.cat === filter || (filter === 'wide' && isWide(i)) || (filter === 'video' && i.kind === 'video') || (filter === 'unused' && !used[i.id])) &&
       (!q || i.name.toLowerCase().includes(q)));
     if (!items.length) lib.append(h('div', {class: 'none'}, 'Nothing matches. Try another filter.'));
     for (const i of items) {
       const n = chosen.indexOf(i.id);
-      const li = h('div', {class: 'li' + (isWide(i) ? ' wide' : '') + (n >= 0 ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': i.name,
+      lib.append(h('div', {class: 'li' + (isWide(i) ? ' wide' : '') + (n >= 0 ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': i.name,
         onclick: () => {
           if (!multi) { closeTop(); onPick([i]); return; }
           const k = chosen.indexOf(i.id); k >= 0 ? chosen.splice(k, 1) : chosen.push(i.id);
@@ -193,41 +269,68 @@ function picker({title = 'Choose from library', multi = false, onPick, allowVide
         i.kind === 'video' ? h('span', {class: 'tag'}, 'Video') : isWide(i) ? h('span', {class: 'tag'}, '2 slides') : '',
         used[i.id] ? h('span', {class: 'used'}, `Used ${used[i.id]}×`) : '',
         multi ? h('span', {class: 'sel'}, n >= 0 ? String(n + 1) : '') : '',
-        h('span', {class: 'nm'}, i.name));
-      lib.append(li);
+        h('span', {class: 'nm'}, i.name)));
     }
   }
   const search = h('input', {type: 'search', placeholder: 'Search by file name', 'aria-label': 'Search images', oninput: e => { q = e.target.value.toLowerCase().trim(); draw(); }});
   const el = sheet(title, h('div', {class: 'filters'}, search, chips), null, 'picker');
   $('.sheet', el).append(lib);
-  if (multi) $('.sheet', el).append(h('footer', {}, h('span', {class: 'hint', style: 'flex:1;align-self:center'}, 'Tap in the order you want the slides.'), addBtn));
-  draw(); openLayer(el); setTimeout(() => search.focus({preventScroll: true}), 50);
+  if (multi) $('.sheet', el).append(h('footer', {}, h('span', {class: 'hint', style: 'flex:1;align-self:center'}, 'Tap in the order you want them.'), addBtn));
+  draw(); openLayer(el);
 }
-
-/* turn picked images into slides; wide images become a left/right pair */
 const toSlides = (imgs, split = true) => imgs.flatMap(i => split && isWide(i) && i.kind !== 'video' ? [{img: i.id, part: 'L'}, {img: i.id, part: 'R'}] : [{img: i.id, part: 'full'}]);
+
+/* ---------- reposition & zoom (grid covers, highlight covers, stories) ---------- */
+function framer({title, ref, aspect, round = false, onDone}) {
+  const work = {...ref, x: ref.x || 0, y: ref.y || 0, z: ref.z || 1};
+  const frame = h('div', {class: 'framer' + (round ? ' round' : ''), style: `aspect-ratio:${aspect}`});
+  let m;
+  const draw = () => { m = media(work, {w: 900}); m.classList.add('fill'); frame.replaceChildren(m, h('div', {class: 'framer-grid'})); };
+  draw();
+  const crop = () => m.querySelector('.crop');
+  const clamp = () => {
+    const c = crop(); if (!c) return;
+    const fw = frame.clientWidth, fh = frame.clientHeight, cw = c.offsetWidth, ch = c.offsetHeight;
+    const mx = Math.max(0, (work.z * cw - fw) / 2) / cw, my = Math.max(0, (work.z * ch - fh) / 2) / ch;
+    work.x = Math.max(-mx, Math.min(mx, work.x)); work.y = Math.max(-my, Math.min(my, work.y));
+    c.style.transform = cropTransform(work);
+  };
+  let drag = null;
+  frame.addEventListener('pointerdown', e => { drag = {sx: e.clientX, sy: e.clientY, x: work.x, y: work.y}; frame.setPointerCapture(e.pointerId); });
+  frame.addEventListener('pointermove', e => {
+    if (!drag) return; const c = crop(); if (!c) return;
+    work.x = drag.x + (e.clientX - drag.sx) / c.offsetWidth; work.y = drag.y + (e.clientY - drag.sy) / c.offsetHeight; clamp();
+  });
+  frame.addEventListener('pointerup', () => drag = null);
+  frame.addEventListener('pointercancel', () => drag = null);
+  const zoom = h('input', {type: 'range', min: 1, max: 3, step: 0.01, value: work.z, 'aria-label': 'Zoom', oninput: e => { work.z = +e.target.value; clamp(); }});
+  const body = h('div', {class: 'body'}, frame, h('label', {class: 'zoom'}, 'Zoom', zoom), h('p', {class: 'hint'}, 'Drag the picture to move it.'));
+  const el = sheet(title, body, h('footer', {},
+    h('button', {class: 'btn', onclick: () => { work.x = 0; work.y = 0; work.z = 1; zoom.value = 1; clamp(); }}, 'Reset'),
+    h('button', {class: 'btn primary grow', onclick: () => { closeTop(); onDone({x: +work.x.toFixed(4), y: +work.y.toFixed(4), z: +work.z.toFixed(3)}); }}, 'Done')), 'framer-sheet');
+  openLayer(el); requestAnimationFrame(clamp);
+}
 
 /* ---------- post editor ---------- */
 function editPost(id) {
   const p = () => S.posts.find(x => x.id === id);
   if (!p()) return;
   const body = h('div', {class: 'body'});
-  const el = sheet('Post ' + (S.posts.indexOf(p()) + 1), body,
+  const el = sheet('Post', body,
     h('footer', {},
       h('button', {class: 'btn danger', onclick: () => { commit(() => Object.assign(p(), emptyPost(), {id})); closeTop(); toast('Slot cleared'); }}, 'Clear slot'),
-      h('button', {class: 'btn', onclick: () => { if (!isEmpty(p())) viewPost(id); }}, 'Preview'),
+      h('button', {class: 'btn', onclick: () => { if (!isEmpty(p())) viewPost(p()); }}, 'Preview'),
       h('button', {class: 'btn primary grow', onclick: closeTop}, 'Done')));
   const title = $('h2', el);
   function draw() {
-    const post = p(); body.replaceChildren();
+    const post = p(); if (!post) { closeTop(); return; }
+    body.replaceChildren();
     title.textContent = 'Post ' + (S.posts.indexOf(post) + 1);
-    // type
     const types = [['single', 'Single'], ['carousel', 'Carousel'], ['reel', 'Reel / video']];
     body.append(h('div', {}, h('h3', {}, 'Format'),
       h('div', {class: 'seg2', role: 'tablist'}, types.map(([k, label]) => h('button', {class: post.type === k ? 'on' : '', role: 'tab', 'aria-selected': String(post.type === k),
-        onclick: () => commit(() => { post.type = k; if (k !== 'carousel' && post.slides.length > 1) post.slides = post.slides.slice(0, 1); }) || draw()},
+        onclick: () => { commit(() => { post.type = k; if (k !== 'carousel' && post.slides.length > 1) post.slides = post.slides.slice(0, 1); }); draw(); }},
         k === 'carousel' ? icon('multi') : k === 'reel' ? icon('reel') : '', label)))));
-    // slides
     const strip = h('div', {class: 'strip'});
     const max = post.type === 'carousel' ? 20 : 1;
     post.slides.forEach((s, i) => {
@@ -254,16 +357,16 @@ function editPost(id) {
       post.type === 'carousel' && post.slides.length > 1 ? h('p', {class: 'hint'}, 'Drag to reorder. Wide images split into two slides that join up when swiped.') : '',
       post.type === 'reel' && !LIB.some(i => i.kind === 'video') ? h('p', {class: 'hint'}, 'No videos in the library yet, so pick a still to stand in for the reel.') : ''));
     sortable(strip, (a, b) => { if (b >= post.slides.length) return draw(); commit(() => move(post.slides, a, b)); draw(); }, {filter: '.add,.x,.act', preventOnFilter: false, draggable: '.it'});
-    // cover
     const cov = coverOf(post), covImg = cov && BYID[cov.img];
+    const ensureCover = () => { if (!post.cover && post.slides[0]) post.cover = {...post.slides[0]}; };
     body.append(h('div', {}, h('h3', {}, 'Grid cover'),
       h('div', {class: 'cover-row'}, media(cov, {w: 240}),
         h('div', {class: 'opts'},
           h('button', {class: 'chip' + (!post.cover ? ' on' : ''), onclick: () => { commit(() => post.cover = null); draw(); }}, 'Use first slide'),
           h('button', {class: 'chip' + (post.cover ? ' on' : ''), onclick: () => picker({title: 'Choose a cover', onPick: imgs => { commit(() => post.cover = {img: imgs[0].id, part: 'full'}); draw(); }})}, 'Pick a different cover'),
+          cov ? h('button', {class: 'chip', onclick: () => framer({title: 'Adjust the grid crop', ref: cov, aspect: S.ratio, onDone: v => { commit(() => { ensureCover(); Object.assign(post.cover, v); }); draw(); }})}, 'Move & zoom') : '',
           post.cover && covImg && isWide(covImg) ? ['L', 'full', 'R'].map(k => h('button', {class: 'chip' + (post.cover.part === k ? ' on' : ''), onclick: () => { commit(() => post.cover.part = k); draw(); }}, k === 'L' ? 'Left half' : k === 'R' ? 'Right half' : 'Whole')) : '')),
-      h('p', {class: 'hint'}, 'This is the image the grid shows. It doesn\'t have to be in the post.')));
-    // caption
+      h('p', {class: 'hint'}, 'This is what the grid shows. It doesn\'t have to be in the post.')));
     const ta = h('textarea', {class: 'caption', placeholder: 'Write a caption…', 'aria-label': 'Caption', maxlength: 2200});
     ta.value = post.caption;
     const cnt = h('div', {class: 'count'});
@@ -279,78 +382,131 @@ function editPost(id) {
   draw(); openLayer(el, render);
 }
 
-/* ---------- highlight editor ---------- */
+/* ---------- highlights, the Instagram way ---------- */
+const newStory = img => ({id: uid(), img: img.id, part: 'full', fit: isWide(img) ? 'blur' : 'fill', bg: '#111111', text: '', textStyle: 'plain', ty: 0.72});
 function editHighlight(id) {
   const hl = () => S.highlights.find(x => x.id === id);
   const body = h('div', {class: 'body'});
-  const el = sheet('Highlight', body, h('footer', {},
-    h('button', {class: 'btn danger', onclick: () => { commit(() => S.highlights = S.highlights.filter(x => x.id !== id)); closeTop(); }}, 'Delete'),
-    h('button', {class: 'btn', onclick: () => playStory(id)}, 'Play'),
+  const el = sheet('Edit highlight', body, h('footer', {},
+    h('button', {class: 'btn danger', onclick: () => { if (confirm('Delete this highlight?')) { commit(() => S.highlights = S.highlights.filter(x => x.id !== id)); closeTop(); } }}, 'Delete'),
+    h('button', {class: 'btn', onclick: () => playStory(S.highlights.indexOf(hl()), 0)}, 'Play'),
     h('button', {class: 'btn primary grow', onclick: closeTop}, 'Done')));
   function draw() {
-    const x = hl(); body.replaceChildren();
-    const t = h('input', {class: 'field', maxlength: 15, placeholder: 'Title', value: x.title, 'aria-label': 'Highlight title'});
+    const x = hl(); if (!x) { closeTop(); return; } body.replaceChildren();
+    const cov = hlCover(x);
+    const c = media(cov, {w: 240}); c.classList.add('hlc');
+    function coverMenu() {
+      const ids = [...new Set(x.items.map(s => s.img))];
+      picker({title: 'Highlight cover', extra: ids.length ? {label: 'From this highlight', ids} : null, onPick: imgs => {
+        const ref = {img: imgs[0].id, part: 'full'};
+        framer({title: 'Position the cover', ref, aspect: '1/1', round: true, onDone: v => { commit(() => x.cover = {...ref, ...v}); draw(); }});
+      }});
+    }
+    const t = h('input', {class: 'field', maxlength: 15, placeholder: 'Highlights', value: x.title, 'aria-label': 'Highlight name'});
     let first = true;
     t.addEventListener('input', () => { if (first) { undoStack.push(JSON.stringify(S)); first = false; } x.title = t.value; save(); });
-    body.append(h('div', {}, h('h3', {}, 'Title'), t, h('p', {class: 'hint'}, 'Up to 15 characters.')));
-    const cv = h('div', {class: 'm hlc'});
-    const c = media(x.cover || x.items[0], {w: 200}); c.classList.add('hlc');
-    body.append(h('div', {}, h('h3', {}, 'Cover'), h('div', {class: 'cover-row'}, x.cover || x.items[0] ? c : cv,
-      h('div', {class: 'opts'},
-        h('button', {class: 'chip', onclick: () => picker({title: 'Highlight cover', onPick: imgs => { commit(() => x.cover = {img: imgs[0].id, part: 'full'}); draw(); }})}, 'Pick cover'),
-        x.cover ? h('button', {class: 'chip', onclick: () => { commit(() => x.cover = null); draw(); }}, 'Use first story') : ''))));
-    const strip = h('div', {class: 'strip'});
-    x.items.forEach((s, i) => strip.append(h('div', {class: 'it'}, media(s, {w: 200}),
+    body.append(h('div', {class: 'hl-head'},
+      h('div', {class: 'hl-cov'},
+        h('button', {class: 'hl-cover-btn', 'aria-label': 'Edit cover', onclick: coverMenu}, h('div', {class: 'ring big'}, c), h('span', {}, 'Edit cover')),
+        x.cover ? h('div', {class: 'opts'},
+          h('button', {class: 'chip', onclick: () => framer({title: 'Position the cover', ref: x.cover, aspect: '1/1', round: true, onDone: v => { commit(() => Object.assign(x.cover, v)); draw(); }})}, 'Move & zoom'),
+          h('button', {class: 'chip', onclick: () => { commit(() => x.cover = null); draw(); }}, 'Use first story')) : ''),
+      h('div', {style: 'flex:1'}, h('h3', {}, 'Name'), t, h('p', {class: 'hint'}, 'Instagram cuts names off at about 15 characters.'))));
+    const strip = h('div', {class: 'strip stories'});
+    x.items.forEach((s, i) => strip.append(h('div', {class: 'it'},
+      h('button', {class: 'sthumb', 'aria-label': `Edit story ${i + 1}`, onclick: () => editStory(id, i, draw)}, storyNode(s, {w: 200})),
       h('button', {class: 'x', 'aria-label': 'Remove story', onclick: () => { commit(() => x.items.splice(i, 1)); draw(); }}, icon('x')),
       h('div', {class: 'lbl'}, String(i + 1)))));
-    strip.append(h('button', {class: 'add', 'aria-label': 'Add stories', onclick: () => picker({title: 'Add stories', multi: true, onPick: imgs => { commit(() => x.items.push(...imgs.map(i => ({img: i.id, part: 'full'})))); draw(); }})}, icon('plus')));
+    strip.append(h('button', {class: 'add sadd', 'aria-label': 'Add stories', onclick: () => picker({title: 'Add stories', multi: true, onPick: imgs => { commit(() => x.items.push(...imgs.map(newStory))); draw(); }})}, icon('plus')));
     sortable(strip, (a, b) => { if (b >= x.items.length) return draw(); commit(() => move(x.items, a, b)); draw(); }, {filter: '.add,.x', preventOnFilter: false, draggable: '.it'});
-    body.append(h('div', {}, h('h3', {}, `Stories (${x.items.length})`), strip, h('p', {class: 'hint'}, 'Drag to reorder. Each story shows full screen, like a real highlight.')));
+    body.append(h('div', {}, h('h3', {}, `Stories (${x.items.length})`), strip, h('p', {class: 'hint'}, 'Tap a story to change how it fills the screen or to add text. Drag to reorder.')));
   }
   draw(); openLayer(el, render);
+}
+function editStory(hid, idx, after) {
+  const x = S.highlights.find(q => q.id === hid); const st = () => x.items[idx];
+  if (!st()) return;
+  const prev = h('div', {class: 'story-prev'});
+  const ctl = h('div', {class: 'story-ctl'});
+  const body = h('div', {class: 'body story-edit'}, prev, ctl);
+  const el = sheet(`Story ${idx + 1}`, body, h('footer', {},
+    h('button', {class: 'btn', onclick: () => picker({title: 'Replace image', onPick: imgs => { commit(() => Object.assign(st(), {img: imgs[0].id, part: 'full', x: 0, y: 0, z: 1})); draw(); }})}, 'Replace image'),
+    h('button', {class: 'btn primary grow', onclick: closeTop}, 'Done')));
+  function draw() {
+    const s = st(); prev.replaceChildren(storyNode(s, {w: 540})); ctl.replaceChildren();
+    const fits = [['fill', 'Fill screen'], ['blur', 'Fit, blurred'], ['color', 'Fit on colour']];
+    ctl.append(h('div', {}, h('h3', {}, 'Fit'), h('div', {class: 'opts'}, fits.map(([k, l]) => h('button', {class: 'chip' + ((s.fit || 'blur') === k ? ' on' : ''), onclick: () => { commit(() => s.fit = k, {render: false}); draw(); }}, l)))));
+    if (s.fit === 'fill') ctl.append(h('button', {class: 'chip', onclick: () => framer({title: 'Position the story', ref: s, aspect: '9/16', onDone: v => { commit(() => Object.assign(s, v), {render: false}); draw(); }})}, 'Move & zoom'));
+    if (s.fit === 'color') {
+      const c = h('input', {type: 'color', value: s.bg || '#111111', 'aria-label': 'Background colour'});
+      c.addEventListener('input', () => { s.bg = c.value; save(); prev.replaceChildren(storyNode(s)); });
+      c.addEventListener('focus', () => undoStack.push(JSON.stringify(S)), {once: true});
+      ctl.append(h('label', {class: 'zoom'}, 'Background', c));
+    }
+    const t = h('input', {class: 'field', placeholder: 'Add text (optional)', value: s.text || '', maxlength: 120, 'aria-label': 'Story text'});
+    let first = true;
+    t.addEventListener('input', () => { if (first) { undoStack.push(JSON.stringify(S)); first = false; } s.text = t.value; save(); prev.replaceChildren(storyNode(s)); });
+    const pos = h('input', {type: 'range', min: 0.1, max: 0.9, step: 0.01, value: s.ty ?? 0.72, 'aria-label': 'Text position'});
+    pos.addEventListener('input', () => { s.ty = +pos.value; save(); prev.replaceChildren(storyNode(s)); });
+    ctl.append(h('div', {}, h('h3', {}, 'Text'), t,
+      h('div', {class: 'opts', style: 'margin-top:8px'}, [['plain', 'Classic'], ['box', 'White box'], ['dark', 'Dark box']].map(([k, l]) => h('button', {class: 'chip' + ((s.textStyle || 'plain') === k ? ' on' : ''), onclick: () => { commit(() => s.textStyle = k, {render: false}); draw(); }}, l))),
+      h('label', {class: 'zoom'}, 'Height', pos)));
+  }
+  draw(); openLayer(el, after);
 }
 function newHighlight() {
   picker({title: 'Pick the stories for this highlight', multi: true, onPick: imgs => {
     const id = uid();
-    commit(() => S.highlights.push({id, title: 'New', cover: null, items: imgs.map(i => ({img: i.id, part: 'full'}))}));
+    commit(() => S.highlights.push({id, title: '', cover: null, items: imgs.map(newStory)}));
     editHighlight(id);
   }});
 }
 
-/* ---------- story player ---------- */
-function playStory(id) {
-  const x = S.highlights.find(q => q.id === id);
-  if (!x) return;
-  let i = 0, timer, start, paused = false;
+/* story player: tap right/left, hold to pause, runs on into the next highlight */
+function playStory(hIdx, sIdx = 0, P = S) {
+  const list = P.highlights.filter(x => x.items.length);
+  let hi = list.indexOf(P.highlights[hIdx]); if (hi < 0) return;
+  let si = sIdx, raf, start, elapsed = 0, paused = false, holdT = null, held = false;
   const DUR = 5000;
-  const bars = h('div', {class: 'bars'}, x.items.map(() => h('i', {}, h('b'))));
-  const stage = h('div', {class: 'main'}), blur = h('div', {class: 'blur'});
-  const av = media(x.cover || x.items[0], {w: 120}); av.className += ' av';
-  const frame = h('div', {class: 'frame'}, blur, stage, bars,
-    h('div', {class: 'sh'}, av, h('span', {}, x.title || 'Highlight')),
-    h('div', {class: 'tap l', onclick: () => go(i - 1)}), h('div', {class: 'tap r', onclick: () => go(i + 1)}));
-  const el = h('div', {class: 'story', role: 'dialog', 'aria-label': x.title}, frame,
-    h('button', {class: 'close-x', 'aria-label': 'Close', onclick: closeTop}, icon('xl')));
-  function go(n) {
-    if (n < 0) n = 0;
-    if (n >= x.items.length) { closeTop(); return; }
-    i = n; cancelAnimationFrame(timer);
-    stage.replaceChildren(media(x.items[i], {w: 1080, fit: true, cls: 'abs'}));
-        blur.replaceChildren(media(x.items[i], {w: 200}));
-    [...bars.children].forEach((b, k) => b.firstChild.style.width = k < i ? '100%' : '0');
-    start = performance.now(); tick();
+  const bars = h('div', {class: 'bars'}), stage = h('div', {class: 'main'}), head = h('div', {class: 'sh'});
+  const frame = h('div', {class: 'frame'}, stage, bars, head);
+  const el = h('div', {class: 'story', role: 'dialog', 'aria-label': 'Story'}, frame,
+    h('button', {class: 'close-x', 'aria-label': 'Close', onclick: () => closeTop()}, icon('xl')));
+  function show() {
+    const x = list[hi], s = x.items[si];
+    bars.replaceChildren(...x.items.map((_, k) => h('i', {}, h('b', {style: `width:${k < si ? 100 : 0}%`}))));
+    const av = media(hlCover(x), {w: 120}); av.classList.add('av');
+    head.replaceChildren(av, h('span', {}, x.title || 'Highlights'), h('span', {class: 'when'}, `${si + 1}/${x.items.length}`));
+    stage.replaceChildren(storyNode(s, {w: 1080}));
+    elapsed = 0; start = performance.now(); cancelAnimationFrame(raf); tick();
+  }
+  function go(d) {
+    const x = list[hi];
+    si += d;
+    if (si >= x.items.length) { if (hi + 1 < list.length) { hi++; si = 0; } else { closeTop(); return; } }
+    else if (si < 0) { if (hi > 0) { hi--; si = 0; } else si = 0; }
+    show();
   }
   function tick() {
-    timer = requestAnimationFrame(now => {
-      const f = Math.min(1, (now - start) / DUR);
-      bars.children[i].firstChild.style.width = f * 100 + '%';
-      f >= 1 ? go(i + 1) : tick();
+    raf = requestAnimationFrame(now => {
+      if (!paused) { elapsed += now - start; }
+      start = now;
+      const b = bars.children[si]; if (b) b.firstChild.style.width = Math.min(100, elapsed / DUR * 100) + '%';
+      elapsed >= DUR ? go(1) : tick();
     });
   }
-  if (!x.items.length) frame.append(h('div', {class: 'empty-s'}, 'No stories in this highlight yet.'));
-  openLayer(el, () => cancelAnimationFrame(timer));
-  el.addEventListener('click', e => { if (e.target === el) closeTop(); });
-  if (x.items.length) go(0);
+  frame.addEventListener('pointerdown', e => { held = false; holdT = setTimeout(() => { held = true; paused = true; frame.classList.add('paused'); }, 220); });
+  frame.addEventListener('pointerup', e => {
+    clearTimeout(holdT);
+    if (held) { paused = false; frame.classList.remove('paused'); return; }
+    const r = frame.getBoundingClientRect();
+    go(e.clientX - r.left < r.width * 0.33 ? -1 : 1);
+  });
+  frame.addEventListener('pointercancel', () => { clearTimeout(holdT); paused = false; });
+  const key = e => { if (e.key === 'ArrowRight') go(1); if (e.key === 'ArrowLeft') go(-1); };
+  document.addEventListener('keydown', key);
+  openLayer(el, () => { cancelAnimationFrame(raf); document.removeEventListener('keydown', key); });
+  show();
 }
 
 /* ---------- post viewer ---------- */
@@ -364,11 +520,10 @@ function captionNode(text, user, full) {
   if (short) wrap.append('… ', h('button', {class: 'more', onclick: () => wrap.replaceWith(captionNode(text, user, true))}, 'more'));
   return wrap;
 }
-function viewPost(id) {
-  const post = S.posts.find(x => x.id === id);
+function viewPost(post, P = S) {
   if (!post || isEmpty(post)) return;
   const slides = post.slides.length ? post.slides : [post.cover];
-  const track = h('div', {class: 'track'}, slides.map(s => h('div', {class: 'slide'}, media(s, {w: 1080}))));
+  const track = h('div', {class: 'track'}, slides.map(s => h('div', {class: 'slide'}, media({img: s.img, part: s.part}, {w: 1080}))));
   const dots = h('div', {class: 'dots'}, slides.length > 1 ? slides.map((_, k) => h('i', {class: k ? '' : 'on'})) : '');
   const pg = slides.length > 1 ? h('span', {class: 'pg'}, `1/${slides.length}`) : '';
   const navL = h('button', {class: 'nav l hide', 'aria-label': 'Previous slide', onclick: () => track.scrollBy({left: -track.clientWidth, behavior: 'smooth'})}, icon('left'));
@@ -379,40 +534,119 @@ function viewPost(id) {
     if (pg) pg.textContent = `${k + 1}/${slides.length}`;
     navL.classList.toggle('hide', k === 0); navR.classList.toggle('hide', k >= slides.length - 1);
   }, {passive: true});
-  const av = media(S.profile.avatar, {w: 100}); av.className += ' av';
-  const vids = () => track.querySelectorAll('video');
+  const av = media(P.profile.avatar, {w: 100}); av.className += ' av';
+  const editable = P === S && canEdit();
   const card = h('article', {class: 'post'},
-    h('div', {class: 'ph'}, av, h('b', {}, S.profile.username)),
+    h('div', {class: 'ph'}, av, h('b', {}, P.profile.username)),
     h('div', {class: 'media-wrap'}, track, pg, navL, navR, post.type === 'reel' ? h('span', {class: 'reel-badge'}, icon('reel'), 'Reel') : ''),
     dots,
     h('div', {class: 'acts'}, icon('heart'), icon('comment'), icon('send'), icon('save', 'r')),
-    captionNode(post.caption, S.profile.username),
-    mode === 'plan' ? h('div', {class: 'pe'}, h('button', {class: 'btn grow', onclick: () => { closeTop(); editPost(id); }}, 'Edit post')) : '');
+    captionNode(post.caption, P.profile.username),
+    editable ? h('div', {class: 'pe'}, h('button', {class: 'btn grow', onclick: () => { closeTop(); editPost(post.id); }}, 'Edit post')) : '');
   const el = h('div', {class: 'shade viewer', role: 'dialog', 'aria-modal': 'true'}, card, h('button', {class: 'close-x', 'aria-label': 'Close', onclick: closeTop}, icon('xl')));
   openLayer(el);
-  vids().forEach(v => { v.muted = true; v.play().catch(() => {}); });
+  track.querySelectorAll('video').forEach(v => { v.muted = true; v.play().catch(() => {}); });
+}
+
+/* ---------- views: switch, create, duplicate, compare ---------- */
+function viewsSheet() {
+  let picking = false, chosen = [];
+  const list = h('div', {class: 'views'});
+  const cmpBtn = h('button', {class: 'btn', onclick: () => { picking = !picking; chosen = picking && VIEW ? [VIEW.id] : []; draw(); }}, 'Compare');
+  const goCmp = h('button', {class: 'btn primary grow hide', onclick: () => { closeTop(); compare(chosen); }}, 'Compare');
+  const el = sheet('Grid views', list, h('footer', {}, cmpBtn,
+    h('button', {class: 'btn', onclick: async () => { const n = prompt('Name the new view', ME + '\'s grid ' + (VIEWS.filter(v => v.owner === ME).length + 1)); if (n) { closeTop(); await createView(n, fresh()); toast('New view created'); } }}, 'New blank'),
+    h('button', {class: 'btn primary grow', onclick: async () => { const n = prompt('Name your copy', (VIEW ? VIEW.name : 'Grid') + ' (copy)'); if (n) { closeTop(); await createView(n, JSON.parse(JSON.stringify(S))); toast('Copied. This one is yours to edit.'); } }}, icon('copy'), 'Duplicate this'),
+    goCmp));
+  function row(v) {
+    const mine = v.owner === ME, cur = VIEW && v.id === VIEW.id, sel = chosen.includes(v.id);
+    const mini = h('div', {class: 'mini'}, (v.summary.c || []).slice(0, 6).map(c => c ? media(c, {w: 120}) : h('div', {class: 'm'})));
+    while (mini.children.length < 6) mini.append(h('div', {class: 'm'}));
+    return h('div', {class: 'vrow' + (cur ? ' cur' : '') + (sel ? ' sel' : ''), role: 'button', tabindex: 0,
+      onclick: async e => {
+        if (e.target.closest('.vact')) return;
+        if (picking) { const k = chosen.indexOf(v.id); k >= 0 ? chosen.splice(k, 1) : chosen.length < 3 && chosen.push(v.id); draw(); return; }
+        if (!cur) await openView(v.id); else closeTop();
+      }},
+      picking ? h('span', {class: 'tick'}, sel ? String(chosen.indexOf(v.id) + 1) : '') : '',
+      mini,
+      h('div', {class: 'vinfo'}, h('b', {}, v.name), h('span', {}, `${v.owner || 'Someone'}${mine ? ' (you)' : ''} · ${v.summary.n || 0} posts · ${v.summary.h || 0} highlights`),
+        h('span', {}, `Edited ${ago(v.updated_at)}${v.updated_by && v.updated_by !== v.owner ? ' by ' + v.updated_by : ''}`)),
+      mine && !picking ? h('div', {class: 'vact'},
+        h('button', {class: 'chip', onclick: async () => { const n = prompt('Rename view', v.name); if (n && n !== v.name) { await api('PUT', '/views/' + v.id, {name: n, baseVersion: v.version, editor: ME}).catch(() => toast('Couldn\'t rename. Try again.')); if (cur) { VIEW.name = n; VIEW.version++; } await loadViews(); draw(); renderStatus(); } }}, 'Rename'),
+        h('button', {class: 'chip', onclick: async () => { if (!confirm(`Delete "${v.name}" for everyone?`)) return; await api('DELETE', '/views/' + v.id); await loadViews(); if (cur) { closeTop(); await pickView(); } else draw(); }}, 'Delete')) : '');
+  }
+  function draw() {
+    const mine = VIEWS.filter(v => v.owner === ME), others = VIEWS.filter(v => v.owner !== ME);
+    list.replaceChildren(
+      ...(picking ? [h('p', {class: 'hint pad'}, 'Pick up to 3 views to put side by side.')] : []),
+      h('h3', {class: 'pad'}, 'Yours'), ...(mine.length ? mine.map(row) : [h('p', {class: 'hint pad'}, 'You haven\'t made a view yet. Duplicate one or start a blank one.')]),
+      h('h3', {class: 'pad'}, 'Everyone else\'s'), ...(others.length ? others.map(row) : [h('p', {class: 'hint pad'}, 'Nobody else has saved a view yet.')]));
+    cmpBtn.textContent = picking ? 'Cancel' : 'Compare';
+    goCmp.classList.toggle('hide', !picking); goCmp.disabled = chosen.length < 2; goCmp.textContent = `Compare ${chosen.length || ''}`;
+    [...el.querySelectorAll('footer > button')].forEach(b => { if (b !== cmpBtn && b !== goCmp) b.classList.toggle('hide', picking); });
+  }
+  openLayer(el);
+  draw();
+  loadViews().then(draw).catch(() => {});
+  const t = setInterval(() => { if (!document.hidden) loadViews().then(draw).catch(() => {}); }, 10000);
+  layers[layers.length - 1].onClose = () => clearInterval(t);
+}
+async function compare(ids) {
+  const plans = await Promise.all(ids.map(id => api('GET', '/views/' + id)));
+  const cols = plans.map(r => {
+    const P = r.plan;
+    const g = h('div', {class: 'grid', style: `--tile:${P.ratio || '3/4'}`}, P.posts.filter(p => !isEmpty(p)).map((p, i) => tileFor(p, i, P, true)));
+    return h('section', {class: 'ccol'},
+      h('header', {}, h('b', {}, r.name), h('span', {}, `${r.owner || 'Someone'} · edited ${ago(r.updated_at)}`)),
+      h('div', {class: 'chl'}, P.highlights.map((x, k) => h('button', {class: 'hl sm', onclick: () => playStory(k, 0, P)}, h('div', {class: 'ring'}, media(hlCover(x), {w: 120})), h('div', {class: 't'}, x.title || ' ')))),
+      g,
+      h('button', {class: 'btn', style: 'margin:10px', onclick: async () => { closeTop(); await openView(r.id); }}, 'Open this view'));
+  });
+  const el = h('div', {class: 'compare', role: 'dialog', 'aria-label': 'Compare views'},
+    h('div', {class: 'cbar'}, h('b', {}, 'Comparing ' + plans.length + ' views'), h('button', {class: 'btn', onclick: closeTop}, 'Close')),
+    h('div', {class: 'ccols'}, cols));
+  openLayer(el);
+}
+function nameSheet(onDone) {
+  const inp = h('input', {class: 'field', placeholder: 'Your name', maxlength: 30, 'aria-label': 'Your name', value: ME});
+  const go = () => { const n = inp.value.trim(); if (!n) { inp.focus(); return; } ME = n; ls.set('gp-me', n); closeTop(); onDone(); };
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+  const el = h('div', {class: 'shade', 'data-modal': '1'}, h('div', {class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Who is planning?'},
+    h('header', {}, h('h2', {}, 'Who\'s planning?')),
+    h('div', {class: 'body'}, h('p', {}, 'Your name goes on the grid views you save, so everyone can see whose is whose.'), inp),
+    h('footer', {}, h('button', {class: 'btn primary grow', onclick: go}, 'Continue'))));
+  el.dataset.modal = '1'; openLayer(el); setTimeout(() => inp.focus(), 50);
+}
+function askSheet(title, text, yes, no) {
+  return new Promise(res => {
+    const el = h('div', {class: 'shade', 'data-modal': '1'}, h('div', {class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': title},
+      h('header', {}, h('h2', {}, title)), h('div', {class: 'body'}, h('p', {}, text)),
+      h('footer', {}, h('button', {class: 'btn', onclick: () => { closeTop(); res(false); }}, no), h('button', {class: 'btn primary grow', onclick: () => { closeTop(); res(true); }}, yes))));
+    openLayer(el);
+  });
 }
 
 /* ---------- main render ---------- */
 const app = h('div', {class: 'app'});
+const status = h('div', {class: 'vstrip'});
 function editable(tag, cls, key, ph, multiline) {
   const el = h(tag, {class: cls, 'data-ph': ph});
   el.textContent = S.profile[key] || '';
-  if (mode === 'plan') {
+  if (mode === 'plan' && canEdit()) {
     el.contentEditable = 'plaintext-only';
     if (el.contentEditable !== 'plaintext-only') el.contentEditable = 'true';
-    el.spellcheck = true;
     el.addEventListener('focus', () => undoStack.push(JSON.stringify(S)));
     el.addEventListener('input', () => { S.profile[key] = el.innerText.replace(/\n$/, ''); save(); });
     if (!multiline) el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } });
   }
   return el;
 }
-function tileFor(post, idx) {
+function tileFor(post, idx, P = S, readOnly = false) {
   const empty = isEmpty(post);
   const t = h('div', {class: 'tile' + (empty ? ' empty' : ''), 'data-id': post.id, tabindex: 0, role: 'button',
     'aria-label': empty ? `Empty slot ${idx + 1}` : `Post ${idx + 1}`,
-    onclick: () => mode === 'plan' ? editPost(post.id) : viewPost(post.id),
+    onclick: () => (!readOnly && mode === 'plan' && canEdit()) ? editPost(post.id) : viewPost(post, P),
     onkeydown: e => { if (e.key === 'Enter') e.currentTarget.click(); }});
   if (empty) { t.append(icon('plus')); return t; }
   t.append(media(coverOf(post), {w: 420}));
@@ -426,59 +660,82 @@ function refreshTile(post) {
   const old = app.querySelector(`.tile[data-id="${post.id}"]`);
   if (old) old.replaceWith(tileFor(post, S.posts.indexOf(post)));
 }
+function renderStatus() {
+  if (!online || !VIEW) { status.classList.add('hide'); return; }
+  status.classList.remove('hide');
+  const mine = canEdit();
+  const state = syncErr ? h('span', {class: 'dot warn'}, 'Reconnecting…') : pending || saving ? h('span', {class: 'dot busy'}, 'Saving…') : h('span', {class: 'dot ok'}, mine ? 'Saved' : 'Live');
+  status.replaceChildren(
+    h('button', {class: 'vname', onclick: viewsSheet, 'aria-label': 'Switch grid view'}, icon('layers'), h('b', {}, VIEW.name), icon('chev')),
+    h('span', {class: 'vmeta'}, mine ? 'Your view' : `${VIEW.owner}'s view, view only`),
+    state);
+}
 function render() {
+  const edit = canEdit();
+  if (!edit) mode = 'preview';
   document.body.classList.toggle('plan', mode === 'plan');
   document.body.classList.toggle('preview', mode === 'preview');
   document.documentElement.style.setProperty('--tile', S.ratio);
   const P = S.profile, count = S.posts.filter(p => !isEmpty(p)).length;
   const av = media(P.avatar, {w: 300}); av.classList.add('avatar'); if (!P.avatar) av.classList.add('empty');
-  if (mode === 'plan') { av.style.cursor = 'pointer'; av.title = 'Change profile picture'; av.onclick = () => picker({title: 'Profile picture', onPick: imgs => commit(() => P.avatar = {img: imgs[0].id, part: 'full'})}); }
+  if (mode === 'plan') { av.style.cursor = 'pointer'; av.title = 'Change profile picture'; av.onclick = () => picker({title: 'Profile picture', onPick: imgs => framer({title: 'Position your profile picture', ref: {img: imgs[0].id, part: 'full'}, aspect: '1/1', round: true, onDone: v => commit(() => P.avatar = {img: imgs[0].id, part: 'full', ...v})})}); }
   const stat = (n, label, key) => h('div', {}, key ? editable('b', '', key, '0') : h('b', {}, n), h('span', {}, label));
+  const hlRow = h('div', {class: 'highlights'},
+    S.highlights.map((x, k) => h('button', {class: 'hl', 'data-id': x.id, onclick: () => mode === 'plan' ? editHighlight(x.id) : playStory(k, 0)},
+      h('div', {class: 'ring'}, media(hlCover(x), {w: 200})), h('div', {class: 't'}, x.title || 'Highlights'))),
+    mode === 'plan' ? h('button', {class: 'hl new', onclick: newHighlight}, h('div', {class: 'ring'}, h('div', {class: 'm'}, icon('plus'))), h('div', {class: 't'}, 'New')) : '');
+  if (mode === 'plan') sortable(hlRow, (a, b) => { if (b >= S.highlights.length) return render(); commit(() => move(S.highlights, a, b)); }, {filter: '.new', draggable: '.hl:not(.new)', direction: 'horizontal'});
   app.replaceChildren(
-    h('div', {class: 'topbar'}, editable('div', 'handle', 'username', 'username'), icon('chev'), h('div', {class: 'spacer'}), icon('plus', 'ic'), icon('menu', 'ic')),
+    h('div', {class: 'topbar'}, editable('div', 'handle', 'username', 'username'), h('button', {class: 'chevb', 'aria-label': 'Switch grid view', onclick: () => online ? viewsSheet() : toast('Views need the team link.')}, icon('chev')), h('div', {class: 'spacer'}), icon('plus', 'ic'), icon('menu', 'ic')),
     h('section', {class: 'profile'}, av,
       h('div', {class: 'stats'}, stat(count, 'posts'), stat('', 'followers', 'followers'), stat('', 'following', 'following')),
       h('div', {class: 'bio'}, editable('div', 'name', 'name', 'Name'), editable('div', 'text', 'bio', mode === 'plan' ? 'Write a bio' : '', true), editable('div', 'link', 'link', mode === 'plan' ? 'Add a link' : '')),
       h('div', {class: 'profile-btns'}, h('span', {}, 'Edit profile'), h('span', {}, 'Share profile'))),
-    h('div', {class: 'highlights'},
-      S.highlights.map(x => {
-        const m = media(x.cover || x.items[0], {w: 200});
-        return h('button', {class: 'hl', onclick: () => mode === 'plan' ? editHighlight(x.id) : playStory(x.id)},
-          h('div', {class: 'ring'}, m), h('div', {class: 't'}, x.title || ' '));
-      }),
-      mode === 'plan' ? h('button', {class: 'hl new', onclick: newHighlight}, h('div', {class: 'ring'}, h('div', {class: 'm'}, icon('plus'))), h('div', {class: 't'}, 'New')) : ''),
+    hlRow,
     h('div', {class: 'tabs'}, h('span', {class: 'on'}, icon('grid')), h('span', {}, icon('reels')), h('span', {}, icon('tagged'))),
-    (() => { const g = h('div', {class: 'grid'}, S.posts.map(tileFor)); if (mode === 'plan') sortable(g, (a, b) => commit(() => move(S.posts, a, b))); return g; })(),
+    (() => { const g = h('div', {class: 'grid'}, S.posts.map((p, i) => tileFor(p, i))); if (mode === 'plan') sortable(g, (a, b) => commit(() => move(S.posts, a, b))); return g; })(),
     h('button', {class: 'addrow', onclick: () => commit(() => S.posts.push(emptyPost(), emptyPost(), emptyPost()))}, '+ Add a row'));
-  renderBar();
+  renderBar(); renderStatus();
 }
 
 /* ---------- planner bar ---------- */
 const bar = h('nav', {class: 'bar', 'aria-label': 'Planner'});
 let menuEl = null;
 function renderBar() {
+  const edit = canEdit();
   bar.replaceChildren(
-    h('div', {class: 'seg'},
+    edit ? h('div', {class: 'seg'},
       h('button', {class: mode === 'plan' ? 'on' : '', onclick: () => { mode = 'plan'; render(); }}, 'Plan'),
-      h('button', {class: mode === 'preview' ? 'on' : '', onclick: () => { mode = 'preview'; render(); }}, 'Preview')),
-    h('button', {onclick: undo, disabled: !undoStack.length, 'aria-label': 'Undo'}, icon('undo'), 'Undo'),
+      h('button', {class: mode === 'preview' ? 'on' : '', onclick: () => { mode = 'preview'; render(); }}, 'Preview'))
+      : h('button', {class: 'hi', onclick: async () => { const n = prompt('Name your copy', VIEW.name + ' (my version)'); if (n) { await createView(n, JSON.parse(JSON.stringify(S))); toast('Copied. This one is yours to edit.'); } }}, icon('copy'), 'Duplicate to edit'),
+    online ? h('button', {onclick: viewsSheet}, icon('layers'), 'Views') : '',
+    edit ? h('button', {onclick: undo, disabled: !undoStack.length, 'aria-label': 'Undo'}, icon('undo'), 'Undo') : '',
     h('button', {onclick: shareLink}, icon('link'), 'Share'),
     h('button', {'aria-label': 'More options', onclick: toggleMenu}, icon('dots')));
+}
+async function shareLink() {
+  let link;
+  if (online && VIEW) link = `${location.origin}${location.pathname}#team=${TEAM}&view=${VIEW.id}`;
+  else link = location.origin + location.pathname + '#p=' + await encode(S);
+  try { await navigator.clipboard.writeText(link); toast(online ? 'Link copied. It opens this view, and anyone with it can join the planning.' : 'Link copied. Anyone with it sees this exact plan.'); }
+  catch (e) { prompt('Copy this link:', link); }
 }
 function toggleMenu() {
   if (menuEl) { menuEl.remove(); menuEl = null; return; }
   const close = () => { menuEl && menuEl.remove(); menuEl = null; };
+  const edit = canEdit();
   menuEl = h('div', {class: 'menu'},
-    h('button', {onclick: () => { close(); commit(() => S.ratio = S.ratio === '3/4' ? '1/1' : '3/4'); toast(S.ratio === '3/4' ? 'Grid shows 3:4 tiles (current Instagram)' : 'Grid shows square tiles (old Instagram)'); }}, S.ratio === '3/4' ? 'Show square grid' : 'Show 3:4 grid'),
-    h('button', {onclick: () => { close(); commit(() => S.posts.unshift(emptyPost(), emptyPost(), emptyPost())); }}, 'Add a row at the top'),
-    h('button', {onclick: () => { close(); commit(() => S.posts = S.posts.filter(p => !isEmpty(p))); toast('Empty slots removed'); }}, 'Remove empty slots'),
-    h('hr'),
+    edit ? h('button', {onclick: () => { close(); commit(() => S.ratio = S.ratio === '3/4' ? '1/1' : '3/4'); toast(S.ratio === '3/4' ? 'Grid shows 3:4 tiles (current Instagram)' : 'Grid shows square tiles (old Instagram)'); }}, S.ratio === '3/4' ? 'Show square grid' : 'Show 3:4 grid') : '',
+    edit ? h('button', {onclick: () => { close(); commit(() => S.posts.unshift(emptyPost(), emptyPost(), emptyPost())); }}, 'Add a row at the top') : '',
+    edit ? h('button', {onclick: () => { close(); commit(() => S.posts = S.posts.filter(p => !isEmpty(p))); toast('Empty slots removed'); }}, 'Remove empty slots') : '',
+    edit ? h('hr') : '',
     h('button', {onclick: () => { close(); exportPlan(); }}, 'Download plan file'),
-    h('button', {onclick: () => { close(); importPlan(); }}, 'Open a plan file'),
-    h('hr'),
-    h('button', {onclick: () => { close(); if (confirm('Start a blank plan? You can undo this.')) commit(() => { const keep = S.profile; S = fresh(); S.profile = keep; }); }}, 'Start a blank plan'));
+    edit ? h('button', {onclick: () => { close(); importPlan(); }}, 'Open a plan file') : '',
+    online ? h('button', {onclick: () => { close(); nameSheet(() => { render(); toast('Name changed to ' + ME); }); }}, `Not ${ME}? Change name`) : '',
+    edit ? h('hr') : '',
+    edit ? h('button', {onclick: () => { close(); if (confirm('Clear this view to a blank plan? You can undo this.')) commit(() => { const keep = S.profile; S = fresh(); S.profile = keep; }); }}, 'Clear this view') : '');
   document.body.append(menuEl);
-  setTimeout(() => document.addEventListener('click', function f(e) { if (menuEl && !menuEl.contains(e.target)) { close(); } document.removeEventListener('click', f); }), 0);
+  setTimeout(() => document.addEventListener('click', function f(e) { if (menuEl && !menuEl.contains(e.target)) close(); document.removeEventListener('click', f); }), 0);
 }
 function exportPlan() {
   const a = h('a', {href: URL.createObjectURL(new Blob([JSON.stringify(S, null, 1)], {type: 'application/json'})), download: `grid-plan-${new Date().toISOString().slice(0, 10)}.json`});
@@ -493,23 +750,57 @@ function importPlan() {
   inp.click();
 }
 
+/* share-link snapshots (plan in the hash) */
+async function encode(obj) {
+  const bytes = new TextEncoder().encode(JSON.stringify(obj));
+  let out = bytes;
+  if (window.CompressionStream) out = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer());
+  let bin = ''; out.forEach(b => bin += String.fromCharCode(b));
+  return (window.CompressionStream ? 'z' : 'j') + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+async function decode(str) {
+  const kind = str[0], bytes = Uint8Array.from(atob(str.slice(1).replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+  if (kind === 'j') return JSON.parse(new TextDecoder().decode(bytes));
+  return JSON.parse(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text());
+}
+
 /* ---------- boot ---------- */
 async function boot() {
-  document.body.append(app, bar);
-  const lib = CFG.library;
-  LIB = Array.isArray(lib) ? lib : await fetch(lib).then(r => r.json()).catch(() => []);
+  document.body.append(status, app, bar);
+  LIB = Array.isArray(CFG.library) ? CFG.library : await fetch(CFG.library).then(r => r.json()).catch(() => []);
   LIB.forEach(i => BYID[i.id] = i);
-  load();
-  const m = location.hash.match(/^#p=(.+)$/);
-  if (m) {
-    try {
-      const shared = await decode(m[1]);
-      const hasLocal = S.posts.some(p => !isEmpty(p));
-      if (!hasLocal || confirm('Open the shared plan? It replaces the plan saved on this device (you can undo).')) { commit(() => S = shared, {render: false}); }
-    } catch (e) { toast('That share link is broken or incomplete.'); }
-    history.replaceState(null, '', location.pathname + location.search);
+  const hash = new URLSearchParams(location.hash.slice(1));
+  if (hash.get('team')) ls.set('gp-team', hash.get('team'));
+  TEAM = ls.get('gp-team');
+  const wantView = hash.get('view'), snap = hash.get('p');
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  let local = null; try { local = JSON.parse(ls.get(KEY)); } catch (e) {}
+  let shared = null; if (snap) { try { shared = await decode(snap); } catch (e) { toast('That share link is broken or incomplete.'); } }
+
+  if (API && TEAM) {
+    try { await api('GET', '/views'); online = true; }
+    catch (e) { toast(e.status === 401 ? 'This team link has expired. Ask Jordan for a new one.' : 'Can\'t reach the shared views right now, so this is saving on this device only.'); }
+  }
+  if (!online) {
+    if (local && local.v === 1) S = local;
+    if (shared && (!hasContent(S) || confirm('Open the shared plan? It replaces the plan saved on this device (you can undo).'))) { undoStack.push(JSON.stringify(S)); S = shared; ls.set(KEY, JSON.stringify(S)); }
+    render();
+    return;
   }
   render();
+  await new Promise(res => ME ? res() : nameSheet(res));
+  // a grid planned on this device before views existed becomes a saved view
+  if (local && local.v === 1 && hasContent(local) && !ls.get('gp-migrated')) {
+    if (await askSheet('Save your grid as a view?', 'You planned a grid on this device before shared views existed. Save it as a view so everyone can see it?', 'Save it as a view', 'Not now')) {
+      await createView(ME + '\'s grid', local); ls.set('gp-migrated', '1'); toast('Saved. Everyone can see it now.');
+    } else ls.set('gp-migrated', 'skipped');
+  }
+  if (shared) { if (await askSheet('Save this shared plan?', 'Someone sent you a snapshot of a grid. Save it as a new view?', 'Save as a view', 'No thanks')) { await createView('Shared grid', shared); } }
+  if (!VIEW) await pickView(wantView);
+  else if (wantView && wantView !== VIEW.id) await pickView(wantView);
+  setInterval(poll, 4000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(); });
+  window.addEventListener('beforeunload', e => { if (pending || saving) { e.preventDefault(); e.returnValue = ''; } });
 }
 document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', boot) : boot();
 })();

@@ -9,7 +9,7 @@
   <title>Grid planner</title>
   <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 96, height: 96 }}">
   {{ 'grid-planner.css' | asset_url | stylesheet_tag }}
-  <script>window.GP_CONFIG = {library: {{ 'grid-planner-library.json' | asset_url | json }}, store: 'gp-plan'};</script>
+  <script>window.GP_CONFIG = {library: {{ 'grid-planner-library.json' | asset_url | json }}, api: 'https://grid-planner-api.playmatelabs.workers.dev', store: 'gp-plan'};</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js" defer></script>
   <script src="{{ 'grid-planner.js' | asset_url }}" defer></script>
 </head>
