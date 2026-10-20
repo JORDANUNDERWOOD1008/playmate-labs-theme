@@ -1,0 +1,17 @@
+{% layout none %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Grid planner</title>
+  <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 96, height: 96 }}">
+  {{ 'grid-planner.css' | asset_url | stylesheet_tag }}
+  <script>window.GP_CONFIG = {library: {{ 'grid-planner-library.json' | asset_url | json }}, store: 'gp-plan'};</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js" defer></script>
+  <script src="{{ 'grid-planner.js' | asset_url }}" defer></script>
+</head>
+<body></body>
+</html>
