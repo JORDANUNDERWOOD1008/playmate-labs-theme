@@ -122,8 +122,8 @@
           "type": "pillar",
           "settings": {
             "icon": "✦",
-            "title": "Designed and made in the UK",
-            "text": "In-house, in small runs"
+            "title": "Designed in the UK",
+            "text": "In-house, made in small runs"
           }
         },
         "p3": {
@@ -319,7 +319,7 @@
         "corner_radius": 10,
         "eyebrow": "INSIDE THE LAB",
         "heading": "Good products.\nCloser moments.",
-        "body": "<p>Playmate Labs is a product development studio. Every object starts as a question about people and ends as something you can hold.</p><p>Drawn in-house, prototyped with our manufacturing partners, finished and made in the UK.</p>",
+        "body": "<p>Playmate Labs is a product development studio. Every object starts as a question about people and ends as something you can hold.</p><p>Drawn in-house in the UK, then prototyped and made with our manufacturing partners.</p>",
         "cta_text": "Our story",
         "cta_url": "/pages/about",
         "cta_style": "btn-secondary",
@@ -359,7 +359,7 @@
         "eyebrow": "INSIDE THE LAB",
         "heading": "Good products.\nCloser moments.",
         "subheading": "",
-        "body": "<p>Designed in-house, prototyped with our partners, made in the UK.</p>",
+        "body": "<p>Designed in-house in the UK, prototyped and made with our partners.</p>",
         "eyebrow_color": "#d92b2b",
         "heading_color": "#1a1a1a",
         "sub_color": "#3d3d3d",
