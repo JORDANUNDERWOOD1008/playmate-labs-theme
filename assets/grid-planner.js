@@ -294,7 +294,7 @@ async function ensureImages(P) { // a plan can use an image someone else uploade
   if (!ids.some(i => !BYID[i])) return 0;
   upCheckT = Date.now(); return loadUploads();
 }
-const isBanner = r => r >= 2.2 && r <= 2.65; // three 4:5 posts side by side is 2.4
+const isBanner = r => r >= 2.2 && r <= 2.65; // three 3:4 posts side by side is 2.25, three 4:5 is 2.4
 async function toJpeg(bmp, sx, sy, sw, sh, W, H) {
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); g.imageSmoothingQuality = 'high';
@@ -309,10 +309,12 @@ async function prepare(file, split) {
   let bmp; try { bmp = await createImageBitmap(file, {imageOrientation: 'from-image'}); } catch (e) { return null; }
   const base = file.name.replace(/\.[^.]+$/, '').slice(0, 60) || 'Upload', r = bmp.width / bmp.height;
   if (split && isBanner(r)) {
-    const tw = bmp.width / 3, th = Math.round(1080 * bmp.height / tw);
+    // Tiles are cut at 3:4 (1080x1440), the shape Instagram's grid shows, so the seams line up there.
+    // A wider banner (e.g. three 4:5 posts) loses a sliver off its outer ends instead of at every seam.
+    const sw = Math.min(bmp.width, bmp.height * 2.25), sh = sw / 2.25, sx = (bmp.width - sw) / 2, sy = (bmp.height - sh) / 2, tw = sw / 3;
     // right tile first, so the newest-first library shows them left, middle, right
     return Promise.all(['right', 'middle', 'left'].map(async pos => { const i = ['left', 'middle', 'right'].indexOf(pos);
-      return {name: `${base} ${i + 1}/3 (${pos})`, w: 1080, h: th, blob: await toJpeg(bmp, i * tw, 0, tw, bmp.height, 1080, th)}; }));
+      return {name: `${base} ${i + 1}/3 (${pos})`, w: 1080, h: 1440, blob: await toJpeg(bmp, sx + i * tw, sy, tw, sh, 1080, 1440)}; }));
   }
   const k = Math.min(1, 1440 / Math.max(bmp.width, bmp.height)), W = Math.round(bmp.width * k), H = Math.round(bmp.height * k);
   return [{name: base, w: W, h: H, blob: await toJpeg(bmp, 0, 0, bmp.width, bmp.height, W, H)}];
