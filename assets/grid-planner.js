@@ -54,6 +54,8 @@ const I = {
   link: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg>',
   layers: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>',
   pin: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.2 2.6l6.2 6.2-1.6 1.1-1.3-.4-3.4 3.4.4 3.9-1.6 1.6-3.8-3.8-5.6 5.6-1.1-1.1 5.6-5.6-3.8-3.8 1.6-1.6 3.9.4 3.4-3.4-.4-1.3z"/></svg>',
+  rows: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/></svg>',
+  check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
   copy: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2h3"/></svg>'
 };
 const icon = (n, cls) => h('span', {class: cls, html: I[n], 'aria-hidden': 'true'});
@@ -878,8 +880,57 @@ function tileFor(post, idx, P = S, readOnly = false) {
   if (post.caption.trim()) t.append(icon('caption', 'cap'));
   return t;
 }
+/* ---------- row mode: select whole rows and move them together ---------- */
+let rowMode = false; const rowSel = new Set(); // keys are the id of each row's first post, which travel with the row
+const padRows = () => { while (S.posts.length % 3) S.posts.push(emptyPost()); };
+const chunkRows = () => { const r = []; for (let i = 0; i < S.posts.length; i += 3) r.push(S.posts.slice(i, i + 3)); return r; };
+const rowLocked = row => row.some(p => p.pinned); // pinned posts stay at the top
+function setRowMode(on) { rowMode = on; rowSel.clear(); if (on) { mode = 'plan'; if (S.posts.length % 3) commit(padRows, {render: false}); } render(); }
+function rowOp(kind) {
+  if (!rowSel.size) return;
+  const n = rowSel.size;
+  commit(() => {
+    padRows();
+    let rows = chunkRows();
+    const sel = r => rowSel.has(r[0].id);
+    if (kind === 'up' || kind === 'down') {
+      const d = kind === 'up' ? -1 : 1, order = rows.map((_, i) => i);
+      if (d > 0) order.reverse();
+      for (const i of order) { const j = i + d; if (j >= 0 && j < rows.length && sel(rows[i]) && !sel(rows[j]) && !rowLocked(rows[j])) [rows[i], rows[j]] = [rows[j], rows[i]]; }
+    } else if (kind === 'top' || kind === 'bottom') {
+      const lock = rows.filter(rowLocked), picked = rows.filter(r => sel(r)), rest = rows.filter(r => !sel(r) && !rowLocked(r));
+      rows = kind === 'top' ? [...lock, ...picked, ...rest] : [...lock, ...rest, ...picked];
+    } else if (kind === 'delete') { rows = rows.filter(r => !sel(r)); rowSel.clear(); }
+    S.posts = rows.flat();
+  });
+  toast(kind === 'delete' ? `Deleted ${n} row${n > 1 ? 's' : ''}` : `Moved ${n} row${n > 1 ? 's' : ''}`);
+}
+function rowsView() {
+  const rows = chunkRows();
+  const list = h('div', {class: 'rowlist'}, rows.map((row, k) => {
+    const key = row[0].id, locked = rowLocked(row), on = rowSel.has(key);
+    const toggle = () => { if (locked) { toast('This row has a pinned post. Unpin it to move the row.'); return; } on ? rowSel.delete(key) : rowSel.add(key); render(); };
+    return h('div', {class: 'rowgrp' + (on ? ' on' : '') + (locked ? ' locked' : ''), 'data-key': key, role: 'checkbox', 'aria-checked': String(on), tabindex: 0,
+      'aria-label': `Row ${k + 1}` + (locked ? ', has a pinned post' : ''), onclick: toggle, onkeydown: e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } }},
+      h('div', {class: 'grid'}, row.map((p, i) => tileFor(p, k * 3 + i, S, true))),
+      h('span', {class: 'rowchk'}, locked ? icon('pin') : on ? icon('check') : ''));
+  }));
+  sortable(list, (a, b) => { // drag one row; any other selected rows come along, in their order, next to it
+    const moved = rows[a], key = moved[0].id;
+    const group = rowSel.has(key) ? rows.filter(r => rowSel.has(r[0].id)) : [moved];
+    commit(() => {
+      const order = rows.slice(); order.splice(b, 0, order.splice(a, 1)[0]);
+      const out = [];
+      for (const r of order) { if (r === moved) out.push(...group); else if (!group.includes(r)) out.push(r); }
+      S.posts = [...out.filter(rowLocked), ...out.filter(r => !rowLocked(r))].flat();
+    });
+    toast(group.length > 1 ? `Moved ${group.length} rows` : 'Row moved');
+  }, {filter: '.locked', preventOnFilter: false});
+  return list;
+}
 let gridRO = null;
 function gridWithInserts() {
+  if (rowMode && mode === 'plan') return rowsView();
   const g = h('div', {class: 'grid'}, S.posts.map((p, i) => tileFor(p, i)));
   if (mode !== 'plan') return g;
   const ins = h('div', {class: 'rowins-layer'});
@@ -938,6 +989,10 @@ function render() {
       h('div', {class: 'profile-btns'}, h('span', {}, 'Edit profile'), h('span', {}, 'Share profile'))),
     hlRow,
     h('div', {class: 'tabs'}, h('span', {class: 'on'}, icon('grid')), h('span', {}, icon('reels')), h('span', {}, icon('tagged'))),
+    mode === 'plan' && edit ? h('div', {class: 'gridtools'}, rowMode
+      ? [h('span', {}, rowSel.size ? h('b', {}, `${rowSel.size} row${rowSel.size > 1 ? 's' : ''} selected. `) : '', rowSel.size ? 'Move them with the bar below, or drag one and the rest come with it.' : 'Tap rows to select them, then move them together. You can also drag a row.'),
+         h('button', {class: 'btn primary', onclick: () => setRowMode(false)}, 'Done')]
+      : h('button', {class: 'btn', onclick: () => setRowMode(true)}, icon('rows'), 'Select rows')) : '',
     gridWithInserts(),
     h('button', {class: 'addrow', onclick: () => commit(() => S.posts.push(emptyPost(), emptyPost(), emptyPost()))}, '+ Add a row'));
   renderBar(); renderStatus();
@@ -948,10 +1003,23 @@ const bar = h('nav', {class: 'bar', 'aria-label': 'Planner'});
 let menuEl = null;
 function renderBar() {
   const edit = canEdit();
+  if (rowMode && mode === 'plan' && edit) {
+    const n = rowSel.size, off = !n;
+    bar.replaceChildren(
+      h('button', {onclick: () => rowOp('up'), disabled: off, 'aria-label': 'Move selected rows up', title: 'Move up'}, '↑'),
+      h('button', {onclick: () => rowOp('down'), disabled: off, 'aria-label': 'Move selected rows down', title: 'Move down'}, '↓'),
+      h('button', {onclick: () => rowOp('top'), disabled: off, title: 'Move to the top'}, 'Top'),
+      h('button', {onclick: () => rowOp('bottom'), disabled: off, title: 'Move to the bottom'}, 'Bottom'),
+      h('button', {onclick: () => rowOp('delete'), disabled: off, class: 'warn'}, 'Delete'),
+      h('button', {class: 'hi', onclick: () => setRowMode(false)}, 'Done'));
+    bar.classList.add('rowbar');
+    return;
+  }
+  bar.classList.remove('rowbar');
   bar.replaceChildren(
     edit ? h('div', {class: 'seg'},
       h('button', {class: mode === 'plan' ? 'on' : '', onclick: () => { mode = 'plan'; render(); }}, 'Plan'),
-      h('button', {class: mode === 'preview' ? 'on' : '', onclick: () => { mode = 'preview'; render(); }}, 'Preview'))
+      h('button', {class: mode === 'preview' ? 'on' : '', onclick: () => { mode = 'preview'; rowMode = false; rowSel.clear(); render(); }}, 'Preview'))
       : h('button', {class: 'hi', onclick: async () => { const n = prompt('Name your copy', VIEW.name + ' (my version)'); if (n) { await createView(n, JSON.parse(JSON.stringify(S))); toast('Copied. This one is yours to edit.'); } }}, icon('copy'), 'Duplicate to edit'),
     online ? h('button', {onclick: viewsSheet}, icon('layers'), 'Views') : '',
     edit ? h('button', {onclick: undo, disabled: !undoStack.length, 'aria-label': 'Undo'}, icon('undo'), 'Undo') : '',
