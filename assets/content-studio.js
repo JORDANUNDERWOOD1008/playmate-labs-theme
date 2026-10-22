@@ -39,15 +39,8 @@ const STAGES = [
   {id: 'post', name: 'Post-production', hint: 'AI edits in ChatGPT, Runway or Gemini, then cut it in CapCut.'},
   {id: 'ready', name: 'Ready', hint: 'Exported. Add the post link once it\'s live.'}
 ];
-const PLATFORMS = ['Instagram', 'TikTok', 'LinkedIn', 'Pinterest'];
-const SECTIONS = [
-  {id: 'script', name: 'Script', re: /^(the\s+)?script\b/i, mono: true},
-  {id: 'shots', name: 'Shot list', re: /^shot\s*list|^shots?\b|^storyboard/i},
-  {id: 'voiceover', name: 'Voiceover', re: /^voice\s*-?\s*over|^vo\b|^narration/i, mono: true},
-  {id: 'onscreen', name: 'On-screen text', re: /^on[\s-]*screen|^text\s*overlay|^overlay|^texsta|^captions?\b|^supers?\b/i},
-  {id: 'workflow', name: 'Workflow', re: /^workflow|^production\s*(steps|plan|workflow)|^steps\b|^process\b/i},
-  {id: 'kit', name: 'Location & kit', re: /^location|^kit\b|^equipment|^logistics|^props/i}
-];
+const P = window.StudioParse;
+const {PLATFORMS, SECTIONS, safeUrl, domain} = P;
 
 /* ---------- icons ---------- */
 const I = {
@@ -107,80 +100,58 @@ async function api(method, path, body, raw) {
   return d;
 }
 
-/* ---------- the Claude doc: split into sections on its headings ---------- */
-function parseDoc(raw) {
-  const lines = String(raw || '').replace(/\r/g, '').split('\n');
-  const sections = {}; let cur = null, title = '', intro = [];
-  const head = l => {
-    const m = l.match(/^\s{0,3}#{1,4}\s+(.+?)\s*#*\s*$/) || l.match(/^\s*\*\*([^*]{2,60})\*\*\s*:?\s*$/) || l.match(/^\s*([A-Z][\w\s&/-]{1,40}):\s*$/);
-    return m ? m[1].replace(/[*_`]/g, '').replace(/^\d+[.)]\s*/, '').trim() : null;
-  };
-  for (const l of lines) {
-    const t = head(l);
-    const sec = t && SECTIONS.find(s => s.re.test(t));
-    if (sec) { cur = sec.id; sections[cur] = sections[cur] ? sections[cur] + '\n' : ''; continue; }
-    if (!cur && !title && /^\s{0,3}#\s+/.test(l)) { title = t; continue; }
-    if (cur) sections[cur] += l + '\n'; else intro.push(l);
-  }
-  for (const k of Object.keys(sections)) sections[k] = sections[k].replace(/^\n+|\s+$/g, '');
-  if (!title) { const first = intro.find(l => l.trim()); if (first && first.length < 90) title = first.replace(/^[#*\s]+|[*\s]+$/g, ''); }
-  return {sections, title, matched: Object.keys(sections).length};
-}
-function kitFields(text) { // "Location: …", "Setting: …", "Extra budget: £…" lines pre-fill the shoot plan
-  const get = re => { const m = String(text || '').match(re); return m ? m[1].trim() : ''; };
-  const budget = get(/^\s*[-*]?\s*\**(?:extra\s+)?budget\**\s*:\s*\**\s*(.+)$/im);
-  const n = budget.match(/£\s*([\d,]+(?:\.\d+)?)/);
-  return {location: get(/^\s*[-*]?\s*\**location\**\s*:\s*\**\s*(.+)$/im), setting: get(/^\s*[-*]?\s*\**setting\**\s*:\s*\**\s*(.+)$/im),
-          budget: n ? +n[1].replace(/,/g, '') : null};
-}
-function richText(text) { // escape, then **bold**, bullet lists and links; nothing else is interpreted
-  const out = []; let list = null;
+/* ---------- the Claude doc ---------- */
+// escape everything, then allow **bold**, *italic*, lists, [text](https://…) and bare https links; checklists render as tick boxes
+function richText(text, {checks = false} = {}) {
+  const out = []; let list = null, box = -1;
+  const link = (u, t) => { const s = safeUrl(u.replace(/&amp;/g, '&')); return s ? `<a href="${esc(s)}" target="_blank" rel="noopener">${t}</a>` : t; };
   for (const line of String(text || '').split('\n')) {
     let s = esc(line).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/(^|\s)\*([^*\s][^*]*)\*(?=\s|$)/g, '$1<i>$2</i>')
-      .replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)])/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, (m, t, u) => link(u, t))
+      .replace(/(^|[\s(])(https?:\/\/[^\s<]+[^\s<.,;:!?)])/g, (m, pre, u) => pre + link(u, esc(P.domain(u.replace(/&amp;/g, '&')) || u)));
+    const ck = s.match(/^\s*[-*]\s+\[([ xX])\]\s+(.*)$/);
+    if (ck && checks) { box++; if (!list || list.tag !== 'ul class="checks"') { list && out.push('</ul>'); list = {tag: 'ul class="checks"'}; out.push('<ul class="checks">'); }
+      out.push(`<li><label><input type="checkbox" data-n="${box}"${ck[1] !== ' ' ? ' checked' : ''}> <span>${ck[2]}</span></label></li>`); continue; }
     const li = s.match(/^\s*(?:[-*•]|(\d+)[.)])\s+(.*)$/);
-    if (li) { const tag = li[1] ? 'ol' : 'ul'; if (!list || list.tag !== tag) { list && out.push(`</${list.tag}>`); list = {tag}; out.push(`<${tag}>`); } out.push(`<li>${li[2]}</li>`); continue; }
-    if (list) { out.push(`</${list.tag}>`); list = null; }
+    if (li) { const tag = li[1] ? 'ol' : 'ul'; if (!list || list.tag !== tag) { list && out.push(`</${list.tag.split(' ')[0]}>`); list = {tag}; out.push(`<${tag}>`); } out.push(`<li>${li[2]}</li>`); continue; }
+    if (list) { out.push(`</${list.tag.split(' ')[0]}>`); list = null; }
     out.push(s.trim() ? `<p>${s}</p>` : '');
   }
-  if (list) out.push(`</${list.tag}>`);
+  if (list) out.push(`</${list.tag.split(' ')[0]}>`);
   return out.join('');
 }
-const plain = t => String(t || '').replace(/\*\*([^*]+)\*\*/g, '$1').replace(/^#+\s*/gm, '');
+const plain = t => String(t || '').replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '$1 ($2)').replace(/^#+\s*/gm, '');
 async function copyText(t, what) {
   try { await navigator.clipboard.writeText(t); toast(`${what} copied`); }
   catch (e) { const ta = h('textarea', {}, t); document.body.append(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast(`${what} copied`); }
 }
-const PROMPT = `You're helping plan a piece of social content for Playmate Labs (playmatelabs.com), a UK date-night brand for couples. Products: Nude Stack'd, a stacking game for couples, and Snap'd chocolates.
-Tone: warm, cheeky, confident. 18+ but never explicit.
-Rules: no health, mood or performance claims. Don't mention events or monthly drops. Say "designed in the UK" for the brand.
+// for anyone without the content-concept skill: the same format, as a prompt
+const PROMPT = `You're planning a piece of social content for Playmate Labs (playmatelabs.com), a UK date-night brand for couples. Products: Nude Stack'd (a stacking game for couples) and Snap'd chocolates.
+Tone: warm, cheeky, confident. 18+ but never explicit. No health, mood or performance claims. Don't mention events or monthly drops. Say "designed in the UK" for the brand.
+Music must come from libraries brand accounts may use (TikTok Commercial Music Library, Meta Sound Collection, CapCut commercial-use tracks), never chart tracks.
+Only give location links you have actually opened; mark each "Verified <date>" or "Unverified". Write "ask" for any price you couldn't see.
 
-The idea: [describe it in a sentence or two]
+The idea: [describe it]
 Platform: [Instagram / TikTok / LinkedIn / Pinterest]
-Format and length: [e.g. 20-second reel, 5-slide carousel]
+Format and length: [e.g. 20-second reel]
+Area: [e.g. London, or "at home"]
 
-Write ONE document. Start with a one-line title as "# Title", then use exactly these headings, in this order:
-
-## Script
-What happens, beat by beat.
-
+Write ONE document. Start with "# Title", then a line "Platform: … | Format: … | Length: … | Where: …", then exactly these headings (skip any that don't apply):
+## Concept  (hook in one line, why it fits the brand in one line)
+## Locations  (2-4 numbered options: **Name** — [link](https://…) — why it fits — cost or "ask" — best time — Verified <date> / Unverified)
+## Shoot day  (date/call time, who's on camera, props and products, weather backup, permissions and release forms)
+## Kit  (bullets; mark hire items with a cost)
+## Budget  (line items and "Total: £X", or "Extra budget: £0 — none needed")
 ## Shot list
-Numbered shots: framing, action, duration. Say which shots are phone, camera or BeReal.
-
+## Script
 ## Voiceover
-Only the words to record.
-
-## On-screen text
-Each caption on its own line, with its timing.
-
-## Workflow
-Step by step: capture, which AI tool to use for each edit (ChatGPT, Runway or Gemini) with the prompt to give it, then the CapCut edit and export settings.
-
-## Location & kit
-Location: …
-Setting: …
-Kit: a bullet list of everything we need
-Extra budget: £… and what it's for (hire, props, location)`;
+## On-screen text  (timed)
+## Music
+## Tech stack
+## Workflow  (numbered steps, with the AI prompts to use)
+## Captions  (per platform, with hashtags)
+## Open questions  (checklist: "- [ ] …")
+End with a fenced block labelled studio containing JSON: {"platforms":[…],"budget":number,"kit":[…],"locations":[{"name":"","url":"","notes":"","verified":""}]}`;
 
 /* ---------- board state ---------- */
 let CARDS = [], PEOPLE = new Set(), online = false;
@@ -202,10 +173,12 @@ function cardFace(c) {
   return h('button', {class: 'card' + (f.posted ? ' posted' : ''), 'data-id': c.id, onclick: () => openCard(c.id)},
     h('span', {class: 'ct'}, f.title || 'Untitled idea'),
     (f.platforms || []).length ? h('span', {class: 'plats'}, f.platforms.map(p => h('span', {class: 'plat'}, p))) : '',
+    f.loc ? h('span', {class: 'cloc'}, icon('pin'), f.loc) : '',
     h('span', {class: 'meta'},
       f.owner ? h('span', {class: 'who', title: f.owner}, f.owner.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase()) : '',
       f.due ? h('span', {class: 'due' + (late ? ' late' : '')}, (late ? 'Overdue ' : '') + fmtDate(f.due)) : '',
       f.budget > 0 ? h('span', {class: 'cost', title: 'Extra budget'}, money(f.budget)) : '',
+      f.open > 0 ? h('span', {class: 'open', title: 'Open questions'}, `${f.open} to decide`) : '',
       f.posted ? h('span', {class: 'tag'}, 'Posted') : '',
       h('span', {class: 'grow'}),
       f.doc ? icon('doc', 'dim') : '', f.refs ? h('span', {class: 'dim n'}, icon('clip'), String(f.refs)) : ''));
@@ -276,22 +249,25 @@ async function newCard() {
 }
 
 /* ---------- quick view ---------- */
-let OPEN = null, saveT = null, saving = false, dirty = false, drawerEl = null;
+let TAB = 'plan', OPEN = null, saveT = null, saving = false, dirty = false, drawerEl = null;
 async function openCard(id, {fresh = false} = {}) {
   let card;
   try { card = await api('GET', '/cards/' + id); } catch (e) { toast('Couldn\'t open it. Check your connection and try again.'); return; }
-  OPEN = card; OPEN.data = OPEN.data || {}; dirty = false;
+  OPEN = card; OPEN.data = OPEN.data || {}; dirty = false; TAB = 'plan'; pickingLoc = false;
   drawerEl = h('div', {class: 'shade drawer-shade'}, h('aside', {class: 'drawer', role: 'dialog', 'aria-modal': 'true', 'aria-label': card.face.title || 'Idea'}));
   openLayer(drawerEl, () => { flush(); OPEN = null; drawerEl = null; });
   drawDrawer();
   if (fresh) { const t = $('.dtitle', drawerEl); t.focus(); t.select(); }
 }
 function faceFrom() {
-  const d = OPEN.data, f = OPEN.face;
-  f.budget = +(d.shoot && d.shoot.budget) || 0;
-  f.doc = !!(d.doc && (d.doc.raw || '').trim());
+  const d = OPEN.data, f = OPEN.face, sh = d.shoot || {};
+  f.budget = +sh.budget || 0;
+  f.doc = !!(d.doc && Object.keys(d.doc.sections || {}).length + (d.doc.raw ? 1 : 0));
   f.refs = (d.refs || []).length;
-  f.posted = !!(d.post_url || '').trim();
+  f.posted = !!safeUrl(d.post_url);
+  f.open = d.doc && d.doc.sections ? P.openCount(d.doc.sections.questions) : 0;
+  const lk = sh.locked && (sh.options || []).find(o => o.id === sh.locked);
+  f.loc = lk ? lk.name : '';
 }
 function change(fn, {redraw = false} = {}) {
   fn(); faceFrom(); dirty = true;
@@ -305,8 +281,10 @@ async function pushSave() {
   if (saving) { saveT = setTimeout(pushSave, 400); return; }
   saving = true; dirty = false;
   const card = OPEN;
+  const body = {face: card.face, data: card.data, baseVersion: card.version, by: ME};
+  if (new Blob([JSON.stringify(body)]).size > 580 * 1024) { saving = false; setStatus('Not saved: this idea is too big'); toast('This idea is too big to save. Shorten the doc, or move long notes into a linked Google Doc in Resources.'); return; }
   try {
-    const r = await api('PUT', '/cards/' + card.id, {face: card.face, data: card.data, baseVersion: card.version, by: ME});
+    const r = await api('PUT', '/cards/' + card.id, body);
     card.version = r.version; card.updated_at = r.updated_at; card.updated_by = ME; lastList = '';
     setStatus('Saved');
   } catch (e) {
@@ -314,7 +292,8 @@ async function pushSave() {
       const who = e.data.card.updated_by || 'Someone';
       Object.assign(OPEN, e.data.card); drawDrawer();
       toast(`${who} just changed this idea, so it now shows their version. Re-add your last edit if it's missing.`);
-    } else { dirty = true; setStatus('Not saved. Retrying…'); saveT = setTimeout(pushSave, 4000); }
+    } else if (e.status === 413) { setStatus('Not saved: this idea is too big'); toast('This idea is too big to save. Shorten the doc, or move long notes into a linked Google Doc in Resources.'); }
+    else { dirty = true; setStatus('Not saved. Retrying…'); saveT = setTimeout(pushSave, 4000); }
   }
   saving = false;
 }
@@ -332,7 +311,7 @@ const grow = t => { t.style.height = 'auto'; t.style.height = Math.min(t.scrollH
 function drawDrawer() {
   if (!drawerEl || !OPEN) return;
   const d = OPEN.data, f = OPEN.face;
-  d.shoot = d.shoot || {}; d.refs = d.refs || [];
+  d.shoot = d.shoot || {}; d.refs = d.refs || []; d.shoot.options = d.shoot.options || [];
   const si = STAGES.findIndex(s => s.id === OPEN.stage);
   const title = h('textarea', {class: 'dtitle', rows: 1, 'aria-label': 'Idea title', oninput: e => { change(() => f.title = e.target.value.replace(/\n/g, ' ')); grow(e.target); }}, f.title || '');
   requestAnimationFrame(() => grow(title));
@@ -349,7 +328,10 @@ function drawDrawer() {
       field('Due', inp(f.due, v => change(() => f.due = v), {type: 'date'}))),
     h('datalist', {id: 'cs-people'}, people.map(p => h('option', {value: p}))));
 
-  const body = h('div', {class: 'dbody'}, docBlock(), shootBlock(), filesBlock());
+  const nRes = d.refs.filter(r => r.group === 'resource').length + (d.res_notes && d.res_notes.trim() ? 1 : 0);
+  const tabs = h('div', {class: 'dtabs', role: 'tablist'}, [['plan', 'Plan'], ['res', `Resources${nRes ? ` (${nRes})` : ''}`]].map(([k, label]) =>
+    h('button', {role: 'tab', class: TAB === k ? 'on' : '', 'aria-selected': String(TAB === k), onclick: () => { TAB = k; drawDrawer(); }}, label)));
+  const body = h('div', {class: 'dbody'}, TAB === 'res' ? resourcesBlock() : [docBlock(), shootBlock(), filesBlock()]);
   const aside = $('.drawer', drawerEl);
   aside.replaceChildren(
     h('header', {class: 'dhead'},
@@ -357,7 +339,7 @@ function drawDrawer() {
         h('button', {class: 'iconbtn', 'aria-label': 'Close', onclick: closeTop}, icon('x'))),
       title, step,
       next ? h('button', {class: 'btn primary next', onclick: () => { moveCard(OPEN.id, next.id, Math.min(0, ...CARDS.filter(c => c.stage === next.id).map(c => c.pos)) - 1); drawDrawer(); toast(`Moved to ${next.name}`); }}, `Move to ${next.name} →`) : '',
-      meta),
+      meta, tabs),
     body,
     h('footer', {class: 'dfoot'},
       OPEN.archived
@@ -372,24 +354,34 @@ async function archive(on) {
   catch (e) { toast('Couldn\'t do that. Check your connection and try again.'); }
 }
 
-/* doc: paste, sections, copy */
+/* doc: import, sections, copy */
 function docBlock() {
-  const doc = OPEN.data.doc = OPEN.data.doc || {raw: '', sections: {}};
-  const wrap = h('section', {class: 'blk doc'}, h('div', {class: 'bh'}, h('h3', {}, 'Claude doc'),
-    h('button', {class: 'btn small', onclick: pasteDoc}, doc.raw ? 'Replace with a new version' : 'Paste Claude\'s doc')));
-  if (!doc.raw) { wrap.append(h('p', {class: 'empty'}, 'Paste the whole document Claude wrote. It splits into script, shot list, voiceover, on-screen text and workflow, each with its own copy button.')); return wrap; }
-  const secs = SECTIONS.filter(s => doc.sections && doc.sections[s.id] != null);
-  if (!secs.length) { wrap.append(section({id: 'raw', name: 'Brief', mono: false}, doc.raw, v => change(() => doc.raw = v))); wrap.append(h('p', {class: 'hint'}, 'The headings didn\'t match the Claude prompt, so the doc is kept as one block.')); return wrap; }
+  const doc = OPEN.data.doc = OPEN.data.doc || {sections: {}};
+  const has = Object.keys(doc.sections || {}).length || (doc.extra || []).length || doc.raw;
+  const wrap = h('section', {class: 'blk doc'}, h('div', {class: 'bh'}, h('h3', {}, 'Concept doc'),
+    h('button', {class: 'btn small', onclick: importDoc}, has ? 'Replace with a new version' : 'Add the concept doc')));
+  if (!has) { wrap.append(h('p', {class: 'empty'}, 'Paste or upload the doc Claude wrote. It fills in this card: locations, kit, budget, script, shot list, voiceover, music, workflow and captions, each with its own copy button.')); return wrap; }
+  if (doc.imported_at) wrap.append(h('p', {class: 'hint'}, `Added by ${doc.by || 'someone'}, ${ago(doc.imported_at)}.`));
+  (doc.warnings || []).forEach(w => wrap.append(h('p', {class: 'warnline'}, w)));
+  const secs = SECTIONS.filter(s => doc.sections && doc.sections[s.id] != null && s.id !== 'locations');
+  if (!secs.length && !(doc.extra || []).length) {
+    wrap.append(section({id: 'raw', name: 'Brief'}, doc.raw || '', v => change(() => doc.raw = v)));
+    wrap.append(h('p', {class: 'hint'}, 'The headings didn\'t match the concept format, so the doc is kept as one block.')); return wrap;
+  }
   for (const s of secs) wrap.append(section(s, doc.sections[s.id], v => change(() => doc.sections[s.id] = v)));
+  (doc.extra || []).forEach((x, i) => wrap.append(section({id: 'x' + i, name: x.heading}, x.text, v => change(() => doc.extra[i].text = v))));
   return wrap;
 }
 function section(s, text, onSave) {
-  const box = h('div', {class: 'sec' + (s.mono ? ' mono' : '')});
-  const view = () => box.replaceChildren(
-    h('div', {class: 'sh'}, h('h4', {}, s.name), h('span', {class: 'grow'}),
-      h('button', {class: 'btn small ghost', onclick: () => edit()}, 'Edit'),
-      h('button', {class: 'btn small', onclick: () => copyText(plain(text), s.name)}, icon('copy'), 'Copy')),
-    h('div', {class: 'txt', html: richText(text) || '<p class="hint">Empty</p>'}));
+  const box = h('div', {class: 'sec' + (s.mono ? ' mono' : ''), 'data-sec': s.id});
+  const view = () => {
+    const txt = h('div', {class: 'txt', html: richText(text, {checks: s.id === 'questions'}) || '<p class="hint">Empty</p>'});
+    txt.querySelectorAll('input[type=checkbox]').forEach(cb => cb.addEventListener('change', () => { text = P.toggleCheck(text, +cb.dataset.n); onSave(text); }));
+    box.replaceChildren(
+      h('div', {class: 'sh'}, h('h4', {}, s.name), h('span', {class: 'grow'}),
+        h('button', {class: 'btn small ghost', onclick: () => edit()}, 'Edit'),
+        h('button', {class: 'btn small', onclick: () => copyText(plain(text), s.name)}, icon('copy'), 'Copy')), txt);
+  };
   const edit = () => {
     const t = area(text, v => text = v, {rows: 6});
     box.replaceChildren(h('div', {class: 'sh'}, h('h4', {}, s.name), h('span', {class: 'grow'}), h('button', {class: 'btn small primary', onclick: () => { onSave(text); view(); }}, 'Done')), t);
@@ -397,38 +389,90 @@ function section(s, text, onSave) {
   };
   view(); return box;
 }
-function pasteDoc() {
-  const doc = OPEN.data.doc;
-  const t = h('textarea', {class: 'in', rows: 12, placeholder: 'Paste the full document from Claude here', 'aria-label': 'Claude doc'});
+const sameVal = (a, b) => JSON.stringify(a ?? '') === JSON.stringify(b ?? '');
+/* bring a parsed doc into the card. A field the doc filled last time is updated; a field someone typed into is left alone. */
+function applyDoc(raw, p) {
+  const d = OPEN.data, f = OPEN.face, sh = d.shoot = d.shoot || {}, ap = (d.doc && d.doc.applied) || {};
+  const set = (key, cur, val, put) => { if (val == null || val === '' || (Array.isArray(val) && !val.length)) return; if (!cur || (Array.isArray(cur) && !cur.length) || sameVal(cur, ap[key])) put(val); ap[key] = val; };
+  set('title', f.title === 'Untitled idea' ? '' : f.title, p.title, v => f.title = v);
+  set('platforms', f.platforms, p.platforms, v => f.platforms = v.slice());
+  set('budget', sh.budget, p.budget === 0 ? null : p.budget, v => sh.budget = v);
+  if (p.budget === 0 && !sh.budget) ap.budget = 0;
+  set('kit', sh.kit, p.kit.length ? p.kit.join('\n') : '', v => sh.kit = v);
+  set('setting', sh.setting, p.setting, v => sh.setting = v);
+  // location options: the doc's list is replaced; options added by hand and a locked choice are kept
+  const old = sh.options || [], keep = old.filter(o => o.src !== 'doc' || o.id === sh.locked);
+  const fresh = p.options.map(o => ({id: Math.random().toString(36).slice(2, 9), src: 'doc', ...o}));
+  for (const k of keep) { const same = fresh.find(o => o.name.toLowerCase() === k.name.toLowerCase()); if (same && k.id === sh.locked) { same.id = k.id; } }
+  sh.options = [...fresh, ...keep.filter(k => !fresh.some(o => o.id === k.id)).map(k => k.src === 'doc' ? {...k, stale: true} : k)];
+  d.doc = {v: 2, raw: raw.length > 100000 ? '' : raw, imported_at: Date.now(), by: ME, sections: p.sections, extra: p.extra, meta: p.meta, warnings: p.warnings, applied: ap};
+}
+function importDoc() {
+  const doc = OPEN.data.doc || {};
+  const t = h('textarea', {class: 'in', rows: 12, placeholder: 'Paste the full concept doc from Claude here', 'aria-label': 'Concept doc'});
+  const fileIn = h('input', {type: 'file', accept: '.md,.markdown,.txt,text/plain,text/markdown', hidden: true, onchange: async e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    if (/\.docx?$/i.test(f.name)) { toast('Word files can\'t be read here. In Claude, copy the doc and paste it, or download it as Markdown (.md).'); return; }
+    if (f.size > 400 * 1024) { toast('That file is too big for one idea. Check it\'s the concept doc.'); return; }
+    t.value = await f.text(); go();
+  }});
   const go = async () => {
     const raw = t.value.trim(); if (!raw) { t.focus(); return; }
-    if (doc.raw && !await ask('Replace the doc?', 'The script, shot list and the rest are replaced with this new version. Your shoot plan stays as it is.', 'Replace it', 'Cancel')) return;
-    const p = parseDoc(raw);
+    if ((doc.sections && Object.keys(doc.sections).length || doc.raw) && !await ask('Replace the doc?', 'The script, shot list and the rest are replaced with this version. Anything you typed into the shoot plan, a locked location and your uploads stay as they are.', 'Replace it', 'Cancel')) return;
+    const p = P.parseDoc(raw);
     closeTop();
-    change(() => {
-      OPEN.data.doc = {raw, sections: p.sections};
-      if (p.title && (!OPEN.face.title || OPEN.face.title === 'Untitled idea')) OPEN.face.title = p.title;
-      const k = kitFields(p.sections.kit), sh = OPEN.data.shoot = OPEN.data.shoot || {};
-      if (k.location && !sh.location) sh.location = k.location;
-      if (k.setting && !sh.setting) sh.setting = k.setting;
-      if (k.budget != null && !sh.budget) sh.budget = k.budget;
-    }, {redraw: true});
-    toast(p.matched ? `Doc added: ${p.matched} section${p.matched > 1 ? 's' : ''} found` : 'Doc added as one block. The headings didn\'t match the Claude prompt.');
+    change(() => applyDoc(raw, p), {redraw: true});
+    const bits = [`${p.matched} section${p.matched === 1 ? '' : 's'}`, p.options.length ? `${p.options.length} location option${p.options.length > 1 ? 's' : ''}` : ''].filter(Boolean).join(' and ');
+    toast(p.matched ? `Doc added: ${bits} found.` : 'Doc added as one block. The headings didn\'t match the concept format.');
   };
-  modal(doc.raw ? 'Paste the new version' : 'Paste Claude\'s doc', h('div', {class: 'body'}, t,
-    h('p', {class: 'hint'}, 'Tip: start Claude with "Copy the Claude prompt" at the top of the board, so the sections split cleanly.')),
+  modal(doc.sections && Object.keys(doc.sections).length ? 'Add the new version' : 'Add the concept doc', h('div', {class: 'body'}, t,
+    h('div', {class: 'withbtn'}, h('button', {class: 'btn small ghost', onclick: () => fileIn.click()}, icon('clip'), 'Upload a .md or .txt file'), fileIn),
+    h('p', {class: 'hint'}, 'Best results: write it with the content-concept skill in Claude, or start Claude with "Copy the Claude prompt" at the top of the board.')),
     h('footer', {}, h('button', {class: 'btn', onclick: closeTop}, 'Cancel'), h('button', {class: 'btn primary', onclick: go}, 'Add the doc')));
   setTimeout(() => t.focus(), 50);
 }
 
-/* shoot plan */
+/* shoot plan: location options from the doc, lock one in */
+let pickingLoc = false;
+function locationChooser() {
+  const sh = OPEN.data.shoot, opts = sh.options || [];
+  const locked = opts.find(o => o.id === sh.locked);
+  const lock = o => change(() => { sh.locked = o.id; sh.location = o.name; sh.location_url = safeUrl(o.url); pickingLoc = false; }, {redraw: true});
+  const row = (o, isLocked) => {
+    const url = safeUrl(o.url), dom = url ? domain(url) : '';
+    return h('li', {class: 'opt' + (isLocked ? ' locked' : '') + (o.stale ? ' stale' : '')},
+      h('div', {class: 'oinfo'},
+        h('div', {class: 'oname'}, isLocked ? icon('pin') : '', h('b', {}, o.name),
+          o.verified && !/not\s*needed|n\/a/i.test(o.verified) ? h('span', {class: 'vtag' + (/unverified/i.test(o.verified) ? ' warn' : '')}, /unverified/i.test(o.verified) ? 'Unverified' : ('Verified ' + o.verified.replace(/^verified\s*/i, '')).trim()) : '',
+          o.stale ? h('span', {class: 'vtag warn'}, 'Not in the latest doc') : ''),
+        o.notes ? h('div', {class: 'onotes', html: richText(o.notes)}) : ''),
+      h('div', {class: 'oacts'},
+        url ? h('a', {class: 'btn small', href: url, target: '_blank', rel: 'noopener', title: url}, 'Open ', h('span', {class: 'dom'}, dom), ' ↗') : h('span', {class: 'hint'}, 'No link'),
+        isLocked && pickingLoc ? h('span', {class: 'vtag'}, 'Locked')
+          : isLocked ? h('button', {class: 'btn small ghost', onclick: () => { pickingLoc = true; drawDrawer(); }}, 'Change')
+          : h('button', {class: 'btn small primary', onclick: () => lock(o)}, 'Lock this one'),
+        o.src === 'manual' && !isLocked ? h('button', {class: 'iconbtn', 'aria-label': 'Remove ' + o.name, onclick: () => change(() => sh.options = opts.filter(x => x !== o), {redraw: true})}, icon('x')) : ''));
+  };
+  const addName = h('input', {class: 'in', placeholder: 'Another place', 'aria-label': 'Location name'});
+  const addUrl = h('input', {class: 'in', type: 'url', placeholder: 'Link (optional)', 'aria-label': 'Location link'});
+  const add = () => { const n = addName.value.trim(); if (!n) { addName.focus(); return; } const u = addUrl.value.trim();
+    if (u && !safeUrl(u)) { toast('Paste a full link starting with https://'); addUrl.focus(); return; }
+    change(() => sh.options = [...opts, {id: Math.random().toString(36).slice(2, 9), src: 'manual', name: n, url: safeUrl(u), notes: ''}], {redraw: true}); };
+  const adder = h('div', {class: 'optadd'}, addName, addUrl, h('button', {class: 'btn small', onclick: add}, 'Add option'));
+  if (locked && !pickingLoc) return h('div', {class: 'fld'}, h('span', {class: 'lbl'}, 'Location: locked in'), h('ul', {class: 'opts'}, row(locked, true)),
+    opts.length > 1 ? h('span', {class: 'hint'}, `${opts.length - 1} other option${opts.length > 2 ? 's' : ''}. Tap Change to compare.`) : '');
+  return h('div', {class: 'fld'}, h('span', {class: 'lbl'}, opts.length ? `Location options (${opts.length})` : 'Location options'),
+    opts.length ? h('ul', {class: 'opts'}, opts.map(o => row(o, o.id === sh.locked))) : h('p', {class: 'hint'}, 'The doc\'s location options appear here, each with a link. Or add one yourself.'),
+    adder, locked ? h('button', {class: 'linkbtn', onclick: () => { pickingLoc = false; drawDrawer(); }}, `Keep ${locked.name}`) : '');
+}
 function shootBlock() {
   const sh = OPEN.data.shoot;
-  const mapUrl = sh.location_url || (sh.location ? 'https://www.google.com/maps/search/' + encodeURIComponent(sh.location) : '');
+  const url = safeUrl(sh.location_url) || (sh.location ? 'https://www.google.com/maps/search/' + encodeURIComponent(sh.location) : '');
   return h('section', {class: 'blk'}, h('div', {class: 'bh'}, h('h3', {}, 'Shoot plan')),
+    locationChooser(),
     h('div', {class: 'row2'},
-      field('Location', h('div', {class: 'withbtn'}, inp(sh.location, v => change(() => sh.location = v), {placeholder: 'e.g. Jordan\'s flat, Shoreditch rooftop'}),
-        mapUrl ? h('a', {class: 'iconbtn', href: mapUrl, target: '_blank', rel: 'noopener', title: 'Open the location', 'aria-label': 'Open the location'}, icon('pin')) : '')),
+      field('Chosen location', h('div', {class: 'withbtn'}, inp(sh.location, v => change(() => { sh.location = v; if (sh.locked) { const o = (sh.options || []).find(x => x.id === sh.locked); if (o && o.name !== v) sh.locked = null; } }), {placeholder: 'e.g. Primrose Hill, or at home'}),
+        url ? h('a', {class: 'iconbtn', href: url, target: '_blank', rel: 'noopener', title: 'Open the location', 'aria-label': 'Open the location'}, icon('pin')) : '')),
       field('Location link', inp(sh.location_url, v => change(() => sh.location_url = v.trim()), {type: 'url', placeholder: 'Maps, Airbnb or venue link'}))),
     field('Setting', area(sh.setting, v => change(() => sh.setting = v), {rows: 2, placeholder: 'Time of day, mood, styling, who\'s in it'})),
     field('Kit needed', area(sh.kit, v => change(() => sh.kit = v), {rows: 3, placeholder: 'Tripod, ring light, 35mm lens, the Nude Stack\'d box…'}), 'One item per line.'),
@@ -436,35 +480,44 @@ function shootBlock() {
       field('Extra budget (£)', inp(sh.budget || '', v => change(() => sh.budget = Math.max(0, +v || 0)), {type: 'number', min: 0, step: 1, inputmode: 'decimal', placeholder: '0'})),
       h('span')),
     field('Budget notes', area(sh.notes, v => change(() => sh.notes = v), {rows: 2, placeholder: 'What the money is for: camera hire, location fee, props'})),
-    refsBlock());
+    refsBlock('quote'));
 }
-function refsBlock() {
-  const refs = OPEN.data.refs;
-  const list = h('ul', {class: 'refs'}, refs.map((r, i) => {
-    const href = r.img ? API + '/img/' + r.img : r.url;
+/* quotes (shoot plan) and resources (Resources tab) share one list, told apart by group */
+function refsBlock(group) {
+  const all = OPEN.data.refs, isRes = group === 'resource';
+  const mine = all.map((r, i) => ({r, i})).filter(x => (x.r.group || 'quote') === group);
+  const list = h('ul', {class: 'refs'}, mine.map(({r}) => {
+    const href = r.img ? API + '/img/' + encodeURIComponent(r.img) : safeUrl(r.url);
     return h('li', {class: 'ref'},
       r.img && r.mime !== 'application/pdf' ? h('a', {href, target: '_blank', rel: 'noopener', class: 'thumb'}, h('img', {src: href, alt: r.label || 'Reference', loading: 'lazy'}))
-        : h('a', {href, target: '_blank', rel: 'noopener', class: 'thumb icon'}, icon(r.img ? 'pdf' : 'link')),
-      h('div', {class: 'rinfo'}, inp(r.label, v => change(() => r.label = v), {'aria-label': 'Label', placeholder: 'What is it? e.g. Lens hire quote'}),
-        h('a', {href, target: '_blank', rel: 'noopener', class: 'rlink'}, r.img ? (r.mime === 'application/pdf' ? 'Open PDF' : 'Open image') : r.url.replace(/^https?:\/\/(www\.)?/, '').slice(0, 48))),
-      h('button', {class: 'iconbtn', 'aria-label': 'Remove ' + (r.label || 'reference'), onclick: async () => {
-        if (!await ask('Remove this?', `"${r.label || 'This reference'}" comes off the idea.`, 'Remove', 'Keep it')) return;
-        change(() => refs.splice(i, 1), {redraw: true});
-        if (r.img) api('DELETE', '/images/' + r.img).catch(() => {});
+        : h('a', {href: href || null, target: '_blank', rel: 'noopener', class: 'thumb icon'}, icon(r.img ? 'pdf' : 'link')),
+      h('div', {class: 'rinfo'}, inp(r.label, v => change(() => r.label = v), {'aria-label': 'Label', placeholder: isRes ? 'What is it? e.g. Moodboard' : 'What is it? e.g. Lens hire quote'}),
+        href ? h('a', {href, target: '_blank', rel: 'noopener', class: 'rlink'}, r.img ? (r.mime === 'application/pdf' ? 'Open PDF' : 'Open image') : (domain(href) || href).slice(0, 48)) : h('span', {class: 'rlink warn'}, 'This link isn\'t a web address')),
+      h('button', {class: 'iconbtn', 'aria-label': 'Remove ' + (r.label || 'item'), onclick: async () => {
+        if (!await ask('Remove this?', `"${r.label || 'This item'}" comes off the idea.`, 'Remove', 'Keep it')) return;
+        change(() => all.splice(all.indexOf(r), 1), {redraw: true});
+        if (r.img) api('DELETE', '/images/' + encodeURIComponent(r.img)).catch(() => {});
       }}, icon('x')));
   }));
-  const fileIn = h('input', {type: 'file', accept: 'image/*,application/pdf,.pdf', multiple: true, hidden: true, onchange: e => { upload(e.target.files); e.target.value = ''; }});
-  const linkIn = h('input', {class: 'in', type: 'url', placeholder: 'Paste a link (hire shop, quote, Pinterest ref)', 'aria-label': 'Reference link'});
-  const addLink = () => { const u = linkIn.value.trim(); if (!/^https?:\/\//.test(u)) { toast('Paste a full link starting with https://'); linkIn.focus(); return; }
-    change(() => refs.push({label: '', url: u}), {redraw: true}); };
+  const fileIn = h('input', {type: 'file', accept: 'image/*,application/pdf,.pdf', multiple: true, hidden: true, onchange: e => { upload(e.target.files, group); e.target.value = ''; }});
+  const linkIn = h('input', {class: 'in', type: 'url', placeholder: isRes ? 'Paste a link (Google Doc, moodboard, Pinterest board)' : 'Paste a link (hire shop, quote, venue)', 'aria-label': 'Link'});
+  const addLink = () => { const u = safeUrl(linkIn.value); if (!u) { toast('Paste a full link starting with https://'); linkIn.focus(); return; }
+    change(() => all.push({group, label: '', url: u, by: ME, at: Date.now()}), {redraw: true}); };
   linkIn.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addLink(); } });
   const zone = h('div', {class: 'refadd'}, h('div', {class: 'withbtn'}, linkIn, h('button', {class: 'btn small', onclick: addLink}, 'Add link')),
-    h('button', {class: 'btn small ghost', onclick: () => fileIn.click()}, icon('clip'), 'Upload a quote or reference'), fileIn,
-    h('span', {class: 'hint'}, 'Photos, screenshots or PDFs. You can also drop files here.'));
+    h('button', {class: 'btn small ghost', onclick: () => fileIn.click()}, icon('clip'), isRes ? 'Upload a file' : 'Upload a quote or reference'), fileIn,
+    h('span', {class: 'hint'}, 'Photos, screenshots or PDFs (up to 1.4 MB). You can also drop files here.'));
   zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drop'); });
   zone.addEventListener('dragleave', () => zone.classList.remove('drop'));
-  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drop'); upload(e.dataTransfer.files); });
-  return h('div', {class: 'fld'}, h('span', {class: 'lbl'}, 'Quotes and references'), refs.length ? list : '', zone);
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drop'); upload(e.dataTransfer.files, group); });
+  return h('div', {class: 'fld'}, h('span', {class: 'lbl'}, isRes ? 'Links and files' : 'Quotes and references'), mine.length ? list : '', zone);
+}
+function resourcesBlock() {
+  const d = OPEN.data;
+  return h('section', {class: 'blk'}, h('div', {class: 'bh'}, h('h3', {}, 'Resources')),
+    h('p', {class: 'hint'}, 'Anything else for this idea: moodboards, brand assets, reference videos, contracts, release forms, research.'),
+    refsBlock('resource'),
+    field('Notes', area(d.res_notes, v => change(() => d.res_notes = v), {rows: 4, placeholder: 'Anything worth keeping: contacts, ideas, feedback from Jordan'})));
 }
 async function toJpeg(file) {
   let bmp; try { bmp = await createImageBitmap(file, {imageOrientation: 'from-image'}); } catch (e) { return null; }
@@ -474,7 +527,7 @@ async function toJpeg(file) {
   for (const q of [0.86, 0.76, 0.64]) { const b = await new Promise(r => c.toBlob(r, 'image/jpeg', q)); if (b && b.size <= 1300 * 1024) return {blob: b, w: W, h: H}; }
   return null;
 }
-async function upload(files) {
+async function upload(files, group = 'quote') {
   const card = OPEN; if (!card) return;
   const fs = [...files]; if (!fs.length) return;
   toast(`Uploading ${fs.length} file${fs.length > 1 ? 's' : ''}…`);
@@ -487,7 +540,7 @@ async function upload(files) {
       else { const j = await toJpeg(f); if (!j) { failed.push(f.name + (/\.(heic|heif)$/i.test(f.name) ? ' (HEIC: save it as JPG first)' : ' (can\'t read this file)')); continue; } body = j.blob; w = j.w; hh = j.h; }
       const qs = new URLSearchParams({name: f.name.slice(0, 70), cat: 'studio', w, h: hh, by: ME});
       const r = await api('POST', '/images?' + qs, null, {type, body});
-      if (OPEN === card) change(() => card.data.refs.push({label: f.name.replace(/\.[^.]+$/, ''), img: r.id, mime: type}), {redraw: true});
+      if (OPEN === card) change(() => card.data.refs.push({group, label: f.name.replace(/\.[^.]+$/, ''), img: r.id, mime: type, by: ME, at: Date.now()}), {redraw: true});
     } catch (e) { failed.push(f.name); }
   }
   toast(failed.length ? `Couldn't upload ${failed.join(', ')}.` : 'Uploaded');
@@ -496,7 +549,7 @@ async function upload(files) {
 /* files + post link */
 function filesBlock() {
   const d = OPEN.data;
-  const open = u => u ? h('a', {class: 'iconbtn', href: u, target: '_blank', rel: 'noopener', 'aria-label': 'Open link', title: 'Open'}, icon('link')) : '';
+  const open = u => safeUrl(u) ? h('a', {class: 'iconbtn', href: safeUrl(u), target: '_blank', rel: 'noopener', 'aria-label': 'Open link', title: 'Open'}, icon('link')) : '';
   return h('section', {class: 'blk'}, h('div', {class: 'bh'}, h('h3', {}, 'Files and posting')),
     field('Raw and edited files', h('div', {class: 'withbtn'}, inp(d.files_url, v => change(() => d.files_url = v.trim()), {type: 'url', placeholder: 'Google Drive or Dropbox folder link'}), open(d.files_url)),
       'Keep the clips in one shared folder, then link it here.'),
