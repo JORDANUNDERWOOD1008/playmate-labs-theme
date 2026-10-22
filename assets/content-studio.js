@@ -37,8 +37,27 @@ const STAGES = [
   {id: 'idea', name: 'Idea', hint: 'Write it with Claude, then paste the doc in.'},
   {id: 'shoot', name: 'Shoot', hint: 'Phone, camera or BeReal: get the raw clips and photos.'},
   {id: 'post', name: 'Post-production', hint: 'AI edits in ChatGPT, Runway or Gemini, then cut it in CapCut.'},
-  {id: 'ready', name: 'Ready', hint: 'Exported. Add the post link once it\'s live.'}
+  {id: 'ready', name: 'Ready', hint: 'Exported and approved. Add the post link once it\'s up.'},
+  {id: 'live', name: 'Live', hint: 'Posted. Adding a post link moves a piece here.'}
 ];
+// the parts a concept piece is made of; the board shows which exist. Untick one in the quick view when a piece doesn't need it.
+const PARTS = [
+  {id: 'doc', name: 'Concept doc', short: 'Doc'},
+  {id: 'script', name: 'Script or voiceover', short: 'Script'},
+  {id: 'shots', name: 'Shot list', short: 'Shots'},
+  {id: 'captions', name: 'Captions', short: 'Captions'},
+  {id: 'loc', name: 'Location', short: 'Location'},
+  {id: 'raw', name: 'Raw footage', short: 'Footage'},
+  {id: 'edit', name: 'Final edit', short: 'Edit'},
+  {id: 'live', name: 'Post link', short: 'Live'}
+];
+const VIEWS = [['week', 'This week'], ['season', 'Season'], ['board', 'Board']];
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const addDays = (s, n) => { const d = new Date(s + 'T12:00'); d.setDate(d.getDate() + n); return iso(d); };
+const mondayOf = s => { const d = new Date(s + 'T12:00'); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return iso(d); };
+const longDate = s => new Date(s + 'T12:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'long'});
+const dayDate = s => new Date(s + 'T12:00').toLocaleDateString('en-GB', {weekday: 'short', day: 'numeric', month: 'short'});
 const P = window.StudioParse;
 const {PLATFORMS, SECTIONS, safeUrl, domain} = P;
 
@@ -156,6 +175,8 @@ End with a fenced block labelled studio containing JSON: {"platforms":[…],"bud
 /* ---------- board state ---------- */
 let CARDS = [], PEOPLE = new Set(), online = false;
 let filter = {q: '', platform: '', archived: false}, curStage = ls.get('cs-stage') || 'idea', dragging = false, lastList = '';
+let VIEW = ls.get('cs-view') || 'week', BOARDVIEW = ls.get('cs-boardview') || 'cards';
+if (!VIEWS.some(v => v[0] === VIEW)) VIEW = 'week';
 const app = h('div', {class: 'app'});
 const visible = c => (filter.archived ? c.archived : !c.archived) &&
   (!filter.platform || (c.face.platforms || []).includes(filter.platform)) &&
@@ -168,10 +189,23 @@ async function loadCards() {
   CARDS.forEach(c => { c.face.owner && PEOPLE.add(c.face.owner); c.created_by && PEOPLE.add(c.created_by); });
   return true;
 }
+// which parts exist: from face.parts (cards saved since the parts view), else what older faces can tell
+function partsOf(c) {
+  const f = c.face || {}, done = new Set(f.parts || [f.doc && 'doc', f.loc && 'loc', f.posted && 'live'].filter(Boolean)), skip = new Set(f.skip || []);
+  return PARTS.map(p => ({...p, st: skip.has(p.id) ? 'skip' : done.has(p.id) ? 'done' : 'miss'}));
+}
+function partChips(c, {jump} = {}) {
+  const ps = partsOf(c).filter(p => p.st !== 'skip'), n = ps.filter(p => p.st === 'done').length;
+  return h('span', {class: 'parts', role: 'list', 'aria-label': `${n} of ${ps.length} parts done`},
+    ps.map(p => h(jump ? 'button' : 'span', {class: 'part ' + p.st, role: 'listitem', title: `${p.name}: ${p.st === 'done' ? 'done' : 'still to do'}`,
+      onclick: jump ? e => { e.stopPropagation(); jump(p.id); } : null}, p.st === 'done' ? '✓ ' : '', p.short)));
+}
 function cardFace(c) {
-  const f = c.face, late = f.due && f.due < today() && c.stage !== 'ready' && !f.posted;
-  return h('button', {class: 'card' + (f.posted ? ' posted' : ''), 'data-id': c.id, onclick: () => openCard(c.id)},
+  const f = c.face, late = f.due && f.due < today() && !['ready', 'live'].includes(c.stage) && !f.posted;
+  return h('button', {class: 'card' + (c.stage === 'live' ? ' posted' : ''), 'data-id': c.id, onclick: () => openCard(c.id)},
+    f.slot || f.post_date ? h('span', {class: 'cslot'}, [f.slot, f.post_date ? 'posts ' + dayDate(f.post_date) : ''].filter(Boolean).join(' · ')) : '',
     h('span', {class: 'ct'}, f.title || 'Untitled idea'),
+    partChips(c),
     (f.platforms || []).length ? h('span', {class: 'plats'}, f.platforms.map(p => h('span', {class: 'plat'}, p))) : '',
     f.loc ? h('span', {class: 'cloc'}, icon('pin'), f.loc) : '',
     h('span', {class: 'meta'},
@@ -194,22 +228,30 @@ function render() {
   const plats = h('div', {class: 'chips', role: 'group', 'aria-label': 'Platform'},
     [['', 'All'], ...PLATFORMS.map(p => [p, p])].map(([k, label]) => h('button', {class: 'chip' + (filter.platform === k ? ' on' : ''), 'aria-pressed': String(filter.platform === k),
       onclick: () => { filter.platform = k; render(); }}, label)));
+  const tabs = h('nav', {class: 'viewtabs', role: 'tablist', 'aria-label': 'View'}, VIEWS.map(([k, label]) => h('button', {role: 'tab', 'aria-selected': String(VIEW === k),
+    onclick: () => { VIEW = k; ls.set('cs-view', k); render(); if (k !== 'board') ensureSeason(); }}, label)));
+  const sum = VIEW === 'board' ? summary : seasonSummary();
+  const boardTools = VIEW === 'board' ? [search, plats,
+    h('div', {class: 'seg2', role: 'group', 'aria-label': 'Board layout'}, [['cards', 'Cards'], ['table', 'Checklist']].map(([k, l]) =>
+      h('button', {class: BOARDVIEW === k ? 'on' : '', 'aria-pressed': String(BOARDVIEW === k), onclick: () => { BOARDVIEW = k; ls.set('cs-boardview', k); render(); }}, l))),
+    h('button', {class: 'btn ghost', onclick: () => copyText(PROMPT, 'Claude prompt')}, icon('copy'), h('span', {class: 'long'}, 'Copy the '), 'Claude prompt')] : [];
   app.replaceChildren(
     h('header', {class: 'top'},
-      h('div', {class: 'brand'}, h('h1', {}, 'Content Studio'), h('p', {class: 'sum'}, summary)),
-      h('div', {class: 'tools'}, search, plats,
-        h('button', {class: 'btn ghost', onclick: () => copyText(PROMPT, 'Claude prompt')}, icon('copy'), h('span', {class: 'long'}, 'Copy the '), 'Claude prompt'),
-        h('button', {class: 'btn primary', onclick: newCard}, icon('plus'), 'New idea'),
+      h('div', {class: 'brand'}, h('h1', {}, 'Content Studio'), h('p', {class: 'sum'}, sum)),
+      h('div', {class: 'tools'}, tabs,
+        h('button', {class: 'btn primary', onclick: () => newCard()}, icon('plus'), 'New idea'),
         h('button', {class: 'me', title: 'Change name', onclick: () => nameSheet(render)}, ME || 'Name'))),
-    h('nav', {class: 'stagetabs', 'aria-label': 'Stages'}, STAGES.map(s => h('button', {class: curStage === s.id ? 'on' : '', 'data-stage': s.id,
-      onclick: () => { curStage = s.id; ls.set('cs-stage', s.id); render(); }}, s.name, h('span', {class: 'n'}, String(CARDS.filter(c => c.stage === s.id && visible(c)).length))))),
-    h('main', {class: 'board', id: 'board'}),
-    h('footer', {class: 'foot'}, h('button', {class: 'linkbtn', onclick: () => { filter.archived = !filter.archived; render(); }}, filter.archived ? 'Back to the board' : 'Show archived ideas'),
+    boardTools.length ? h('div', {class: 'subbar tools'}, ...boardTools) : '',
+    VIEW === 'board' && BOARDVIEW === 'cards' ? h('nav', {class: 'stagetabs', 'aria-label': 'Stages'}, STAGES.map(s => h('button', {class: curStage === s.id ? 'on' : '', 'data-stage': s.id,
+      onclick: () => { curStage = s.id; ls.set('cs-stage', s.id); render(); }}, s.name, h('span', {class: 'n'}, String(CARDS.filter(c => c.stage === s.id && visible(c)).length))))) : '',
+    VIEW === 'board' ? h('main', {class: BOARDVIEW === 'table' ? 'tablewrap' : 'board', id: 'board'}) : h('main', {class: 'pane', id: 'pane'}),
+    h('footer', {class: 'foot'}, VIEW === 'board' ? h('button', {class: 'linkbtn', onclick: () => { filter.archived = !filter.archived; render(); }}, filter.archived ? 'Back to the board' : 'Show archived ideas') : '',
       online ? '' : h('span', {class: 'warn'}, 'Not connected. Changes won\'t save until the team link works.')));
-  drawBoard();
+  if (VIEW === 'board') drawBoard(); else drawPane();
 }
 function drawBoard() {
   const board = $('#board'); if (!board) return;
+  if (BOARDVIEW === 'table') { drawTable(board); return; }
   board.replaceChildren(...STAGES.map(s => {
     const list = CARDS.filter(c => c.stage === s.id && visible(c)).sort((a, b) => a.pos - b.pos);
     const col = h('div', {class: 'cards', 'data-stage': s.id}, list.map(cardFace));
@@ -240,12 +282,182 @@ function dropped(e) {
   moveCard(id, stage, posBetween(e.item.previousElementSibling, e.item.nextElementSibling));
   const s = STAGES.find(x => x.id === stage); if (e.from !== e.to) toast(`Moved to ${s.name}`);
 }
-async function newCard() {
+async function newCard(preset = {}) {
   if (!online) { toast('Connect with the team link first, so ideas save where everyone can see them.'); return; }
   try {
-    const r = await api('POST', '/cards', {stage: 'idea', face: {title: 'Untitled idea', owner: ME, platforms: []}, data: {}, by: ME});
-    await loadCards(); curStage = 'idea'; render(); openCard(r.id, {fresh: true});
+    const r = await api('POST', '/cards', {stage: 'idea', face: {title: 'Untitled idea', owner: ME, platforms: [], ...preset}, data: {}, by: ME});
+    await loadCards(); curStage = 'idea'; render(); openCard(r.id, {fresh: !preset.title});
   } catch (e) { toast('Couldn\'t create the idea. Check your connection and try again.'); }
+}
+
+/* ---------- board as a checklist: every piece against every part ---------- */
+function drawTable(el) {
+  const rows = STAGES.flatMap(s => CARDS.filter(c => c.stage === s.id && visible(c)).sort((a, b) => a.pos - b.pos).map(c => ({c, s})));
+  if (!rows.length) { el.replaceChildren(h('p', {class: 'empty'}, filter.q || filter.platform ? 'No matches.' : 'Nothing on the board yet.')); return; }
+  const cell = p => h('td', {class: 'pc ' + p.st, title: `${p.name}: ${p.st === 'done' ? 'done' : p.st === 'skip' ? 'not needed' : 'still to do'}`},
+    h('span', {'aria-hidden': 'true'}, p.st === 'done' ? '✓' : p.st === 'skip' ? '·' : ''), h('span', {class: 'sr'}, p.st === 'done' ? 'done' : p.st === 'skip' ? 'not needed' : 'to do'));
+  el.replaceChildren(h('table', {class: 'ptable'},
+    h('thead', {}, h('tr', {}, h('th', {class: 'pt'}, 'Piece'), h('th', {}, 'Stage'), PARTS.map(p => h('th', {class: 'ph', title: p.name}, p.short)))),
+    h('tbody', {}, rows.map(({c, s}) => h('tr', {tabindex: 0, onclick: () => openCard(c.id), onkeydown: e => { if (e.key === 'Enter') openCard(c.id); }},
+      h('td', {class: 'pt'}, h('b', {}, c.face.title || 'Untitled idea'), c.face.slot || c.face.post_date ? h('span', {class: 'hint'}, [c.face.slot, c.face.post_date ? dayDate(c.face.post_date) : ''].filter(Boolean).join(' · ')) : ''),
+      h('td', {}, h('span', {class: 'stg ' + s.id}, s.name)), partsOf(c).map(cell))))));
+}
+
+/* ---------- season: the Season 1 grid from the grid planner, joined to cards by slot ---------- */
+let SEASON = null, seasonLoading = null, LIBMAP = {};
+function imgSrc(id, w = 400) {
+  if (!id) return '';
+  if (id.startsWith('u-')) return API + '/img/' + id.slice(2);
+  const l = LIBMAP[id]; return l ? l.src + (l.src.includes('?') ? '&' : '?') + 'width=' + w : '';
+}
+function parseSeason(plan) {
+  const year = CFG.year || 2027, tiles = [];
+  (plan.posts || []).forEach((p, i) => {
+    const [first, ...rest] = String(p.caption || '').split('\n');
+    const m = first.match(/^(S\d+C(\d+)-(\w+))\s*·\s*\w{3}\s+(\d{1,2})\s+(\w{3})\s*·\s*([^·]+?)(?:\s*·\s*(left|middle|right))?\s*$/);
+    if (!m) return;
+    const mi = MON.indexOf(m[5]); if (mi < 0) return;
+    const brief = rest.join(' ').trim().split(/\n\n/)[0];
+    const sl = (p.slides || [])[0], img = sl && sl.img || (p.cover && p.cover.img) || '';
+    tiles.push({i, code: m[1], ch: +m[2], slot: m[3], date: iso(new Date(year, mi, +m[4], 12)), title: m[6].trim(), part: m[7] || '', type: p.type,
+      brief: brief.replace(/^NEW · /, '').replace(/^OPEN · fill from this week's Monday Mic and real work\. Suggested: /, 'Open: '), open: /^OPEN/.test(brief), img});
+  });
+  const chapters = [...new Set(tiles.map(t => t.ch))].sort((a, b) => a - b).map(n => {
+    const ts = tiles.filter(t => t.ch === n), ds = ts.map(t => t.date).sort();
+    return {n, title: ts[0].title, from: ds[0], to: ds[ds.length - 1], tiles: ts};
+  });
+  return {tiles, chapters, start: tiles.map(t => t.date).sort()[0]};
+}
+function ensureSeason() {
+  if (SEASON || seasonLoading || !CFG.season || !online) return seasonLoading;
+  seasonLoading = (async () => {
+    try { if (CFG.library) (await (await fetch(CFG.library)).json()).forEach(i => LIBMAP[i.id] = i); } catch (e) {}
+    try { const v = await api('GET', '/views/' + CFG.season); SEASON = parseSeason(v.plan || {}); SEASON.name = v.name; }
+    catch (e) { SEASON = {error: true, tiles: [], chapters: []}; }
+    await loadWeeks().catch(() => {});
+    seasonLoading = null; if (VIEW !== 'board') render();
+  })();
+  return seasonLoading;
+}
+const cardFor = code => CARDS.find(c => !c.archived && c.face.slot === code);
+function seasonSummary() {
+  if (!SEASON || !SEASON.tiles.length) return CFG.season ? 'Loading the season…' : 'No season linked yet.';
+  const next = SEASON.tiles.map(t => t.date).filter(d => d >= today()).sort()[0];
+  const ch = next && SEASON.chapters.find(c => c.from <= next && next <= c.to || c.tiles.some(t => t.date === next));
+  return [SEASON.name || 'Season 1', ch ? `Chapter ${ch.n} "${ch.title}"` : '', next ? `next drop ${dayDate(next)}` : 'season finished'].filter(Boolean).join(' · ');
+}
+function tileEl(t, {mini = false} = {}) {
+  const c = cardFor(t.code), st = c ? c.stage : '';
+  const d = h('button', {class: 'tile' + (t.img ? '' : ' empty') + (mini ? ' sm' : ''), title: `${t.code} · ${dayDate(t.date)}\n${t.brief}`,
+    onclick: () => tileSheet(t)},
+    t.img ? h('img', {src: imgSrc(t.img, mini ? 200 : 500), alt: t.brief, loading: 'lazy'}) : h('span', {class: 'tb'}, t.brief),
+    t.slot !== 'Banner' ? h('span', {class: 'tslot'}, t.slot) : '',
+    st ? h('span', {class: 'tst ' + st, title: STAGES.find(s => s.id === st).name}) : '');
+  return d;
+}
+function tileSheet(t) {
+  const c = cardFor(t.code);
+  if (c) { openCard(c.id); return; }
+  modal(`${t.code} · ${dayDate(t.date)}`, h('div', {class: 'body'},
+    t.img ? h('img', {class: 'tprev', src: imgSrc(t.img, 600), alt: ''}) : '',
+    h('p', {}, h('b', {}, `Chapter ${t.ch}: ${t.title}`)), h('p', {}, t.brief),
+    h('p', {class: 'hint'}, t.img ? 'This slot already has its image in the Season grid. Start a card if it still needs captions or posting.' : 'Nothing is made for this slot yet. Start a card and it joins the board as an idea, tied to this slot and date.')),
+    h('footer', {}, h('button', {class: 'btn', onclick: closeTop}, 'Close'),
+      h('button', {class: 'btn primary', onclick: () => { closeTop(); newCard({title: t.brief.replace(/^Open: /, '').replace(/\.?\s*HERO MOMENT \d/, '').slice(0, 90), slot: t.code, post_date: t.date, platforms: ['Instagram']}); }}, 'Start a card for this post')));
+}
+function drawSeason(pane) {
+  if (!SEASON) { pane.replaceChildren(h('p', {class: 'empty'}, 'Loading the season…')); ensureSeason(); return; }
+  if (SEASON.error) { pane.replaceChildren(h('p', {class: 'empty'}, 'Couldn\'t load the Season grid. Check your connection; it retries when you switch tabs.')); SEASON = null; return; }
+  const legend = h('div', {class: 'legend'}, STAGES.map(s => h('span', {}, h('i', {class: 'tst ' + s.id}), s.name)), h('span', {}, 'Dashed: still to make'), h('span', {}, 'No dot: no card yet'));
+  pane.replaceChildren(legend, h('div', {class: 'chapters'}, SEASON.chapters.map(ch => {
+    const made = ch.tiles.filter(t => t.img || (cardFor(t.code) || {}).stage === 'live').length;
+    return h('article', {class: 'chap'}, h('header', {}, h('h3', {}, `${ch.n}. ${ch.title}`), h('span', {class: 'when'}, `${fmtDate(ch.from)} to ${fmtDate(ch.to)}`)),
+      h('div', {class: 'mini'}, ch.tiles.map(t => tileEl(t, {mini: true}))),
+      h('p', {class: 'hint'}, `${made} of ${ch.tiles.length} tiles have art`),
+      h('button', {class: 'linkbtn', onclick: () => { WEEK = mondayOf(ch.from); ls.set('cs-week', WEEK); VIEW = 'week'; ls.set('cs-view', 'week'); render(); }}, 'Open its first week'));
+  })));
+}
+
+/* ---------- this week: the weekly rhythm, the pack of pieces, Thursday's drop ---------- */
+let WEEKS = [], WEEK = ls.get('cs-week') || '', weekSaving = false, lastWeeks = '', weeksChanged = false;
+async function loadWeeks() { const d = await api('GET', '/weeks'); WEEKS = d.weeks || []; }
+const weekRec = k => WEEKS.find(w => !w.archived && w.face.week === k);
+async function saveWeek(k, fn) {
+  if (!online) { toast('Not connected, so this won\'t save yet.'); return; }
+  if (weekSaving) { setTimeout(() => saveWeek(k, fn), 300); return; }
+  weekSaving = true;
+  let r = weekRec(k);
+  const face = r ? JSON.parse(JSON.stringify(r.face)) : {week: k, steps: {}, mic: '', stories: []};
+  fn(face);
+  try {
+    if (!r) { const x = await api('POST', '/weeks', {stage: 'open', face, data: {}, by: ME}); WEEKS.push({id: x.id, version: x.version || 1, face, archived: false}); }
+    else {
+      try { const x = await api('PUT', '/weeks/' + r.id, {face, data: {}, baseVersion: r.version, by: ME}); r.version = x.version; r.face = face; }
+      catch (e) { if (e.status !== 409) throw e; await loadWeeks(); r = weekRec(k); const f2 = JSON.parse(JSON.stringify(r.face)); fn(f2);
+        const x = await api('PUT', '/weeks/' + r.id, {face: f2, data: {}, baseVersion: r.version, by: ME}); r.version = x.version; r.face = f2; }
+    }
+  } catch (e) { toast('Couldn\'t save that. Check your connection and try again.'); }
+  weekSaving = false;
+  if (VIEW === 'week' && !($('#pane') || document.body).contains(document.activeElement)) drawPane();
+}
+function defaultWeek() {
+  const now = mondayOf(today());
+  if (SEASON && SEASON.tiles.length) { const next = SEASON.tiles.map(t => t.date).filter(d => d >= now).sort()[0]; if (next && mondayOf(next) > now && !CARDS.some(c => c.face.post_date && mondayOf(c.face.post_date) === now)) return mondayOf(next); }
+  return now;
+}
+function drawWeek(pane) {
+  if (!WEEK && !SEASON && CFG.season) { pane.replaceChildren(h('p', {class: 'empty'}, 'Loading this week…')); return; }
+  if (!WEEK) WEEK = defaultWeek();
+  const end = addDays(WEEK, 6), inWeek = d => d && d >= WEEK && d <= end;
+  const tiles = SEASON ? SEASON.tiles.filter(t => inWeek(t.date)) : [];
+  const codes = new Set(tiles.map(t => t.code));
+  const pack = CARDS.filter(c => !c.archived && (inWeek(c.face.post_date) || codes.has(c.face.slot))).sort((a, b) => STAGES.findIndex(s => s.id === b.stage) - STAGES.findIndex(s => s.id === a.stage));
+  const rec = weekRec(WEEK), wf = rec ? rec.face : {steps: {}, mic: '', stories: []};
+  const ready = pack.filter(c => ['ready', 'live'].includes(c.stage)).length, live = pack.filter(c => c.stage === 'live').length;
+  const ch = SEASON && SEASON.chapters.find(c => c.tiles.some(t => inWeek(t.date)));
+  const go = n => { WEEK = n; ls.set('cs-week', n); drawPane(); };
+  const steps = [
+    {k: 'questions', name: 'Sun · Questions', sub: wf.steps.questions ? 'Sent' : 'Claude sends questions for the Mic', manual: true},
+    {k: 'mic', name: 'Mon · Mic', sub: wf.steps.mic ? (wf.mic ? wf.mic.slice(0, 40) : 'Recorded') : 'Record on Voice Memos', manual: true},
+    {k: 'approve', name: 'Approve', sub: pack.length ? `${ready} of ${pack.length} ready` : 'No pieces yet', done: pack.length && ready === pack.length},
+    {k: 'post', name: 'Thu · Post', sub: pack.length ? `${live} of ${pack.length} live` : (tiles.length ? `${tiles.length} grid posts` : 'Nothing scheduled'), done: pack.length && live === pack.length}
+  ];
+  const nowStep = steps.findIndex(s => !(s.manual ? wf.steps[s.k] : s.done));
+  const stepEl = (s, i) => h(s.manual ? 'button' : 'div', {class: 'step' + ((s.manual ? wf.steps[s.k] : s.done) ? ' done' : i === nowStep ? ' now' : ''), 'aria-pressed': s.manual ? String(!!wf.steps[s.k]) : null,
+    onclick: s.manual ? () => saveWeek(WEEK, f => { f.steps = f.steps || {}; f.steps[s.k] = !f.steps[s.k]; }) : null}, h('b', {}, s.name), h('span', {}, s.sub));
+  const mic = h('input', {class: 'in', value: wf.mic || '', placeholder: 'Monday Mic: episode title or a link to the recording', 'aria-label': 'Monday Mic',
+    onchange: e => saveWeek(WEEK, f => f.mic = e.target.value.trim())});
+  const piece = c => h('li', {}, h('button', {class: 'piece', onclick: () => openCard(c.id)},
+    h('span', {class: 'chs'}, (c.face.platforms || []).length ? c.face.platforms.map(p => h('span', {class: 'chb', title: p}, {Instagram: 'IG', TikTok: 'TT', LinkedIn: 'LI', Pinterest: 'PI'}[p] || p.slice(0, 2))) : h('span', {class: 'chb none'}, '?')),
+    h('span', {class: 'pmain'}, h('b', {}, c.face.title || 'Untitled idea'), partChips(c)),
+    h('span', {class: 'stg ' + c.stage}, STAGES.find(s => s.id === c.stage).name)));
+  const waiting = pack.flatMap(c => (c.face.qs || []).map(q => ({q, c})));
+  const storyIn = h('input', {class: 'in', placeholder: 'Add a story, e.g. Fri · poll: old box or new box?', 'aria-label': 'Add a story',
+    onkeydown: e => { if (e.key === 'Enter' && e.target.value.trim()) { const t = e.target.value.trim(); e.target.value = ''; saveWeek(WEEK, f => (f.stories = f.stories || []).push({t, done: false})); } }});
+  pane.replaceChildren(h('div', {class: 'weekbar'},
+      h('div', {}, h('h2', {}, `Week of ${longDate(WEEK)}`), h('p', {class: 'hint'}, ch ? `Chapter ${ch.n} · ${ch.title}` : SEASON && SEASON.start && WEEK < SEASON.start ? `Before the season. It starts ${dayDate(SEASON.start)}.` : 'Outside the season grid')),
+      h('div', {class: 'withbtn'}, h('button', {class: 'btn small', onclick: () => go(addDays(WEEK, -7)), 'aria-label': 'Previous week'}, '‹ Prev'),
+        h('button', {class: 'btn small ghost', onclick: () => go(mondayOf(today()))}, 'Today'),
+        SEASON && SEASON.start && WEEK < mondayOf(SEASON.start) ? h('button', {class: 'btn small ghost', onclick: () => go(mondayOf(SEASON.start))}, 'Season start') : '',
+        h('button', {class: 'btn small', onclick: () => go(addDays(WEEK, 7)), 'aria-label': 'Next week'}, 'Next ›'))),
+    h('div', {class: 'week'},
+      h('div', {},
+        h('section', {class: 'panel'}, h('div', {class: 'steps'}, steps.map(stepEl)), h('div', {class: 'microw'}, mic)),
+        h('section', {class: 'panel'}, h('div', {class: 'bh'}, h('h3', {}, 'This week\'s pack'), h('button', {class: 'btn small', onclick: () => newCard({post_date: addDays(WEEK, 3)})}, icon('plus'), 'Add a piece')),
+          pack.length ? h('ul', {class: 'pack'}, pack.map(piece)) : h('p', {class: 'empty'}, tiles.length ? 'No cards for this week yet. Tap a tile in Thursday\'s drop to start one, or add a piece for LinkedIn, Pinterest or stories.' : 'Nothing planned this week. Add a piece, or set a post date on a card.'))),
+      h('div', {},
+        h('section', {class: 'panel'}, h('h3', {}, 'Thursday\'s grid drop'), h('p', {class: 'hint'}, tiles.length ? 'Post right, then centre, then left' : 'No grid posts this week'),
+          tiles.length ? h('div', {class: 'drop'}, tiles.sort((a, b) => a.i - b.i).map(t => tileEl(t))) : ''),
+        h('section', {class: 'panel'}, h('h3', {}, 'Stories this week'),
+          h('ul', {class: 'checks'}, (wf.stories || []).map((s, i) => h('li', {}, h('label', {}, h('input', {type: 'checkbox', checked: s.done, onchange: () => saveWeek(WEEK, f => f.stories[i].done = !f.stories[i].done)}), h('span', {}, s.t)),
+            h('button', {class: 'iconbtn', 'aria-label': 'Remove ' + s.t, onclick: () => saveWeek(WEEK, f => f.stories.splice(i, 1))}, icon('x'))))), storyIn),
+        h('section', {class: 'panel'}, h('h3', {}, 'Waiting on'), waiting.length ? h('ul', {class: 'wait'}, waiting.map(({q, c}) => h('li', {}, h('button', {class: 'linkbtn', onclick: () => openCard(c.id)}, q), h('span', {class: 'hint'}, c.face.title))))
+          : h('p', {class: 'hint'}, 'No open questions on this week\'s pieces.')))));
+}
+function drawPane() {
+  const pane = $('#pane'); if (!pane) return;
+  if (!SEASON && CFG.season) ensureSeason();
+  VIEW === 'season' ? drawSeason(pane) : drawWeek(pane);
 }
 
 /* ---------- quick view ---------- */
@@ -254,13 +466,15 @@ async function openCard(id, {fresh = false} = {}) {
   let card;
   try { card = await api('GET', '/cards/' + id); } catch (e) { toast('Couldn\'t open it. Check your connection and try again.'); return; }
   OPEN = card; OPEN.data = OPEN.data || {}; dirty = false; TAB = 'plan'; pickingLoc = false;
+  const was = JSON.stringify(card.face); faceFrom(card);
+  if (JSON.stringify(card.face) !== was && online) { dirty = true; clearTimeout(saveT); saveT = setTimeout(pushSave, 800); } // older cards learn their parts
   drawerEl = h('div', {class: 'shade drawer-shade'}, h('aside', {class: 'drawer', role: 'dialog', 'aria-modal': 'true', 'aria-label': card.face.title || 'Idea'}));
   openLayer(drawerEl, () => { flush(); OPEN = null; drawerEl = null; });
   drawDrawer();
   if (fresh) { const t = $('.dtitle', drawerEl); t.focus(); t.select(); }
 }
-function faceFrom() {
-  const d = OPEN.data, f = OPEN.face, sh = d.shoot || {};
+function faceFrom(card = OPEN) {
+  const d = card.data || {}, f = card.face, sh = d.shoot || {};
   f.budget = +sh.budget || 0;
   f.doc = !!(d.doc && Object.keys(d.doc.sections || {}).length + (d.doc.raw ? 1 : 0));
   f.refs = (d.refs || []).length;
@@ -268,9 +482,15 @@ function faceFrom() {
   f.open = d.doc && d.doc.sections ? P.openCount(d.doc.sections.questions) : 0;
   const lk = sh.locked && (sh.options || []).find(o => o.id === sh.locked);
   f.loc = lk ? lk.name : '';
+  const sec = k => !!(d.doc && d.doc.sections && String(d.doc.sections[k] || '').trim());
+  f.parts = [f.doc && 'doc', (sec('script') || sec('voiceover') || sec('onscreen')) && 'script', sec('shots') && 'shots', sec('captions') && 'captions',
+    (f.loc || String(sh.location || '').trim()) && 'loc', safeUrl(d.files_url) && 'raw', safeUrl(d.edit_url) && 'edit', f.posted && 'live'].filter(Boolean);
+  f.skip = (d.skip || []).filter(k => PARTS.some(p => p.id === k));
+  f.qs = d.doc && d.doc.sections ? String(d.doc.sections.questions || '').split('\n').map(l => l.match(/^\s*[-*]\s+\[ \]\s+(.*)$/)).filter(Boolean).map(m => plain(m[1]).slice(0, 110)).slice(0, 4) : [];
 }
 function change(fn, {redraw = false} = {}) {
   fn(); faceFrom(); dirty = true;
+  const pc = drawerEl && $('.dparts .parts', drawerEl); if (pc) pc.replaceWith(partChips(OPEN, {jump: jumpTo}));
   const c = CARDS.find(x => x.id === OPEN.id); if (c) { c.face = {...OPEN.face}; drawBoard(); }
   clearTimeout(saveT); saveT = setTimeout(pushSave, 800);
   if (redraw) drawDrawer();
@@ -323,9 +543,10 @@ function drawDrawer() {
   const meta = h('div', {class: 'dmeta'},
     h('div', {class: 'chips'}, PLATFORMS.map(p => h('button', {class: 'chip' + ((f.platforms || []).includes(p) ? ' on' : ''), 'aria-pressed': String((f.platforms || []).includes(p)),
       onclick: () => change(() => { const a = f.platforms = f.platforms || []; a.includes(p) ? a.splice(a.indexOf(p), 1) : a.push(p); }, {redraw: true})}, p))),
-    h('div', {class: 'row2'},
+    h('div', {class: 'row3'},
       field('Owner', inp(f.owner, v => change(() => f.owner = v.trim()), {list: 'cs-people', placeholder: 'Who\'s on it'})),
-      field('Due', inp(f.due, v => change(() => f.due = v), {type: 'date'}))),
+      field('Made by', inp(f.due, v => change(() => f.due = v), {type: 'date'})),
+      field('Post date', inp(f.post_date, v => change(() => f.post_date = v), {type: 'date'}))),
     h('datalist', {id: 'cs-people'}, people.map(p => h('option', {value: p}))));
 
   const nRes = d.refs.filter(r => r.group === 'resource').length + (d.res_notes && d.res_notes.trim() ? 1 : 0);
@@ -337,8 +558,9 @@ function drawDrawer() {
     h('header', {class: 'dhead'},
       h('div', {class: 'dtop'}, h('span', {class: 'dstatus'}, OPEN.updated_by ? `Edited by ${OPEN.updated_by}, ${ago(OPEN.updated_at)}` : ''),
         h('button', {class: 'iconbtn', 'aria-label': 'Close', onclick: closeTop}, icon('x'))),
-      title, step,
-      next ? h('button', {class: 'btn primary next', onclick: () => { moveCard(OPEN.id, next.id, Math.min(0, ...CARDS.filter(c => c.stage === next.id).map(c => c.pos)) - 1); drawDrawer(); toast(`Moved to ${next.name}`); }}, `Move to ${next.name} →`) : '',
+      f.slot ? h('span', {class: 'dslot'}, `Season grid · ${f.slot}`) : '',
+      title, step, partsStrip(),
+      next ?h('button', {class: 'btn primary next', onclick: () => { moveCard(OPEN.id, next.id, Math.min(0, ...CARDS.filter(c => c.stage === next.id).map(c => c.pos)) - 1); drawDrawer(); toast(`Moved to ${next.name}`); }}, `Move to ${next.name} →`) : '',
       meta, tabs),
     body,
     h('footer', {class: 'dfoot'},
@@ -515,7 +737,7 @@ function locationChooser() {
 function shootBlock() {
   const sh = OPEN.data.shoot;
   const url = safeUrl(sh.location_url) || (sh.location ? 'https://www.google.com/maps/search/' + encodeURIComponent(sh.location) : '');
-  return h('section', {class: 'blk'}, h('div', {class: 'bh'}, h('h3', {}, 'Shoot plan')),
+  return h('section', {class: 'blk', 'data-blk': 'shoot'}, h('div', {class: 'bh'}, h('h3', {}, 'Shoot plan')),
     locationChooser(),
     h('div', {class: 'row2'},
       field('Chosen location', h('div', {class: 'withbtn'}, inp(sh.location, v => change(() => { sh.location = v; if (sh.locked) { const o = (sh.options || []).find(x => x.id === sh.locked); if (o && o.name !== v) sh.locked = null; } }), {placeholder: 'e.g. Primrose Hill, or at home'}),
@@ -597,11 +819,42 @@ async function upload(files, group = 'quote') {
 function filesBlock() {
   const d = OPEN.data;
   const open = u => safeUrl(u) ? h('a', {class: 'iconbtn', href: safeUrl(u), target: '_blank', rel: 'noopener', 'aria-label': 'Open link', title: 'Open'}, icon('link')) : '';
-  return h('section', {class: 'blk'}, h('div', {class: 'bh'}, h('h3', {}, 'Files and posting')),
-    field('Raw and edited files', h('div', {class: 'withbtn'}, inp(d.files_url, v => change(() => d.files_url = v.trim()), {type: 'url', placeholder: 'Google Drive or Dropbox folder link'}), open(d.files_url)),
+  const toLive = () => { if (OPEN && OPEN.face.posted && OPEN.stage !== 'live') { moveCard(OPEN.id, 'live', Math.min(0, ...CARDS.filter(c => c.stage === 'live').map(c => c.pos)) - 1); drawDrawer(); toast('Posted, so it moved to Live'); } };
+  return h('section', {class: 'blk', 'data-blk': 'files'}, h('div', {class: 'bh'}, h('h3', {}, 'Footage, edit and posting')),
+    field('Raw footage', h('div', {class: 'withbtn'}, inp(d.files_url, v => change(() => d.files_url = v.trim()), {type: 'url', placeholder: 'Google Drive or Dropbox folder link'}), open(d.files_url)),
       'Keep the clips in one shared folder, then link it here.'),
-    field('Post link', h('div', {class: 'withbtn'}, inp(d.post_url, v => change(() => d.post_url = v.trim()), {type: 'url', placeholder: 'Paste once it\'s live'}), open(d.post_url)),
-      'Adding this marks the idea as posted.'));
+    field('Final edit', h('div', {class: 'withbtn'}, inp(d.edit_url, v => change(() => d.edit_url = v.trim()), {type: 'url', placeholder: 'Link to the exported video or images'}), open(d.edit_url)),
+      'The CapCut export, ready for approval.'),
+    field('Post link', h('div', {class: 'withbtn'}, inp(d.post_url, v => change(() => d.post_url = v.trim()), {type: 'url', placeholder: 'Paste once it\'s up', onchange: toLive}), open(d.post_url)),
+      'Adding this marks the piece as posted and moves it to Live.'));
+}
+/* the parts strip at the top of the quick view: tap a part to jump to it; untick parts this piece doesn't need */
+function jumpTo(id) {
+  {
+    const sel = {doc: '.blk.doc', script: '[data-sec="script"],[data-sec="voiceover"],[data-sec="onscreen"]', shots: '[data-sec="shots"]', captions: '[data-sec="captions"]', loc: '[data-blk="shoot"]', raw: '[data-blk="files"]', edit: '[data-blk="files"]', live: '[data-blk="files"]'}[id];
+    if (TAB !== 'plan') { TAB = 'plan'; drawDrawer(); }
+    const el = $(sel, drawerEl) || $('.blk.doc', drawerEl);
+    if (el) { el.scrollIntoView({behavior: 'smooth', block: 'start'}); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1200); }
+  }
+}
+function partsStrip() {
+  const d = OPEN.data; d.skip = d.skip || [];
+  const need = h('details', {class: 'needs'}, h('summary', {}, 'What this piece needs'),
+    h('div', {class: 'needgrid'}, PARTS.map(p => h('label', {}, h('input', {type: 'checkbox', checked: !d.skip.includes(p.id),
+      onchange: e => change(() => { d.skip = e.target.checked ? d.skip.filter(k => k !== p.id) : [...d.skip, p.id]; }, {redraw: true})}), ' ', p.name))));
+  return h('div', {class: 'dparts'}, partChips(OPEN, {jump: jumpTo}), need);
+}
+
+/* cards saved before the parts view: work out their parts once, and move posted ones to Live */
+async function backfill() {
+  for (const c of CARDS.filter(c => !c.archived && (!c.face.parts || (c.face.posted && c.stage === 'ready')))) {
+    try {
+      const full = await api('GET', '/cards/' + c.id); full.data = full.data || {};
+      if (!full.face.parts) { faceFrom(full); await api('PUT', '/cards/' + c.id, {face: full.face, data: full.data, baseVersion: full.version, by: full.updated_by || ME}); }
+      if (full.face.posted && full.stage === 'ready') await api('POST', `/cards/${c.id}/move`, {stage: 'live', pos: c.pos, by: ME});
+    } catch (e) { /* someone else is editing it; it updates on their save */ }
+  }
+  lastList = ''; if (await loadCards().catch(() => false)) render();
 }
 
 /* ---------- identity ---------- */
@@ -628,7 +881,11 @@ function teamSheet(err) {
 async function poll() {
   if (!online || document.hidden || dragging) return;
   try {
-    if (await loadCards() && !layers.some(l => l.el !== drawerEl)) { const f = document.activeElement; if (!f || !f.classList.contains('search')) render(); else drawBoard(); }
+    if (VIEW === 'week') { try { await loadWeeks(); const sig = JSON.stringify(WEEKS); if (sig !== lastWeeks) { lastWeeks = sig; weeksChanged = true; } } catch (e) {} }
+    const changed = await loadCards() || weeksChanged; weeksChanged = false;
+    if (changed && !layers.some(l => l.el !== drawerEl)) { const f = document.activeElement, pane = $('#pane');
+      if (pane && pane.contains(f) && /INPUT|TEXTAREA/.test(f.tagName)) { /* typing in the week: redraw next tick */ }
+      else if (!f || !f.classList.contains('search')) render(); else drawBoard(); }
     if (OPEN && !dirty && !saving && !drawerEl.contains(document.activeElement)) {
       const r = await api('GET', `/cards/${OPEN.id}?v=${OPEN.version}`);
       if (!r.unchanged && OPEN && OPEN.id === r.id) { Object.assign(OPEN, r); drawDrawer(); }
@@ -650,6 +907,7 @@ async function boot() {
     }
   }
   render();
+  if (online) backfill();
   if (!ME) nameSheet(render);
   const open = q.get('idea'); if (open && online) openCard(open);
   setInterval(() => { if (!online) loadCards().then(() => { online = true; render(); }).catch(() => {}); else poll(); }, 4000);

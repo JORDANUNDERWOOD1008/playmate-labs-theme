@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Inter:wght@400;500;600;700&family=Jost:wght@500;600&display=swap">
   {{ 'content-studio.css' | asset_url | stylesheet_tag }}
-  <script>window.CS_CONFIG = {api: 'https://grid-planner-api.playmatelabs.workers.dev'};</script>
+  <script>window.CS_CONFIG = {api: 'https://grid-planner-api.playmatelabs.workers.dev', library: {{ 'grid-planner-library.json' | asset_url | json }}, season: '1s70336i4q', year: 2027};</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js" defer></script>
   <script src="{{ 'content-studio-parse.js' | asset_url }}" defer></script>
   <script src="{{ 'content-studio.js' | asset_url }}" defer></script>
