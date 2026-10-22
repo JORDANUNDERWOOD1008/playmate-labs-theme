@@ -407,12 +407,58 @@ function applyDoc(raw, p) {
   sh.options = [...fresh, ...keep.filter(k => !fresh.some(o => o.id === k.id)).map(k => k.src === 'doc' ? {...k, stale: true} : k)];
   d.doc = {v: 2, raw: raw.length > 100000 ? '' : raw, imported_at: Date.now(), by: ME, sections: p.sections, extra: p.extra, meta: p.meta, warnings: p.warnings, applied: ap};
 }
+/* PDFs: read the concept.md attached by the content-concept PDF export; otherwise rebuild headings from font sizes */
+let pdfLib = null;
+function loadPdfJs() {
+  if (pdfLib) return pdfLib;
+  pdfLib = new Promise((res, rej) => {
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    sc.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; res(window.pdfjsLib); };
+    sc.onerror = () => { pdfLib = null; rej(new Error('pdfjs')); };
+    document.head.append(sc);
+  });
+  return pdfLib;
+}
+async function readPdf(file) {
+  const lib = await loadPdfJs();
+  const pdf = await lib.getDocument({data: new Uint8Array(await file.arrayBuffer())}).promise;
+  const att = await pdf.getAttachments().catch(() => null);
+  const md = att && Object.values(att).find(a => /\.(md|markdown|txt)$/i.test(a.filename || ''));
+  if (md) return {text: new TextDecoder().decode(md.content), exact: true};
+  const lines = [];
+  for (let n = 1; n <= Math.min(pdf.numPages, 40); n++) {
+    const tc = await (await pdf.getPage(n)).getTextContent();
+    const rows = [];
+    for (const it of tc.items) {
+      if (!it.str || !it.str.trim()) { continue; }
+      const y = it.transform[5], size = Math.hypot(it.transform[2], it.transform[3]) || it.height;
+      let r = rows.find(r => Math.abs(r.y - y) < size * 0.5);
+      if (!r) { r = {y, size, parts: []}; rows.push(r); }
+      r.parts.push({x: it.transform[4], w: it.width || 0, s: it.str}); r.size = Math.max(r.size, size);
+    }
+    rows.sort((a, b) => b.y - a.y).forEach(r => lines.push({size: r.size, text: r.parts.sort((a, b) => a.x - b.x).reduce((t, p, i, arr) => { const prev = arr[i - 1];
+      return t + (prev && p.x - (prev.x + prev.w) > r.size * 0.12 && !/\s$/.test(t) && !/^\s/.test(p.s) ? ' ' : '') + p.s; }, '').replace(/\s+/g, ' ').replace(/\s+([,.;:!?)])/g, '$1').trim()}));
+  }
+  const sizes = lines.map(l => l.size).sort((a, b) => a - b), body = sizes[Math.floor(sizes.length / 2)] || 10;
+  const top = Math.max(...sizes);
+  const text = lines.map(l => l.size >= top * 0.95 && l.size > body * 1.6 ? '# ' + l.text : l.size > body * 1.15 && l.text.length < 60 ? '## ' + l.text : l.text).join('\n');
+  return {text: text.replace(/^[☐□]\s*/gm, '- [ ] ').replace(/^[☑☒✓✔]\s*/gm, '- [x] ').replace(/^Upload this PDF to Content Studio.*$/gm, '').replace(/^.*attached inside this PDF as concept\.md\.?$/gm, ''), exact: false};
+}
 function importDoc() {
   const doc = OPEN.data.doc || {};
   const t = h('textarea', {class: 'in', rows: 12, placeholder: 'Paste the full concept doc from Claude here', 'aria-label': 'Concept doc'});
-  const fileIn = h('input', {type: 'file', accept: '.md,.markdown,.txt,text/plain,text/markdown', hidden: true, onchange: async e => {
+  let pdfFile = null;
+  const fileIn = h('input', {type: 'file', accept: '.md,.markdown,.txt,.pdf,text/plain,text/markdown,application/pdf', hidden: true, onchange: async e => {
     const f = e.target.files[0]; e.target.value = ''; if (!f) return;
-    if (/\.docx?$/i.test(f.name)) { toast('Word files can\'t be read here. In Claude, copy the doc and paste it, or download it as Markdown (.md).'); return; }
+    if (/\.docx?$/i.test(f.name)) { toast('Word files can\'t be read here. Save it as a PDF, or copy the doc and paste it.'); return; }
+    if (/\.pdf$/i.test(f.name) || f.type === 'application/pdf') {
+      if (f.size > 15 * 1024 * 1024) { toast('That PDF is over 15 MB. Check it\'s the concept doc.'); return; }
+      toast('Reading the PDF…');
+      try { const r = await readPdf(f); t.value = r.text; pdfFile = f; if (!r.exact) toast('Read the PDF\'s text. Check the sections after it loads.'); }
+      catch (err) { toast('Couldn\'t read that PDF. Copy the text out of it and paste it instead.'); return; }
+      go(); return;
+    }
     if (f.size > 400 * 1024) { toast('That file is too big for one idea. Check it\'s the concept doc.'); return; }
     t.value = await f.text(); go();
   }});
@@ -422,11 +468,12 @@ function importDoc() {
     const p = P.parseDoc(raw);
     closeTop();
     change(() => applyDoc(raw, p), {redraw: true});
+    if (pdfFile && pdfFile.size <= 1400 * 1024) upload([pdfFile], 'resource'); // keep the PDF itself in Resources
     const bits = [`${p.matched} section${p.matched === 1 ? '' : 's'}`, p.options.length ? `${p.options.length} location option${p.options.length > 1 ? 's' : ''}` : ''].filter(Boolean).join(' and ');
     toast(p.matched ? `Doc added: ${bits} found.` : 'Doc added as one block. The headings didn\'t match the concept format.');
   };
   modal(doc.sections && Object.keys(doc.sections).length ? 'Add the new version' : 'Add the concept doc', h('div', {class: 'body'}, t,
-    h('div', {class: 'withbtn'}, h('button', {class: 'btn small ghost', onclick: () => fileIn.click()}, icon('clip'), 'Upload a .md or .txt file'), fileIn),
+    h('div', {class: 'withbtn'}, h('button', {class: 'btn small ghost', onclick: () => fileIn.click()}, icon('clip'), 'Upload a PDF, .md or .txt file'), fileIn),
     h('p', {class: 'hint'}, 'Best results: write it with the content-concept skill in Claude, or start Claude with "Copy the Claude prompt" at the top of the board.')),
     h('footer', {}, h('button', {class: 'btn', onclick: closeTop}, 'Cancel'), h('button', {class: 'btn primary', onclick: go}, 'Add the doc')));
   setTimeout(() => t.focus(), 50);

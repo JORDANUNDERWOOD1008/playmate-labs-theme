@@ -96,7 +96,11 @@ function parseOptions(text) {
   return out.slice(0, 6).map(o => ({...o, notes: o.notes.replace(/\s*·\s*·\s*/g, ' · ').replace(/^\s*·\s*|\s*·\s*$/g, '').slice(0, 400)}));
 }
 function parseKit(text) {
-  return String(text || '').split('\n').map(l => l.match(/^\s*(?:[-*•]|\d+[.)]|\[[ x]\])\s+(.*)$/i)).filter(Boolean).map(m => m[1].replace(/\*\*/g, '').trim()).filter(Boolean);
+  const lines = String(text || '').split('\n');
+  const items = lines.map(l => l.match(/^\s*(?:[-*•]|\d+[.)]|\[[ x]\])\s+(.*)$/i)).filter(Boolean).map(m => m[1].replace(/\*\*/g, '').trim()).filter(Boolean);
+  if (items.length) return items;
+  // text pulled from a PDF loses its bullet marks: treat each short line as an item
+  return lines.map(l => l.replace(/\*\*/g, '').trim()).filter(l => l && l.length < 90);
 }
 function parsePlatforms(s) {
   const out = [];
