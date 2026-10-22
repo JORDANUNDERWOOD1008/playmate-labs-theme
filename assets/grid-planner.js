@@ -53,6 +53,7 @@ const I = {
   undo: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg>',
   link: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg>',
   layers: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>',
+  pin: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.2 2.6l6.2 6.2-1.6 1.1-1.3-.4-3.4 3.4.4 3.9-1.6 1.6-3.8-3.8-5.6 5.6-1.1-1.1 5.6-5.6-3.8-3.8 1.6-1.6 3.9.4 3.4-3.4-.4-1.3z"/></svg>',
   copy: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2h3"/></svg>'
 };
 const icon = (n, cls) => h('span', {class: cls, html: I[n], 'aria-hidden': 'true'});
@@ -113,6 +114,28 @@ let S = fresh(), mode = 'plan', undoStack = [];
 const isEmpty = p => !p.slides.length && !p.cover;
 const coverOf = p => p.cover || p.slides[0] || null;
 const hlCover = x => x.cover || x.items[0] || null;
+/* Pinned posts (up to 3, like Instagram) sit at the front of S.posts, newest pin first.
+   pinFrom remembers where the post was among the unpinned ones, so unpinning puts it back. */
+const PIN_MAX = 3;
+const pinCount = () => S.posts.filter(p => p.pinned).length;
+const normPins = () => { S.posts = [...S.posts.filter(p => p.pinned), ...S.posts.filter(p => !p.pinned)]; };
+function togglePin(id) {
+  const post = S.posts.find(x => x.id === id);
+  if (!post || isEmpty(post)) return;
+  if (!post.pinned && pinCount() >= PIN_MAX) { toast(`You can pin up to ${PIN_MAX} posts. Unpin one first.`); return; }
+  const was = !!post.pinned;
+  commit(() => {
+    const i = S.posts.indexOf(post); S.posts.splice(i, 1);
+    const n = pinCount();
+    if (was) { const back = Math.min(n + (post.pinFrom || 0), S.posts.length); delete post.pinned; delete post.pinFrom; S.posts.splice(back, 0, post); }
+    else { post.pinned = true; post.pinFrom = i - n; S.posts.unshift(post); }
+  });
+  toast(was ? 'Unpinned. It\'s back in its place in the grid.' : 'Pinned to the top of the grid.');
+}
+function insertRow(at) { // three empty slots, so the columns below keep lining up
+  commit(() => S.posts.splice(Math.max(0, Math.min(at, S.posts.length)), 0, emptyPost(), emptyPost(), emptyPost()));
+  toast('Row added');
+}
 const hasContent = P => P && (P.posts.some(p => !isEmpty(p)) || P.highlights.length);
 
 /* ---------- sync: shared views over the API, or this device only ---------- */
@@ -487,7 +510,7 @@ function editPost(id) {
   const body = h('div', {class: 'body'});
   const el = sheet('Post', body,
     h('footer', {},
-      h('button', {class: 'btn danger', onclick: () => { commit(() => Object.assign(p(), emptyPost(), {id})); closeTop(); toast('Slot cleared'); }}, 'Clear'),
+      h('button', {class: 'btn danger', onclick: () => { commit(() => { const q = Object.assign(p(), emptyPost(), {id}); delete q.pinned; delete q.pinFrom; normPins(); }); closeTop(); toast('Slot cleared'); }}, 'Clear'),
       h('button', {class: 'btn danger', onclick: () => { commit(() => S.posts = S.posts.filter(x => x.id !== id)); closeTop(); toast('Slot deleted. The posts after it moved up.'); }}, 'Delete slot'),
       h('button', {class: 'btn', onclick: () => { if (!isEmpty(p())) viewPost(p()); }}, 'Preview'),
       h('button', {class: 'btn primary grow', onclick: closeTop}, 'Done')));
@@ -529,6 +552,13 @@ function editPost(id) {
     sortable(strip, (a, b) => { if (b >= post.slides.length) return draw(); commit(() => move(post.slides, a, b)); draw(); }, {filter: '.add,.x,.act', preventOnFilter: false, draggable: '.it'});
     const cov = coverOf(post), covImg = cov && BYID[cov.img];
     const ensureCover = () => { if (!post.cover && post.slides[0]) post.cover = {...post.slides[0]}; };
+    const idx = S.posts.indexOf(post), rowStart = Math.floor(idx / 3) * 3;
+    body.append(h('div', {}, h('h3', {}, 'Grid'),
+      h('div', {class: 'gridacts'},
+        isEmpty(post) ? '' : h('button', {class: 'btn' + (post.pinned ? ' on' : ''), onclick: () => { togglePin(post.id); draw(); }}, icon('pin'), post.pinned ? 'Unpin' : 'Pin to top'),
+        h('button', {class: 'btn', onclick: () => { insertRow(rowStart); draw(); }}, 'Insert row above'),
+        h('button', {class: 'btn', onclick: () => { insertRow(rowStart + 3); draw(); }}, 'Insert row below')),
+      post.pinned ? h('p', {class: 'hint'}, 'Pinned posts stay at the top of the grid, up to 3.') : ''));
     body.append(h('div', {}, h('h3', {}, 'Grid cover'),
       h('div', {class: 'cover-row'}, media(cov, {w: 240}),
         h('div', {class: 'opts'},
@@ -841,11 +871,35 @@ function tileFor(post, idx, P = S, readOnly = false) {
     return t;
   }
   t.append(media(coverOf(post), {w: 420}));
-  if (post.type === 'carousel' && post.slides.length > 1) t.append(icon('multi', 'badge'));
-  if (post.type === 'reel') t.append(icon('reel', 'badge'));
+  if (post.pinned) t.append(icon('pin', 'badge pin'));
+  else if (post.type === 'carousel' && post.slides.length > 1) t.append(icon('multi', 'badge'));
+  else if (post.type === 'reel') t.append(icon('reel', 'badge'));
   t.append(h('span', {class: 'num'}, String(idx + 1)));
   if (post.caption.trim()) t.append(icon('caption', 'cap'));
   return t;
+}
+let gridRO = null;
+function gridWithInserts() {
+  const g = h('div', {class: 'grid'}, S.posts.map((p, i) => tileFor(p, i)));
+  if (mode !== 'plan') return g;
+  const ins = h('div', {class: 'rowins-layer'});
+  const wrap = h('div', {class: 'gridwrap'}, g, ins);
+  sortable(g, (a, b) => { const moved = S.posts[a]; commit(() => { move(S.posts, a, b); normPins(); });
+    if (S.posts.indexOf(moved) !== b) toast(moved.pinned ? 'Pinned posts stay at the top. Unpin it to move it down.' : 'Pinned posts stay at the top of the grid.'); },
+    {onStart: () => wrap.classList.add('dragging'), onUnchoose: () => wrap.classList.remove('dragging')});
+  const place = () => { // one handle on each line between rows, plus the top edge
+    const tiles = g.children, rows = Math.ceil(tiles.length / 3), gap = rows > 1 ? tiles[3].offsetTop - tiles[0].offsetTop - tiles[0].offsetHeight : 0;
+    ins.replaceChildren();
+    for (let k = 0; k < rows; k++) {
+      const at = k * 3, top = k ? tiles[at].offsetTop - gap / 2 : 0;
+      ins.append(h('button', {class: 'rowins' + (k ? '' : ' first'), style: `top:${top}px`, 'aria-label': k ? `Insert a row above row ${k + 1}` : 'Insert a row at the top',
+        onclick: () => insertRow(k ? at : pinCount())}, h('span', {}, icon('plus'), h('b', {}, 'Insert row'))));
+    }
+  };
+  requestAnimationFrame(place);
+  if (gridRO) gridRO.disconnect();
+  if (window.ResizeObserver) { gridRO = new ResizeObserver(() => place()); gridRO.observe(g); }
+  return wrap;
 }
 function refreshTile(post) {
   const old = app.querySelector(`.tile[data-id="${post.id}"]`);
@@ -884,7 +938,7 @@ function render() {
       h('div', {class: 'profile-btns'}, h('span', {}, 'Edit profile'), h('span', {}, 'Share profile'))),
     hlRow,
     h('div', {class: 'tabs'}, h('span', {class: 'on'}, icon('grid')), h('span', {}, icon('reels')), h('span', {}, icon('tagged'))),
-    (() => { const g = h('div', {class: 'grid'}, S.posts.map((p, i) => tileFor(p, i))); if (mode === 'plan') sortable(g, (a, b) => commit(() => move(S.posts, a, b))); return g; })(),
+    gridWithInserts(),
     h('button', {class: 'addrow', onclick: () => commit(() => S.posts.push(emptyPost(), emptyPost(), emptyPost()))}, '+ Add a row'));
   renderBar(); renderStatus();
 }
@@ -917,7 +971,7 @@ function toggleMenu() {
   const edit = canEdit();
   menuEl = h('div', {class: 'menu'},
     edit ? h('button', {onclick: () => { close(); commit(() => S.ratio = S.ratio === '3/4' ? '1/1' : '3/4'); toast(S.ratio === '3/4' ? 'Grid shows 3:4 tiles (current Instagram)' : 'Grid shows square tiles (old Instagram)'); }}, S.ratio === '3/4' ? 'Show square grid' : 'Show 3:4 grid') : '',
-    edit ? h('button', {onclick: () => { close(); commit(() => S.posts.unshift(emptyPost(), emptyPost(), emptyPost())); }}, 'Add a row at the top') : '',
+    edit ? h('button', {onclick: () => { close(); insertRow(pinCount()); }}, 'Add a row at the top') : '',
     edit ? h('button', {onclick: () => { close(); commit(() => S.posts = S.posts.filter(p => !isEmpty(p))); toast('Empty slots removed'); }}, 'Remove empty slots') : '',
     edit ? h('hr') : '',
     h('button', {onclick: () => { close(); exportPlan(); }}, 'Download plan file'),
