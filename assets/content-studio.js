@@ -389,16 +389,20 @@ async function saveWeek(k, fn) {
   let r = weekRec(k);
   const face = r ? JSON.parse(JSON.stringify(r.face)) : {week: k, steps: {}, mic: '', stories: []};
   fn(face);
+  // show the change straight away, then save it
+  if (r) r.face = face; else { r = {id: null, version: 0, face, archived: false}; WEEKS.push(r); }
+  const typing = () => { const f = document.activeElement; return f && /INPUT|TEXTAREA/.test(f.tagName) && ($('#pane') || document.body).contains(f); };
+  if (VIEW === 'week' && !typing()) drawPane();
   try {
-    if (!r) { const x = await api('POST', '/weeks', {stage: 'open', face, data: {}, by: ME}); WEEKS.push({id: x.id, version: x.version || 1, face, archived: false}); }
+    if (!r.id) { const x = await api('POST', '/weeks', {stage: 'open', face, data: {}, by: ME}); r.id = x.id; r.version = x.version || 1; }
     else {
-      try { const x = await api('PUT', '/weeks/' + r.id, {face, data: {}, baseVersion: r.version, by: ME}); r.version = x.version; r.face = face; }
-      catch (e) { if (e.status !== 409) throw e; await loadWeeks(); r = weekRec(k); const f2 = JSON.parse(JSON.stringify(r.face)); fn(f2);
-        const x = await api('PUT', '/weeks/' + r.id, {face: f2, data: {}, baseVersion: r.version, by: ME}); r.version = x.version; r.face = f2; }
+      try { const x = await api('PUT', '/weeks/' + r.id, {face, data: {}, baseVersion: r.version, by: ME}); r.version = x.version; }
+      catch (e) { if (e.status !== 409) throw e; await loadWeeks(); const r2 = weekRec(k); const f2 = JSON.parse(JSON.stringify(r2.face)); fn(f2);
+        const x = await api('PUT', '/weeks/' + r2.id, {face: f2, data: {}, baseVersion: r2.version, by: ME}); r2.version = x.version; r2.face = f2;
+        if (VIEW === 'week' && !typing()) drawPane(); }
     }
-  } catch (e) { toast('Couldn\'t save that. Check your connection and try again.'); }
+  } catch (e) { toast('Couldn\'t save that. Check your connection and try again.'); await loadWeeks().catch(() => {}); if (VIEW === 'week' && !typing()) drawPane(); }
   weekSaving = false;
-  if (VIEW === 'week' && !($('#pane') || document.body).contains(document.activeElement)) drawPane();
 }
 function defaultWeek() {
   const now = mondayOf(today());
