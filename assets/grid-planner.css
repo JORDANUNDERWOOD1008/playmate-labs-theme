@@ -297,3 +297,7 @@ input.field{width:100%;border:1px solid var(--line);border-radius:8px;padding:10
 .upform .chk{display:flex;gap:8px;align-items:flex-start;margin-top:14px;line-height:1.35}
 .upform .chk input{margin-top:3px;accent-color:var(--accent)}
 .upform .hint{margin-top:12px;min-height:1.2em}
+.tile .tdel{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
+.tile .tdel svg{width:14px;height:14px}
+.tile .tdel:hover,.tile .tdel:focus-visible{background:#d33}
+.sortable-chosen .tdel{display:none}

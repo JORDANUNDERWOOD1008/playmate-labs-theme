@@ -81,7 +81,8 @@ function media(ref, {w = 640, fit = false, cls = '', pan = true} = {}) {
   const crop = h('div', {class: 'crop'});
   if (pan && !fit && (ref.x || ref.y || (ref.z && ref.z !== 1))) crop.style.transform = cropTransform(ref);
   const z = pan && ref.z > 1 ? ref.z : 1;
-  if (img.kind === 'video') crop.append(h('video', {src: img.src + '#t=0.5', muted: true, playsinline: true, preload: 'metadata', loop: true}));
+  if (img.kind === 'video') crop.append(img.poster ? h('video', {src: img.src, poster: img.poster, muted: true, playsinline: true, preload: 'none', loop: true})
+    : h('video', {src: img.src + '#t=0.5', muted: true, playsinline: true, preload: 'metadata', loop: true}));
   else crop.append(h('img', {src: url(img, Math.min(2160, Math.round((half ? w * 2 : w) * z))), alt: img.name, decoding: 'async', draggable: 'false'}));
   box.append(crop);
   return box;
@@ -243,14 +244,19 @@ function usage() {
 
 /* ---------- uploads: images added from a computer go into the shared library (stored by the API) ---------- */
 const upItem = r => ({id: 'u-' + r.id, uid: r.id, name: r.name, cat: r.cat, w: r.w, h: r.h, kind: 'image', src: API + '/img/' + r.id, up: true, by: r.created_by || ''});
+const upVideo = r => ({...upItem(r), id: 'v-' + r.id, kind: 'video', src: API + '/vid/' + r.id, poster: API + '/vposter/' + r.id, vid: true});
 function addUploads(rows) { // rows oldest first; each lands at the top of the library
   let n = 0;
-  for (const r of rows) { const it = upItem(r); if (BYID[it.id]) continue; BYID[it.id] = it; LIB.unshift(it); n++; }
+  for (const r of rows) { const it = r.isVideo ? upVideo(r) : upItem(r); if (BYID[it.id]) continue; BYID[it.id] = it; LIB.unshift(it); n++; }
   return n;
 }
 async function loadUploads() {
   if (!online) return 0;
-  try { return addUploads((await api('GET', '/images')).images.slice().reverse()); } catch (e) { return 0; }
+  try {
+    const d = await api('GET', '/images');
+    const rows = [...d.images, ...(d.videos || []).map(v => ({...v, isVideo: true}))].sort((a, b) => a.created_at - b.created_at);
+    return addUploads(rows);
+  } catch (e) { return 0; }
 }
 let upCheckT = 0;
 async function ensureImages(P) { // a plan can use an image someone else uploaded after this page loaded
@@ -293,21 +299,62 @@ async function uploadOne(p, cat) {
   if (!r.ok) throw new Error(d.error || r.status);
   return d;
 }
+const VID_MAX = 200 * 1024 * 1024;
+const isVideoFile = f => f.type.startsWith('video/') || /\.(mp4|mov|m4v|webm)$/i.test(f.name);
+const videoMime = f => /\.webm$/i.test(f.name) || f.type === 'video/webm' ? 'video/webm' : /\.mov$/i.test(f.name) || f.type === 'video/quicktime' ? 'video/quicktime' : 'video/mp4';
+function videoInfo(file) { // size and a cover frame; fails if this browser can't decode the file
+  return new Promise(res => {
+    const v = document.createElement('video'), u = URL.createObjectURL(file);
+    let done = false; const end = r => { if (done) return; done = true; URL.revokeObjectURL(u); res(r); };
+    v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = u;
+    v.onerror = () => end(null);
+    setTimeout(() => end(null), 20000);
+    v.onloadedmetadata = () => { if (!v.videoWidth) return end(null); v.currentTime = Math.min(0.5, (v.duration || 1) / 2); };
+    v.onseeked = async () => {
+      const k = Math.min(1, 720 / Math.max(v.videoWidth, v.videoHeight)), W = Math.round(v.videoWidth * k), H = Math.round(v.videoHeight * k);
+      const c = document.createElement('canvas'); c.width = W; c.height = H; c.getContext('2d').drawImage(v, 0, 0, W, H);
+      const poster = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.8));
+      end({w: v.videoWidth, h: v.videoHeight, poster});
+    };
+  });
+}
+async function uploadVideo(f, cat, progress) {
+  const info = await videoInfo(f);
+  if (!info) throw new Error('decode');
+  const qs = new URLSearchParams({name: f.name.replace(/\.[^.]+$/, '').slice(0, 60) || 'Video', cat, w: info.w, h: info.h, size: f.size, mime: videoMime(f), by: ME});
+  const hdr = {'X-Team-Key': TEAM};
+  let r = await fetch(`${API}/videos?${qs}`, {method: 'POST', headers: {...hdr, 'Content-Type': 'image/jpeg'}, body: info.poster || new Blob([])});
+  const v = await r.json().catch(() => ({})); if (!r.ok) throw new Error(v.error || r.status);
+  for (let i = 0; i < v.chunks; i++) {
+    const part = f.slice(i * v.chunkSize, (i + 1) * v.chunkSize);
+    for (let t = 0; ; t++) { // a dropped chunk is retried, not the whole video
+      try { r = await fetch(`${API}/videos/${v.id}/chunk/${i}`, {method: 'PUT', headers: {...hdr, 'Content-Type': 'application/octet-stream'}, body: part}); if (r.ok) break; }
+      catch (e) { /* network blip */ }
+      if (t >= 3) throw new Error('chunk');
+      await new Promise(w => setTimeout(w, 1500 * (t + 1)));
+    }
+    progress((i + 1) / v.chunks);
+  }
+  r = await fetch(`${API}/videos/${v.id}/done`, {method: 'POST', headers: hdr});
+  const row = await r.json().catch(() => ({})); if (!r.ok) throw new Error(row.error || r.status);
+  return {...row, isVideo: true};
+}
 function uploadFlow(fileList, onDone) {
-  const files = [...fileList].filter(f => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
-  if (!files.length) { toast('Choose image files (JPG, PNG or WebP).'); return; }
+  const files = [...fileList].filter(f => f.type.startsWith('image/') || isVideoFile(f) || /\.(heic|heif)$/i.test(f.name));
+  if (!files.length) { toast('Choose images (JPG, PNG, WebP) or videos (MP4, MOV).'); return; }
   let cat = 'lifestyle', split = true;
-  const n = files.length, plural = n > 1 ? 's' : '';
+  const n = files.length, plural = n > 1 ? 's' : '', hasImg = files.some(f => !isVideoFile(f)), noun = hasImg ? (files.some(isVideoFile) ? 'file' : 'image') : 'video';
   const catChips = [['lifestyle', 'Lifestyle'], ['product', 'Product']].map(([k, label]) => h('button', {class: 'chip' + (k === cat ? ' on' : ''),
     onclick: e => { cat = k; catChips.forEach(c => c.classList.remove('on')); e.currentTarget.classList.add('on'); }}, label));
   const msg = h('p', {class: 'hint', 'aria-live': 'polite'}, '');
-  const go = h('button', {class: 'btn primary grow', onclick: () => run()}, `Upload ${n} image${plural}`);
+  const go = h('button', {class: 'btn primary grow', onclick: () => run()}, `Upload ${n} ${noun}${plural}`);
   const cancel = h('button', {class: 'btn', onclick: closeTop}, 'Cancel');
-  const el = sheet(`Upload ${n} image${plural}`, h('div', {class: 'body upform'},
+  const el = sheet(`Upload ${n} ${noun}${plural}`, h('div', {class: 'body upform'},
     h('p', {}, 'They go into the shared library, so everyone on the team can use them.'),
     h('p', {class: 'lbl'}, 'Library section'), h('div', {class: 'chips'}, catChips),
-    h('label', {class: 'chk'}, h('input', {type: 'checkbox', checked: true, onchange: e => split = e.target.checked}),
-      h('span', {}, 'Split 3-post banners into 3 grid tiles (left, middle, right)')),
+    hasImg ? h('label', {class: 'chk'}, h('input', {type: 'checkbox', checked: true, onchange: e => split = e.target.checked}),
+      h('span', {}, 'Split 3-post banners into 3 grid tiles (left, middle, right)')) : '',
+    files.some(isVideoFile) ? h('p', {class: 'hint'}, 'Videos upload at full quality, so a big file can take a minute or two. Keep this open until it finishes.') : '',
     msg), h('footer', {}, cancel, go), 'upload');
   openLayer(el);
   async function run() {
@@ -316,30 +363,35 @@ function uploadFlow(fileList, onDone) {
     for (const [i, f] of files.entries()) {
       msg.textContent = `Uploading ${i + 1} of ${n}…`;
       try {
+        if (isVideoFile(f)) {
+          if (f.size > VID_MAX) { failed.push(f.name + ' (over 200 MB: export it smaller)'); continue; }
+          added.push(await uploadVideo(f, cat, x => msg.textContent = `Uploading ${n > 1 ? `${i + 1} of ${n}, ` : ''}${f.name}: ${Math.round(x * 100)}%`));
+          continue;
+        }
         const parts = await prepare(f, split);
         if (!parts) { failed.push(f.name + (/\.(heic|heif)$/i.test(f.name) ? ' (HEIC: save it as JPG first)' : ' (can\'t read this file)')); continue; }
         for (const p of parts) {
           if (!p.blob) { failed.push(p.name + ' (too big)'); continue; }
           added.push(await uploadOne(p, cat));
         }
-      } catch (e) { failed.push(f.name + (e.message === 'too_big' ? ' (too big)' : '')); }
+      } catch (e) { failed.push(f.name + (e.message === 'too_big' ? ' (too big)' : e.message === 'decode' ? ' (this browser can\'t play it: export as MP4)' : '')); }
     }
     addUploads(added);
     closeTop();
-    const ok = added.length ? `Uploaded ${added.length} image${added.length > 1 ? 's' : ''}.` : '';
+    const ok = added.length ? `Uploaded ${added.length} ${added.every(r => r.isVideo) ? 'video' : added.some(r => r.isVideo) ? 'file' : 'image'}${added.length > 1 ? 's' : ''}.` : '';
     toast(failed.length ? `${ok} Couldn't upload ${failed.join(', ')}.`.trim() : ok);
-    const ids = new Set(added.map(r => 'u-' + r.id));
+    const ids = new Set(added.map(r => (r.isVideo ? 'v-' : 'u-') + r.id));
     if (onDone) onDone(LIB.filter(i => ids.has(i.id)).map(i => i.id)); // library order: left tile before right
   }
 }
 async function deleteUpload(img) {
   if (!await askSheet('Delete this upload?', `"${img.name}" is removed from the library for everyone. Any grid that uses it will show a blank tile.`, 'Delete', 'Keep it')) return false;
-  try { await api('DELETE', '/images/' + img.uid); } catch (e) { toast('Couldn\'t delete it. Try again.'); return false; }
+  try { await api('DELETE', (img.vid ? '/videos/' : '/images/') + img.uid); } catch (e) { toast('Couldn\'t delete it. Try again.'); return false; }
   delete BYID[img.id]; LIB = LIB.filter(i => i.id !== img.id); toast('Deleted.'); return true;
 }
 
 /* ---------- picker ---------- */
-function picker({title = 'Choose from library', multi = false, onPick, allowVideo = true, extra = null}) {
+function picker({title = 'Choose from library', multi = false, onPick, allowVideo = true, extra = null, start = 'all'}) {
   let filter = 'all', q = '', chosen = [];
   const used = usage();
   const lib = h('div', {class: 'lib'});
@@ -347,7 +399,7 @@ function picker({title = 'Choose from library', multi = false, onPick, allowVide
   const hasVideo = LIB.some(i => i.kind === 'video');
   const hasUp = online || LIB.some(i => i.up);
   const tabs = [...(extra ? [['extra', extra.label]] : []), ['all', 'All'], ['product', 'Product'], ['lifestyle', 'Lifestyle'], ...(hasUp ? [['uploaded', 'Uploaded']] : []), ['wide', 'Wide (2-slide)'], ...(hasVideo && allowVideo ? [['video', 'Video']] : []), ['unused', 'Not used yet']];
-  if (extra) filter = 'extra';
+  if (extra) filter = 'extra'; else if (tabs.some(t => t[0] === start)) filter = start;
   const chips = tabs.map(([k, label]) => h('button', {class: 'chip' + (k === filter ? ' on' : ''), onclick: e => { filter = k; chips.forEach(c => c.classList.remove('on')); e.currentTarget.classList.add('on'); draw(); }}, label));
   function draw() {
     lib.replaceChildren();
@@ -376,11 +428,12 @@ function picker({title = 'Choose from library', multi = false, onPick, allowVide
   const search = h('input', {type: 'search', placeholder: 'Search by file name', 'aria-label': 'Search images', oninput: e => { q = e.target.value.toLowerCase().trim(); draw(); }});
   const afterUpload = ids => {
     if (!ids.length) return;
+    if (!chips.some(c => c.textContent === 'Uploaded')) { closeTop(); picker({title, multi, onPick, allowVideo, extra, start: 'uploaded'}); return; }
     filter = 'uploaded'; chips.forEach(c => c.classList.toggle('on', c.textContent === 'Uploaded'));
     if (multi) { chosen.push(...ids.filter(id => !chosen.includes(id))); addBtn.disabled = !chosen.length; addBtn.textContent = `Add ${chosen.length}`; }
     draw();
   };
-  const fileIn = h('input', {type: 'file', accept: 'image/*', multiple: true, hidden: true, onchange: e => { uploadFlow(e.target.files, afterUpload); e.target.value = ''; }});
+  const fileIn = h('input', {type: 'file', accept: allowVideo ? 'image/*,video/mp4,video/quicktime,video/webm,.mp4,.mov,.m4v' : 'image/*', multiple: true, hidden: true, onchange: e => { uploadFlow(e.target.files, afterUpload); e.target.value = ''; }});
   const upBtn = online ? h('button', {class: 'btn upbtn', onclick: () => fileIn.click()}, icon('plus'), 'Upload') : '';
   const el = sheet(title, h('div', {class: 'filters'}, search, upBtn, fileIn, chips), null, 'picker');
   if (online) {
@@ -388,7 +441,7 @@ function picker({title = 'Choose from library', multi = false, onPick, allowVide
     sh.addEventListener('dragover', e => { if ([...e.dataTransfer.types].includes('Files')) { e.preventDefault(); sh.classList.add('dropping'); } });
     sh.addEventListener('dragleave', e => { if (!sh.contains(e.relatedTarget)) sh.classList.remove('dropping'); });
     sh.addEventListener('drop', e => { e.preventDefault(); sh.classList.remove('dropping'); if (e.dataTransfer.files.length) uploadFlow(e.dataTransfer.files, afterUpload); });
-    lib.dataset.drop = 'Drop images to upload them';
+    lib.dataset.drop = allowVideo ? 'Drop images or videos to upload them' : 'Drop images to upload them';
   }
   $('.sheet', el).append(lib);
   if (multi) $('.sheet', el).append(h('footer', {}, h('span', {class: 'hint', style: 'flex:1;align-self:center'}, 'Tap in the order you want them.'), addBtn));
@@ -434,7 +487,8 @@ function editPost(id) {
   const body = h('div', {class: 'body'});
   const el = sheet('Post', body,
     h('footer', {},
-      h('button', {class: 'btn danger', onclick: () => { commit(() => Object.assign(p(), emptyPost(), {id})); closeTop(); toast('Slot cleared'); }}, 'Clear slot'),
+      h('button', {class: 'btn danger', onclick: () => { commit(() => Object.assign(p(), emptyPost(), {id})); closeTop(); toast('Slot cleared'); }}, 'Clear'),
+      h('button', {class: 'btn danger', onclick: () => { commit(() => S.posts = S.posts.filter(x => x.id !== id)); closeTop(); toast('Slot deleted. The posts after it moved up.'); }}, 'Delete slot'),
       h('button', {class: 'btn', onclick: () => { if (!isEmpty(p())) viewPost(p()); }}, 'Preview'),
       h('button', {class: 'btn primary grow', onclick: closeTop}, 'Done')));
   const title = $('h2', el);
@@ -459,19 +513,19 @@ function editPost(id) {
         img && isWide(img) && post.type !== 'carousel' ? h('button', {class: 'act', onclick: () => { commit(() => s.part = s.part === 'L' ? 'R' : s.part === 'R' ? 'full' : 'L'); draw(); }}, s.part === 'L' ? 'Show right' : s.part === 'R' ? 'Show whole' : 'Show left') : ''));
     });
     if (post.slides.length < max) strip.append(h('button', {class: 'add', 'aria-label': 'Add media', onclick: () => {
-      picker({title: post.type === 'carousel' ? 'Add slides' : post.type === 'reel' ? 'Choose the video or image' : 'Choose an image', multi: post.type === 'carousel',
+      picker({title: post.type === 'carousel' ? 'Add slides' : post.type === 'reel' ? 'Choose the video or image' : 'Choose an image', multi: post.type === 'carousel', start: post.type === 'reel' ? 'video' : 'all',
         onPick: imgs => {
           commit(() => {
             if (post.type === 'carousel') post.slides.push(...toSlides(imgs));
             else if (post.type === 'single' && isWide(imgs[0]) && imgs[0].kind !== 'video') { post.type = 'carousel'; post.slides = toSlides(imgs); toast('Wide image: made a 2-slide carousel. Switch to Single to use one half.'); }
-            else post.slides = [{img: imgs[0].id, part: 'full'}];
+            else { post.slides = [{img: imgs[0].id, part: 'full'}]; if (imgs[0].kind === 'video' && post.type === 'single') post.type = 'reel'; }
             post.slides = post.slides.slice(0, 20);
           }); draw();
         }});
     }}, icon('plus')));
     body.append(h('div', {}, h('h3', {}, post.type === 'carousel' ? `Slides (${post.slides.length}/20)` : post.type === 'reel' ? 'Video' : 'Image'), strip,
       post.type === 'carousel' && post.slides.length > 1 ? h('p', {class: 'hint'}, 'Drag to reorder. Wide images split into two slides that join up when swiped.') : '',
-      post.type === 'reel' && !LIB.some(i => i.kind === 'video') ? h('p', {class: 'hint'}, 'No videos in the library yet, so pick a still to stand in for the reel.') : ''));
+      post.type === 'reel' && !LIB.some(i => i.kind === 'video') ? h('p', {class: 'hint'}, online ? 'No videos in the library yet. Tap + then Upload to add an MP4 or MOV, or pick a still to stand in.' : 'No videos in the library yet, so pick a still to stand in for the reel.') : ''));
     sortable(strip, (a, b) => { if (b >= post.slides.length) return draw(); commit(() => move(post.slides, a, b)); draw(); }, {filter: '.add,.x,.act', preventOnFilter: false, draggable: '.it'});
     const cov = coverOf(post), covImg = cov && BYID[cov.img];
     const ensureCover = () => { if (!post.cover && post.slides[0]) post.cover = {...post.slides[0]}; };
@@ -661,7 +715,7 @@ function viewPost(post, P = S) {
     editable ? h('div', {class: 'pe'}, h('button', {class: 'btn grow', onclick: () => { closeTop(); editPost(post.id); }}, 'Edit post')) : '');
   const el = h('div', {class: 'shade viewer', role: 'dialog', 'aria-modal': 'true'}, card, h('button', {class: 'close-x', 'aria-label': 'Close', onclick: closeTop}, icon('xl')));
   openLayer(el);
-  track.querySelectorAll('video').forEach(v => { v.muted = true; v.play().catch(() => {}); });
+  track.querySelectorAll('video').forEach(v => { v.muted = true; v.play().catch(() => {}); v.onclick = () => { v.muted = !v.muted; toast(v.muted ? 'Sound off' : 'Sound on'); }; });
 }
 
 /* ---------- views: switch, create, duplicate, compare ---------- */
@@ -780,7 +834,12 @@ function tileFor(post, idx, P = S, readOnly = false) {
     'aria-label': empty ? `Empty slot ${idx + 1}` : `Post ${idx + 1}`,
     onclick: () => (!readOnly && mode === 'plan' && canEdit()) ? editPost(post.id) : viewPost(post, P),
     onkeydown: e => { if (e.key === 'Enter') e.currentTarget.click(); }});
-  if (empty) { t.append(icon('plus')); return t; }
+  if (empty) {
+    t.append(icon('plus'));
+    if (!readOnly && mode === 'plan' && canEdit()) t.append(h('button', {class: 'tdel', 'aria-label': `Delete empty slot ${idx + 1}`, title: 'Delete this slot',
+      onclick: e => { e.stopPropagation(); commit(() => S.posts = S.posts.filter(x => x.id !== post.id)); }}, icon('x')));
+    return t;
+  }
   t.append(media(coverOf(post), {w: 420}));
   if (post.type === 'carousel' && post.slides.length > 1) t.append(icon('multi', 'badge'));
   if (post.type === 'reel') t.append(icon('reel', 'badge'));
