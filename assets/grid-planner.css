@@ -282,3 +282,18 @@ input.field{width:100%;border:1px solid var(--line);border-radius:8px;padding:10
 .story .sh{right:56px}
 .story .sh .when{margin-left:auto;font-weight:400;opacity:.8;font-size:12px}
 .story .frame{touch-action:manipulation;user-select:none}
+
+/* uploads */
+.picker .upbtn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px}
+.picker .sheet.dropping{outline:3px dashed var(--accent);outline-offset:-8px}
+.picker .sheet.dropping .lib::after{content:attr(data-drop);position:absolute;inset:auto 0 40%;text-align:center;font-weight:700;color:var(--accent);pointer-events:none}
+.picker .sheet.dropping .lib{position:relative;opacity:.55}
+.lib .li .del{position:absolute;right:5px;bottom:5px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;display:grid;place-items:center;opacity:0;transition:opacity .15s}
+.lib .li .del svg{width:12px;height:12px}
+.lib .li:hover .del,.lib .li .del:focus-visible{opacity:1}
+@media (hover:none){.lib .li .del{opacity:1}}
+.upform .lbl{font-weight:600;margin:14px 0 6px}
+.upform .chips{display:flex;gap:6px;flex-wrap:wrap}
+.upform .chk{display:flex;gap:8px;align-items:flex-start;margin-top:14px;line-height:1.35}
+.upform .chk input{margin-top:3px;accent-color:var(--accent)}
+.upform .hint{margin-top:12px;min-height:1.2em}

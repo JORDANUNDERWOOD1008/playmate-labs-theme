@@ -62,7 +62,7 @@ let LIB = [], BYID = {};
 const isWide = img => img && img.w / img.h >= 1.25;
 function url(img, w) {
   if (!img) return '';
-  if (img.local || !w) return img.src;
+  if (img.local || img.up || !w) return img.src;
   return img.src + (img.src.includes('?') ? '&' : '?') + 'width=' + w;
 }
 /* ref: {img, part: 'full'|'L'|'R', x, y, z}. x/y shift the image (fraction of its size), z zooms. */
@@ -169,6 +169,7 @@ async function poll() {
     if (!r.unchanged && VIEW && VIEW.id === id && !pending && !saving) {
       Object.assign(VIEW, {version: r.version, name: r.name, updated_at: r.updated_at, updated_by: r.updated_by});
       S = r.plan; render();
+      if (await ensureImages(S)) render();
     }
   } catch (e) {
     if (e.status === 404) { toast('This view was deleted.'); VIEW = null; await pickView(); }
@@ -184,6 +185,7 @@ async function openView(id) {
   undoStack = []; ls.set('gp-view', id);
   mode = canEdit() ? 'plan' : 'preview';
   closeAll(); render();
+  if (await ensureImages(S)) render();
 }
 async function createView(name, plan) {
   const r = await api('POST', '/views', {name, owner: ME, plan, summary: summary(plan)});
@@ -239,6 +241,103 @@ function usage() {
   return u;
 }
 
+/* ---------- uploads: images added from a computer go into the shared library (stored by the API) ---------- */
+const upItem = r => ({id: 'u-' + r.id, uid: r.id, name: r.name, cat: r.cat, w: r.w, h: r.h, kind: 'image', src: API + '/img/' + r.id, up: true, by: r.created_by || ''});
+function addUploads(rows) { // rows oldest first; each lands at the top of the library
+  let n = 0;
+  for (const r of rows) { const it = upItem(r); if (BYID[it.id]) continue; BYID[it.id] = it; LIB.unshift(it); n++; }
+  return n;
+}
+async function loadUploads() {
+  if (!online) return 0;
+  try { return addUploads((await api('GET', '/images')).images.slice().reverse()); } catch (e) { return 0; }
+}
+let upCheckT = 0;
+async function ensureImages(P) { // a plan can use an image someone else uploaded after this page loaded
+  if (!online || !P || Date.now() - upCheckT < 10000) return 0;
+  const ids = [];
+  const add = r => r && r.img && ids.push(r.img);
+  P.posts.forEach(p => { p.slides.forEach(add); add(p.cover); });
+  P.highlights.forEach(x => { x.items.forEach(add); add(x.cover); });
+  add(P.profile && P.profile.avatar);
+  if (!ids.some(i => !BYID[i])) return 0;
+  upCheckT = Date.now(); return loadUploads();
+}
+const isBanner = r => r >= 2.2 && r <= 2.65; // three 4:5 posts side by side is 2.4
+async function toJpeg(bmp, sx, sy, sw, sh, W, H) {
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); g.imageSmoothingQuality = 'high';
+  g.drawImage(bmp, sx, sy, sw, sh, 0, 0, W, H);
+  for (const q of [0.86, 0.76, 0.66]) {
+    const b = await new Promise(res => c.toBlob(res, 'image/jpeg', q));
+    if (b && b.size <= 1300 * 1024) return b;
+  }
+  return null;
+}
+async function prepare(file, split) {
+  let bmp; try { bmp = await createImageBitmap(file, {imageOrientation: 'from-image'}); } catch (e) { return null; }
+  const base = file.name.replace(/\.[^.]+$/, '').slice(0, 60) || 'Upload', r = bmp.width / bmp.height;
+  if (split && isBanner(r)) {
+    const tw = bmp.width / 3, th = Math.round(1080 * bmp.height / tw);
+    // right tile first, so the newest-first library shows them left, middle, right
+    return Promise.all(['right', 'middle', 'left'].map(async pos => { const i = ['left', 'middle', 'right'].indexOf(pos);
+      return {name: `${base} ${i + 1}/3 (${pos})`, w: 1080, h: th, blob: await toJpeg(bmp, i * tw, 0, tw, bmp.height, 1080, th)}; }));
+  }
+  const k = Math.min(1, 1440 / Math.max(bmp.width, bmp.height)), W = Math.round(bmp.width * k), H = Math.round(bmp.height * k);
+  return [{name: base, w: W, h: H, blob: await toJpeg(bmp, 0, 0, bmp.width, bmp.height, W, H)}];
+}
+async function uploadOne(p, cat) {
+  const qs = new URLSearchParams({name: p.name, cat, w: p.w, h: p.h, by: ME});
+  const r = await fetch(`${API}/images?${qs}`, {method: 'POST', headers: {'Content-Type': 'image/jpeg', 'X-Team-Key': TEAM}, body: p.blob});
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || r.status);
+  return d;
+}
+function uploadFlow(fileList, onDone) {
+  const files = [...fileList].filter(f => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
+  if (!files.length) { toast('Choose image files (JPG, PNG or WebP).'); return; }
+  let cat = 'lifestyle', split = true;
+  const n = files.length, plural = n > 1 ? 's' : '';
+  const catChips = [['lifestyle', 'Lifestyle'], ['product', 'Product']].map(([k, label]) => h('button', {class: 'chip' + (k === cat ? ' on' : ''),
+    onclick: e => { cat = k; catChips.forEach(c => c.classList.remove('on')); e.currentTarget.classList.add('on'); }}, label));
+  const msg = h('p', {class: 'hint', 'aria-live': 'polite'}, '');
+  const go = h('button', {class: 'btn primary grow', onclick: () => run()}, `Upload ${n} image${plural}`);
+  const cancel = h('button', {class: 'btn', onclick: closeTop}, 'Cancel');
+  const el = sheet(`Upload ${n} image${plural}`, h('div', {class: 'body upform'},
+    h('p', {}, 'They go into the shared library, so everyone on the team can use them.'),
+    h('p', {class: 'lbl'}, 'Library section'), h('div', {class: 'chips'}, catChips),
+    h('label', {class: 'chk'}, h('input', {type: 'checkbox', checked: true, onchange: e => split = e.target.checked}),
+      h('span', {}, 'Split 3-post banners into 3 grid tiles (left, middle, right)')),
+    msg), h('footer', {}, cancel, go), 'upload');
+  openLayer(el);
+  async function run() {
+    go.disabled = cancel.disabled = true;
+    const added = [], failed = [];
+    for (const [i, f] of files.entries()) {
+      msg.textContent = `Uploading ${i + 1} of ${n}…`;
+      try {
+        const parts = await prepare(f, split);
+        if (!parts) { failed.push(f.name + (/\.(heic|heif)$/i.test(f.name) ? ' (HEIC: save it as JPG first)' : ' (can\'t read this file)')); continue; }
+        for (const p of parts) {
+          if (!p.blob) { failed.push(p.name + ' (too big)'); continue; }
+          added.push(await uploadOne(p, cat));
+        }
+      } catch (e) { failed.push(f.name + (e.message === 'too_big' ? ' (too big)' : '')); }
+    }
+    addUploads(added);
+    closeTop();
+    const ok = added.length ? `Uploaded ${added.length} image${added.length > 1 ? 's' : ''}.` : '';
+    toast(failed.length ? `${ok} Couldn't upload ${failed.join(', ')}.`.trim() : ok);
+    const ids = new Set(added.map(r => 'u-' + r.id));
+    if (onDone) onDone(LIB.filter(i => ids.has(i.id)).map(i => i.id)); // library order: left tile before right
+  }
+}
+async function deleteUpload(img) {
+  if (!await askSheet('Delete this upload?', `"${img.name}" is removed from the library for everyone. Any grid that uses it will show a blank tile.`, 'Delete', 'Keep it')) return false;
+  try { await api('DELETE', '/images/' + img.uid); } catch (e) { toast('Couldn\'t delete it. Try again.'); return false; }
+  delete BYID[img.id]; LIB = LIB.filter(i => i.id !== img.id); toast('Deleted.'); return true;
+}
+
 /* ---------- picker ---------- */
 function picker({title = 'Choose from library', multi = false, onPick, allowVideo = true, extra = null}) {
   let filter = 'all', q = '', chosen = [];
@@ -246,14 +345,15 @@ function picker({title = 'Choose from library', multi = false, onPick, allowVide
   const lib = h('div', {class: 'lib'});
   const addBtn = h('button', {class: 'btn primary grow', disabled: true, onclick: () => { closeTop(); onPick(chosen.map(id => BYID[id])); }}, 'Add');
   const hasVideo = LIB.some(i => i.kind === 'video');
-  const tabs = [...(extra ? [['extra', extra.label]] : []), ['all', 'All'], ['product', 'Product'], ['lifestyle', 'Lifestyle'], ['wide', 'Wide (2-slide)'], ...(hasVideo && allowVideo ? [['video', 'Video']] : []), ['unused', 'Not used yet']];
+  const hasUp = online || LIB.some(i => i.up);
+  const tabs = [...(extra ? [['extra', extra.label]] : []), ['all', 'All'], ['product', 'Product'], ['lifestyle', 'Lifestyle'], ...(hasUp ? [['uploaded', 'Uploaded']] : []), ['wide', 'Wide (2-slide)'], ...(hasVideo && allowVideo ? [['video', 'Video']] : []), ['unused', 'Not used yet']];
   if (extra) filter = 'extra';
   const chips = tabs.map(([k, label]) => h('button', {class: 'chip' + (k === filter ? ' on' : ''), onclick: e => { filter = k; chips.forEach(c => c.classList.remove('on')); e.currentTarget.classList.add('on'); draw(); }}, label));
   function draw() {
     lib.replaceChildren();
     const extraIds = extra ? extra.ids : [];
     const items = (filter === 'extra' ? extraIds.map(id => BYID[id]).filter(Boolean) : LIB).filter(i => (allowVideo || i.kind !== 'video') &&
-      (filter === 'all' || filter === 'extra' || i.cat === filter || (filter === 'wide' && isWide(i)) || (filter === 'video' && i.kind === 'video') || (filter === 'unused' && !used[i.id])) &&
+      (filter === 'all' || filter === 'extra' || i.cat === filter || (filter === 'uploaded' && i.up) || (filter === 'wide' && isWide(i)) || (filter === 'video' && i.kind === 'video') || (filter === 'unused' && !used[i.id])) &&
       (!q || i.name.toLowerCase().includes(q)));
     if (!items.length) lib.append(h('div', {class: 'none'}, 'Nothing matches. Try another filter.'));
     for (const i of items) {
@@ -268,12 +368,28 @@ function picker({title = 'Choose from library', multi = false, onPick, allowVide
         media({img: i.id, part: 'full'}, {w: isWide(i) ? 480 : 260}),
         i.kind === 'video' ? h('span', {class: 'tag'}, 'Video') : isWide(i) ? h('span', {class: 'tag'}, '2 slides') : '',
         used[i.id] ? h('span', {class: 'used'}, `Used ${used[i.id]}×`) : '',
+        i.up && i.by === ME && !used[i.id] ? h('button', {class: 'del', 'aria-label': 'Delete ' + i.name, title: 'Delete upload', onclick: async e => { e.stopPropagation(); if (await deleteUpload(i)) { const k = chosen.indexOf(i.id); if (k >= 0) chosen.splice(k, 1); draw(); } }}, icon('x')) : '',
         multi ? h('span', {class: 'sel'}, n >= 0 ? String(n + 1) : '') : '',
         h('span', {class: 'nm'}, i.name)));
     }
   }
   const search = h('input', {type: 'search', placeholder: 'Search by file name', 'aria-label': 'Search images', oninput: e => { q = e.target.value.toLowerCase().trim(); draw(); }});
-  const el = sheet(title, h('div', {class: 'filters'}, search, chips), null, 'picker');
+  const afterUpload = ids => {
+    if (!ids.length) return;
+    filter = 'uploaded'; chips.forEach(c => c.classList.toggle('on', c.textContent === 'Uploaded'));
+    if (multi) { chosen.push(...ids.filter(id => !chosen.includes(id))); addBtn.disabled = !chosen.length; addBtn.textContent = `Add ${chosen.length}`; }
+    draw();
+  };
+  const fileIn = h('input', {type: 'file', accept: 'image/*', multiple: true, hidden: true, onchange: e => { uploadFlow(e.target.files, afterUpload); e.target.value = ''; }});
+  const upBtn = online ? h('button', {class: 'btn upbtn', onclick: () => fileIn.click()}, icon('plus'), 'Upload') : '';
+  const el = sheet(title, h('div', {class: 'filters'}, search, upBtn, fileIn, chips), null, 'picker');
+  if (online) {
+    const sh = $('.sheet', el);
+    sh.addEventListener('dragover', e => { if ([...e.dataTransfer.types].includes('Files')) { e.preventDefault(); sh.classList.add('dropping'); } });
+    sh.addEventListener('dragleave', e => { if (!sh.contains(e.relatedTarget)) sh.classList.remove('dropping'); });
+    sh.addEventListener('drop', e => { e.preventDefault(); sh.classList.remove('dropping'); if (e.dataTransfer.files.length) uploadFlow(e.dataTransfer.files, afterUpload); });
+    lib.dataset.drop = 'Drop images to upload them';
+  }
   $('.sheet', el).append(lib);
   if (multi) $('.sheet', el).append(h('footer', {}, h('span', {class: 'hint', style: 'flex:1;align-self:center'}, 'Tap in the order you want them.'), addBtn));
   draw(); openLayer(el);
@@ -808,6 +924,7 @@ async function boot() {
     render();
     return;
   }
+  await loadUploads();
   render();
   await new Promise(res => ME ? res() : nameSheet(res));
   // a grid planned on this device before views existed becomes a saved view
