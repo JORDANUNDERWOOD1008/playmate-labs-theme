@@ -46,7 +46,7 @@
     const l = LIBMAP[id]; return l ? l.src + (l.src.includes('?') ? '&' : '?') + 'width=' + w : '';
   }
   function ctx() {
-    return {logos: LOGOS, img: (sec, slot) => { const r = (sec.images || {})[slot]; return r && r.id ? {src: srcOf(r.id), x: r.x, y: r.y, z: r.z} : null; }};
+    return {logos: LOGOS, img: (sec, slot) => { const r = (sec.images || {})[slot]; return r && r.id ? {slot, src: srcOf(r.id), x: r.x, y: r.y, z: r.z} : {slot}; }};
   }
   async function loadLibrary() {
     const out = [];
@@ -91,7 +91,7 @@
     const t = ES.types[sec.type]; if (!t.autoArea || (sec.fields || {}).color !== 'auto') return;
     const ref = (sec.images || {}).photo; if (!ref || !ref.id) return;
     const key = ref.id + '|' + (ref.y ?? 50) + '|' + (ref.z || 1);
-    const apply = L => { const c = L > 0.55 ? '#2C1810' : '#FAF7F2'; if (sec.fields.autoColor !== c) { sec.fields.autoColor = c; change(true); } };
+    const apply = L => { const c = L > 0.55 ? '#2C1810' : '#FAF7F2'; if (sec.fields.autoColor !== c) { sec.fields.autoColor = c; change(sec); } };
     if (lumCache[key] != null) return apply(lumCache[key]);
     const im = new Image(); im.crossOrigin = 'anonymous';
     im.onload = () => {
@@ -131,10 +131,14 @@
     history.replaceState(null, '', '?email=' + id); drawList(); drawStage(); drawSide(); $('#list').classList.remove('open');
   }
   function thumbOf() { const s = OPEN.data.sections.find(x => x.images && Object.values(x.images).some(r => r && r.id)); return s ? Object.values(s.images).find(r => r && r.id).id : ''; }
-  function change(redraw) {
+  function refresh(sec) {
+    const el = document.querySelector(`.sec[data-id="${sec.id}"]`); if (!el) return drawStage();
+    el.innerHTML = ES.render(sec, ctx()); el.prepend(tagFor(sec)); autoColor(sec); fit();
+  }
+  function change(what) {
     if (!OPEN) return; dirty = true; lastEdit = Date.now();
     OPEN.face = {...OPEN.face, thumb: thumbOf()};
-    if (redraw) drawStage();
+    if (what === true) drawStage(); else if (what && what.id) refresh(what);
     $('#saving').textContent = 'Saving…';
     clearTimeout(saveT); saveT = setTimeout(flush, 800);
   }
@@ -163,8 +167,13 @@
 
   /* preview */
   let SORT = null;
+  function tagFor(sec) { return h('span', {class: 'tag', title: 'Drag to move this section'}, '⠿ ' + ES.types[sec.type].label); }
+  function selectSec(id, focus) {
+    SEL = id; document.querySelectorAll('.sec').forEach(x => x.classList.toggle('on', x.dataset.id === SEL)); drawSide(); $('#side').classList.add('open');
+    if (focus) { const s0 = $('#side'); s0.scrollTop = 0; }
+  }
   function drawStage() {
-    const st = $('#stage'); st.innerHTML = '';
+    const st = $('#stage'), keep = st.scrollTop; st.innerHTML = ''; requestAnimationFrame(() => { st.scrollTop = keep; });
     st.append(h('div', {class: 'mobiletabs'}, h('button', {class: 'btn small', onclick: () => $('#list').classList.add('open')}, 'All emails'), OPEN ? h('button', {class: 'btn small', onclick: () => $('#side').classList.add('open')}, 'Edit section') : null));
     if (!OPEN) { st.append(h('div', {class: 'empty'}, h('h2', {text: 'Pick an email to edit'}), h('p', {text: 'Or start a new one from the list. Each email is built from sections you can reorder, swap images in and rewrite.'}))); return; }
     const f = OPEN.face, sel = h('select', {class: 'fi', style: 'width:auto', 'aria-label': 'Status', onchange: e => setStatus(e.target.value)}, STATUS.map(([k, l]) => h('option', {value: k, selected: OPEN.stage === k}, l)));
@@ -176,8 +185,12 @@
     st.append(h('div', {class: 'inbox', id: 'inbox'}));
     const es = h('div', {class: 'es', id: 'es'});
     OPEN.data.sections.forEach(sec => {
-      const d = h('div', {class: 'sec' + (sec.id === SEL ? ' on' : ''), 'data-id': sec.id, tabindex: 0, html: ES.render(sec, ctx()), onclick: () => { SEL = sec.id; document.querySelectorAll('.sec').forEach(x => x.classList.toggle('on', x.dataset.id === SEL)); drawSide(); $('#side').classList.add('open'); }});
-      d.prepend(h('span', {class: 'tag', text: ES.types[sec.type].label}));
+      const d = h('div', {class: 'sec' + (sec.id === SEL ? ' on' : ''), 'data-id': sec.id, tabindex: 0, html: ES.render(sec, ctx()), onclick: e => {
+        const slot = e.target.closest('[data-slot]');
+        if (slot && slot.dataset.slot) { selectSec(sec.id); pickImage(id => { sec.images = sec.images || {}; sec.images[slot.dataset.slot] = {id, x: 50, y: 50, z: 1}; change(sec); drawSide(); }); return; }
+        selectSec(sec.id, true);
+      }});
+      d.prepend(tagFor(sec));
       es.append(d); autoColor(sec);
     });
     if (!OPEN.data.sections.length) es.append(h('div', {class: 'empty', style: 'margin:auto'}, h('p', {text: 'No sections yet. Add the first one.'})));
@@ -185,7 +198,7 @@
     st.append(h('div', {class: 'addbar'}, h('button', {class: 'btn', onclick: addSection}, '+ Add section')));
     drawInbox(); fit();
     if (SORT) SORT.destroy();
-    if (window.Sortable) SORT = Sortable.create(es, {animation: 150, draggable: '.sec', onEnd: () => { const ids = [...es.querySelectorAll('.sec')].map(x => x.dataset.id); OPEN.data.sections.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id)); change(); }});
+    if (window.Sortable) SORT = Sortable.create(es, {animation: 150, draggable: '.sec', handle: '.tag', onEnd: () => { const ids = [...es.querySelectorAll('.sec')].map(x => x.dataset.id); OPEN.data.sections.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id)); change(); }});
   }
   function drawInbox() { const b = $('#inbox'); if (!b || !OPEN) return; b.innerHTML = ''; b.append(h('b', {text: 'Jordan at Playmate'}), (OPEN.face.subject || 'Subject line'), ' ', h('span', {text: '· ' + (OPEN.face.preheader || 'preheader')})); }
   function fit() { const fr = document.querySelector('.frame'), es = $('#es'); if (!fr || !es) return; const k = Math.min(1, fr.clientWidth / 600); es.style.transform = k < 1 ? `scale(${k})` : ''; fr.style.height = k < 1 ? es.offsetHeight * k + 'px' : ''; }
@@ -199,17 +212,26 @@
     const sec = secOf();
     if (!sec) { side.append(h('p', {class: 'hint', text: OPEN ? 'Click a section in the preview to edit it.' : 'Open an email first.'})); return; }
     const t = ES.types[sec.type], f = sec.fields = sec.fields || {};
-    side.append(h('p', {class: 'hint'}, h('b', {text: t.label}), ' · [[words]] highlights, ~~words~~ strikes through'));
-    (t.images || []).forEach(([slot, label]) => side.append(slotEditor(sec, slot, label)));
+    side.append(h('p', {class: 'hint'}, h('b', {text: t.label}), (t.images || []).length ? ' · click any photo in the email to swap it' : ''));
+    if ((t.images || []).length) { side.append(h('span', {class: 'lbl', text: 'Photos'})); (t.images || []).forEach(([slot, label]) => side.append(slotEditor(sec, slot, label))); }
+    side.append(h('details', {class: 'words'}, h('summary', {class: 'lbl', text: 'Words (optional: ask Claude for bigger changes)'}), ...wordFields(sec, t, f)));
+    side.append(actions(sec)); return;
+  }
+  function wordFields(sec, t, f) {
+    const out = [];
     t.fields.forEach(([k, label, kind, opts]) => {
       let input;
-      if (kind === 'select') input = h('select', {class: 'fi', onchange: e => { f[k] = e.target.value; change(true); }}, Object.entries(opts).map(([v, l]) => h('option', {value: v, selected: (f[k] ?? t.defaults[k]) === v}, l)));
-      else if (kind === 'textarea') input = h('textarea', {class: 'fi', rows: Math.min(8, Math.max(2, String(f[k] || '').split('\n').length + 1)), oninput: e => { f[k] = e.target.value; change(true); }}, f[k] || '');
-      else input = h('input', {class: 'fi', type: kind === 'link' ? 'url' : 'text', value: f[k] || '', oninput: e => { f[k] = e.target.value; change(true); }});
-      side.append(h('label', {class: 'fld'}, h('span', {class: 'lbl', text: label}), input));
+      if (kind === 'select') input = h('select', {class: 'fi', onchange: e => { f[k] = e.target.value; change(sec); }}, Object.entries(opts).map(([v, l]) => h('option', {value: v, selected: (f[k] ?? t.defaults[k]) === v}, l)));
+      else if (kind === 'textarea') input = h('textarea', {class: 'fi', rows: Math.min(8, Math.max(2, String(f[k] || '').split('\n').length + 1)), oninput: e => { f[k] = e.target.value; change(sec); }}, f[k] || '');
+      else input = h('input', {class: 'fi', type: kind === 'link' ? 'url' : 'text', value: f[k] || '', oninput: e => { f[k] = e.target.value; change(sec); }});
+      out.push(h('label', {class: 'fld'}, h('span', {class: 'lbl', text: label}), input));
     });
+    return out;
+  }
+  function actions(sec) {
+    const side = {append: x => x};
     const i = OPEN.data.sections.indexOf(sec), move = d => { const a = OPEN.data.sections; a.splice(i, 1); a.splice(i + d, 0, sec); change(true); drawSide(); };
-    side.append(h('div', {class: 'acts'},
+    return (h('div', {class: 'acts'},
       h('button', {class: 'btn small', disabled: i === 0, onclick: () => move(-1)}, 'Move up'),
       h('button', {class: 'btn small', disabled: i === OPEN.data.sections.length - 1, onclick: () => move(1)}, 'Move down'),
       h('button', {class: 'btn small', onclick: () => { const c = JSON.parse(JSON.stringify(sec)); c.id = uid(); OPEN.data.sections.splice(i + 1, 0, c); SEL = c.id; change(true); drawSide(); }}, 'Duplicate'),
@@ -218,10 +240,10 @@
   function slotEditor(sec, slot, label) {
     sec.images = sec.images || {};
     const r = sec.images[slot] || {}, th = h('span', {class: 'th', style: r.id ? `background-image:url("${srcOf(r.id, 200)}")` : ''});
-    const rng = (k, l, min, max, step, def) => h('label', {class: 'rng'}, l, h('input', {type: 'range', min, max, step, value: r[k] ?? def, disabled: !r.id, oninput: e => { sec.images[slot] = {...sec.images[slot], [k]: +e.target.value}; change(true); }}));
+    const rng = (k, l, min, max, step, def) => h('label', {class: 'rng'}, l, h('input', {type: 'range', min, max, step, value: r[k] ?? def, disabled: !r.id, oninput: e => { sec.images[slot] = {...sec.images[slot], [k]: +e.target.value}; change(sec); }}));
     return h('div', {class: 'slot'}, th, h('div', {class: 'ctl'}, h('span', {class: 'lbl', text: label}),
-      h('div', {class: 'acts'}, h('button', {class: 'btn small', onclick: () => pickImage(id => { sec.images[slot] = {id, x: 50, y: 50, z: 1}; change(true); drawSide(); })}, r.id ? 'Replace' : 'Add image'),
-        r.id ? h('button', {class: 'btn small quiet', onclick: () => { delete sec.images[slot]; change(true); drawSide(); }}, 'Remove') : null),
+      h('div', {class: 'acts'}, h('button', {class: 'btn small', onclick: () => pickImage(id => { sec.images[slot] = {id, x: 50, y: 50, z: 1}; change(sec); drawSide(); })}, r.id ? 'Replace' : 'Add image'),
+        r.id ? h('button', {class: 'btn small quiet', onclick: () => { delete sec.images[slot]; change(sec); drawSide(); }}, 'Remove') : null),
       rng('x', 'Across', 0, 100, 1, 50), rng('y', 'Up/down', 0, 100, 1, 50), rng('z', 'Zoom', 1, 2.5, 0.05, 1)));
   }
   function addSection() {

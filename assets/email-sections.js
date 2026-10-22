@@ -11,7 +11,7 @@
   const lines = s => String(s || '').split('\n').map(x => x.trim()).filter(Boolean).map(x => x.split('|').map(y => y.trim()));
   const pill = (t, light) => t ? `<span class="es-pill${light ? ' light' : ''}">${esc(t)}</span>` : '';
   // img(slot) returns {src, x, y, z} or null; the section decides the frame size
-  const pic = (im, cls = '', alt = '') => im && im.src ? `<div class="es-pic ${cls}"><img src="${esc(im.src)}" alt="${esc(alt)}" crossorigin="anonymous" style="object-position:${im.x ?? 50}% ${im.y ?? 50}%;transform:scale(${im.z || 1});transform-origin:${im.x ?? 50}% ${im.y ?? 50}%"></div>` : `<div class="es-pic es-empty ${cls}"><span>Add an image</span></div>`;
+  const pic = (im, cls = '', alt = '') => im && im.src ? `<div class="es-pic ${cls}" data-slot="${esc(im.slot || '')}"><img src="${esc(im.src)}" alt="${esc(alt)}" crossorigin="anonymous" style="object-position:${im.x ?? 50}% ${im.y ?? 50}%;transform:scale(${im.z || 1});transform-origin:${im.x ?? 50}% ${im.y ?? 50}%"></div>` : `<div class="es-pic es-empty ${cls}" data-slot="${esc((im && im.slot) || '')}"><span>Add an image</span></div>`;
   const colorOf = f => f.color && f.color !== 'auto' ? HEX[f.color] : (f.autoColor || C.esp);
   const logoFor = hex => hex === C.ivory ? 'ivory' : hex === C.esp ? 'black' : 'burgundy';
 
