@@ -72,6 +72,7 @@ svg{display:block}
 .tile{position:relative;aspect-ratio:var(--tile);background:var(--soft);overflow:hidden;cursor:pointer}
 .tile.empty{display:grid;place-items:center;color:var(--muted);background:repeating-linear-gradient(135deg,var(--soft) 0 10px,var(--chip) 10px 20px)}
 .preview .tile.empty{background:var(--bg);cursor:default}
+.tile.empty .ebrief{position:absolute;left:6px;right:6px;bottom:6px;font-size:11px;line-height:1.3;color:var(--fg);background:var(--bg);border-radius:6px;padding:5px 6px;text-align:left;display:-webkit-box;-webkit-line-clamp:6;white-space:pre-line;-webkit-box-orient:vertical;overflow:hidden}
 .preview .tile.empty>*{display:none}
 .tile .badge{position:absolute;top:8px;right:8px;color:#fff;filter:drop-shadow(0 0 2px rgba(0,0,0,.6))}
 .tile .num{position:absolute;left:6px;bottom:6px;font-size:11px;font-weight:600;color:#fff;background:rgba(0,0,0,.5);border-radius:10px;padding:1px 7px}

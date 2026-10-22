@@ -870,6 +870,8 @@ function tileFor(post, idx, P = S, readOnly = false) {
     onkeydown: e => { if (e.key === 'Enter') e.currentTarget.click(); }});
   if (empty) {
     t.append(icon('plus'));
+    const brief = post.caption.trim(); // a planned slot: show its brief so the gap reads as a plan
+    if (brief) t.append(h('span', {class: 'ebrief'}, brief.length > 150 ? brief.slice(0, 148) + '…' : brief));
     if (!readOnly && mode === 'plan' && canEdit()) t.append(h('button', {class: 'tdel', 'aria-label': `Delete empty slot ${idx + 1}`, title: 'Delete this slot',
       onclick: e => { e.stopPropagation(); commit(() => S.posts = S.posts.filter(x => x.id !== post.id)); }}, icon('x')));
     return t;
