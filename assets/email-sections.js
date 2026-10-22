@@ -18,16 +18,37 @@
   const T = {
     hero: {label: 'Hero', images: [['photo', 'Photo']],
       fields: [['strike', 'Struck-through line', 'text'], ['headline', 'Headline', 'text'], ['sub', 'Subline ([[bold]] for emphasis)', 'textarea'], ['button', 'Button', 'text'], ['href', 'Button link', 'link'],
-               ['color', 'Text colour', 'select', COLORS], ['shadow', 'Soft shadow behind text', 'select', {no: 'Off', yes: 'On'}], ['height', 'Height', 'select', {tall: 'Tall', short: 'Short'}]],
-      defaults: {strike: 'same old friday', headline: 'play night.', sub: "We're not promising fireworks. Just [[a better reason to put the phone down.]]", button: 'pull a block', href: 'https://playmatelabs.com/products/nude-stacked', color: 'auto', shadow: 'no', height: 'tall'},
+               ['layout', 'Layout', 'select', {overlay: 'Text on the photo', stack: 'Text above the photo'}], ['bg', 'Background (text above)', 'select', {cream: 'Cream', ivory: 'Ivory', blush: 'Blush', burgundy: 'Burgundy'}],
+               ['color', 'Text colour', 'select', COLORS], ['shadow', 'Soft shadow behind text', 'select', {no: 'Off', yes: 'On'}], ['height', 'Photo height', 'select', {tall: 'Tall', short: 'Short'}]],
+      defaults: {strike: 'same old friday', headline: 'play night.', sub: "We're not promising fireworks. Just [[a better reason to put the phone down.]]", button: 'pull a block', href: 'https://playmatelabs.com/products/nude-stacked', layout: 'overlay', bg: 'cream', color: 'auto', shadow: 'no', height: 'tall'},
       autoArea: {top: 0, height: .45}, // where the text sits, for the Auto colour
       render(f, img, x) {
-        const hex = colorOf(f);
-        return `<div class="es-hero ${f.height === 'short' ? 'short' : ''} ${f.shadow === 'yes' ? 'shadow' : ''}" style="--tc:${hex}">${pic(img('photo'), 'fill', f.headline)}
-          <div class="hin"><img class="logo" src="${x.logos[logoFor(hex)]}" alt="playmate?">
+        const stack = f.layout === 'stack';
+        const hex = stack ? (f.color && f.color !== 'auto' ? HEX[f.color] : f.bg === 'burgundy' ? C.ivory : C.esp) : colorOf(f);
+        const text = `<div class="hin"><img class="logo" src="${x.logos[logoFor(hex)]}" alt="playmate?">
           ${f.strike ? `<div class="disp strike">${esc(f.strike)}</div>` : ''}<div class="disp big">${inline(f.headline)}</div>
-          ${f.sub ? `<p class="sub">${inline(f.sub).replace(/<span class="es-hl">(.+?)<\/span>/g, '<b>$1</b>')}</p>` : ''}${pill(f.button, hex === C.ivory)}</div></div>`;
+          ${f.sub ? `<p class="sub">${inline(f.sub).replace(/<span class="es-hl">(.+?)<\/span>/g, '<b>$1</b>')}</p>` : ''}${pill(f.button, hex === C.ivory)}</div>`;
+        if (stack) return `<div class="es-hero stack hbg-${f.bg || 'cream'} ${f.height === 'short' ? 'short' : ''}" style="--tc:${hex}">${text}${pic(img('photo'), 'below', f.headline)}</div>`;
+        return `<div class="es-hero ${f.height === 'short' ? 'short' : ''} ${f.shadow === 'yes' ? 'shadow' : ''}" style="--tc:${hex}">${pic(img('photo'), 'fill', f.headline)}${text}</div>`;
       }, link: f => f.href},
+    strip: {label: 'Top strip', fields: [['text', 'Text', 'text'], ['bg', 'Colour', 'select', {burgundy: 'Burgundy', espresso: 'Espresso', blush: 'Blush'}]],
+      defaults: {text: 'out now · free UK delivery over £49', bg: 'burgundy'},
+      render: f => `<div class="es-strip sbg-${f.bg || 'burgundy'}">${esc(f.text)}</div>`},
+    image: {label: 'Photo', images: [['photo', 'Photo']], fields: [['caption', 'Handwritten caption (optional)', 'text'], ['shape', 'Shape', 'select', {square: 'Square', tall: 'Tall', wide: 'Wide'}], ['href', 'Link (optional)', 'link']],
+      defaults: {caption: '', shape: 'square', href: ''},
+      render: (f, img) => `<div class="es-image shape-${f.shape || 'square'}">${pic(img('photo'), 'full', f.caption || 'photo')}${f.caption ? `<div class="icap">${esc(f.caption)}</div>` : ''}</div>`, link: f => f.href},
+    split: {label: 'Photo + text', images: [['photo', 'Photo']], fields: [['eyebrow', 'Small label', 'text'], ['title', 'Title', 'text'], ['body', 'Text', 'textarea'], ['button', 'Button', 'text'], ['href', 'Link', 'link'], ['side', 'Photo side', 'select', {left: 'Left', right: 'Right'}], ['bg', 'Background', 'select', {cream: 'Cream', white: 'White', blush: 'Blush', burgundy: 'Burgundy'}]],
+      defaults: {eyebrow: 'inside the lab', title: 'good products.\ncloser moments.', body: 'Every object starts as a question about people and ends as something you can hold.', button: 'read our story', href: 'https://playmatelabs.com/pages/about', side: 'left', bg: 'cream'},
+      render: (f, img) => `<div class="es-split bg-${f.bg || 'cream'} ${f.side === 'right' ? 'rev' : ''}">${pic(img('photo'), 'sp', f.title)}<div class="stx"><div class="eyebrow">${esc(f.eyebrow)}</div><h3 class="disp">${inline(f.title)}</h3><p>${inline(f.body)}</p>${pill(f.button, f.bg === 'burgundy')}</div></div>`, link: f => f.href},
+    prompts: {label: 'Prompt cards', fields: [['title', 'Title', 'text'], ['cards', 'Cards, one per line: level | prompt (3)', 'textarea'], ['sub', 'Line under (optional)', 'text']],
+      defaults: {title: 'pull one tonight', cards: 'mild | Tell me the moment you knew you fancied me.\nspicy | Kiss me somewhere you never have before.\nwild | Blindfold on. Your partner picks the next block.', sub: '162 prompts. Every card is optional.'},
+      render(f) {
+        const cs = lines(f.cards).slice(0, 3), rot = [-7, 0, 7], dy = [16, 0, 16];
+        return `<div class="es-prompts"><h2 class="disp">${inline(f.title)}</h2><div class="fan">${cs.map(([l, t], i) => `<div class="pc lv-${esc((l || '').toLowerCase())}" style="transform:translateY(${dy[i]}px) rotate(${rot[i]}deg)"><div class="lv">${esc(l)}</div><p>${esc(t || '')}</p><div class="pm">playmate?</div></div>`).join('')}</div>${f.sub ? `<p class="psub">${inline(f.sub)}</p>` : ''}</div>`;
+      }},
+    stats: {label: 'Numbers', fields: [['title', 'Title (optional)', 'text'], ['items', 'Numbers, one per line: number | label (3)', 'textarea'], ['bg', 'Background', 'select', {cream: 'Cream', blush: 'Blush', burgundy: 'Burgundy'}]],
+      defaults: {title: '', items: '54 | wooden blocks\n162 | prompts, 3 levels\n1 | travel bag + blindfold', bg: 'cream'},
+      render: f => `<div class="es-stats bg-${f.bg || 'cream'}">${f.title ? `<h3 class="disp">${inline(f.title)}</h3>` : ''}<div class="sg">${lines(f.items).slice(0, 3).map(([n, l]) => `<div><b class="disp">${esc(n)}</b><span>${esc(l || '')}</span></div>`).join('')}</div></div>`},
     statement: {label: 'Statement', fields: [['text', 'Text ([[highlight]])', 'textarea'], ['bg', 'Background', 'select', {cream: 'Cream', white: 'White', blush: 'Blush'}]],
       defaults: {text: 'Life-changing is a stretch.\n[[Friday-changing, definitely.]]', bg: 'cream'},
       render: f => `<div class="es-statement bg-${f.bg || 'cream'}"><p>${inline(f.text)}</p></div>`},
@@ -116,9 +137,42 @@
 .es .es-hero .sub{font-size:19px;line-height:1.4;margin:16px auto 24px;max-width:440px}
 .es .es-hero .sub b{font-weight:700}
 .es .es-hero .es-pill{box-shadow:0 4px 0 ${C.esp}}
+.es .es-hero.stack{height:auto;padding-top:46px}
+.es .es-hero.stack .hin{position:relative;top:auto;left:auto;right:auto;padding:0 24px 34px}
+.es .es-hero.stack .below{height:520px}
+.es .es-hero.stack.short .below{height:380px}
+.es .hbg-cream{background:#F5EFE6}.es .hbg-ivory{background:#FAF7F2}.es .hbg-blush{background:#F2DDD8}.es .hbg-burgundy{background:#4A1228}
+.es .es-strip{padding:13px 20px;text-align:center;font-family:Jost,sans-serif;font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase}
+.es .sbg-burgundy{background:#6B1E3A;color:#FAF7F2}.es .sbg-espresso{background:#2C1810;color:#F2DDD8}.es .sbg-blush{background:#E8C4BC;color:#6B1E3A}
+.es .es-image{position:relative}
+.es .es-image .full{width:600px}.es .shape-square .full{height:600px}.es .shape-tall .full{height:750px}.es .shape-wide .full{height:400px}
+.es .es-image .icap{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-family:Caveat,cursive;font-weight:700;font-size:44px;color:#FAF7F2;text-shadow:0 2px 14px rgba(0,0,0,.4)}
+.es .es-split{display:grid;grid-template-columns:270px 1fr;gap:28px;align-items:center;padding:44px 36px}
+.es .es-split.rev{grid-template-columns:1fr 270px}.es .es-split.rev .sp{order:2}
+.es .es-split .sp{width:270px;height:338px;border-radius:20px;border:3px solid #2C1810;box-shadow:7px 7px 0 #6B1E3A}
+.es .es-split h3{font-size:40px;margin:8px 0 12px}
+.es .es-split p{font-size:16px;line-height:1.5;margin-bottom:18px}
+.es .es-split.bg-burgundy{background:#4A1228;color:#FAF7F2}.es .es-split.bg-burgundy .sp{box-shadow:7px 7px 0 #E8C4BC}
+.es .es-prompts{padding:50px 30px 54px;text-align:center;background:#F2DDD8}
+.es .es-prompts h2{font-size:50px;margin-bottom:30px;color:#6B1E3A}
+.es .es-prompts .fan{display:flex;justify-content:center;gap:0;padding:6px 0 24px}
+.es .es-prompts .pc{width:168px;height:246px;background:#FAF7F2;border:3px solid #2C1810;border-radius:16px;padding:16px 14px;display:flex;flex-direction:column;text-align:left;margin:0 -8px;box-shadow:0 10px 18px rgba(44,24,16,.16)}
+.es .es-prompts .fan .pc{margin:0 3px}
+.es .es-prompts .pc:nth-child(2){z-index:2}
+.es .es-prompts .lv{align-self:flex-start;font-family:Jost,sans-serif;font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:#E8C4BC;color:#6B1E3A}
+.es .es-prompts .lv-spicy .lv{background:#6B1E3A;color:#FAF7F2}.es .es-prompts .lv-wild .lv{background:#2C1810;color:#F2DDD8}
+.es .es-prompts .pc p{font-family:Jost,sans-serif;font-weight:700;font-size:18px;line-height:1.2;margin-top:14px;flex:1;color:#2C1810}
+.es .es-prompts .pm{font-family:Jost,sans-serif;font-weight:800;font-size:13px;color:#6B1E3A}
+.es .es-prompts .psub{font-size:16px;margin-top:6px}
+.es .es-stats{padding:40px 36px;text-align:center}
+.es .es-stats h3{font-size:34px;margin-bottom:20px}
+.es .es-stats .sg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.es .es-stats b{display:block;font-size:56px;color:#6B1E3A;line-height:1}
+.es .es-stats span{display:block;font-size:14px;margin-top:6px}
+.es .es-stats.bg-burgundy{background:#6B1E3A;color:#FAF7F2}.es .es-stats.bg-burgundy b{color:#F2DDD8}
 /* statement */
 .es .es-statement{padding:52px 56px 20px;text-align:center}
-.es .es-statement p{font-family:Jost,sans-serif;font-weight:700;font-size:30px;line-height:1.15}
+.es .es-statement p{font-family:Jost,sans-serif;font-weight:700;font-size:30px;line-height:1.3}
 .es .bg-white{background:#fff}.es .bg-blush{background:${C.blush2}}
 /* diagram */
 .es .es-diag{padding:28px 20px 40px}

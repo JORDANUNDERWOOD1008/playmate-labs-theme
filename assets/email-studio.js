@@ -228,6 +228,7 @@
     const box = h('div', {class: 'types'}, Object.entries(ES.types).map(([k, t]) => h('button', {onclick: () => {
       const s = {id: uid(), type: k, fields: ES.defaults(k), images: {}}; const at = SEL ? OPEN.data.sections.findIndex(x => x.id === SEL) + 1 : OPEN.data.sections.length;
       OPEN.data.sections.splice(at, 0, s); SEL = s.id; sh.remove(); change(true); drawSide(); $('#side').classList.add('open');
+      requestAnimationFrame(() => { const el = document.querySelector(`.sec[data-id="${s.id}"]`); if (el) el.scrollIntoView({behavior: 'smooth', block: 'center'}); }); toast(`Added ${t.label}, below the section you had selected.`);
     }}, h('b', {text: t.label}), h('span', {text: (t.images || []).length ? `${t.images.length} image${t.images.length > 1 ? 's' : ''}` : 'text only'}))));
     const sh = sheet('Add a section', box);
   }
