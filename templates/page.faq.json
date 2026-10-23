@@ -98,12 +98,14 @@
           }
         },
         "b15": {
+          "disabled": true,
           "type": "group",
           "settings": {
             "title": "Membership & Rewards"
           }
         },
         "b16": {
+          "disabled": true,
           "type": "question",
           "settings": {
             "q": "How do I earn Playmate Points?",
@@ -111,6 +113,7 @@
           }
         },
         "b17": {
+          "disabled": true,
           "type": "question",
           "settings": {
             "q": "How do I redeem my points?",

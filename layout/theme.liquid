@@ -137,7 +137,7 @@
   {%- comment -%} ══ NOINDEX — non-content utility pages ══ {%- endcomment -%}
   {%- comment -%} current_tags = a blog tag page: thin, duplicate listings of posts that are
   already indexed on their own. ~20 of these were in the index earning 1-13 impressions each. {%- endcomment -%}
-  {%- if template == '404' or template == 'cart' or request.path contains '/policies/' or current_tags or template.suffix == 'wholesale' -%}
+  {%- if template == '404' or template == 'cart' or request.path contains '/policies/' or current_tags or template.suffix == 'wholesale' or template.suffix == 'stockist-login' -%}
     <meta name="robots" content="noindex, follow">
   {%- endif -%}
 
