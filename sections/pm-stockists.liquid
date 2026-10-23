@@ -31,6 +31,7 @@
           <p class="font-hand -rotate-2 text-2xl text-primary">{{ s.done }}</p>
           <p class="font-heavy mt-4 text-xl font-bold text-primary">Awaiting approval</p>
           <p class="mt-3 text-sm font-light leading-relaxed text-muted-foreground">{{ s.done_sub }}</p>
+          <p class="mt-3 text-sm font-light leading-relaxed text-muted-foreground">{{ s.done_note }}</p>
         {%- else -%}
           {%- if form.errors -%}<p role="alert" class="text-sm text-primary">{{ form.errors | default_errors }}</p>{%- endif -%}
           <input type="hidden" name="contact[tags]" value="stockist-application">
@@ -44,7 +45,7 @@
         {%- endif -%}
       {%- endform -%}
       <div class="mt-4 flex flex-wrap items-center gap-3 text-sm">
-        <a href="/pages/wholesale" class="underline underline-offset-4">{% if customer.tags contains 'stockist' %}Wholesale account{% else %}Stockist sign in{% endif %}</a>
+        {% if customer.tags contains 'stockist' %}<a href="/pages/wholesale" class="underline underline-offset-4">Wholesale account</a>{% else %}<a href="/pages/stockist-login" class="underline underline-offset-4">Stockist sign in</a>{% endif %}
       </div>
     </div>
   </div>
@@ -58,7 +59,8 @@
     { "type": "textarea", "id": "sub", "label": "Line", "default": "Bring our date-night games and chocolate to your shop. We work with independent boutiques, gift shops, concept stores and hotels across the UK." },
     { "type": "textarea", "id": "steps", "label": "How it works, one per line", "default": "Send us your business details.\nWait for approval and your account invitation.\nCreate your password, then browse your wholesale prices." },
     { "type": "text", "id": "done", "label": "After applying", "default": "you're on our list." },
-    { "type": "text", "id": "done_sub", "label": "After applying, line", "default": "Thank you for applying. We'll review your business details. If approved, you'll receive an email invitation to create your password and enter the wholesale shop." }
+    { "type": "text", "id": "done_sub", "label": "After applying, line 2", "default": "Thank you for applying. We'll review your business details. If approved, you'll receive an email invitation to create your password and enter the wholesale shop." },
+    { "type": "text", "id": "done_note", "label": "After applying, line 3", "default": "No account to create yet. Wholesale access stays private until we approve your application." }
   ],
   "blocks": [{ "type": "perk", "name": "Perk", "settings": [{ "type": "text", "id": "t", "label": "Title" }, { "type": "text", "id": "b", "label": "Line" }] }],
   "presets": [{ "name": "Become a stockist" }]

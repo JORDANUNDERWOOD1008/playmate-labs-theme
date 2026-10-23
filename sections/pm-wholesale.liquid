@@ -18,7 +18,7 @@
     <h1 class="font-heavy mt-4 text-4xl font-black leading-tight text-primary md:text-6xl">{{ s.out_title }}</h1>
     <div class="mt-8">
       <p class="max-w-xl text-muted-foreground">{{ s.out_text }}</p>
-      <a href="{{ login }}" class="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-primary px-8 text-[11px] font-bold uppercase tracking-[0.25em] text-primary-foreground">Sign in</a>
+      <a href="/pages/stockist-login" class="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-primary px-8 text-[11px] font-bold uppercase tracking-[0.25em] text-primary-foreground">Sign in</a>
       <a href="/pages/stockists" class="ml-4 mt-6 inline-block underline underline-offset-4">Apply to become a stockist</a>
     </div>
   {%- elsif customer.tags contains 'stockist' -%}
