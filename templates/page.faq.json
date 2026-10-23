@@ -53,21 +53,7 @@
         "b6": {
           "type": "group",
           "settings": {
-            "title": "Products & Drops"
-          }
-        },
-        "b7": {
-          "type": "question",
-          "settings": {
-            "q": "What is a Monthly Drop?",
-            "a": "Each month we curate a limited-edition sensory kit for couples. Each drop is themed, limited in quantity and ships once per month. Once it's gone, it's gone."
-          }
-        },
-        "b8": {
-          "type": "question",
-          "settings": {
-            "q": "How do I get early access to drops?",
-            "a": "Subscribe to our newsletter or join the Playmate Community to receive early access notifications before each drop goes public."
+            "title": "Products"
           }
         },
         "b9": {
@@ -81,7 +67,7 @@
           "type": "question",
           "settings": {
             "q": "What's the difference between the experience and the kit?",
-            "a": "The 5-Day Sensory Experience is our free digital programme delivered by email. The monthly drop kits are physical products: premium sensory items delivered to your door."
+            "a": "The 5-Day Sensory Experience is our free digital programme delivered by email. Our games and chocolate are physical products, delivered to your door."
           }
         },
         "b11": {
@@ -121,7 +107,7 @@
           "type": "question",
           "settings": {
             "q": "How do I earn Playmate Points?",
-            "a": "Earn 1 point per £1 spent, 50 points for writing a review, 200 points for referring a friend, 25 points for following us on social media, and 100 points when you subscribe to monthly drops."
+            "a": "Earn 1 point per £1 spent, 50 points for writing a review, 200 points for referring a friend and 25 points for following us on social media."
           }
         },
         "b17": {
@@ -141,14 +127,14 @@
           "type": "question",
           "settings": {
             "q": "What is your returns policy?",
-            "a": "We offer 30-day returns on unopened, unused items in original packaging."
+            "a": "We offer a 30-day satisfaction guarantee. You have 30 days from delivery to ask for a return or refund. Sale items and gift cards can't be returned."
           }
         },
         "b20": {
           "type": "question",
           "settings": {
             "q": "How do I start a return?",
-            "a": "Email us at info@playmatelabs.com with your order number and reason for return. We will send you a return label within 24 hours."
+            "a": "Email us at info@playmatelabs.com with your order number and reason for return. We will reply with the return address and next steps."
           }
         },
         "old21": {
@@ -196,8 +182,6 @@
         "old21",
         "old22",
         "b6",
-        "b7",
-        "b8",
         "b9",
         "old23",
         "old24",

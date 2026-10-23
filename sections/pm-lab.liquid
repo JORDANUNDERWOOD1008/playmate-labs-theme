@@ -1,7 +1,7 @@
 <section class="mx-auto max-w-3xl px-5 pt-16 md:px-6 md:pt-24 text-center">
   <p class="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">{{ section.settings.label }}</p>
   <h2 class="font-heavy mt-2 text-4xl font-black leading-tight tracking-tight text-primary md:text-5xl">{{ section.settings.heading | newline_to_br }}</h2>
-  <p class="mt-4 font-light text-muted-foreground">{{ section.settings.sub }}</p>
+  {%- if section.settings.sub != blank -%}<p class="mt-4 font-light text-muted-foreground">{{ section.settings.sub }}</p>{%- endif -%}
   <a href="{{ section.settings.link_url | default: '/pages/about' }}" class="mt-6 inline-block border-b-2 border-primary pb-1 text-xs font-bold uppercase tracking-[0.25em] text-primary">{{ section.settings.link }}</a>
 </section>
 {% schema %}

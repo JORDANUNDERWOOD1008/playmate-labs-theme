@@ -150,6 +150,7 @@
     },
     "loved": {
       "type": "pm-loved",
+      "disabled": true,
       "blocks": {
         "b1": {
           "type": "quote",
@@ -253,7 +254,7 @@
       "settings": {
         "label": "Inside the lab",
         "heading": "good products.\ncloser moments.",
-        "sub": "25,000+ happy couples and counting.",
+        "sub": "",
         "link": "Our story",
         "link_url": ""
       }
@@ -286,7 +287,7 @@
           "type": "qa",
           "settings": {
             "q": "What is your returns policy?",
-            "a": "We offer 30-day returns on unopened, unused items in original packaging. Consumable food items and personalised products cannot be returned for hygiene reasons."
+            "a": "We offer a 30-day satisfaction guarantee. You have 30 days from delivery to ask for a return or refund. Sale items and gift cards can't be returned."
           }
         }
       },

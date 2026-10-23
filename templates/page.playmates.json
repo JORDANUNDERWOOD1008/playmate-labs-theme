@@ -30,7 +30,7 @@
           "settings": {
             "id": "sweet",
             "q": "Pick your chocolate.",
-            "why": "For flavour picks and new choc drops.",
+            "why": "For flavour picks and new chocolate.",
             "kind": "one",
             "opts": "Milk, Dark, White, Surprise me"
           }
