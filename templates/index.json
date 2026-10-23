@@ -12,7 +12,7 @@
     "hero": {
       "type": "pm-hero",
       "settings": {
-        "image": "shopify://shop_images/adaa7c05-1356-413f-b7f2-6f8109fdd286.png",
+        "image": "shopify://shop_images/gp-l-sexy-is-a-feelingartboard-17-5757.jpg",
         "image_alt": "Two hands sharing a chocolate heart beside the Nude Stack'd game",
         "photo_note": "psst. friday?",
         "note": "come over.",
@@ -89,13 +89,16 @@
         "card1": {
           "type": "card",
           "settings": {
-            "product": "nude-stacked"
+            "product": "nude-stacked",
+            "rollover": "shopify://shop_images/adaa7c05-1356-413f-b7f2-6f8109fdd286_e90ce945-dd9b-4358-a315-ffceee96ab63.png"
           }
         },
         "card2": {
           "type": "card",
           "settings": {
-            "product": "playmate-chocolate"
+            "product": "playmate-chocolate",
+            "cover": "shopify://shop_images/f4ecd822-d331-4c1f-a5a2-2f4f2a5b3278.png",
+            "rollover": "shopify://shop_images/gp-p-47220efa-55d0-4eb6-8690-7c2746cf9fe5-cae7.jpg"
           }
         },
         "card3": {
