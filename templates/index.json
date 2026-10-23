@@ -1,15 +1,32 @@
 /*
- * Cinematic theme template (built 23 Oct 2026 from the Lovable design). Edit in the theme editor.
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
  */
 {
   "sections": {
     "hero": {
       "type": "pm-hero",
-      "settings": {}
+      "settings": {
+        "image": "shopify://shop_images/gp-l-sexy-is-a-feelingartboard-17-5757.jpg",
+        "image_alt": "Two hands sharing a chocolate heart beside the Nude Stack'd game",
+        "photo_note": "psst. friday?",
+        "note": "come over.",
+        "heading": "rewrite\ndate night.",
+        "after": "(it's about time.)",
+        "button": "Shop all",
+        "button_link": "",
+        "link": "Our story",
+        "link_url": "",
+        "descriptor": "Playmate Labs is a UK date-night brand for couples."
+      }
     },
     "press": {
       "type": "pm-press",
-      "settings": {},
       "blocks": {
         "b1": {
           "type": "logo",
@@ -61,17 +78,22 @@
         "b4",
         "b5",
         "b6"
-      ]
+      ],
+      "settings": {
+        "label": "As seen in"
+      }
     },
     "featured": {
       "type": "pm-featured",
       "settings": {
-        "collection": "frontpage"
+        "heading": "made for two.",
+        "link": "View all",
+        "collection": "frontpage",
+        "limit": 3
       }
     },
     "range": {
       "type": "pm-range",
-      "settings": {},
       "blocks": {
         "b1": {
           "type": "row",
@@ -93,11 +115,13 @@
       "block_order": [
         "b1",
         "b2"
-      ]
+      ],
+      "settings": {
+        "label": "The range"
+      }
     },
     "loved": {
       "type": "pm-loved",
-      "settings": {},
       "blocks": {
         "b1": {
           "type": "quote",
@@ -128,17 +152,23 @@
         "b1",
         "b2",
         "b3"
-      ]
+      ],
+      "settings": {
+        "heading": "loved by two.",
+        "rating": "★★★★★ 5.0"
+      }
     },
     "pull_one": {
       "type": "pm-pull-one",
       "settings": {
+        "note": "your move.",
+        "heading": "pull one.",
+        "sub": "Tap a block. Don't let it fall.",
         "product": "nude-stacked"
       }
     },
     "we_see_you": {
       "type": "pm-we-see-you",
-      "settings": {},
       "blocks": {
         "b1": {
           "type": "card",
@@ -169,19 +199,39 @@
         "b1",
         "b2",
         "b3"
-      ]
+      ],
+      "settings": {
+        "note": "come as you are.",
+        "heading": "we see you.",
+        "intro": "Connection is hard. It takes time, nerve and a little practice, and nobody hands you a manual. Wherever you're starting from, you're in good company.",
+        "outro": "Real connection grows from feeling safe and at ease. That's where we start: small, easy invitations to get closer, to someone else or to yourself.",
+        "link": "Start the free 5-day experience"
+      }
     },
     "five_day": {
       "type": "pm-five-day-signup",
-      "settings": {}
+      "settings": {
+        "note": "a little something for you.",
+        "heading": "the 5-day experience.",
+        "sub": "It's free. It's for you.",
+        "button": "I'm in.",
+        "done": "you're in.",
+        "done_sub": "Day 1: Curiosity arrives in your inbox tomorrow morning.",
+        "small": "No spam. Unsubscribe anytime."
+      }
     },
     "lab": {
       "type": "pm-lab",
-      "settings": {}
+      "settings": {
+        "label": "Inside the lab",
+        "heading": "good products.\ncloser moments.",
+        "sub": "25,000+ happy couples and counting.",
+        "link": "Our story",
+        "link_url": ""
+      }
     },
     "faq": {
       "type": "pm-faq-teaser",
-      "settings": {},
       "blocks": {
         "b1": {
           "type": "qa",
@@ -217,11 +267,16 @@
         "b2",
         "b3",
         "b4"
-      ]
+      ],
+      "settings": {
+        "note": "ask us anything.",
+        "heading": "questions.",
+        "link": "See all FAQs",
+        "link_url": ""
+      }
     },
     "postcard": {
       "type": "pm-postcard",
-      "settings": {},
       "blocks": {
         "b1": {
           "type": "note",
@@ -246,7 +301,13 @@
         "b1",
         "b2",
         "b3"
-      ]
+      ],
+      "settings": {
+        "note": "Turn it over.",
+        "front": "for the curious.",
+        "signoff": "with love, the lab x",
+        "start": "2026-10-19"
+      }
     }
   },
   "order": [
