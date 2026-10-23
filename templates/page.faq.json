@@ -132,14 +132,49 @@
           "type": "question",
           "settings": {
             "q": "What is your returns policy?",
-            "a": "We offer 30-day returns on unopened, unused items in original packaging. Consumable food items and personalised products cannot be returned for hygiene reasons."
+            "a": "We offer 30-day returns on unopened, unused items in original packaging."
           }
         },
         "b20": {
           "type": "question",
           "settings": {
             "q": "How do I start a return?",
-            "a": "Email us at hello@playmate-labs.com with your order number and reason for return. We will send you a return label within 24 hours."
+            "a": "Email us at info@playmatelabs.com with your order number and reason for return. We will send you a return label within 24 hours."
+          }
+        },
+        "old21": {
+          "type": "question",
+          "settings": {
+            "q": "Is the packaging discreet?",
+            "a": "Yes. Plain outer box, no branding, no product names on the label. It arrives looking like any other parcel, and your statement shows Playmate Labs."
+          }
+        },
+        "old22": {
+          "type": "question",
+          "settings": {
+            "q": "Do you supply retailers?",
+            "a": "We do. Playmate Labs is stocked by independent retailers across the UK. For trade pricing and lead times, get in touch through the wholesale enquiries form."
+          }
+        },
+        "old23": {
+          "type": "question",
+          "settings": {
+            "q": "What is actually in the chocolate?",
+            "a": "Colombian milk chocolate (41% cocoa solids) with Liboost® Damiana, zinc, B6 and selenium. Every batch is made in the UK by artisan chocolatiers. Full ingredient and allergen information is on each product page."
+          }
+        },
+        "old24": {
+          "type": "question",
+          "settings": {
+            "q": "Allergens?",
+            "a": "Our chocolate contains milk and soya, and is produced in a kitchen that handles nuts. If you have a severe allergy, check the full declaration on the product page before ordering."
+          }
+        },
+        "old25": {
+          "type": "question",
+          "settings": {
+            "q": "How many servings in a box?",
+            "a": "Each box holds enough for one evening for two. Most couples order two or three boxes at a time, which is why the multi-box options are priced the way they are."
           }
         }
       },
@@ -149,10 +184,15 @@
         "b3",
         "b4",
         "b5",
+        "old21",
+        "old22",
         "b6",
         "b7",
         "b8",
         "b9",
+        "old23",
+        "old24",
+        "old25",
         "b10",
         "b11",
         "b12",

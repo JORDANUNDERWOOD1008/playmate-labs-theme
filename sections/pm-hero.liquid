@@ -16,6 +16,7 @@
       <a href="{{ section.settings.button_link | default: routes.all_products_collection_url }}" class="rounded-full bg-primary px-8 py-4 md:px-10 text-xs font-bold uppercase tracking-[0.25em] text-primary-foreground">{{ section.settings.button }}</a>
       <a href="{{ section.settings.link_url | default: '/pages/about' }}" class="border-b-2 border-primary pb-1 text-xs font-bold uppercase tracking-[0.25em] text-primary">{{ section.settings.link }}</a>
     </div>
+    {%- if section.settings.descriptor != blank -%}<p class="mt-8 max-w-sm text-xs font-light leading-relaxed text-muted-foreground">{{ section.settings.descriptor }}</p>{%- endif -%}
   </div>
 </section>
 {% schema %}
@@ -31,7 +32,8 @@
     { "type": "text", "id": "button", "label": "Button", "default": "Shop all" },
     { "type": "url", "id": "button_link", "label": "Button link" },
     { "type": "text", "id": "link", "label": "Text link", "default": "Our story" },
-    { "type": "url", "id": "link_url", "label": "Text link URL" }
+    { "type": "url", "id": "link_url", "label": "Text link URL" },
+    { "type": "text", "id": "descriptor", "label": "Small line under the buttons", "default": "Playmate Labs is a UK date-night brand for couples.", "info": "Tells Google and AI assistants what we are. Keep it plain." }
   ],
   "presets": [{ "name": "Hero (cinematic)" }]
 }

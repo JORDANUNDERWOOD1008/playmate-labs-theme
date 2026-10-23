@@ -8,8 +8,7 @@
     endfor
   endif
   if nav == blank
-    assign journal = routes.blogs_url | append: '/the-playmate-journal'
-    assign nav = routes.all_products_collection_url | append: '|Shop all^/pages/about|About us^' | append: journal | append: '|Journal^/pages/contact|Contact^'
+    assign nav = routes.all_products_collection_url | append: '|Shop all^/pages/about|About us^/blogs/the-playmate-journal|Journal^/pages/contact|Contact^'
   endif
   assign nav = nav | split: '^'
 -%}
