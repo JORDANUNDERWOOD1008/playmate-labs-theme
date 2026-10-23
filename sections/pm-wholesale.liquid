@@ -11,7 +11,6 @@
     the order is then invoiced as a draft order.
 {%- endcomment -%}
 {%- assign s = section.settings -%}
-{%- assign login = routes.account_login_url | append: '?return_url=' | append: request.path | append: '&return_to=' | append: request.path -%}
 <div class="mx-auto max-w-5xl px-5 py-10 md:py-16" data-wholesale>
   {% render 'pm-note', text: s.note, class: 'text-lg -rotate-2' %}
   {%- if customer == nil -%}
