@@ -5,10 +5,24 @@
     <a href="{{ routes.all_products_collection_url }}" class="text-xs font-bold uppercase tracking-[0.25em] text-primary underline underline-offset-8">{{ section.settings.link }}</a>
   </div>
   <div class="no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:px-0 lg:grid-cols-3">
-    {%- for p in c.products limit: section.settings.limit -%}
-      {%- assign cover_img = nil -%}{%- assign hover_img = nil -%}
-      {%- for block in section.blocks -%}{%- if block.settings.product.id == p.id -%}{%- assign cover_img = block.settings.cover -%}{%- assign hover_img = block.settings.rollover -%}{%- endif -%}{%- endfor -%}
-      <div class="w-[72%] shrink-0 snap-start md:w-auto">{% render 'pm-product-card', p: p, cover_img: cover_img, hover_img: hover_img %}</div>
+    {%- comment -%} Order: products in the Card photos blocks first (drag them to reorder), then the rest of the collection. {%- endcomment -%}
+    {%- assign shown = 0 -%}{%- assign used = ',' -%}
+    {%- for block in section.blocks -%}
+      {%- assign p = block.settings.product -%}
+      {%- if p != blank and p.available != nil and shown < section.settings.limit -%}
+        {%- assign key = ',' | append: p.id | append: ',' -%}
+        {%- unless used contains key -%}
+          <div class="w-[72%] shrink-0 snap-start md:w-auto" {{ block.shopify_attributes }}>{% render 'pm-product-card', p: p, cover_img: block.settings.cover, hover_img: block.settings.rollover %}</div>
+          {%- assign used = used | append: p.id | append: ',' -%}{%- assign shown = shown | plus: 1 -%}
+        {%- endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- for p in c.products -%}
+      {%- assign key = ',' | append: p.id | append: ',' -%}
+      {%- if shown < section.settings.limit -%}{%- unless used contains key -%}
+        <div class="w-[72%] shrink-0 snap-start md:w-auto">{% render 'pm-product-card', p: p %}</div>
+        {%- assign used = used | append: p.id | append: ',' -%}{%- assign shown = shown | plus: 1 -%}
+      {%- endunless -%}{%- endif -%}
     {%- endfor -%}
   </div>
 </section>
@@ -22,7 +36,7 @@
     { "type": "range", "id": "limit", "label": "How many", "min": 2, "max": 9, "step": 1, "default": 3 }
   ],
   "blocks": [{ "type": "card", "name": "Card photos", "settings": [
-    { "type": "product", "id": "product", "label": "Product" },
+    { "type": "product", "id": "product", "label": "Product", "info": "Cards show in the order of these blocks. Drag to reorder." },
     { "type": "image_picker", "id": "cover", "label": "Main photo", "info": "Empty = the default photo." },
     { "type": "image_picker", "id": "rollover", "label": "Rollover photo", "info": "Shown when someone hovers over the card. Empty = the default." }
   ]}],
