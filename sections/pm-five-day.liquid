@@ -1,0 +1,167 @@
+{%- comment -%}
+  The 5 Day Experience page: pick who it's for (for me / just met / with someone), then that
+  version's days and the sign-up. All three versions are in the HTML; cinematic.js shows one.
+  Day and date-idea blocks are tagged with their version. Sign-ups go to the 5-Day list in
+  Klaviyo with five_day_mode set to solo, met or duo.
+{%- endcomment -%}
+{%- assign s = section.settings -%}
+{%- assign modes = 'solo,met,duo' | split: ',' -%}
+{%- capture toggle -%}
+  <div role="radiogroup" aria-label="Who it's for" class="mt-6 inline-flex self-center rounded-full border border-border p-1">
+    {%- for k in modes -%}{%- liquid
+      assign k_label = k | append: '_label'
+      assign k_h = k | append: '_h'
+      assign k_pick = k | append: '_pick'
+      assign k_note = k | append: '_note'
+      assign k_sub = k | append: '_sub'
+      assign k_how = k | append: '_how'
+    -%}
+      <button type="button" role="radio" data-set-mode="{{ k }}" class="rounded-full px-3 py-2.5 text-[10px] sm:px-5 sm:text-[11px] font-bold uppercase tracking-[0.2em] transition text-primary">{{ s[k_label] }}</button>
+    {%- endfor -%}
+  </div>
+{%- endcapture -%}
+<div data-five-day>
+  <div data-mode-picker class="mx-auto flex min-h-[70vh] max-w-3xl flex-col items-center justify-center px-5 py-16 text-center">
+    {% render 'pm-note', text: s.pick_note, class: '-rotate-2 text-2xl' %}
+    <h1 class="font-heavy mt-2 text-5xl font-black leading-none tracking-tight text-primary md:text-7xl">{{ s.pick_heading }}</h1>
+    <div class="mt-10 grid w-full gap-4 sm:grid-cols-3">
+      {%- for k in modes -%}{%- liquid
+      assign k_label = k | append: '_label'
+      assign k_h = k | append: '_h'
+      assign k_pick = k | append: '_pick'
+      assign k_note = k | append: '_note'
+      assign k_sub = k | append: '_sub'
+      assign k_how = k | append: '_how'
+    -%}
+        <button type="button" data-set-mode="{{ k }}" class="rounded-md bg-card p-8 text-left transition hover:-translate-y-1 hover:shadow-lg">
+          <span class="font-heavy block text-3xl font-black text-primary">{{ s[k_label] | downcase }}.</span>
+          <span class="font-hand mt-3 block text-lg text-primary">{{ s[k_h] }}</span>
+          <span class="mt-2 block text-sm font-light text-muted-foreground">{{ s[k_pick] }}</span>
+        </button>
+      {%- endfor -%}
+    </div>
+  </div>
+  {%- for k in modes -%}{%- liquid
+      assign k_label = k | append: '_label'
+      assign k_h = k | append: '_h'
+      assign k_pick = k | append: '_pick'
+      assign k_note = k | append: '_note'
+      assign k_sub = k | append: '_sub'
+      assign k_how = k | append: '_how'
+    -%}
+    <div data-mode-panel="{{ k }}" hidden class="pb-20">
+      <section class="mx-auto grid max-w-6xl items-center gap-8 px-5 pt-6 md:grid-cols-2 md:px-6 md:pt-10">
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.25em] text-muted-foreground"><a href="{{ routes.root_url }}">Home</a> › 5 Day Experience</p>
+          {{ toggle }}
+          {%- assign kn = s[k_note] -%}{% render 'pm-note', text: kn, class: 'mt-6 -rotate-2 text-xl' %}
+          <h2 class="font-heavy mt-2 text-5xl font-black leading-none tracking-tight text-primary md:text-7xl">{{ s[k_h] }}</h2>
+          <p class="mt-4 max-w-md text-lg font-light">{{ s[k_sub] }}</p>
+        </div>
+        <div class="relative">
+          {%- if s.image != blank -%}{{ s.image | image_url: width: 1000 | image_tag: alt: s.image_alt, loading: 'lazy', class: 'aspect-[4/5] w-full rounded-md object-cover md:aspect-square' }}
+          {%- else -%}<img width="1100" height="1375" src="{{ 'pm-laugh.webp' | asset_url }}" alt="{{ s.image_alt | escape }}" loading="lazy" class="aspect-[4/5] w-full rounded-md object-cover md:aspect-square">{%- endif -%}
+          {% render 'pm-note', text: s.image_note, class: 'absolute -bottom-4 left-4 rotate-3 text-2xl' %}
+        </div>
+      </section>
+      <section class="mx-auto mt-14 max-w-6xl px-5 md:px-6">
+        <h2 class="font-heavy text-3xl font-black tracking-tight text-primary">how it works.</h2>
+        <ul class="mt-5 grid gap-3 sm:grid-cols-3">
+          {%- assign how = s[k_how] | newline_to_br | split: '<br />' -%}
+          {%- for t in how -%}<li class="rounded-md bg-card p-5 font-bold">{{ t | strip }}</li>{%- endfor -%}
+        </ul>
+      </section>
+      <section class="mx-auto mt-14 max-w-3xl px-5 md:px-6">
+        <h2 class="font-heavy text-3xl font-black tracking-tight text-primary">the five days.</h2>
+        <div class="mt-5 divide-y divide-border border-y border-border" data-days>
+          {%- assign n = 0 -%}
+          {%- for b in section.blocks -%}{%- if b.type == 'day' and b.settings.mode == k -%}
+            {%- assign n = n | plus: 1 -%}
+            <div {{ b.shopify_attributes }}>
+              <button type="button" data-day aria-expanded="{% if n == 1 %}true{% else %}false{% endif %}" class="flex w-full items-start gap-4 py-5 text-left">
+                <span class="font-hand w-10 shrink-0 text-2xl text-primary">{{ n }}.</span>
+                <span class="flex-1">
+                  <span class="block font-heavy text-xl font-black text-primary">{{ b.settings.s }}</span>
+                  <span class="mt-1 block text-sm font-light text-muted-foreground">{{ b.settings.d }}</span>
+                </span>
+                <span class="text-xl text-primary" data-sign>{% if n == 1 %}−{% else %}+{% endif %}</span>
+              </button>
+              <p data-day-body {% unless n == 1 %}hidden{% endunless %} class="animate-in fade-in -mt-1 mb-5 ml-14 rounded-md bg-card p-4 text-sm italic">{{ b.settings.b }}</p>
+            </div>
+          {%- endif -%}{%- endfor -%}
+        </div>
+      </section>
+      {%- if k == 'met' -%}
+        <section class="mx-auto mt-14 max-w-6xl px-5 md:px-6">
+          {% render 'pm-note', text: s.ideas_note, class: '-rotate-2 text-xl' %}
+          <h2 class="font-heavy mt-1 text-3xl font-black tracking-tight text-primary">{{ s.ideas_heading }}</h2>
+          <p class="mt-2 text-sm font-light text-muted-foreground">{{ s.ideas_sub }}</p>
+          <div class="no-scrollbar -mx-5 mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-3 md:px-0">
+            {%- for b in section.blocks -%}{%- if b.type == 'idea' -%}
+              <div class="w-[75%] shrink-0 snap-start rounded-md bg-card p-5 md:w-auto" {{ b.shopify_attributes }}>
+                <p class="font-heavy font-black text-primary">{{ b.settings.t }}</p>
+                <p class="mt-1 text-sm font-light">{{ b.settings.d }}</p>
+              </div>
+            {%- endif -%}{%- endfor -%}
+          </div>
+          <a href="https://placestheapp.com/" target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.25em] text-primary">
+            <img src="{{ 'pm-places-icon.png' | asset_url }}" alt="Places app" width="40" height="40" loading="lazy" class="h-10 w-10 rounded-xl">
+            <span class="border-b-2 border-primary pb-1">Find more date spots on Places ↗</span>
+          </a>
+        </section>
+      {%- endif -%}
+      <section class="mx-auto mt-14 max-w-md px-5 text-center">
+        <p data-done hidden class="font-hand -rotate-2 text-3xl text-primary">see you tomorrow.</p>
+        <form data-klaviyo-form="fiveDay" data-source="5 Day Experience page" class="flex flex-col gap-3">
+          <input type="hidden" name="five_day_mode" value="{{ k }}">
+          {{ toggle }}
+          <input required type="email" name="email" autocomplete="email" aria-label="Your email" placeholder="Your email" class="rounded-full border border-border bg-card px-5 py-4 text-center">
+          <button class="rounded-full bg-primary py-4 text-sm font-black uppercase tracking-[0.25em] text-primary-foreground transition hover:scale-[1.02]">I'm in.</button>
+          <p data-error hidden role="alert" class="text-sm text-primary"></p>
+        </form>
+      </section>
+    </div>
+  {%- endfor -%}
+</div>
+{% schema %}
+{
+  "name": "5 Day Experience",
+  "settings": [
+    { "type": "text", "id": "pick_note", "label": "Picker note", "default": "first things first." },
+    { "type": "text", "id": "pick_heading", "label": "Picker heading", "default": "who's it for?" },
+    { "type": "image_picker", "id": "image", "label": "Photo" },
+    { "type": "text", "id": "image_alt", "label": "Photo description", "default": "Two people laughing together on a sofa" },
+    { "type": "text", "id": "image_note", "label": "Note on the photo", "default": "day one starts tomorrow." },
+    { "type": "header", "content": "For me" },
+    { "type": "text", "id": "solo_label", "label": "Label", "default": "For me" },
+    { "type": "text", "id": "solo_pick", "label": "Picker line", "default": "single, dating, or happily unavailable." },
+    { "type": "text", "id": "solo_note", "label": "Note", "default": "no app required." },
+    { "type": "text", "id": "solo_h", "label": "Heading", "default": "make things interesting." },
+    { "type": "text", "id": "solo_sub", "label": "Line", "default": "Five days of small experiments in taste, curiosity and making your own plans." },
+    { "type": "textarea", "id": "solo_how", "label": "How it works, one per line", "default": "One short email a day.\nFree, by email.\nFor the single, the dating and the happily unavailable." },
+    { "type": "header", "content": "Just met" },
+    { "type": "text", "id": "met_label", "label": "Label", "default": "Just met" },
+    { "type": "text", "id": "met_pick", "label": "Picker line", "default": "a few dates in, or still deciding." },
+    { "type": "text", "id": "met_note", "label": "Note", "default": "a few dates in. or none yet." },
+    { "type": "text", "id": "met_h", "label": "Heading", "default": "you've met. now what?" },
+    { "type": "text", "id": "met_sub", "label": "Line", "default": "Five days of questions, small surprises and an excuse to make another plan." },
+    { "type": "textarea", "id": "met_how", "label": "How it works, one per line", "default": "One short email a day.\nFree, by email.\nYou each sign up yourselves. Sharing the link signs nobody up." },
+    { "type": "text", "id": "ideas_note", "label": "Date ideas note", "default": "for round two." },
+    { "type": "text", "id": "ideas_heading", "label": "Date ideas heading", "default": "good date ideas." },
+    { "type": "text", "id": "ideas_sub", "label": "Date ideas line", "default": "Public, low-pressure, easy to leave or easy to stay." },
+    { "type": "header", "content": "With someone" },
+    { "type": "text", "id": "duo_label", "label": "Label", "default": "With someone" },
+    { "type": "text", "id": "duo_pick", "label": "Picker line", "default": "you and someone you like." },
+    { "type": "text", "id": "duo_note", "label": "Note", "default": "something other than \"what shall we watch?\"" },
+    { "type": "text", "id": "duo_h", "label": "Heading", "default": "the 5 day experience." },
+    { "type": "text", "id": "duo_sub", "label": "Line", "default": "Five days of questions, small challenges and better plans." },
+    { "type": "textarea", "id": "duo_how", "label": "How it works, one per line", "default": "One short email a day.\nFree. Always.\nFor you and someone you like." }
+  ],
+  "blocks": [
+    { "type": "day", "name": "Day", "settings": [
+      { "type": "select", "id": "mode", "label": "Version", "options": [{ "value": "solo", "label": "For me" }, { "value": "met", "label": "Just met" }, { "value": "duo", "label": "With someone" }], "default": "duo" },
+      { "type": "text", "id": "s", "label": "Title" }, { "type": "text", "id": "d", "label": "Short line" }, { "type": "textarea", "id": "b", "label": "Full prompt" } ] },
+    { "type": "idea", "name": "Date idea (Just met)", "settings": [{ "type": "text", "id": "t", "label": "Idea" }, { "type": "text", "id": "d", "label": "Line" }] }
+  ]
+}
+{% endschema %}

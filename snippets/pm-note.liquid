@@ -1,0 +1,4 @@
+{%- comment -%}
+  Handwritten note (Homemade Apple). Usage: {% render 'pm-note', text: 'come over.', class: '-rotate-2 text-xl', light: false %}
+{%- endcomment -%}
+<p class="font-hand pointer-events-none select-none leading-snug {% if light %}text-primary-foreground{% else %}text-primary{% endif %} {{ class }}">{{ text }}</p>

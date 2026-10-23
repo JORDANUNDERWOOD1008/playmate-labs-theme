@@ -1,0 +1,25 @@
+<div class="mx-auto max-w-6xl px-5 pb-24 pt-8 md:px-6 md:pt-12">
+  <h1 class="font-heavy text-4xl font-black tracking-tight text-primary md:text-6xl">search.</h1>
+  <form action="{{ routes.search_url }}" method="get" role="search" class="mt-6 flex max-w-xl gap-2">
+    <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search" aria-label="Search" class="flex-1 rounded-full border border-border bg-card px-5 py-3">
+    <button class="rounded-full bg-primary px-6 text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground">Search</button>
+  </form>
+  {%- if search.performed -%}
+    {%- paginate search.results by 24 -%}
+      <p class="mt-6 text-sm text-muted-foreground">{{ search.results_count }} results</p>
+      <div class="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 md:gap-6 lg:grid-cols-3">
+        {%- for r in search.results -%}
+          {%- if r.object_type == 'product' -%}{% render 'pm-product-card', p: r %}
+          {%- else -%}
+            <a href="{{ r.url }}" class="group block">
+              <div class="aspect-[4/5] overflow-hidden rounded-sm bg-card">{%- if r.image -%}{{ r.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: r.title, class: 'h-full w-full object-cover' }}{%- endif -%}</div>
+              <p class="mt-4 text-[11px] uppercase tracking-[0.25em] text-muted-foreground">{{ r.object_type }}</p>
+              <h2 class="font-heavy mt-1 text-lg font-bold">{{ r.title }}</h2>
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endpaginate -%}
+  {%- endif -%}
+</div>
+{% schema %}{ "name": "Search", "settings": [] }{% endschema %}

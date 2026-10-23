@@ -1,0 +1,88 @@
+{%- comment -%}
+  "Become a Playmate" preferences. Answers stay in this browser (as on the design) and, once the
+  visitor ticks consent and gives an email, are saved to their Klaviyo profile as pm_* properties.
+  Questions are blocks: tier headings and questions (one / three / slider).
+{%- endcomment -%}
+{%- assign s = section.settings -%}
+<div class="mx-auto max-w-3xl px-5 pb-24 pt-6 md:px-6 md:pb-12 md:pt-6" data-playmates>
+  <p class="text-[11px] uppercase tracking-[0.25em] text-muted-foreground"><a href="{{ routes.root_url }}">Home</a> › Playmates</p>
+  {% render 'pm-note', text: s.note, class: 'mt-8 md:mt-5 -rotate-2 text-xl' %}
+  <h1 class="font-heavy mt-2 text-4xl font-black leading-none tracking-tight text-primary sm:text-5xl md:text-7xl">{{ s.heading }}</h1>
+  <p class="mt-4 max-w-lg font-light text-muted-foreground">{{ s.sub }}</p>
+  <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+    {%- assign perks = s.perks | newline_to_br | split: '<br />' -%}
+    {%- for p in perks -%}<li class="rounded-md bg-card px-4 py-3 text-sm font-bold text-primary">♥ {{ p | strip }}</li>{%- endfor -%}
+  </ul>
+  {%- assign open = false -%}
+  {%- for b in section.blocks -%}
+    {%- if b.type == 'tier' -%}
+      {%- if open -%}</div></section>{%- endif -%}
+      <section class="pt-14 md:pt-8" {{ b.shopify_attributes }}>
+        <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground">{{ b.settings.n }} · {{ b.settings.note }}</p>
+        <h2 class="font-heavy mt-1 text-2xl font-black tracking-tight text-primary md:text-3xl">{{ b.settings.title }}</h2>
+        <div class="mt-6 space-y-8 md:space-y-6">
+      {%- assign open = true -%}
+    {%- else -%}
+      <div data-q="{{ b.settings.id }}" data-kind="{{ b.settings.kind }}" {{ b.shopify_attributes }}>
+        <p class="font-bold">{{ b.settings.q }}{% if b.settings.kind == 'three' %}<span class="ml-2 text-xs font-light text-muted-foreground">pick up to 3</span>{% endif %}</p>
+        <p class="mt-1 text-xs font-light text-muted-foreground">Why we ask: {{ b.settings.why }}</p>
+        {%- assign opts = b.settings.opts | split: ',' -%}
+        {%- if b.settings.kind == 'slider' -%}
+          <div class="mt-4">
+            <input type="range" min="1" max="5" value="3" aria-label="{{ b.settings.q | escape }}" class="w-full accent-primary">
+            <div class="flex justify-between text-[11px] font-bold uppercase tracking-[0.2em] text-primary"><span>{{ opts[0] | strip }}</span><span>{{ opts[1] | strip }}</span></div>
+          </div>
+        {%- else -%}
+          <div class="mt-3 flex flex-wrap gap-2">
+            {%- for o in opts -%}
+              <button type="button" data-opt="{{ o | strip | escape }}" aria-pressed="false" class="rounded-full border px-4 py-2.5 text-sm transition border-border hover:border-primary">{{ o | strip }}</button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if open -%}</div></section>{%- endif -%}
+  {%- comment -%} Selected chip classes, set by cinematic.js: border-primary bg-primary text-primary-foreground {%- endcomment -%}
+  <section class="mt-14 md:mt-10 rounded-md bg-card p-6 md:p-8">
+    <h2 class="font-heavy text-2xl font-black tracking-tight text-primary">{{ s.use_heading }}</h2>
+    <ul class="mt-4 space-y-2 text-sm font-light">
+      {%- assign use = s.use | newline_to_br | split: '<br />' -%}
+      {%- for u in use -%}<li>{{ u | strip }}</li>{%- endfor -%}
+    </ul>
+    <label class="mt-6 flex items-start gap-3 text-sm">
+      <input type="checkbox" data-consent class="mt-1 accent-primary">
+      <span>{{ s.consent }}</span>
+    </label>
+    <input type="email" data-email autocomplete="email" placeholder="Your email (so we can remember your picks)" aria-label="Your email" class="mt-4 w-full rounded-full border border-border bg-background px-5 py-3 text-sm">
+    <div class="mt-6 flex flex-wrap items-center gap-4">
+      <button type="button" data-save disabled class="rounded-full bg-primary px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground disabled:opacity-40">Save my picks</button>
+      <button type="button" data-wipe class="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground underline">Delete my answers</button>
+    </div>
+    <p data-saved hidden class="font-hand mt-4 -rotate-1 text-xl text-primary">welcome in, playmate.</p>
+    <p data-error hidden role="alert" class="mt-3 text-sm text-primary"></p>
+  </section>
+</div>
+{% schema %}
+{
+  "name": "Become a Playmate",
+  "settings": [
+    { "type": "text", "id": "note", "label": "Note", "default": "members only. (well, sort of.)" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "become a playmate." },
+    { "type": "textarea", "id": "sub", "label": "Line", "default": "Tell us what you're into, skip what you're not. In return, we make Playmate Labs feel like it was made for you two." },
+    { "type": "textarea", "id": "perks", "label": "Perks, one per line", "default": "Picks made for your mood\nEarly access to new drops\nA little birthday-month treat\nPrompts matched to your spice level" },
+    { "type": "text", "id": "use_heading", "label": "Privacy heading", "default": "how we use this." },
+    { "type": "textarea", "id": "use", "label": "Privacy lines, one per line", "default": "We only use your answers to personalise what you see and the emails you get from us.\nWe never sell them or share them for advertising.\nEvery question is optional. You can change or delete your answers at any time, right here." },
+    { "type": "textarea", "id": "consent", "label": "Consent line", "default": "I'm happy for Playmate Labs to use my answers to personalise my experience. I can withdraw this at any time." }
+  ],
+  "blocks": [
+    { "type": "tier", "name": "Tier heading", "settings": [{ "type": "text", "id": "n", "label": "Number" }, { "type": "text", "id": "title", "label": "Title" }, { "type": "text", "id": "note", "label": "Note" }] },
+    { "type": "question", "name": "Question", "settings": [
+      { "type": "text", "id": "id", "label": "Key (saved as pm_<key>)" },
+      { "type": "text", "id": "q", "label": "Question" },
+      { "type": "text", "id": "why", "label": "Why we ask" },
+      { "type": "select", "id": "kind", "label": "Answer type", "options": [{ "value": "one", "label": "Pick one" }, { "value": "three", "label": "Pick up to three" }, { "value": "slider", "label": "Slider" }], "default": "one" },
+      { "type": "textarea", "id": "opts", "label": "Options, comma-separated (slider: the two ends)" } ] }
+  ]
+}
+{% endschema %}

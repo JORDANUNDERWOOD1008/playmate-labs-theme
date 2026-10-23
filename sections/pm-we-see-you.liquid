@@ -1,0 +1,38 @@
+<section class="mx-auto max-w-6xl px-6 pt-16 md:pt-24">
+  <div class="mx-auto max-w-2xl text-center">
+    {% render 'pm-note', text: section.settings.note, class: '-rotate-2 text-xl' %}
+    <h2 class="font-heavy mt-3 text-5xl font-black tracking-tight text-primary md:text-6xl">{{ section.settings.heading }}</h2>
+    <p class="mt-5 text-lg font-light leading-relaxed text-muted-foreground">{{ section.settings.intro }}</p>
+  </div>
+  <div class="mt-12 grid gap-5 md:grid-cols-3">
+    {%- for block in section.blocks -%}
+      <article class="rounded-md bg-card p-6 md:p-8 {% if forloop.index == 2 %}md:translate-y-6{% endif %}" {{ block.shopify_attributes }}>
+        {% render 'pm-note', text: block.settings.note, class: '-rotate-2 text-base' %}
+        <h3 class="font-heavy mt-3 text-xl font-bold leading-tight text-primary">{{ block.settings.title }}</h3>
+        <p class="mt-3 font-light leading-relaxed text-muted-foreground">{{ block.settings.body }}</p>
+      </article>
+    {%- endfor -%}
+  </div>
+  <div class="mt-16 text-center">
+    <p class="mx-auto max-w-xl text-lg font-light">{{ section.settings.outro }}</p>
+    <a href="#five-day" class="mt-6 inline-block border-b-2 border-primary pb-1 text-xs font-bold uppercase tracking-[0.25em] text-primary">{{ section.settings.link }}</a>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "We see you",
+  "settings": [
+    { "type": "text", "id": "note", "label": "Note", "default": "come as you are." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "we see you." },
+    { "type": "textarea", "id": "intro", "label": "Intro", "default": "Connection is hard. It takes time, nerve and a little practice, and nobody hands you a manual. Wherever you're starting from, you're in good company." },
+    { "type": "textarea", "id": "outro", "label": "Closing line", "default": "Real connection grows from feeling safe and at ease. That's where we start: small, easy invitations to get closer, to someone else or to yourself." },
+    { "type": "text", "id": "link", "label": "Link to the 5-day sign-up", "default": "Start the free 5-day experience" }
+  ],
+  "blocks": [{ "type": "card", "name": "Card", "settings": [
+    { "type": "text", "id": "note", "label": "Note" },
+    { "type": "text", "id": "title", "label": "Title" },
+    { "type": "textarea", "id": "body", "label": "Text" }
+  ]}],
+  "presets": [{ "name": "We see you" }]
+}
+{% endschema %}

@@ -1577,6 +1577,23 @@
         "id": "klaviyo_footer_list_id",
         "label": "Klaviyo List ID — Footer newsletter",
         "info": "Optional separate list for footer email signups."
+     },
+      {
+        "type": "text",
+        "id": "klaviyo_sms_list_id",
+        "label": "Klaviyo List ID — SMS signups",
+        "info": "Used by the SMS opt-in page."
+      },
+      {
+        "type": "header",
+        "content": "Cinematic theme"
+      },
+      {
+        "type": "number",
+        "id": "pm_free_shipping",
+        "label": "Free shipping threshold, in pence",
+        "info": "Drives the cart drawer progress bar. 4900 = £49.",
+        "default": 4900
       }
     ]
   },

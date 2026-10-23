@@ -1,0 +1,152 @@
+{%- comment -%}
+  Product page from the cinematic site: gallery, buy panel with variants and subscriptions,
+  accordions (copy from snippets/pm-copy, overridable by metafields), mobile sticky bar and
+  "you might also like". Adds go through cinematic.js to /cart/add.js and open the drawer.
+{%- endcomment -%}
+{%- assign current = product.selected_or_first_available_variant -%}
+{%- capture tag -%}{% render 'pm-copy', product: product, field: 'tag' %}{%- endcapture -%}
+{%- capture intro -%}{% render 'pm-copy', product: product, field: 'intro' %}{%- endcapture -%}
+{%- capture glance -%}{% render 'pm-copy', product: product, field: 'glance' %}{%- endcapture -%}
+{%- capture in_box -%}{% render 'pm-copy', product: product, field: 'in_box' %}{%- endcapture -%}
+{%- capture how_to -%}{% render 'pm-copy', product: product, field: 'how_to' %}{%- endcapture -%}
+{%- capture extra -%}{% render 'pm-copy', product: product, field: 'extra_images' %}{%- endcapture -%}
+{%- assign extra = extra | strip | split: '|' -%}
+<div class="mx-auto max-w-6xl px-5 pb-24 pt-4 md:px-6 md:pb-0 md:pt-8" data-product-page>
+  <p class="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+    <a href="{{ routes.root_url }}">Home</a> › <a href="{{ routes.all_products_collection_url }}">Shop</a> › {{ product.title }}
+  </p>
+  <div class="mt-4 grid gap-8 md:mt-6 md:gap-10 md:grid-cols-2">
+    <div>
+      <div class="relative -mx-5 aspect-[4/5] overflow-hidden bg-card md:mx-0 md:rounded-sm">
+        {% render 'pm-note', text: section.settings.photo_note, light: true, class: 'absolute bottom-6 left-6 z-10 -rotate-6 text-3xl drop-shadow' %}
+        {%- if extra.size > 0 and extra[0] != blank -%}
+          <img width="1100" height="1366" data-main-image src="{{ extra[0] | asset_url }}" alt="{{ product.title | escape }}" fetchpriority="high" class="h-full w-full object-cover">
+        {%- elsif product.featured_image -%}
+          <img width="1200" height="1500" data-main-image src="{{ product.featured_image | image_url: width: 1200 }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" fetchpriority="high" class="h-full w-full object-cover">
+        {%- endif -%}
+      </div>
+      <div class="mt-3 grid grid-cols-5 gap-2 md:grid-cols-4 md:gap-3" data-thumbs>
+        {%- assign i = 0 -%}
+        {%- for a in extra -%}{%- if a != blank -%}
+          <button type="button" data-full="{{ a | asset_url }}" aria-label="Show photo {{ forloop.index }}" class="aspect-square overflow-hidden rounded-sm border-2 {% if i == 0 %}border-primary{% else %}border-transparent{% endif %}"><img width="240" height="298" src="{{ a | asset_url }}" alt="" loading="lazy" class="h-full w-full object-cover"></button>
+          {%- assign i = i | plus: 1 -%}
+        {%- endif -%}{%- endfor -%}
+        {%- for m in product.media -%}{%- if m.media_type == 'image' -%}
+          <button type="button" data-full="{{ m | image_url: width: 1200 }}" aria-label="Show photo" class="aspect-square overflow-hidden rounded-sm border-2 {% if i == 0 %}border-primary{% else %}border-transparent{% endif %}">{{ m | image_url: width: 240 | image_tag: loading: 'lazy', alt: '', class: 'h-full w-full object-cover' }}</button>
+          {%- assign i = i | plus: 1 -%}
+        {%- endif -%}{%- endfor -%}
+      </div>
+    </div>
+    <div class="md:sticky md:top-28 md:self-start">
+      <span class="rounded-full bg-card px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{% if product.available %}{{ tag | strip }}{% else %}Sold out{% endif %}</span>
+      <h1 class="font-heavy mt-4 text-4xl font-black md:text-5xl tracking-tight text-primary">{{ product.title }}</h1>
+      <p class="mt-2 text-2xl" data-price>{{ current.price | money }}</p>
+      {% render 'pm-note', text: section.settings.note, class: 'mt-4 -rotate-2 text-lg' %}
+      <p class="mt-4 font-light leading-relaxed text-muted-foreground">{{ intro | strip }}</p>
+
+      <form data-product-form class="mt-8" novalidate>
+        <script type="application/json" data-variants>{{ product.variants | json }}</script>
+        <input type="hidden" name="id" value="{{ current.id }}">
+        {%- unless product.has_only_default_variant -%}
+          {%- for option in product.options_with_values -%}
+            <fieldset class="mb-5">
+              <legend class="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{{ option.name }}</legend>
+              <div class="flex flex-wrap gap-2">
+                {%- for value in option.values -%}
+                  <label class="cursor-pointer">
+                    <input type="radio" class="peer sr-only" name="option{{ option.position }}" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %}>
+                    <span class="inline-block rounded-full border border-border px-4 py-2.5 text-sm transition peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-primary">{{ value }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endfor -%}
+        {%- endunless -%}
+        {%- if product.selling_plan_groups.size > 0 -%}
+          <fieldset class="mb-5 space-y-2">
+            <legend class="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">How often</legend>
+            {%- unless product.requires_selling_plan -%}
+              <label class="flex cursor-pointer items-center gap-3 rounded-sm bg-card px-4 py-3 text-sm"><input type="radio" name="selling_plan" value="" checked class="accent-primary"> One-time purchase</label>
+            {%- endunless -%}
+            {%- for group in product.selling_plan_groups -%}{%- for plan in group.selling_plans -%}
+              <label class="flex cursor-pointer items-center gap-3 rounded-sm bg-card px-4 py-3 text-sm"><input type="radio" name="selling_plan" value="{{ plan.id }}" class="accent-primary" {% if product.requires_selling_plan and forloop.first %}checked{% endif %}> {{ plan.name }}</label>
+            {%- endfor -%}{%- endfor -%}
+          </fieldset>
+        {%- endif -%}
+        <div class="flex gap-3">
+          <div class="inline-flex items-center rounded-full border border-border">
+            <button type="button" class="px-4 py-3" data-qty-step="-1" aria-label="One fewer">−</button>
+            <span class="w-6 text-center" data-qty>1</span>
+            <button type="button" class="px-4 py-3" data-qty-step="1" aria-label="One more">+</button>
+          </div>
+          <button type="submit" data-add {% unless current.available %}disabled{% endunless %} class="flex-1 rounded-full bg-primary py-4 text-[11px] font-bold uppercase tracking-[0.25em] text-primary-foreground disabled:opacity-40">
+            {% if current.available %}Add to cart · {{ current.price | money }}{% else %}Sold out{% endif %}
+          </button>
+        </div>
+        <p data-error hidden role="alert" class="mt-3 text-sm text-primary"></p>
+      </form>
+
+      <ul class="mt-6 grid grid-cols-2 gap-2 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+        {%- assign perks = section.settings.perks | newline_to_br | split: '<br />' -%}
+        {%- for p in perks -%}<li>✦ {{ p | strip }}</li>{%- endfor -%}
+      </ul>
+      <div class="mt-8 divide-y divide-border border-y border-border">
+        {%- if glance != blank -%}
+          <details open class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-heavy font-bold">At a glance<span class="transition group-open:rotate-45">+</span></summary>
+            <ul class="mt-3 list-disc space-y-2 pl-5 text-sm font-light text-muted-foreground">{{ glance }}</ul></details>
+        {%- endif -%}
+        {%- if in_box != blank -%}
+          <details class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-heavy font-bold">What's in the box<span class="transition group-open:rotate-45">+</span></summary>
+            <ul class="mt-3 list-disc space-y-2 pl-5 text-sm font-light text-muted-foreground">{{ in_box }}</ul></details>
+        {%- endif -%}
+        {%- if how_to != blank -%}
+          <details class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-heavy font-bold">How to play<span class="transition group-open:rotate-45">+</span></summary>
+            <ol class="mt-3 list-decimal space-y-2 pl-5 text-sm font-light text-muted-foreground">{{ how_to }}</ol></details>
+        {%- endif -%}
+        {%- if product.metafields.custom.ingredients != blank -%}
+          <details class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-heavy font-bold">Ingredients &amp; allergens<span class="transition group-open:rotate-45">+</span></summary>
+            <div class="pm-rte mt-3 text-sm text-muted-foreground">{{ product.metafields.custom.ingredients | metafield_tag }}</div></details>
+        {%- endif -%}
+        {%- if product.description != blank -%}
+          <details class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-heavy font-bold">The details<span class="transition group-open:rotate-45">+</span></summary>
+            <div class="pm-rte mt-3 text-sm text-muted-foreground">{{ product.description }}</div></details>
+        {%- endif -%}
+        <details class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-heavy font-bold">Delivery &amp; returns<span class="transition group-open:rotate-45">+</span></summary>
+          <ul class="mt-3 list-disc space-y-2 pl-5 text-sm font-light text-muted-foreground">
+            {%- assign rows = section.settings.delivery | newline_to_br | split: '<br />' -%}
+            {%- for r in rows -%}<li>{{ r | strip }}</li>{%- endfor -%}
+          </ul></details>
+      </div>
+    </div>
+  </div>
+  <div class="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-border bg-background/95 px-4 py-3 backdrop-blur md:hidden">
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-sm font-bold">{{ product.title }}</p>
+      <p class="text-xs text-primary" data-sticky-price>{{ current.price | money }}</p>
+    </div>
+    <button type="button" data-sticky-add {% unless current.available %}disabled{% endunless %} class="shrink-0 rounded-full bg-primary px-6 py-3.5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground disabled:opacity-40">{% if current.available %}Add to cart{% else %}Sold out{% endif %}</button>
+  </div>
+  <section class="pt-16 md:pt-24">
+    <h2 class="font-heavy text-3xl font-black text-primary">{{ section.settings.related_heading }}</h2>
+    {% render 'pm-note', text: section.settings.related_note, class: 'mt-1 -rotate-1 text-lg' %}
+    <div class="mt-8 grid gap-6 sm:grid-cols-2">
+      {%- assign shown = 0 -%}
+      {%- for p in collections.all.products -%}
+        {%- if p.id != product.id and shown < 2 -%}{% render 'pm-product-card', p: p %}{%- assign shown = shown | plus: 1 -%}{%- endif -%}
+      {%- endfor -%}
+    </div>
+  </section>
+</div>
+{% schema %}
+{
+  "name": "Product (cinematic)",
+  "settings": [
+    { "type": "text", "id": "photo_note", "label": "Note on the photo", "default": "tonight?" },
+    { "type": "text", "id": "note", "label": "Note under the price", "default": "you'll want two." },
+    { "type": "textarea", "id": "perks", "label": "Perks, one per line", "default": "Free UK from £49\nSecure checkout\n30-day returns\nEco packaging" },
+    { "type": "textarea", "id": "delivery", "label": "Delivery & returns, one per line", "default": "Free UK delivery from £49.\nStandard £5.99 (3–5 working days) or Express next day £7.99.\n30-day happiness guarantee — full refund, no questions." },
+    { "type": "text", "id": "related_heading", "label": "Related heading", "default": "you might also like." },
+    { "type": "text", "id": "related_note", "label": "Related note", "default": "trust us." }
+  ]
+}
+{% endschema %}

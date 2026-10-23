@@ -1,0 +1,19 @@
+<section class="mx-auto max-w-3xl px-5 pt-16 md:px-6 md:pt-24 text-center">
+  <p class="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">{{ section.settings.label }}</p>
+  <h2 class="font-heavy mt-2 text-4xl font-black leading-tight tracking-tight text-primary md:text-5xl">{{ section.settings.heading | newline_to_br }}</h2>
+  <p class="mt-4 font-light text-muted-foreground">{{ section.settings.sub }}</p>
+  <a href="{{ section.settings.link_url | default: '/pages/about' }}" class="mt-6 inline-block border-b-2 border-primary pb-1 text-xs font-bold uppercase tracking-[0.25em] text-primary">{{ section.settings.link }}</a>
+</section>
+{% schema %}
+{
+  "name": "Inside the lab",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "Inside the lab" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "good products.\ncloser moments." },
+    { "type": "text", "id": "sub", "label": "Line", "default": "25,000+ happy couples and counting." },
+    { "type": "text", "id": "link", "label": "Link text", "default": "Our story" },
+    { "type": "url", "id": "link_url", "label": "Link" }
+  ],
+  "presets": [{ "name": "Inside the lab" }]
+}
+{% endschema %}

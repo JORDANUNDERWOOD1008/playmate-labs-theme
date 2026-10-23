@@ -1,0 +1,48 @@
+{%- comment -%} The Playmate Journal in the cinematic style, listing the real posts. {%- endcomment -%}
+{%- assign s = section.settings -%}
+{%- assign chip = 'rounded-full border px-4 py-2 text-[11px] font-bold uppercase tracking-[0.2em]' -%}
+<div class="mx-auto max-w-6xl px-6 pt-12">
+  {% render 'pm-note', text: s.note, class: '-rotate-2 text-xl' %}
+  <p class="mt-2 text-[11px] uppercase tracking-[0.3em] text-muted-foreground">{{ blog.title }}</p>
+  <h1 class="font-heavy mt-3 max-w-3xl text-5xl font-black leading-[0.95] tracking-tight text-primary md:text-6xl">{% if current_tags %}{{ current_tags.first | downcase }}.{% else %}{{ s.heading }}{% endif %}</h1>
+  {%- if blog.all_tags.size > 0 -%}
+    <div class="mt-8 flex flex-wrap gap-2">
+      <a href="{{ blog.url }}" class="{{ chip }} {% if current_tags == blank %}border-primary bg-primary text-primary-foreground{% else %}border-border text-primary{% endif %}">All</a>
+      {%- for t in blog.all_tags limit: s.tag_limit -%}
+        <a href="{{ blog.url }}/tagged/{{ t | handleize }}" class="{{ chip }} {% if current_tags contains t %}border-primary bg-primary text-primary-foreground{% else %}border-border text-primary{% endif %}">{{ t }}</a>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+  {%- paginate blog.articles by 12 -%}
+    <div class="mt-10 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
+      {%- for a in blog.articles -%}
+        <article class="group">
+          <a href="{{ a.url }}" class="block">
+            <div class="relative aspect-[4/5] overflow-hidden rounded-sm bg-card">
+              {%- if a.image -%}{{ a.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400, 600, 800', sizes: '(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw', alt: a.image.alt, class: 'h-full w-full object-cover transition duration-700 group-hover:scale-105' }}{%- endif -%}
+            </div>
+            <p class="mt-4 text-[11px] uppercase tracking-[0.25em] text-muted-foreground">{{ a.tags.first | default: 'Journal' }} · {{ a.published_at | date: '%-d %b %Y' }}</p>
+            <h2 class="font-heavy mt-1 text-xl font-bold">{{ a.title }}</h2>
+          </a>
+        </article>
+      {%- endfor -%}
+    </div>
+    {%- if paginate.pages > 1 -%}
+      <nav class="mt-12 flex justify-center gap-6 text-xs font-bold uppercase tracking-[0.25em] text-primary" aria-label="Pages">
+        {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">← Newer</a>{%- endif -%}
+        <span class="text-muted-foreground">{{ paginate.current_page }} / {{ paginate.pages }}</span>
+        {%- if paginate.next -%}<a href="{{ paginate.next.url }}">Older →</a>{%- endif -%}
+      </nav>
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+{% schema %}
+{
+  "name": "Journal (cinematic)",
+  "settings": [
+    { "type": "text", "id": "note", "label": "Note", "default": "read this together." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "culture, rituals & relationship experiments." },
+    { "type": "range", "id": "tag_limit", "label": "Topic chips to show", "min": 0, "max": 20, "step": 1, "default": 8 }
+  ]
+}
+{% endschema %}

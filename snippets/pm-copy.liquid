@@ -1,0 +1,83 @@
+{%- comment -%}
+  Product copy from the cinematic site, keyed by product handle. A product metafield in the
+  custom namespace overrides each field when it is filled in (card_tag, card_desc, intro, and
+  glance / in_box / how_to as one line per item).
+  Usage: {% render 'pm-copy', product: product, field: 'tag' %}
+  Fields: tag, desc, intro, glance, in_box, how_to (lists render as <li>), hover, extra_images (asset names), category
+{%- endcomment -%}
+{%- liquid
+  assign h = product.handle
+  assign tag = '' 
+  assign desc = ''
+  assign intro = ''
+  assign glance = ''
+  assign in_box = ''
+  assign how_to = ''
+  assign hover = ''
+  assign extra = ''
+  case h
+    when 'nude-stacked'
+      assign tag = 'New in'
+      assign desc = 'The stacking game that turns a quiet night into a long one.'
+      assign intro = 'A date-night stacking game for two. Pull a block, draw a prompt card and pick a level, from easy to a little bolder. Made for adults (18+). Anyone can pass.'
+      assign glance = 'Pull a block, match its symbol to a card, choose one of three levels.|A game lasts anything from five minutes to two hours.|House rule: either of you can skip any card, any time.|Companion app with every card in six languages.'
+      assign in_box = '54 red wooden blocks — 37 with symbols, 17 "?" wild blocks|54 prompt cards, three levels each (162 prompts)|Soft eye mask|Drawstring travel bag|Gift box, ready to give'
+      assign how_to = 'Build the tower together, three blocks a layer.|Take turns pulling a block. One hand, no rushing.|Match the symbol and draw a card. "?" is wild.|Choose your level. Do it, or pass.|Place the block on top and hand over.|When the tower falls, rebuild — or call it a night.'
+      assign hover = 'pm-hot-blocks.webp'
+      assign extra = 'pm-hot-blocks.webp|pm-hot-blindfold.webp'
+    when 'playmate-chocolate'
+      assign tag = 'The original'
+      assign desc = 'Vanilla, hot honey and black raspberry. Made to be broken in half.'
+      assign intro = 'Aphrodisiac milk chocolate hearts in three flavours: vanilla, hot honey and black raspberry. One heart, two halves — share it.'
+      assign glance = 'Three hearts per box.|Vanilla · Hot honey · Black raspberry.|Made in the UK.|Arrives in discreet packaging.'
+      assign hover = 'pm-hot-choc.webp'
+      assign extra = 'pm-hot-choc.webp'
+    when 'aphrodisiac-hot-chocolate-spoons'
+      assign tag = '4 pack'
+      assign desc = 'Aphrodisiac hot chocolate on a spoon.'
+      assign intro = 'Stir into hot milk and watch it melt. Four aphrodisiac hot chocolate spoons for slow evenings in.'
+      assign glance = 'Four spoons per pack.|Stir into 200ml hot milk.|Back soon — join the list for the restock.'
+      assign hover = 'pm-hot-spoon.webp'
+      assign extra = 'pm-hot-spoon.webp'
+  endcase
+  assign m = product.metafields.custom
+  if m.card_tag != blank
+    assign tag = m.card_tag.value
+  endif
+  if m.card_desc != blank
+    assign desc = m.card_desc.value
+  endif
+  if m.intro != blank
+    assign intro = m.intro.value
+  endif
+  if m.glance != blank
+    assign glance = m.glance.value | newline_to_br | replace: '<br />', '|' | strip_newlines
+  endif
+  if m.in_box != blank
+    assign in_box = m.in_box.value | newline_to_br | replace: '<br />', '|' | strip_newlines
+  endif
+  if m.how_to != blank
+    assign how_to = m.how_to.value | newline_to_br | replace: '<br />', '|' | strip_newlines
+  endif
+  if desc == blank
+    assign desc = product.description | strip_html | truncatewords: 14
+  endif
+  if intro == blank
+    assign intro = product.description | strip_html | truncatewords: 60
+  endif
+  if tag == blank and product.type != blank
+    assign tag = product.type
+  endif
+-%}
+{%- case field -%}
+  {%- when 'tag' -%}{{ tag }}
+  {%- when 'desc' -%}{{ desc }}
+  {%- when 'intro' -%}{{ intro }}
+  {%- when 'hover' -%}{% if hover != blank %}{{ hover | asset_url }}{% endif %}
+  {%- when 'extra_images' -%}{{ extra }}
+  {%- when 'category' -%}{% if product.type == 'Games' or product.tags contains 'game' %}games{% else %}chocolate{% endif %}
+  {%- when 'glance', 'in_box', 'how_to' -%}
+    {%- case field -%}{%- when 'glance' -%}{%- assign list = glance -%}{%- when 'in_box' -%}{%- assign list = in_box -%}{%- else -%}{%- assign list = how_to -%}{%- endcase -%}
+    {%- assign items = list | split: '|' -%}
+    {%- for x in items -%}{%- assign x = x | strip -%}{%- if x != blank -%}<li>{{ x }}</li>{%- endif -%}{%- endfor -%}
+{%- endcase -%}

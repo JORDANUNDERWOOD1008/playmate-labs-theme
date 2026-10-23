@@ -1,0 +1,68 @@
+{%- comment -%} Cinematic header: announcement strip, sticky bar, full-screen mobile menu. {%- endcomment -%}
+{%- liquid
+  # Nav as "url|title" pairs: the chosen menu, or the four links from the cinematic design.
+  assign nav = ''
+  if section.settings.menu != blank
+    for link in linklists[section.settings.menu].links
+      assign nav = nav | append: link.url | append: '|' | append: link.title | append: '^'
+    endfor
+  endif
+  if nav == blank
+    assign journal = routes.blogs_url | append: '/the-playmate-journal'
+    assign nav = routes.all_products_collection_url | append: '|Shop all^/pages/about|About us^' | append: journal | append: '|Journal^/pages/contact|Contact^'
+  endif
+  assign nav = nav | split: '^'
+-%}
+<div class="bg-primary px-4 py-2 text-center text-[9px] font-bold uppercase tracking-[0.2em] text-primary-foreground md:text-[11px] md:tracking-[0.3em]">
+  {{ section.settings.announcement }}
+</div>
+<header class="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
+  <div class="mx-auto grid h-14 max-w-6xl grid-cols-[44px_1fr_44px] items-center px-3 md:flex md:h-auto md:justify-between md:gap-4 md:px-6 md:py-4">
+    <button type="button" aria-label="Open menu" aria-controls="pm-menu" aria-expanded="false" data-menu-open class="grid h-11 w-11 place-items-center md:hidden">
+      <span class="block h-[2px] w-5 bg-primary shadow-[0_6px_0_var(--color-primary),0_-6px_0_var(--color-primary)]"></span>
+    </button>
+    <a href="{{ routes.root_url }}" class="justify-self-center">
+      <img src="{{ 'pm-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" width="1024" height="190" class="logo-ink h-6 w-auto md:h-8">
+    </a>
+    <nav aria-label="Main" class="hidden gap-8 text-[11px] font-bold uppercase tracking-[0.25em] text-primary md:flex">
+      {%- for n in nav -%}{%- assign l = n | split: '|' -%}
+        <a href="{{ l[0] }}" {% if request.path contains l[0] %}aria-current="page" class="underline underline-offset-8"{% endif %}>{{ l[1] }}</a>
+      {%- endfor -%}
+    </nav>
+    <button type="button" aria-label="Open cart" data-cart-open class="relative grid h-11 w-11 place-items-center md:hidden">
+      <svg viewBox="0 0 24 24" class="h-6 w-6 fill-none stroke-primary" stroke-width="1.8" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z" /><path d="M9 8a3 3 0 0 1 6 0" /></svg>
+      <span data-cart-count-badge class="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground"{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+    </button>
+    <button type="button" data-cart-open class="hidden shrink-0 rounded-full bg-primary px-5 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground md:block">
+      Cart (<span data-cart-count>{{ cart.item_count }}</span>)
+    </button>
+  </div>
+</header>
+<div id="pm-menu" hidden class="fixed inset-0 z-50 flex flex-col bg-background md:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="flex h-14 items-center justify-between px-3">
+    <img width="1024" height="190" src="{{ 'pm-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" class="logo-ink ml-2 h-6 w-auto">
+    <button type="button" aria-label="Close menu" data-menu-close class="grid h-11 w-11 place-items-center text-3xl leading-none text-primary">×</button>
+  </div>
+  <nav aria-label="Mobile" class="flex flex-1 flex-col gap-1 px-6 pt-6">
+    {%- for n in nav -%}{%- assign l = n | split: '|' -%}
+      <a href="{{ l[0] }}" class="font-heavy border-b border-border py-4 text-4xl font-black tracking-tight text-primary">{{ l[1] | downcase }}.</a>
+    {%- endfor -%}
+    {% render 'pm-note', text: section.settings.menu_note, class: 'mt-8 -rotate-2 text-2xl' %}
+  </nav>
+  <div class="space-y-2 px-6 pb-10 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+    {%- assign perks = section.settings.menu_perks | newline_to_br | split: '<br />' -%}
+    {%- for p in perks -%}<p>✦ {{ p | strip }}</p>{%- endfor -%}
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Header",
+  "class": "pm-header-section",
+  "settings": [
+    { "type": "text", "id": "announcement", "label": "Announcement", "default": "Free shipping from £49 · Discreet packaging" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "info": "Leave empty to use the four links from the design: Shop all, About us, Journal, Contact." },
+    { "type": "text", "id": "menu_note", "label": "Handwritten line in the mobile menu", "default": "come closer." },
+    { "type": "textarea", "id": "menu_perks", "label": "Mobile menu perks, one per line", "default": "Free shipping from £49\nDiscreet packaging" }
+  ]
+}
+{% endschema %}

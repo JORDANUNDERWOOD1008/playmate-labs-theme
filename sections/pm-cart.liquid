@@ -1,0 +1,31 @@
+<div class="mx-auto max-w-3xl px-5 pb-24 pt-8 md:px-6 md:pt-12">
+  <h1 class="font-heavy text-4xl font-black tracking-tight text-primary md:text-6xl">your cart.</h1>
+  {%- if cart.item_count == 0 -%}
+    <p class="font-hand mt-8 -rotate-2 text-xl text-primary">empty, for now.</p>
+    <a href="{{ routes.all_products_collection_url }}" class="mt-6 inline-block rounded-full bg-primary px-8 py-3 text-[11px] font-bold uppercase tracking-[0.25em] text-primary-foreground">Browse shop</a>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post" class="mt-8">
+      <ul class="divide-y divide-border border-y border-border">
+        {%- for item in cart.items -%}
+          <li class="flex gap-4 py-5">
+            {%- if item.image -%}<img width="80" height="96" src="{{ item.image | image_url: width: 200 }}" alt="{{ item.product.title | escape }}" class="h-24 w-20 rounded-sm object-cover" loading="lazy">{%- endif -%}
+            <div class="flex-1">
+              <a href="{{ item.url }}" class="font-heavy font-bold">{{ item.product.title }}</a>
+              {%- unless item.product.has_only_default_variant -%}<p class="text-xs text-muted-foreground">{{ item.variant.title }}</p>{%- endunless -%}
+              {%- if item.selling_plan_allocation -%}<p class="text-xs text-muted-foreground">{{ item.selling_plan_allocation.selling_plan.name }}</p>{%- endif -%}
+              <p class="text-sm text-primary">{{ item.final_line_price | money }}</p>
+              <label class="mt-2 inline-flex items-center gap-2 text-sm">Qty <input type="number" min="0" name="updates[]" value="{{ item.quantity }}" class="w-16 rounded-full border border-border bg-card px-3 py-1"></label>
+            </div>
+            <a href="{{ item.url_to_remove }}" class="self-start text-xs text-muted-foreground underline">Remove</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+      <div class="mt-6 flex items-center justify-between font-heavy text-lg font-bold"><span>Subtotal</span><span>{{ cart.total_price | money }}</span></div>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <button name="update" class="rounded-full border border-border px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">Update</button>
+        <button name="checkout" class="flex-1 rounded-full bg-primary py-4 text-[11px] font-bold uppercase tracking-[0.25em] text-primary-foreground">Checkout</button>
+      </div>
+    </form>
+  {%- endif -%}
+</div>
+{% schema %}{ "name": "Cart page", "settings": [] }{% endschema %}

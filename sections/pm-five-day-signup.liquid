@@ -1,0 +1,41 @@
+{%- comment -%} The red envelope. Signs people up to the 5-Day Experience list in Klaviyo (cinematic.js). {%- endcomment -%}
+<section id="five-day" class="mx-auto max-w-6xl scroll-mt-28 px-5 pt-14 md:px-6 md:pt-24">
+  <div class="footer-envelope signup-envelope relative overflow-hidden px-5 pb-10 pt-8 text-center text-primary-foreground md:px-16 md:pb-24 md:pt-16">
+    <div class="relative z-10">
+      <p class="font-hand -rotate-2 text-lg md:text-xl">{{ section.settings.note }}</p>
+      <h2 class="font-heavy mt-4 text-3xl font-black leading-tight md:mt-6 md:text-5xl">{{ section.settings.heading }}</h2>
+      <p class="mt-3 text-sm opacity-80">{{ section.settings.sub }}</p>
+      <div data-done hidden class="mt-8">
+        <p class="font-hand -rotate-2 text-2xl">{{ section.settings.done }}</p>
+        <p class="mt-2 text-sm opacity-80">{{ section.settings.done_sub }}</p>
+      </div>
+      <form data-klaviyo-form="fiveDay" data-source="Homepage envelope" class="mx-auto mt-5 grid max-w-xl grid-cols-[minmax(0,1fr)_auto] gap-2 md:mt-8 md:flex md:gap-3">
+        <input required type="email" name="email" autocomplete="email" aria-label="Your email" placeholder="Your email" class="col-span-2 min-h-11 min-w-0 flex-1 rounded-full border border-border bg-background px-4 py-2 text-base text-foreground md:px-5 md:py-3 md:text-sm">
+        <select name="joining_as" aria-label="I am joining as" class="min-h-11 min-w-0 rounded-full border border-border bg-background px-4 py-2 text-base text-foreground md:px-5 md:py-3 md:text-sm">
+          <option value="">I am joining as…</option>
+          <option>A couple looking for novelty</option>
+          <option>Dating and exploring</option>
+          <option>Buying as a gift</option>
+        </select>
+        <button type="submit" class="inline-flex h-auto min-h-11 items-center justify-center rounded-full border border-border bg-background px-5 py-2 font-hand text-sm text-primary md:min-h-12 md:px-6 md:py-3">{{ section.settings.button }}</button>
+        <p data-error hidden role="alert" class="col-span-2 text-sm"></p>
+      </form>
+      <p class="mt-4 text-[11px] opacity-70">{{ section.settings.small }}</p>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "5-day sign-up envelope",
+  "settings": [
+    { "type": "text", "id": "note", "label": "Note", "default": "a little something for you." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "the 5-day experience." },
+    { "type": "text", "id": "sub", "label": "Line", "default": "It's free. It's for you." },
+    { "type": "text", "id": "button", "label": "Button", "default": "I'm in." },
+    { "type": "text", "id": "done", "label": "After signing up", "default": "you're in." },
+    { "type": "text", "id": "done_sub", "label": "After signing up, line", "default": "Day 1: Curiosity arrives in your inbox tomorrow morning." },
+    { "type": "text", "id": "small", "label": "Small print", "default": "No spam. Unsubscribe anytime." }
+  ],
+  "presets": [{ "name": "5-day sign-up envelope" }]
+}
+{% endschema %}

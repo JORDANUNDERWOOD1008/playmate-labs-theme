@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#6B1E3A">
+  <meta name="theme-color" content="#72101F">
   <meta name="msvalidate.01" content="DD22E6752A61891AC89B366341673A50" />
 
   {%- comment -%} ══ GOOGLE CONSENT MODE v2 — must be FIRST script ══ {%- endcomment -%}
@@ -45,7 +45,6 @@
     <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
   {%- endunless -%}
 
-  {%- assign formatted_initial_value = cart.total_price | money_with_currency -%}
 
   {%- comment -%} ══ TITLE TAG — per-template with 70-char limit awareness ══ {%- endcomment -%}
   <title>
@@ -147,197 +146,27 @@
   {{ content_for_header }}
 
   {%- comment -%}
-    Heading and body faces are chosen in Theme settings → Typography and are
-    served from Shopify's own CDN by 'theme-css-variables' below, so there is
-    no Google Fonts round-trip for them.
-
-    Cormorant Garamond is the one face Shopify's library does not carry, so it
-    is fetched from Google only when the accent style actually asks for it.
+    Cinematic theme (Oct 2026): Figtree for the heavy lowercase headings, Jost for body copy and
+    Homemade Apple for the handwritten notes. Every utility class comes from cinematic.css, which
+    is compiled with Tailwind from the sections named pm-*. Rebuild it with
+    cinematic-site/build/build.sh after changing classes in those sections.
   {%- endcomment -%}
-  {%- if settings.font_accent == 'cormorant' -%}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" media="print" onload="this.media='all'"
-          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap">
-    <noscript>
-      <link rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap">
-    </noscript>
-  {%- endif -%}
-
-  {%- comment -%} Minimal icon styles — replaces full Font Awesome CDN (~70KB saved) {%- endcomment -%}
-  <style>
-    .fas,.fab{display:inline-block;font-style:normal;font-variant:normal;text-rendering:auto;-webkit-font-smoothing:antialiased}
-    .fa-shopping-bag::before{content:"🛍"}
-    .fa-chevron-down::before{content:"▾"}
-    .fa-chevron-up::before{content:"▴"}
-    .fa-check::before{content:"✓"}
-    .fa-star::before{content:"★"}
-    .fa-arrow-right::before{content:"→"}
-    .fa-times::before{content:"✕"}
-    .fa-bars::before{content:"☰"}
-    .fa-heart::before{content:"♥"}
-    .fa-instagram::before,.fa-tiktok::before,.fa-linkedin::before{content:""}
-  </style>
-
-  {%- comment -%} Playmate Labs Stylesheets {%- endcomment -%}
-  {{ 'global.css' | asset_url | stylesheet_tag }}
-  {{ 'components.css' | asset_url | stylesheet_tag }}
-  {{ 'theme-extra.css' | asset_url | stylesheet_tag }}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Homemade+Apple&family=Figtree:wght@400;500;700;900&display=swap">
+  {{ 'cinematic.css' | asset_url | stylesheet_tag }}
 
   {%- comment -%}
-    Theme settings → CSS custom properties. Must come after global.css so the
-    merchant's choices override the design-system defaults.
+    Pages not rebuilt in the cinematic design yet (customer accounts, SMS opt-in, Bloggle posts)
+    still load the old stylesheets so they look as they do today. Phase 2 restyles them.
   {%- endcomment -%}
-  {% render 'theme-css-variables' %}
-
-  {%- comment -%}
-    A font the shop holds a web licence for, served by its provider. Loaded
-    before the variables snippet so the family is available when the custom
-    properties are set.
-  {%- endcomment -%}
-  {%- if settings.custom_font_enable and settings.custom_font_url != blank -%}
-    <link rel="preconnect" href="https://use.typekit.net" crossorigin>
-    <link rel="stylesheet" href="{{ settings.custom_font_url }}">
+  {%- if template.directory == 'customers' or template.suffix == 'sms-opt-in' or template.suffix contains 'bloggle' -%}
+    {{ 'global.css' | asset_url | stylesheet_tag }}
+    {{ 'components.css' | asset_url | stylesheet_tag }}
+    {% render 'theme-css-variables' %}
+    {%- if template.directory == 'customers' -%}{{ 'account.css' | asset_url | stylesheet_tag }}{%- endif -%}
+    {%- if template.suffix contains 'bloggle' -%}{{ 'journal.css' | asset_url | stylesheet_tag }}{%- endif -%}
   {%- endif -%}
-
-  {%- comment -%}
-    Scroll-reveal safety net. `.reveal` starts at opacity:0 and waits for JS
-    to un-hide it, and the animate-* helpers use fill-mode `both`, so they
-    also hold their from-state. If that JS never runs the copy stays
-    invisible — and inside the theme editor it is frequently caught
-    mid-fade, which makes it impossible to judge text colour.
-  {%- endcomment -%}
-  {%- if request.design_mode -%}
-    <style>
-      .reveal, .reveal-left, .reveal-right, .reveal-scale {
-        opacity: 1 !important; transform: none !important; transition: none !important;
-      }
-      [class*="animate-"] { animation: none !important; opacity: 1 !important; }
-    </style>
-  {%- endif -%}
-  <noscript>
-    <style>
-      .reveal, .reveal-left, .reveal-right, .reveal-scale {
-        opacity: 1 !important; transform: none !important;
-      }
-      [class*="animate-"] { animation: none !important; opacity: 1 !important; }
-    </style>
-  </noscript>
-
-  {%- comment -%} Header overlap fix — neutralise Shopify's section wrapper {%- endcomment -%}
-  <style>
-    /*
-     * ============================================================
-     * PLAYMATE LABS — HEADER OVERLAP FIX
-     * ============================================================
-     */
-
-    /* 1. Neutralise the Shopify section wrapper — must be static */
-    {%- comment -%}
-      Skipped in floating-pill mode: pinning the header section to static with
-      auto height is exactly what leaves a band of page above the hero, and it
-      carries !important so the section cannot override it from its own styles.
-    {%- endcomment -%}
-    {%- unless settings.header_is_pills -%}
-    #shopify-section-header,
-    .shopify-section.site-header,
-    .playmate-header-section {
-      position: static !important;
-      height: auto !important;
-      z-index: auto !important;
-    }
-    {%- endunless -%}
-
-    /* 2. Only the inner nav element is fixed */
-    #main-nav.site-nav {
-      position: fixed !important;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      height: var(--nav-height, 72px);
-    }
-
-    /* 3. Announcement bar sits above everything, including the pill header,
-          and the header drops by exactly its height. --bar-height is emitted
-          by the section itself, and is 0px when the bar has no messages. */
-    :root { --bar-height: 0px; }
-
-    /* .site-nav is position:fixed, so offsetting the section around it does
-       nothing; the nav itself has to drop by the bar's height. */
-    .site-nav,
-    .site-nav.nav-pills,
-    .shopify-section-group-header-group,
-    #shopify-section-header {
-      top: var(--bar-height, 0px) !important;
-    }
-
-    /* The search panel slides out of the nav, so it starts below it too. */
-    .search-bar { top: calc(var(--nav-height, 72px) + var(--bar-height, 0px)) !important; }
-
-    /* 4. The bar is fixed, so the page has to start below it rather than
-          underneath it. --bar-height is 0px when the bar has no messages. */
-    #MainContent {
-      padding-top: var(--bar-height, 0px);
-    }
-
-    /* 5. Non-hero pages get a simple spacer */
-    #MainContent > .shopify-section:first-child > .page-hero-minimal,
-    #MainContent > .shopify-section:first-child > .contact-hero,
-    #MainContent > .shopify-section:first-child > .faq-hero,
-    #MainContent > .shopify-section:first-child > .page-hero {
-      padding-top: calc(var(--nav-height, 72px) + var(--bar-height, 38px) + 2rem);
-    }
-
-    /* 6. Mobile */
-    @media (max-width: 768px) {
-      #MainContent {
-        padding-top: var(--bar-height, 0px);
-      }
-      #MainContent > .shopify-section:first-child > .page-hero-minimal,
-      #MainContent > .shopify-section:first-child > .contact-hero,
-      #MainContent > .shopify-section:first-child > .faq-hero,
-      #MainContent > .shopify-section:first-child > .page-hero {
-        padding-top: calc(var(--nav-height, 64px) + var(--bar-height, 38px) + 1.5rem);
-      }
-    }
-  </style>
-
-  {%- comment -%} Page-specific stylesheets {%- endcomment -%}
-  {%- case template.name -%}
-    {%- when 'index' -%}
-      {{ 'home.css' | asset_url | stylesheet_tag }}
-    {%- when 'collection' -%}
-      {{ 'shop.css' | asset_url | stylesheet_tag }}
-    {%- when 'product' -%}
-      {{ 'product.css' | asset_url | stylesheet_tag }}
-    {%- when 'blog' -%}
-      {{ 'journal.css' | asset_url | stylesheet_tag }}
-    {%- when 'article' -%}
-      {{ 'journal.css' | asset_url | stylesheet_tag }}
-    {%- when 'search' -%}
-      {{ 'search.css' | asset_url | stylesheet_tag }}
-    {%- when 'customers/account' -%}
-      {{ 'account.css' | asset_url | stylesheet_tag }}
-    {%- when 'page' -%}
-      {%- case template.suffix -%}
-        {%- when 'experience', '5-day-experience' -%}
-          {{ 'experience.css' | asset_url | stylesheet_tag }}
-        {%- when 'drops', 'monthly-drops' -%}
-          {{ 'drops.css' | asset_url | stylesheet_tag }}
-        {%- when 'events' -%}
-          {{ 'events.css' | asset_url | stylesheet_tag }}
-        {%- when 'event-detail' -%}
-          {{ 'event-detail.css' | asset_url | stylesheet_tag }}
-        {%- when 'faq' -%}
-          {{ 'faq.css' | asset_url | stylesheet_tag }}
-        {%- when 'contact' -%}
-          {{ 'contact.css' | asset_url | stylesheet_tag }}
-        {%- when 'about', 'community' -%}
-          {%- comment -%} Shared page styles covered by components.css {%- endcomment -%}
-      {%- endcase -%}
-  {%- endcase -%}
 
   <script>
     // Theme feature flags
@@ -359,103 +188,38 @@
   {% render 'schema-faq' %}
 </head>
 
-<body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}--{{ template.suffix }}{% endif %}">
+<body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}--{{ template.suffix }}{% endif %} antialiased">
 
   {%- comment -%} Google Tag Manager — noscript fallback {%- endcomment -%}
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NXMGJ6W7" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-  <a class="skip-to-content-link button visually-hidden" href="#MainContent">
-    {{ 'accessibility.skip_to_text' | t }}
-  </a>
+  <a class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-primary focus:px-5 focus:py-3 focus:text-primary-foreground" href="#MainContent">Skip to content</a>
 
-  {%- comment -%} Header / Nav (fixed — sits above content) {%- endcomment -%}
-  {% section 'header' %}
+  {% section 'pm-header' %}
+  {% section 'pm-cart-drawer' %}
 
-  {%- comment -%} Announcement Bar rendered inside normal flow so nav overlay is clean {%- endcomment -%}
-  {% section 'announcement-bar' %}
-
-  {%- comment -%} Cart Drawer {%- endcomment -%}
-  {% render 'cart-drawer' %}
-
-  {%- comment -%}
-    Newsletter Popup — RETIRED 2026-09-17.
-    It and the exit-intent popup inside the same snippet fired on top of the
-    scratch popup, so a first-time mobile visitor met three modals before
-    seeing a product. The scratch popup is now the only interruption, and it
-    asks for the email itself. Re-enable only if the scratch popup goes away.
-  {%- endcomment -%}
-  {%- comment -%}{% render 'newsletter-popup' %}{%- endcomment -%}
-
-  {%- comment -%} Toast Notification {%- endcomment -%}
-  <div id="toast-container" class="toast-container" aria-live="polite"></div>
-
-  <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+  <main id="MainContent" role="main" tabindex="-1" class="focus:outline-none">
     {{ content_for_layout }}
   </main>
 
-  {%- comment -%} Footer {%- endcomment -%}
-  {% section 'footer' %}
+  {% section 'pm-footer' %}
 
-  {%- comment -%} Scroll to top {%- endcomment -%}
-  <button class="scroll-top-btn" id="scroll-top" aria-label="Scroll to top">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-      <path d="M18 15l-6-6-6 6"/>
-    </svg>
-  </button>
+  <script>
+    window.PM = {
+      klaviyoKey: {{ settings.klaviyo_public_api_key | default: '' | json }},
+      lists: {
+        fiveDay: {{ settings.klaviyo_experience_list_id | default: settings.klaviyo_popup_list_id | default: '' | json }},
+        news: {{ settings.klaviyo_footer_list_id | default: settings.klaviyo_popup_list_id | default: '' | json }}
+      },
+      freeShipping: {{ settings.pm_free_shipping | default: 4900 }}
+    };
+  </script>
+  <script src="{{ 'cinematic.js' | asset_url }}" defer></script>
 
-  {%- comment -%} Global JS {%- endcomment -%}
-  <script src="{{ 'main.js' | asset_url }}" defer></script>
-  <script src="{{ 'cart-api.js' | asset_url }}" defer></script>
-
-  {%- comment -%} Page-specific JS {%- endcomment -%}
-  {%- if template.name == 'index' -%}
-    <script src="{{ 'home.js' | asset_url }}" defer></script>
-  {%- endif -%}
-
-  {%- comment -%} Full-screen scratch popup {%- endcomment -%}
-  {%- if settings.scratch_popup_enable -%}
-    {{ 'scratch-popup.css' | asset_url | stylesheet_tag }}
-    {%- style -%}
-      .sp {
-        --sp-bg: {{ settings.scratch_bg_color | default: '#FAF7F2' }};
-        --sp-bg-pos: {{ settings.scratch_bg_pos }};
-        --sp-bg-pos-m: {{ settings.scratch_bg_pos_m }};
-        --sp-halign: {{ settings.scratch_halign }};
-        --sp-valign: {{ settings.scratch_valign }};
-        --sp-valign-m: {{ settings.scratch_valign_m }};
-        --sp-text-align: {{ settings.scratch_text_align }};
-        --sp-text-align-m: {{ settings.scratch_text_align_m }};
-        --sp-width: {{ settings.scratch_width }}px;
-        --sp-pad: {{ settings.scratch_pad }}px;
-        --sp-pad-m: {{ settings.scratch_pad_m }}px;
-        --sp-heading-color: {{ settings.scratch_heading_color }};
-        --sp-sub-color: {{ settings.scratch_sub_color }};
-        --sp-prize-color: {{ settings.scratch_prize_color }};
-        --sp-prize-bg: {{ settings.scratch_prize_bg | default: '#FFFFFF' }};
-        --sp-btn-bg: {{ settings.scratch_btn_bg }};
-        --sp-btn-text: {{ settings.scratch_btn_text }};
-        --sp-heading-size: {{ settings.scratch_heading_size }}px;
-        --sp-heading-size-m: {{ settings.scratch_heading_size_m }}px;
-        --sp-prize-size: {{ settings.scratch_prize_size }}px;
-        --sp-prize-size-m: {{ settings.scratch_prize_size_m }}px;
-        --sp-img-h-m: {{ settings.scratch_img_h_m }}%;
-      }
-    {%- endstyle -%}
-    {% render 'scratch-popup' %}
-    <script>
-      window.PM_SCRATCH = {
-        delay: {{ settings.scratch_delay }},
-        trigger: {{ settings.scratch_trigger | json }},
-        days: {{ settings.scratch_days }},
-        brush: {{ settings.scratch_brush }},
-        threshold: {{ settings.scratch_threshold | divided_by: 100.0 }},
-        foilFrom: {{ settings.scratch_foil_from | json }},
-        foilMid: {{ settings.scratch_foil_from | json }},
-        foilTo: {{ settings.scratch_foil_to | json }}
-      };
-    </script>
-    <script src="{{ 'scratch-popup.js' | asset_url }}" defer></script>
-  {%- endif -%}
+  {%- comment -%}
+    The "Try your luck" scratch card is not part of this theme yet. It comes back once there is a
+    real offer and discount code behind it (decision 23 Oct 2026).
+  {%- endcomment -%}
 
   {%- comment -%} Cookie Consent Banner {%- endcomment -%}
   {% render 'shopify-consent-bridge' %}

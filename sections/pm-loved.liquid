@@ -1,0 +1,30 @@
+<section class="mx-auto max-w-6xl px-5 pt-14 md:px-6 md:pt-20">
+  <div class="flex items-baseline justify-between gap-4">
+    <h2 class="font-heavy text-3xl font-black tracking-tight text-primary md:text-4xl">{{ section.settings.heading }}</h2>
+    <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary">{{ section.settings.rating }}</p>
+  </div>
+  <div class="no-scrollbar -mx-5 mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-3 md:px-0">
+    {%- for block in section.blocks -%}
+      <figure class="w-[80%] shrink-0 snap-start rounded-md bg-card p-5 md:w-auto" {{ block.shopify_attributes }}>
+        <p class="text-sm text-primary">★★★★★</p>
+        <blockquote class="mt-2 font-bold leading-snug">"{{ block.settings.quote }}"</blockquote>
+        <figcaption class="mt-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">{{ block.settings.name }} · {{ block.settings.product }}</figcaption>
+      </figure>
+    {%- endfor -%}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Loved by two",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "loved by two." },
+    { "type": "text", "id": "rating", "label": "Rating line", "default": "★★★★★ 5.0" }
+  ],
+  "blocks": [{ "type": "quote", "name": "Review", "settings": [
+    { "type": "textarea", "id": "quote", "label": "Quote" },
+    { "type": "text", "id": "name", "label": "Name" },
+    { "type": "text", "id": "product", "label": "Product" }
+  ]}],
+  "presets": [{ "name": "Loved by two" }]
+}
+{% endschema %}

@@ -1,0 +1,24 @@
+<section class="border-y border-border py-8">
+  <p class="mb-5 text-center text-[11px] uppercase tracking-[0.3em] text-muted-foreground">{{ section.settings.label }}</p>
+  <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-8 gap-y-5 px-6 md:gap-x-12">
+    {%- for block in section.blocks -%}
+      {%- if block.settings.image != blank -%}
+        {{ block.settings.image | image_url: height: 80 | image_tag: alt: block.settings.name, loading: 'lazy', class: 'h-5 w-auto object-contain opacity-80 md:h-7', attributes: block.shopify_attributes }}
+      {%- else -%}
+        <img width="160" height="28" src="{{ block.settings.asset | asset_url }}" alt="{{ block.settings.name | escape }}" loading="lazy" class="h-5 w-auto object-contain opacity-80 md:h-7" {{ block.shopify_attributes }}>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "As seen in",
+  "settings": [{ "type": "text", "id": "label", "label": "Label", "default": "As seen in" }],
+  "blocks": [{ "type": "logo", "name": "Logo", "settings": [
+    { "type": "text", "id": "name", "label": "Publication" },
+    { "type": "image_picker", "id": "image", "label": "Logo" },
+    { "type": "text", "id": "asset", "label": "Theme asset file (used when no logo is picked)" }
+  ]}],
+  "presets": [{ "name": "As seen in" }]
+}
+{% endschema %}

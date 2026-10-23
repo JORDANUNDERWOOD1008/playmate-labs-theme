@@ -1,0 +1,38 @@
+{%- comment -%} Homepage hero: split layout, photo right on desktop, on top on mobile. {%- endcomment -%}
+<section class="grid md:grid-cols-2">
+  <div class="relative order-1 md:order-2">
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 1600 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '600, 900, 1200, 1600', sizes: '(min-width: 768px) 50vw, 100vw', alt: section.settings.image_alt, class: 'h-[42vh] min-h-[280px] md:h-[70vh] md:min-h-[480px] w-full object-cover object-[50%_45%] md:object-center' }}
+    {%- else -%}
+      <img src="{{ 'pm-hero-mobile.webp' | asset_url }}" alt="{{ section.settings.image_alt | escape }}" width="896" height="1200" fetchpriority="high" class="h-[42vh] min-h-[280px] md:h-[70vh] md:min-h-[480px] w-full object-cover object-[50%_45%] md:object-center">
+    {%- endif -%}
+    {% render 'pm-note', text: section.settings.photo_note, class: 'absolute bottom-10 left-8 -rotate-6 text-2xl md:text-3xl' %}
+  </div>
+  <div class="order-2 flex flex-col justify-center bg-card px-6 py-10 md:py-16 md:order-1 md:px-16">
+    {% render 'pm-note', text: section.settings.note, class: 'mb-4 -rotate-2 text-xl' %}
+    <h1 class="font-heavy max-w-3xl text-5xl font-black leading-[0.9] tracking-tight text-primary sm:text-6xl md:text-8xl">{{ section.settings.heading | newline_to_br }}</h1>
+    {% render 'pm-note', text: section.settings.after, class: 'mt-4 rotate-1 text-lg' %}
+    <div class="mt-8 flex items-center gap-6 md:gap-8">
+      <a href="{{ section.settings.button_link | default: routes.all_products_collection_url }}" class="rounded-full bg-primary px-8 py-4 md:px-10 text-xs font-bold uppercase tracking-[0.25em] text-primary-foreground">{{ section.settings.button }}</a>
+      <a href="{{ section.settings.link_url | default: '/pages/about' }}" class="border-b-2 border-primary pb-1 text-xs font-bold uppercase tracking-[0.25em] text-primary">{{ section.settings.link }}</a>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Hero (cinematic)",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Photo", "info": "Empty = the photo from the design." },
+    { "type": "text", "id": "image_alt", "label": "Photo description", "default": "Two hands sharing a chocolate heart beside the Nude Stack'd game" },
+    { "type": "text", "id": "photo_note", "label": "Note on the photo", "default": "psst. friday?" },
+    { "type": "text", "id": "note", "label": "Note above the heading", "default": "come over." },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "rewrite\ndate night." },
+    { "type": "text", "id": "after", "label": "Note under the heading", "default": "(it's about time.)" },
+    { "type": "text", "id": "button", "label": "Button", "default": "Shop all" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "link", "label": "Text link", "default": "Our story" },
+    { "type": "url", "id": "link_url", "label": "Text link URL" }
+  ],
+  "presets": [{ "name": "Hero (cinematic)" }]
+}
+{% endschema %}

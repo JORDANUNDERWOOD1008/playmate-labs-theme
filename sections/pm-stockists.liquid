@@ -1,0 +1,63 @@
+{%- comment -%}
+  Become a stockist. Applications go through Shopify's contact form (tagged stockist-application),
+  so they land in the store inbox. The wholesale login and trade prices come in phase 2.
+{%- endcomment -%}
+{%- assign s = section.settings -%}
+{%- assign input = 'w-full rounded-sm border border-border bg-card px-4 py-3.5 text-base' -%}
+<div class="mx-auto max-w-6xl px-5 pb-24 pt-6 md:px-6 md:pt-12">
+  <p class="text-[11px] uppercase tracking-[0.25em] text-muted-foreground"><a href="{{ routes.root_url }}">Home</a> › Become a stockist</p>
+  {% render 'pm-note', text: s.note, class: 'mt-8 -rotate-2 text-xl' %}
+  <h1 class="font-heavy mt-2 max-w-3xl text-4xl font-black leading-none tracking-tight text-primary sm:text-5xl md:text-7xl">{{ s.heading }}</h1>
+  <p class="mt-4 max-w-xl font-light text-muted-foreground">{{ s.sub }}</p>
+  <div class="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
+    {%- for b in section.blocks -%}
+      <div class="rounded-md bg-card p-5 md:p-6" {{ b.shopify_attributes }}>
+        <h2 class="font-heavy font-bold text-primary">{{ b.settings.t }}</h2>
+        <p class="mt-1 text-sm font-light text-muted-foreground">{{ b.settings.b }}</p>
+      </div>
+    {%- endfor -%}
+  </div>
+  <div class="mt-14 grid gap-10 md:grid-cols-2">
+    <div>
+      <h2 class="font-heavy text-3xl font-black tracking-tight text-primary">how it works.</h2>
+      <ol class="mt-6 space-y-5">
+        {%- assign steps = s.steps | newline_to_br | split: '<br />' -%}
+        {%- for t in steps -%}<li class="flex gap-4"><span class="font-heavy text-2xl font-black text-primary">{{ forloop.index }}</span><span class="pt-1 font-light">{{ t | strip }}</span></li>{%- endfor -%}
+      </ol>
+    </div>
+    <div class="rounded-md bg-card p-6 md:p-8">
+      {%- form 'contact', id: 'stockist-application', class: 'space-y-3' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="font-hand -rotate-2 text-2xl text-primary">{{ s.done }}</p>
+          <p class="font-heavy mt-4 text-xl font-bold text-primary">Awaiting approval</p>
+          <p class="mt-3 text-sm font-light leading-relaxed text-muted-foreground">{{ s.done_sub }}</p>
+        {%- else -%}
+          {%- if form.errors -%}<p role="alert" class="text-sm text-primary">{{ form.errors | default_errors }}</p>{%- endif -%}
+          <input type="hidden" name="contact[tags]" value="stockist-application">
+          <input required name="contact[name]" aria-label="Your name" placeholder="Your name" maxlength="200" class="{{ input }}">
+          <input required name="contact[Business]" aria-label="Shop / business name" placeholder="Shop / business name" maxlength="200" class="{{ input }}">
+          <input required name="contact[email]" aria-label="Email" type="email" autocomplete="email" placeholder="Email" maxlength="254" class="{{ input }}">
+          <input name="contact[Website or Instagram]" aria-label="Website or Instagram" placeholder="Website or Instagram" maxlength="500" class="{{ input }}">
+          <input name="contact[Town or city]" aria-label="Town / city" placeholder="Town / city" maxlength="200" class="{{ input }}">
+          <textarea name="contact[body]" aria-label="Tell us about your shop" rows="4" placeholder="Tell us about your shop" maxlength="3000" class="{{ input }}"></textarea>
+          <button class="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground">Apply now</button>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Become a stockist",
+  "settings": [
+    { "type": "text", "id": "note", "label": "Note", "default": "let's be partners." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "become a stockist." },
+    { "type": "textarea", "id": "sub", "label": "Line", "default": "Bring our date-night games and chocolate to your shop. We work with independent boutiques, gift shops, concept stores and hotels across the UK." },
+    { "type": "textarea", "id": "steps", "label": "How it works, one per line", "default": "Send us your business details.\nWait for approval and your account invitation.\nCreate your password, then browse your wholesale prices." },
+    { "type": "text", "id": "done", "label": "After applying", "default": "you're on our list." },
+    { "type": "text", "id": "done_sub", "label": "After applying, line", "default": "Thank you for applying. We'll review your business details. If approved, you'll receive an email invitation to create your password and enter the wholesale shop." }
+  ],
+  "blocks": [{ "type": "perk", "name": "Perk", "settings": [{ "type": "text", "id": "t", "label": "Title" }, { "type": "text", "id": "b", "label": "Line" }] }],
+  "presets": [{ "name": "Become a stockist" }]
+}
+{% endschema %}

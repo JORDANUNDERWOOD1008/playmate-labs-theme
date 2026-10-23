@@ -1,0 +1,28 @@
+<section class="mx-auto max-w-6xl px-5 pt-16 md:px-6 md:pt-24">
+  <p class="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">{{ section.settings.label }}</p>
+  <div class="mt-6 divide-y divide-border border-y border-border">
+    {%- for block in section.blocks -%}
+      {%- assign n = 0 -%}
+      {%- for p in collections.all.products -%}
+        {%- capture cat -%}{% render 'pm-copy', product: p, field: 'category' %}{%- endcapture -%}
+        {%- assign cat = cat | strip -%}{%- if cat == block.settings.category -%}{%- assign n = n | plus: 1 -%}{%- endif -%}
+      {%- endfor -%}
+      <a href="{{ routes.all_products_collection_url }}?c={{ block.settings.category }}" class="group flex flex-col gap-2 py-6 md:py-8 md:flex-row md:items-baseline md:justify-between" {{ block.shopify_attributes }}>
+        <span class="font-heavy text-4xl font-black tracking-tight text-primary transition group-hover:translate-x-2 sm:text-5xl md:text-7xl">{{ block.settings.word }}</span>
+        <span class="max-w-sm font-light text-muted-foreground">{{ block.settings.line }} <span class="font-bold text-primary">{{ n }} →</span></span>
+      </a>
+    {%- endfor -%}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "The range",
+  "settings": [{ "type": "text", "id": "label", "label": "Label", "default": "The range" }],
+  "blocks": [{ "type": "row", "name": "Row", "settings": [
+    { "type": "text", "id": "word", "label": "Big word", "default": "games." },
+    { "type": "text", "id": "line", "label": "Line" },
+    { "type": "select", "id": "category", "label": "Filter", "options": [{ "value": "games", "label": "Games" }, { "value": "chocolate", "label": "Chocolate" }], "default": "games" }
+  ]}],
+  "presets": [{ "name": "The range" }]
+}
+{% endschema %}

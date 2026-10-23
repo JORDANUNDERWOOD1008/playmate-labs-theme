@@ -1,0 +1,19 @@
+/*
+ * Cinematic theme template (built 23 Oct 2026 from the Lovable design). Edit in the theme editor.
+ */
+{
+  "sections": {
+    "main": {
+      "type": "pm-collection",
+      "settings": {}
+    },
+    "five_day": {
+      "type": "pm-five-day-signup",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "five_day"
+  ]
+}

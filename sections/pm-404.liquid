@@ -1,0 +1,12 @@
+<div class="py-32 text-center px-6">
+  {% render 'pm-note', text: section.settings.note, class: '-rotate-2 text-xl' %}
+  <h1 class="font-heavy mt-2 text-4xl font-black text-primary md:text-6xl">{{ section.settings.heading }}</h1>
+  <a href="{{ routes.all_products_collection_url }}" class="mt-6 inline-block underline">{{ section.settings.link }}</a>
+</div>
+{% schema %}
+{ "name": "Not found", "settings": [
+  { "type": "text", "id": "note", "label": "Note", "default": "oops." },
+  { "type": "text", "id": "heading", "label": "Heading", "default": "lost in the ritual." },
+  { "type": "text", "id": "link", "label": "Link", "default": "Browse the shop" }
+] }
+{% endschema %}

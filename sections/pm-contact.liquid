@@ -1,0 +1,40 @@
+{%- comment -%} Contact page: the design's form, wired to Shopify's contact form (emails the store). {%- endcomment -%}
+{%- assign s = section.settings -%}
+<div class="mx-auto grid max-w-6xl gap-10 px-6 pt-12 md:grid-cols-2">
+  <div class="relative">
+    {% render 'pm-note', text: s.image_note, light: true, class: 'absolute bottom-8 left-8 z-10 -rotate-6 text-3xl drop-shadow' %}
+    {%- if s.image != blank -%}{{ s.image | image_url: width: 1000 | image_tag: alt: s.image_alt, class: 'aspect-[4/5] w-full rounded-sm object-cover' }}
+    {%- else -%}<img width="1100" height="1366" src="{{ 'pm-hot-blindfold.webp' | asset_url }}" alt="{{ s.image_alt | escape }}" class="aspect-[4/5] w-full rounded-sm object-cover">{%- endif -%}
+  </div>
+  <div>
+    <h1 class="font-heavy text-5xl font-black tracking-tight text-primary">{{ s.heading }}</h1>
+    <p class="mt-4 font-light text-muted-foreground">{{ s.sub }}</p>
+    {%- form 'contact', class: 'mt-8 space-y-4' -%}
+      {%- if form.posted_successfully? -%}
+        <p class="font-hand mt-10 -rotate-2 text-2xl text-primary">{{ s.done }}</p>
+      {%- else -%}
+        {%- if form.errors -%}<p role="alert" class="text-sm text-primary">{{ form.errors | default_errors }}</p>{%- endif -%}
+        <input required name="contact[name]" autocomplete="name" placeholder="Name" aria-label="Name" class="w-full rounded-sm border border-border bg-card px-4 py-3">
+        <input required type="email" name="contact[email]" autocomplete="email" placeholder="Email" aria-label="Email" class="w-full rounded-sm border border-border bg-card px-4 py-3">
+        <select name="contact[topic]" aria-label="Topic" class="w-full rounded-sm border border-border bg-card px-4 py-3">
+          <option>Order</option><option>Become a stockist</option><option>Press</option><option>Events</option>
+        </select>
+        <textarea required rows="5" name="contact[body]" placeholder="Message" aria-label="Message" class="w-full rounded-sm border border-border bg-card px-4 py-3"></textarea>
+        <button class="rounded-full bg-primary px-10 py-4 text-[11px] font-bold uppercase tracking-[0.25em] text-primary-foreground">Send</button>
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Contact (cinematic)",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Photo" },
+    { "type": "text", "id": "image_alt", "label": "Photo description", "default": "Woman in a red blindfold holding Nude Stack'd" },
+    { "type": "text", "id": "image_note", "label": "Note on the photo", "default": "write back?" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "say hello." },
+    { "type": "text", "id": "sub", "label": "Line", "default": "Orders, stockists, press or live events. We reply within two working days." },
+    { "type": "text", "id": "done", "label": "After sending", "default": "got it. talk soon." }
+  ]
+}
+{% endschema %}

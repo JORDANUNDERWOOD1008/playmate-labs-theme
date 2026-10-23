@@ -1,0 +1,14 @@
+/*
+ * Cinematic theme template (built 23 Oct 2026 from the Lovable design). Edit in the theme editor.
+ */
+{
+  "sections": {
+    "main": {
+      "type": "pm-page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

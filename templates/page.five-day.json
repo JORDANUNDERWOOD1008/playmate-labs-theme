@@ -1,0 +1,216 @@
+/*
+ * Cinematic theme template (built 23 Oct 2026 from the Lovable design). Edit in the theme editor.
+ */
+{
+  "sections": {
+    "main": {
+      "type": "pm-five-day",
+      "settings": {},
+      "blocks": {
+        "b1": {
+          "type": "day",
+          "settings": {
+            "mode": "solo",
+            "s": "you have a type. apparently.",
+            "d": "Three qualities that attract you, three that make time together enjoyable. Compare.",
+            "b": "Pick three qualities that attract you, then three that actually make spending time with someone enjoyable. See where they overlap. Keep the answers private."
+          }
+        },
+        "b2": {
+          "type": "day",
+          "settings": {
+            "mode": "solo",
+            "s": "your taste is showing.",
+            "d": "One song, one flavour, one texture. Ten minutes.",
+            "b": "Choose one song, one flavour and one texture you love. Put them together for ten minutes: music on, something good to eat or drink, somewhere comfortable."
+          }
+        },
+        "b3": {
+          "type": "day",
+          "settings": {
+            "mode": "solo",
+            "s": "go somewhere you'd usually scroll past.",
+            "d": "A nearby place you've been curious about. Small budget, including £0.",
+            "b": "Choose a nearby place you've been curious about: a café, exhibition, bookshop or unfamiliar street. Give yourself a small budget, including £0. Go alone or invite someone."
+          }
+        },
+        "b4": {
+          "type": "day",
+          "settings": {
+            "mode": "solo",
+            "s": "make the first move.",
+            "d": "An invitation, a better question, or a booking. Dating is optional.",
+            "b": "Choose one: send a specific invitation, ask someone a more interesting question, or book something you've been waiting for company to do. Dating is optional."
+          }
+        },
+        "b5": {
+          "type": "day",
+          "settings": {
+            "mode": "solo",
+            "s": "keep the good bit.",
+            "d": "Pick the best bit of the week. Do it again.",
+            "b": "Pick the thing you enjoyed most this week. Make a plan to do it again. Finish one sentence: \"I'd like more of ___.\""
+          }
+        },
+        "b6": {
+          "type": "day",
+          "settings": {
+            "mode": "met",
+            "s": "first impressions.",
+            "d": "A first impression and one thing that surprised you after. 5 min.",
+            "b": "Each share a first impression and one thing that surprised you afterwards. Keep it to a sentence or two, then see where the conversation goes. Takeaway: a story about how you met."
+          }
+        },
+        "b7": {
+          "type": "day",
+          "settings": {
+            "mode": "met",
+            "s": "a minor disagreement.",
+            "d": "Five either-or choices. Compare. No scores. 5 min.",
+            "b": "Answer separately: breakfast or dinner, city or coast, planned or spontaneous, call or text, window or aisle. Compare. Nobody's keeping score. Takeaway: five easy conversation starters."
+          }
+        },
+        "b8": {
+          "type": "day",
+          "settings": {
+            "mode": "met",
+            "s": "send me something good.",
+            "d": "One recommendation and why it's for them. 5 min.",
+            "b": "Send one recommendation: a song, a film or a place to eat. Add a sentence about why you chose it for this person. Takeaway: something specific to reply to later."
+          }
+        },
+        "b9": {
+          "type": "day",
+          "settings": {
+            "mode": "met",
+            "s": "you choose.",
+            "d": "Pick a hidden card: curious, playful or unexpected. 8 min.",
+            "b": "Curious: what's a skill you're unexpectedly good at? Playful: sell me your ideal Sunday in twenty seconds. Unexpected: name a public place you'd like to show me. Takeaway: a new story, or an idea for meeting again."
+          }
+        },
+        "b10": {
+          "type": "day",
+          "settings": {
+            "mode": "met",
+            "s": "round two.",
+            "d": "Fancy another date? Two options, pick one. Or don't. 5 min.",
+            "b": "If you'd both like another date, offer two specific options with a day, a place and a rough budget. Choose one together. It's also fine to end here. Takeaway: a clear next step, if it's mutual."
+          }
+        },
+        "b11": {
+          "type": "day",
+          "settings": {
+            "mode": "duo",
+            "s": "you probably don't know this.",
+            "d": "Write down one thing they probably don't know about you. Swap.",
+            "b": "Write down one thing your person probably doesn't know about you. Nothing dramatic. Unless it is. Swap. Questions are allowed."
+          }
+        },
+        "b12": {
+          "type": "day",
+          "settings": {
+            "mode": "duo",
+            "s": "settle something.",
+            "d": "Five small disputes. Answer separately, then compare.",
+            "b": "Who picked who up? Who takes longer to leave the house? Who'd survive a week without their phone? Who's the better cook? Who started it? Answer separately. Compare. Try to stay together."
+          }
+        },
+        "b13": {
+          "type": "day",
+          "settings": {
+            "mode": "duo",
+            "s": "make them a recommendation.",
+            "d": "One song, one food, one place. Explain your oddest pick.",
+            "b": "Send them one song, one food and one place you think they'd like. Then explain your least obvious choice. They'll ask anyway."
+          }
+        },
+        "b14": {
+          "type": "day",
+          "settings": {
+            "mode": "duo",
+            "s": "pick a card.",
+            "d": "Three hidden prompts. Pick one. No peeking.",
+            "b": "One: tell me your first impression of me. Two: plan a date you think I'd secretly love. Three: give me a compliment that isn't about my appearance. Pick a number before you read them. Too late."
+          }
+        },
+        "b15": {
+          "type": "day",
+          "settings": {
+            "mode": "duo",
+            "s": "actually make a plan.",
+            "d": "Propose a date with a time, place and budget. Pick one. Book it.",
+            "b": "You each propose a date: a time, a place, a budget. Pick one. Book it. Not 'we should'. Actually book it."
+          }
+        },
+        "b16": {
+          "type": "idea",
+          "settings": {
+            "t": "Small gallery, then coffee",
+            "d": "Something to look at means something to talk about."
+          }
+        },
+        "b17": {
+          "type": "idea",
+          "settings": {
+            "t": "Pub quiz",
+            "d": "Teamwork, mild competition, and you learn what they know."
+          }
+        },
+        "b18": {
+          "type": "idea",
+          "settings": {
+            "t": "Market wander",
+            "d": "Share a few bites. Disagree about which stall was best."
+          }
+        },
+        "b19": {
+          "type": "idea",
+          "settings": {
+            "t": "Pottery or a one-off class",
+            "d": "Being bad at something together is very bonding."
+          }
+        },
+        "b20": {
+          "type": "idea",
+          "settings": {
+            "t": "Walk with a destination",
+            "d": "Side by side is easier than face to face."
+          }
+        },
+        "b21": {
+          "type": "idea",
+          "settings": {
+            "t": "Bookshop dare",
+            "d": "Pick a book for each other. Under a tenner."
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4",
+        "b5",
+        "b6",
+        "b7",
+        "b8",
+        "b9",
+        "b10",
+        "b11",
+        "b12",
+        "b13",
+        "b14",
+        "b15",
+        "b16",
+        "b17",
+        "b18",
+        "b19",
+        "b20",
+        "b21"
+      ]
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

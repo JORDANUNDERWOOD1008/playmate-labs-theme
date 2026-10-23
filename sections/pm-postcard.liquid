@@ -1,0 +1,58 @@
+{%- comment -%}
+  Weekly discovery postcard (homepage only). A new note turns up every Monday at 00:00 UTC from
+  the start date; earlier notes stay under "previous notes". cinematic.js does the flip, archive and save.
+{%- endcomment -%}
+{%- capture notes -%}[{%- for block in section.blocks -%}{"number":{{ forloop.index }},"text":{{ block.settings.text | json }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]{%- endcapture -%}
+<section aria-label="Weekly discovery postcard" class="mx-auto max-w-6xl px-6 pt-16 text-center md:pt-20" data-postcard data-start="{{ section.settings.start }}">
+  <script type="application/json" data-notes>{{ notes }}</script>
+  <p class="font-hand mb-5 -rotate-2 text-xl text-primary">{{ section.settings.note }}</p>
+  <button type="button" data-flip aria-expanded="false" aria-label="Turn over this week's postcard" class="discovery-postcard relative mx-auto block h-auto w-full max-w-md whitespace-normal rounded-sm p-0 text-primary">
+    <span class="discovery-postcard-inner relative block aspect-[3/2]">
+      <span class="discovery-postcard-face absolute inset-0 flex flex-col justify-between border border-border bg-card p-6 text-left sm:p-8" data-front>
+        <span class="flex items-center justify-between text-[10px] uppercase tracking-[0.15em]"><span data-edition>note 001</span><span class="border border-primary/40 px-2 py-3">P.L.</span></span>
+        <span class="grid grid-cols-2 items-end gap-5">
+          <span class="font-hand text-lg leading-relaxed">{{ section.settings.front }}</span>
+          <span class="space-y-4 border-l border-primary/20 pb-1 pl-5"><span class="block border-b border-primary/20 pb-1 font-hand text-sm">to: you</span><span class="block border-b border-primary/20"></span><span class="block border-b border-primary/20"></span></span>
+        </span>
+        <span class="text-[10px] uppercase tracking-[0.15em]">Playmate Labs · a weekly discovery</span>
+      </span>
+      <span class="discovery-postcard-face discovery-postcard-reverse absolute inset-0 flex flex-col items-center justify-between border border-border bg-background p-6 sm:p-8" data-back aria-hidden="true">
+        <span class="text-[10px] uppercase tracking-[0.15em]" data-edition>note 001</span>
+        <span class="font-hand max-w-xs text-xl leading-relaxed sm:text-2xl" data-text></span>
+        <span class="font-hand text-xs">{{ section.settings.signoff }}</span>
+      </span>
+    </span>
+  </button>
+  <div class="mx-auto mt-4 flex max-w-md items-center justify-center gap-2">
+    <button type="button" data-save hidden class="inline-flex h-11 w-11 items-center justify-center rounded-md text-primary hover:bg-card" aria-label="Save this postcard" title="Save postcard">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+    </button>
+    <button type="button" data-archive-toggle aria-expanded="false" class="inline-flex h-11 w-11 items-center justify-center rounded-md text-primary hover:bg-card" aria-label="Explore previous notes" title="Previous notes">
+      <svg data-icon-history class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+      <svg data-icon-x hidden class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+    <button type="button" data-turn-back hidden class="inline-flex h-11 w-11 items-center justify-center rounded-md text-primary hover:bg-card" aria-label="Turn postcard back" title="Turn back">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+    </button>
+  </div>
+  <div data-archive hidden class="mx-auto mt-3 max-w-md border-t border-border pt-4">
+    <p class="font-hand text-sm text-primary">previous notes.</p>
+    <div data-archive-list class="mt-3 flex flex-wrap justify-center gap-2"></div>
+    <p data-archive-empty hidden class="mt-2 text-sm text-muted-foreground">The first of many. Another arrives Monday.</p>
+    <button type="button" data-this-week hidden class="mt-2 min-h-11 text-sm text-primary underline-offset-4 hover:underline">This week's note</button>
+  </div>
+  {%- comment -%} Archive buttons are built in cinematic.js: min-h-11 rounded-md border border-border bg-background px-4 text-sm text-primary hover:bg-card {%- endcomment -%}
+</section>
+{% schema %}
+{
+  "name": "Weekly postcard",
+  "settings": [
+    { "type": "text", "id": "note", "label": "Note", "default": "Turn it over." },
+    { "type": "text", "id": "front", "label": "Front line", "default": "for the curious." },
+    { "type": "text", "id": "signoff", "label": "Sign-off", "default": "with love, the lab x" },
+    { "type": "text", "id": "start", "label": "First Monday (YYYY-MM-DD)", "default": "2026-10-19" }
+  ],
+  "blocks": [{ "type": "note", "name": "Note", "settings": [{ "type": "text", "id": "text", "label": "Text" }]}],
+  "presets": [{ "name": "Weekly postcard" }]
+}
+{% endschema %}

@@ -1,0 +1,29 @@
+{%- comment -%} "pull one." The mini stacking game from the cinematic site; cinematic.js builds the tower. {%- endcomment -%}
+<section class="mx-auto max-w-md px-5 pt-14 text-center md:pt-20" data-pull-one data-product-url="{{ section.settings.product.url | default: '/products/nude-stacked' }}">
+  {% render 'pm-note', text: section.settings.note, class: '-rotate-2 text-lg' %}
+  <h2 class="font-heavy mt-1 text-3xl font-black leading-none tracking-tight text-primary md:text-4xl">{{ section.settings.heading }}</h2>
+  <p class="mt-2 text-sm font-light text-muted-foreground">{{ section.settings.sub }}</p>
+  <div class="mt-6 flex justify-center">
+    <div data-tower class="flex flex-col-reverse items-center transition-transform duration-500 ease-in" style="transform-origin: bottom right"></div>
+  </div>
+  <div class="mt-5 min-h-[56px]" data-result></div>
+  {%- comment -%} Classes used by cinematic.js for the tower, so Tailwind keeps them:
+    flex gap-1 pb-1 grid h-10 w-20 place-items-center rounded-[3px] md:h-12 md:w-24 transition bg-transparent bg-block hover:brightness-110 active:translate-x-2 disabled:cursor-default h-5 w-5 h-4 w-4
+    mt-1 h-2 w-64 md:w-72 rounded-full bg-foreground/10 translate-x-10 translate-y-6 rotate-[28deg] opacity-60 rotate-[1.5deg]
+    font-hand text-xl text-primary mt-3 rounded-full bg-primary px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary-foreground
+    mx-auto flex aspect-[5/7] w-48 -rotate-2 flex-col justify-between rounded-lg bg-block p-4 text-left shadow-lg animate-in fade-in zoom-in-95
+    items-center gap-2 tracking-[0.25em] font-heavy text-lg leading-snug self-end text-[9px] opacity-70 inline-block border-b border-primary fill-primary-foreground
+  {%- endcomment -%}
+</section>
+{% schema %}
+{
+  "name": "Pull one (mini game)",
+  "settings": [
+    { "type": "text", "id": "note", "label": "Note", "default": "your move." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "pull one." },
+    { "type": "text", "id": "sub", "label": "Line", "default": "Tap a block. Don't let it fall." },
+    { "type": "product", "id": "product", "label": "\"Get the real tower\" links to" }
+  ],
+  "presets": [{ "name": "Pull one (mini game)" }]
+}
+{% endschema %}

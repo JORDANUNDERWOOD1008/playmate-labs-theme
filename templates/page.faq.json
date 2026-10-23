@@ -1,0 +1,173 @@
+/*
+ * Cinematic theme template (built 23 Oct 2026 from the Lovable design). Edit in the theme editor.
+ */
+{
+  "sections": {
+    "main": {
+      "type": "pm-faq",
+      "settings": {},
+      "blocks": {
+        "b1": {
+          "type": "group",
+          "settings": {
+            "title": "Orders & Shipping"
+          }
+        },
+        "b2": {
+          "type": "question",
+          "settings": {
+            "q": "How long does shipping take?",
+            "a": "Standard delivery takes 3-5 working days. Express options available at checkout. Free standard shipping on orders of £49 or more."
+          }
+        },
+        "b3": {
+          "type": "question",
+          "settings": {
+            "q": "How do I track my order?",
+            "a": "You will receive a tracking email once your order has shipped. You can also check your order status in your account under Order History."
+          }
+        },
+        "b4": {
+          "type": "question",
+          "settings": {
+            "q": "Can I change or cancel my order?",
+            "a": "We process orders quickly. Please contact us within 1 hour of placing your order to make changes. After this, we cannot guarantee modifications."
+          }
+        },
+        "b5": {
+          "type": "question",
+          "settings": {
+            "q": "Do you ship internationally?",
+            "a": "Currently we ship within the UK. International shipping is coming soon. Sign up to our newsletter to be notified."
+          }
+        },
+        "b6": {
+          "type": "group",
+          "settings": {
+            "title": "Products & Drops"
+          }
+        },
+        "b7": {
+          "type": "question",
+          "settings": {
+            "q": "What is a Monthly Drop?",
+            "a": "Each month we curate a limited-edition sensory kit for couples. Each drop is themed, limited in quantity and ships once per month. Once it's gone, it's gone."
+          }
+        },
+        "b8": {
+          "type": "question",
+          "settings": {
+            "q": "How do I get early access to drops?",
+            "a": "Subscribe to our newsletter or join the Playmate Community to receive early access notifications before each drop goes public."
+          }
+        },
+        "b9": {
+          "type": "question",
+          "settings": {
+            "q": "Are the products safe / allergen-free?",
+            "a": "All products are clearly labelled with ingredients and allergen information. Please review product pages carefully if you have specific dietary requirements or sensitivities."
+          }
+        },
+        "b10": {
+          "type": "question",
+          "settings": {
+            "q": "What's the difference between the experience and the kit?",
+            "a": "The 5-Day Sensory Experience is our free digital programme delivered by email. The monthly drop kits are physical products: premium sensory items delivered to your door."
+          }
+        },
+        "b11": {
+          "type": "group",
+          "settings": {
+            "title": "Events"
+          }
+        },
+        "b12": {
+          "type": "question",
+          "settings": {
+            "q": "Where are your events held?",
+            "a": "We currently host events in London, with Manchester and other UK cities coming soon. Exact venue details are sent after booking."
+          }
+        },
+        "b13": {
+          "type": "question",
+          "settings": {
+            "q": "Do I need to come as a couple?",
+            "a": "Most events are designed for couples, though some community mixers welcome individuals. Check the specific event listing for details."
+          }
+        },
+        "b14": {
+          "type": "question",
+          "settings": {
+            "q": "What is your cancellation policy for events?",
+            "a": "Full refunds are available up to 48 hours before the event. Within 48 hours, we can transfer your booking to a future event but cannot issue refunds."
+          }
+        },
+        "b15": {
+          "type": "group",
+          "settings": {
+            "title": "Membership & Rewards"
+          }
+        },
+        "b16": {
+          "type": "question",
+          "settings": {
+            "q": "How do I earn Playmate Points?",
+            "a": "Earn 1 point per £1 spent, 50 points for writing a review, 200 points for referring a friend, 25 points for following us on social media, and 100 points when you subscribe to monthly drops."
+          }
+        },
+        "b17": {
+          "type": "question",
+          "settings": {
+            "q": "How do I redeem my points?",
+            "a": "Points can be redeemed at checkout for discounts. 100 points = £1 off. Higher membership tiers unlock bonus multipliers and exclusive rewards."
+          }
+        },
+        "b18": {
+          "type": "group",
+          "settings": {
+            "title": "Returns & Refunds"
+          }
+        },
+        "b19": {
+          "type": "question",
+          "settings": {
+            "q": "What is your returns policy?",
+            "a": "We offer 30-day returns on unopened, unused items in original packaging. Consumable food items and personalised products cannot be returned for hygiene reasons."
+          }
+        },
+        "b20": {
+          "type": "question",
+          "settings": {
+            "q": "How do I start a return?",
+            "a": "Email us at hello@playmate-labs.com with your order number and reason for return. We will send you a return label within 24 hours."
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4",
+        "b5",
+        "b6",
+        "b7",
+        "b8",
+        "b9",
+        "b10",
+        "b11",
+        "b12",
+        "b13",
+        "b14",
+        "b15",
+        "b16",
+        "b17",
+        "b18",
+        "b19",
+        "b20"
+      ]
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

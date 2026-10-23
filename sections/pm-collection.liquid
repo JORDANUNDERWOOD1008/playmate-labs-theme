@@ -1,0 +1,60 @@
+{%- comment -%}
+  Shop grid. On "all" (and frontpage) it is the design's "ways to change the evening." page with
+  Games / Chocolate chips (?c=games filters in cinematic.js, the URL stays /collections/all).
+  Other collections keep their own title and description, which carry their SEO copy.
+{%- endcomment -%}
+{%- assign is_all = false -%}
+{%- if collection.handle == 'all' or collection.handle == 'frontpage' -%}{%- assign is_all = true -%}{%- endif -%}
+{%- assign n_games = 0 -%}{%- assign n_choc = 0 -%}
+{%- for p in collection.products -%}
+  {%- capture cat -%}{% render 'pm-copy', product: p, field: 'category' %}{%- endcapture -%}
+  {%- assign cat = cat | strip -%}
+  {%- if cat == 'games' -%}{%- assign n_games = n_games | plus: 1 -%}{%- else -%}{%- assign n_choc = n_choc | plus: 1 -%}{%- endif -%}
+{%- endfor -%}
+<div data-shop data-all-heading="{{ section.settings.heading | escape }}">
+  <div class="mx-auto max-w-6xl px-6 pt-8 md:pt-12">
+    {% render 'pm-note', text: section.settings.note, class: '-rotate-2 text-xl' %}
+    <h1 data-shop-heading class="font-heavy mt-2 text-4xl font-black leading-none tracking-tight text-primary sm:text-5xl md:text-7xl">
+      {%- if is_all -%}{{ section.settings.heading }}{%- else -%}{{ collection.title | downcase }}.{%- endif -%}
+    </h1>
+    <p data-shop-line hidden class="mt-3 max-w-md font-light text-muted-foreground"></p>
+    {%- if is_all -%}
+      {%- assign chip = 'shrink-0 whitespace-nowrap rounded-full border px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em]' -%}
+      <div class="no-scrollbar -mx-6 mt-6 flex gap-2 overflow-x-auto px-6 [scrollbar-width:none] md:mx-0 md:mt-8 md:flex-wrap md:px-0">
+        <a href="{{ collection.url }}" data-chip="" class="{{ chip }} border-primary bg-primary text-primary-foreground">All ({{ collection.products_count }})</a>
+        <a href="{{ collection.url }}?c=games" data-chip="games" data-line="{{ section.settings.games_line | escape }}" class="{{ chip }} border-border text-primary">Games ({{ n_games }})</a>
+        <a href="{{ collection.url }}?c=chocolate" data-chip="chocolate" data-line="{{ section.settings.chocolate_line | escape }}" class="{{ chip }} border-border text-primary">Chocolate ({{ n_choc }})</a>
+      </div>
+    {%- endif -%}
+    <ul class="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+      {%- assign perks = section.settings.perks | newline_to_br | split: '<br />' -%}
+      {%- for p in perks -%}<li>✦ {{ p | strip }}</li>{%- endfor -%}
+    </ul>
+    {%- paginate collection.products by 24 -%}
+      <div class="mt-12 grid grid-cols-2 gap-x-4 gap-y-8 md:gap-6 lg:grid-cols-3">
+        {%- for p in collection.products -%}{% render 'pm-product-card', p: p %}{%- endfor -%}
+      </div>
+      {%- if paginate.pages > 1 -%}
+        <nav class="mt-10 flex justify-center gap-6 text-xs font-bold uppercase tracking-[0.25em] text-primary" aria-label="Pages">
+          {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">← Previous</a>{%- endif -%}
+          {%- if paginate.next -%}<a href="{{ paginate.next.url }}">Next →</a>{%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+    {%- if is_all == false and collection.description != blank -%}
+      <div class="pm-rte mx-auto mt-16 max-w-2xl text-muted-foreground">{{ collection.description }}</div>
+    {%- endif -%}
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Shop grid",
+  "settings": [
+    { "type": "text", "id": "note", "label": "Note", "default": "pick one." },
+    { "type": "text", "id": "heading", "label": "Heading on Shop all", "default": "ways to change the evening." },
+    { "type": "text", "id": "games_line", "label": "Games line", "default": "Pull a block. Ask the question. Let the game do the asking." },
+    { "type": "text", "id": "chocolate_line", "label": "Chocolate line", "default": "Aphrodisiac chocolate made to be shared, snapped and melted." },
+    { "type": "textarea", "id": "perks", "label": "Perks, one per line", "default": "Free shipping from £49\nDesigned & made in the UK\nDiscreet packaging" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,95 @@
+{%- comment -%}
+  Journal post in the cinematic style. Keeps everything the old template did for SEO: one H1
+  (body H1s become H2), author card with role, published and updated dates, reading time, the
+  blog CTA A/B test and three related posts. Article schema comes from layout/theme.liquid.
+{%- endcomment -%}
+<article class="mx-auto max-w-6xl px-5 pb-8 pt-6 md:px-6 md:pt-10">
+  <p class="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+    <a href="{{ routes.root_url }}">Home</a> › <a href="{{ blog.url }}">{{ blog.title | default: 'Journal' }}</a> › {{ article.title | truncate: 40 }}
+  </p>
+  <header class="mx-auto max-w-3xl pt-8 text-center md:pt-12">
+    {%- if article.tags.size > 0 -%}
+      <div class="flex flex-wrap justify-center gap-2">
+        {%- for tag in article.tags limit: 3 -%}<a href="{{ blog.url }}/tagged/{{ tag | handleize }}" class="rounded-full border border-border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{{ tag }}</a>{%- endfor -%}
+      </div>
+    {%- endif -%}
+    <h1 class="font-heavy mt-5 text-4xl font-black leading-[0.95] tracking-tight text-primary sm:text-5xl md:text-6xl">{{ article.title }}</h1>
+    {%- if article.excerpt != blank -%}<p class="mx-auto mt-5 max-w-xl text-lg font-light leading-relaxed text-muted-foreground">{{ article.excerpt | strip_html | truncate: 220 }}</p>{%- endif -%}
+    <p class="mt-6 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+      <a href="/pages/about" class="font-bold text-primary">{{ article.author }}</a>
+      · <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%-d %B %Y' }}</time>
+      {%- assign pub = article.published_at | date: '%Y-%m-%d' -%}{%- assign upd = article.updated_at | date: '%Y-%m-%d' -%}
+      {%- if upd != pub %} · Updated <time datetime="{{ upd }}">{{ article.updated_at | date: '%-d %B %Y' }}</time>{%- endif %}
+      · {{ article.content | strip_html | split: ' ' | size | divided_by: 200 | plus: 1 }} min read
+    </p>
+  </header>
+  {%- if article.image -%}
+    <div class="mt-10">{{ article.image | image_url: width: 1600 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '600, 1000, 1400, 1600', sizes: '(min-width: 1152px) 1104px, 100vw', alt: article.image.alt, class: 'aspect-[16/9] w-full rounded-sm object-cover' }}</div>
+  {%- endif -%}
+  <div class="mx-auto mt-12 grid max-w-5xl gap-12 md:grid-cols-[minmax(0,1fr)_260px]">
+    <div class="pm-rte">{{ article.content | replace: '<h1', '<h2' | replace: '</h1>', '</h2>' }}</div>
+    <aside class="space-y-5 md:sticky md:top-28 md:self-start">
+      <div class="rounded-md bg-card p-6">
+        <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground">About the author</p>
+        <p class="font-heavy mt-3 text-lg font-bold text-primary"><a href="/pages/about">{{ article.author }}</a></p>
+        <p class="text-sm text-muted-foreground">{% if article.author == 'Jordan Underwood' %}Founder, Playmate Labs{% else %}Playmate Labs Editorial{% endif %}</p>
+        {%- if article.author == 'Jordan Underwood' -%}
+          <p class="mt-3 text-sm font-light leading-relaxed">{{ section.settings.founder_bio }}</p>
+          <a href="/pages/about" class="mt-3 inline-block border-b border-primary text-[11px] font-bold uppercase tracking-[0.2em] text-primary">Read full bio</a>
+        {%- endif -%}
+      </div>
+      <div class="rounded-md bg-primary p-6 text-primary-foreground">
+        <p class="font-hand -rotate-2 text-lg">a little something for you.</p>
+        <p class="font-heavy mt-2 text-xl font-black">the 5-day experience.</p>
+        <p class="mt-1 text-sm opacity-80">It's free. It's for you.</p>
+        <a href="/pages/five-day" class="mt-4 inline-block rounded-full bg-background px-5 py-2.5 font-hand text-sm text-primary">I'm in.</a>
+      </div>
+    </aside>
+  </div>
+</article>
+
+{%- assign cta_product = all_products['nude-stacked'] -%}
+{%- if cta_product == blank or cta_product.available == false -%}{%- assign cta_product = all_products['playmate-chocolate'] -%}{%- endif -%}
+{%- if cta_product != blank and cta_product.available -%}
+  <section id="ab-cta-card" style="display:none" data-test="blog-cta-v2" data-product="{{ cta_product.handle }}" class="mx-auto max-w-5xl px-5 pt-8 md:px-6">
+    <div class="grid items-center gap-6 rounded-md bg-card p-6 sm:grid-cols-[160px_1fr] md:p-8">
+      {%- if cta_product.featured_image -%}{{ cta_product.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: cta_product.title, class: 'aspect-[4/5] w-full rounded-sm object-cover sm:w-40' }}{%- endif -%}
+      <div>
+        <p class="font-hand -rotate-2 text-lg text-primary">enjoyed this?</p>
+        <p class="font-heavy mt-1 text-2xl font-black text-primary">{{ cta_product.title }}</p>
+        {%- capture cta_desc -%}{% render 'pm-copy', product: cta_product, field: 'desc' %}{%- endcapture -%}
+        <p class="mt-2 font-light text-muted-foreground">{{ cta_desc | strip }}</p>
+        <a id="ab-cta-btn" href="{{ cta_product.url }}" class="mt-4 inline-block rounded-full bg-primary px-8 py-3 text-[11px] font-bold uppercase tracking-[0.25em] text-primary-foreground">Shop · {% if cta_product.price_varies %}from {% endif %}{{ cta_product.price_min | money }}</a>
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{%- if blog.articles.size > 1 -%}
+  <section class="mx-auto max-w-6xl px-5 pt-16 md:px-6 md:pt-24">
+    <h2 class="font-heavy text-3xl font-black tracking-tight text-primary md:text-4xl">keep reading.</h2>
+    <div class="mt-8 grid gap-8 sm:grid-cols-3">
+      {%- assign count = 0 -%}
+      {%- for a in blog.articles -%}
+        {%- if a.id != article.id and count < 3 -%}
+          <a href="{{ a.url }}" class="group block">
+            <div class="aspect-[4/5] overflow-hidden rounded-sm bg-card">{%- if a.image -%}{{ a.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: a.image.alt, class: 'h-full w-full object-cover transition duration-700 group-hover:scale-105' }}{%- endif -%}</div>
+            <p class="mt-4 text-[11px] uppercase tracking-[0.25em] text-muted-foreground">{{ a.tags.first | default: 'Journal' }}</p>
+            <h3 class="font-heavy mt-1 text-lg font-bold leading-snug">{{ a.title }}</h3>
+          </a>
+          {%- assign count = count | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    <a href="{{ blog.url }}" class="mt-10 inline-block border-b-2 border-primary pb-1 text-xs font-bold uppercase tracking-[0.25em] text-primary">All Journal posts</a>
+  </section>
+{%- endif -%}
+{% render 'pm-article-ab' %}
+{% schema %}
+{
+  "name": "Journal post (cinematic)",
+  "settings": [
+    { "type": "textarea", "id": "founder_bio", "label": "Founder bio on Jordan's posts", "default": "Jordan founded Playmate Labs to bring science-backed aphrodisiac chocolates to UK couples. He works directly with artisan chocolatiers and ingredient researchers to develop every product." }
+  ]
+}
+{% endschema %}

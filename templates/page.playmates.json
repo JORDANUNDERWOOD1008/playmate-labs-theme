@@ -1,0 +1,144 @@
+/*
+ * Cinematic theme template (built 23 Oct 2026 from the Lovable design). Edit in the theme editor.
+ */
+{
+  "sections": {
+    "main": {
+      "type": "pm-playmates",
+      "settings": {},
+      "blocks": {
+        "b1": {
+          "type": "tier",
+          "settings": {
+            "n": "01",
+            "title": "the fun stuff.",
+            "note": "30 seconds. Tap and go."
+          }
+        },
+        "b2": {
+          "type": "question",
+          "settings": {
+            "id": "night",
+            "q": "Your ideal night in?",
+            "why": "So we suggest games that fit your mood.",
+            "kind": "one",
+            "opts": "Wine & a film, Games on the sofa, Cooking together, Bath & candles"
+          }
+        },
+        "b3": {
+          "type": "question",
+          "settings": {
+            "id": "sweet",
+            "q": "Pick your chocolate.",
+            "why": "For flavour picks and new choc drops.",
+            "kind": "one",
+            "opts": "Milk, Dark, White, Surprise me"
+          }
+        },
+        "b4": {
+          "type": "question",
+          "settings": {
+            "id": "vibe",
+            "q": "Pick three words for your perfect date.",
+            "why": "Shapes the prompts and picks we show you.",
+            "kind": "three",
+            "opts": "Silly, Slow, Flirty, Cosy, Daring, Romantic, Chatty, Spontaneous"
+          }
+        },
+        "b5": {
+          "type": "tier",
+          "settings": {
+            "n": "02",
+            "title": "a little more you.",
+            "note": "Optional. Skip anything."
+          }
+        },
+        "b6": {
+          "type": "question",
+          "settings": {
+            "id": "stage",
+            "q": "Where are you at?",
+            "why": "First dates and ten-year couples want different things.",
+            "kind": "one",
+            "opts": "Just started dating, Settled in, Years together, Rather not say"
+          }
+        },
+        "b7": {
+          "type": "question",
+          "settings": {
+            "id": "for",
+            "q": "Who are you usually shopping for?",
+            "why": "So gift ideas actually make sense.",
+            "kind": "one",
+            "opts": "Us two, A gift for someone, Hen do / party, A bit of everything"
+          }
+        },
+        "b8": {
+          "type": "question",
+          "settings": {
+            "id": "moments",
+            "q": "Moments you'd like a nudge for?",
+            "why": "We'll only email around the ones you pick.",
+            "kind": "three",
+            "opts": "Valentine's, Anniversary, Birthdays, Christmas, Just because"
+          }
+        },
+        "b9": {
+          "type": "tier",
+          "settings": {
+            "n": "03",
+            "title": "just between us.",
+            "note": "Fully optional. Only if you want to."
+          }
+        },
+        "b10": {
+          "type": "question",
+          "settings": {
+            "id": "spice",
+            "q": "How spicy do you like your games?",
+            "why": "We'll match prompts to your comfort. Change it anytime.",
+            "kind": "slider",
+            "opts": "Sweet, Spicy"
+          }
+        },
+        "b11": {
+          "type": "question",
+          "settings": {
+            "id": "more",
+            "q": "What would you like more of together?",
+            "why": "Helps us decide what we make next.",
+            "kind": "three",
+            "opts": "Laughing, Talking, Touch, Trying new things, Slowing down"
+          }
+        },
+        "b12": {
+          "type": "question",
+          "settings": {
+            "id": "bday",
+            "q": "Birthday month?",
+            "why": "Just the month, for a treat. Never your full date.",
+            "kind": "one",
+            "opts": "Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4",
+        "b5",
+        "b6",
+        "b7",
+        "b8",
+        "b9",
+        "b10",
+        "b11",
+        "b12"
+      ]
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
