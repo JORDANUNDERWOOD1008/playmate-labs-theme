@@ -316,6 +316,102 @@
     reset();
   }
 
+  /* ── Scratch card ────────────────────────────────────────── */
+  const sc = $('[data-scratch]');
+  if (sc) {
+    const modal = $('[data-scratch-modal]', sc), canvas = $('[data-scratch-canvas]', sc);
+    const step = name => $$('[data-step]', sc).forEach(el => { el.hidden = el.dataset.step !== name; });
+    let ready = false, done = false, drawing = false;
+    const SEEN = 'pm-scratch-seen';
+    const paint = () => {
+      const ctx = canvas.getContext('2d'), css = getComputedStyle(document.documentElement);
+      const dark = css.getPropertyValue('--choc').trim() || '#4a2c20', light = css.getPropertyValue('--choc-light').trim() || '#6b4430';
+      const W = (canvas.width = canvas.offsetWidth * 2), H = (canvas.height = canvas.offsetHeight * 2);
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = dark; ctx.fillRect(0, 0, W, H);
+      const cols = 4, rows = 2, g = 10, cw = (W - g * (cols + 1)) / cols, ch = (H - g * (rows + 1)) / rows;
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+        const x = g + c * (cw + g), y = g + r * (ch + g);
+        ctx.fillStyle = light; ctx.fillRect(x, y, cw, ch);
+        ctx.fillStyle = dark; ctx.fillRect(x + 8, y + 8, cw - 16, ch - 16);
+      }
+      ctx.fillStyle = light; ctx.font = 'bold 26px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('SCRATCH ME', W / 2, H / 2 + 9);
+      ctx.globalCompositeOperation = 'destination-out';
+      ready = true;
+    };
+    const reveal = () => { if (done) return; done = true; setTimeout(() => step('claim'), 300); };
+    const scratch = e => {
+      if (!drawing || done) return;
+      const ctx = canvas.getContext('2d'), b = canvas.getBoundingClientRect();
+      ctx.beginPath(); ctx.arc((e.clientX - b.left) * 2, (e.clientY - b.top) * 2, 36, 0, Math.PI * 2); ctx.fill();
+      const px = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      let clear = 0;
+      for (let i = 3; i < px.length; i += 64) if (px[i] === 0) clear++;
+      if (clear / (px.length / 64) > 0.45) reveal();
+    };
+    canvas.addEventListener('pointerdown', e => { drawing = true; scratch(e); });
+    canvas.addEventListener('pointermove', scratch);
+    ['pointerup', 'pointerleave'].forEach(t => canvas.addEventListener(t, () => { drawing = false; }));
+    const open = () => {
+      modal.hidden = false; document.body.style.overflow = 'hidden';
+      try { localStorage.setItem(SEEN, '1'); } catch (_) {}
+      if (!ready) requestAnimationFrame(paint);
+    };
+    const close = () => { modal.hidden = true; document.body.style.overflow = ''; };
+    $('[data-scratch-open]', sc).addEventListener('click', open);
+    $('[data-scratch-skip]', sc).addEventListener('click', reveal);
+    $$('[data-scratch-close]', sc).forEach(b => b.addEventListener('click', close));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) close(); });
+    const delay = Number(sc.dataset.delay || 0);
+    let seen = false; try { seen = !!localStorage.getItem(SEEN); } catch (_) {}
+    if (delay > 0 && !seen) setTimeout(() => { if (modal.hidden && !cartOpen) open(); }, delay * 1000);
+    $('[data-scratch-form]', sc).addEventListener('submit', async e => {
+      e.preventDefault();
+      const err = $('[data-error]', sc), btn = $('button', e.target), email = e.target.elements.email.value;
+      err.hidden = true; btn.disabled = true;
+      // Into the main Klaviyo email list (the one the newsletter popup used), marked with where it came from.
+      try {
+        await klaviyoSubscribe(PM.lists?.news, email, {scratch_card: true, scratch_prize: sc.dataset.prize || ''}, 'Scratch card');
+        step('done');
+        window.dataLayer?.push({event: 'pm_signup', signup_form: 'Scratch card'});
+      } catch (_) { err.textContent = 'That didn’t go through. Check your email and try again.'; err.hidden = false; }
+      btn.disabled = false;
+    });
+  }
+
+  /* ── Wholesale order request ─────────────────────────────── */
+  const ws = $('[data-wholesale]');
+  if (ws && $('[data-line]', ws)) {
+    let cur = 'GBP';
+    const fmt = (c, v) => new Intl.NumberFormat('en-GB', {style: 'currency', currency: c}).format(v / 100);
+    const lines = $$('[data-line]', ws);
+    const recalc = () => {
+      let total = 0; const order = [];
+      lines.forEach(l => {
+        const unit = Number(l.dataset[cur.toLowerCase()] || 0), qty = Math.max(0, Math.floor(Number($('input', l).value) || 0));
+        $('[data-case-price]', l).textContent = unit ? fmt(cur, unit) : 'On request';
+        total += unit * qty;
+        if (qty) order.push(`${l.dataset.name}: ${qty} case${qty > 1 ? 's' : ''} × ${unit ? fmt(cur, unit) : 'price on request'}`);
+      });
+      $('[data-total]', ws).textContent = fmt(cur, total);
+      const f = $('[data-order-field]', ws); if (f) f.value = order.join('\n') + (order.length ? `\nSubtotal ex VAT: ${fmt(cur, total)}` : '');
+      const cf = $('[data-currency-field]', ws); if (cf) cf.value = cur;
+      $('[data-submit]', ws).disabled = !order.length;
+    };
+    ws.addEventListener('input', recalc);
+    $$('[data-currency]', ws).forEach(b => b.addEventListener('click', () => {
+      cur = b.dataset.currency;
+      $$('[data-currency]', ws).forEach(x => {
+        const on = x === b; x.setAttribute('aria-pressed', String(on));
+        x.classList.toggle('bg-primary', on); x.classList.toggle('text-primary-foreground', on); x.classList.toggle('border-primary', on);
+        x.classList.toggle('border-border', !on); x.classList.toggle('text-primary', !on);
+      });
+      recalc();
+    }));
+    recalc();
+  }
+
   /* ── Weekly postcard ─────────────────────────────────────── */
   const pc = $('[data-postcard]');
   if (pc) {

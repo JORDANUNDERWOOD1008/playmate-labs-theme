@@ -1,0 +1,71 @@
+{%- comment -%}
+  "Try your luck?" scratch card from the cinematic site. Sign-ups go to the main Klaviyo email list
+  (theme setting klaviyo_popup_list_id) with scratch_card and scratch_prize on the profile.
+  Shows a discount code only when one is filled in below. Switch it off with "Show the scratch card".
+{%- endcomment -%}
+{%- assign s = section.settings -%}
+{%- if s.enable -%}
+<div data-scratch data-delay="{{ s.delay }}" data-prize="{{ s.prize | escape }}">
+  <button type="button" data-scratch-open class="fixed right-0 top-auto bottom-32 md:bottom-auto md:top-1/2 z-40 md:-translate-y-1/2 rounded-l-md bg-primary px-1.5 py-3 md:px-2 md:py-4 text-[8px] md:text-[10px] font-bold uppercase tracking-[0.25em] text-primary-foreground [writing-mode:vertical-rl]">{{ s.tab }}</button>
+  <div data-scratch-modal hidden class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="{{ s.heading | escape }}">
+    <button type="button" aria-label="Close" data-scratch-close class="absolute inset-0 bg-foreground/50"></button>
+    <div class="relative w-full max-w-md overflow-hidden rounded-md bg-background text-center">
+      {%- if s.image != blank -%}
+        {{ s.image | image_url: width: 900 | image_tag: alt: '', class: 'h-40 w-full object-cover', loading: 'lazy' }}
+      {%- endif -%}
+      <div class="p-8">
+        <div data-step="scratch">
+          <h2 class="font-heavy text-3xl font-black text-primary">{{ s.heading }}</h2>
+          <p class="mt-2 text-sm text-muted-foreground">{{ s.sub }}</p>
+          <div class="relative mt-6 h-32 w-full overflow-hidden rounded-md bg-card">
+            <div class="absolute inset-0 grid place-items-center"><p class="font-heavy text-2xl font-black text-primary">{{ s.prize | downcase }}</p></div>
+            <canvas data-scratch-canvas aria-label="Scratch the chocolate" class="absolute inset-0 h-full w-full cursor-pointer touch-none"></canvas>
+          </div>
+          <button type="button" data-scratch-skip class="mt-3 text-[11px] text-muted-foreground underline">Reveal it</button>
+        </div>
+        <div data-step="claim" hidden>
+          <p class="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">{{ s.lead }}</p>
+          <h2 class="font-heavy mt-1 text-4xl font-black text-primary">{{ s.prize }}</h2>
+          <form data-scratch-form class="mt-6 flex gap-2">
+            <input required type="email" name="email" autocomplete="email" placeholder="Email" aria-label="Email" class="min-w-0 flex-1 rounded-full border border-border bg-card px-4 py-3 text-sm">
+            <button class="rounded-full bg-primary px-5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground">{{ s.cta }}</button>
+          </form>
+          <p data-error hidden role="alert" class="mt-2 text-sm text-primary"></p>
+          <p class="mt-3 text-[11px] text-muted-foreground">{{ s.smallprint }}</p>
+        </div>
+        <div data-step="done" hidden>
+          <p class="font-hand -rotate-2 text-2xl text-primary">{{ s.done }}</p>
+          {%- if s.code != blank -%}
+            <p class="font-heavy mt-4 inline-block rounded-md border border-dashed border-primary px-5 py-2 text-xl font-black tracking-[0.15em] text-primary">{{ s.code }}</p>
+            <p class="mt-3 text-sm text-muted-foreground">{{ s.done_code }}</p>
+          {%- else -%}
+            <p class="mt-3 text-sm text-muted-foreground">{{ s.done_sub }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+      <button type="button" data-scratch-close class="absolute right-3 top-3 rounded-full bg-background px-3 py-1 text-xs" aria-label="Close">✕</button>
+    </div>
+  </div>
+</div>
+{%- endif -%}
+{% schema %}
+{
+  "name": "Scratch card",
+  "settings": [
+    { "type": "checkbox", "id": "enable", "label": "Show the scratch card", "default": true, "info": "Before going live: put a real offer and code behind it." },
+    { "type": "range", "id": "delay", "label": "Open by itself after (seconds, 0 = only from the tab)", "min": 0, "max": 60, "step": 1, "default": 0 },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "tab", "label": "Side tab", "default": "Try your luck?" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Try your luck" },
+    { "type": "text", "id": "sub", "label": "Line", "default": "Scratch the chocolate to see what's inside." },
+    { "type": "text", "id": "lead", "label": "Above the prize", "default": "You've got" },
+    { "type": "text", "id": "prize", "label": "Prize", "default": "Up to 60% off" },
+    { "type": "text", "id": "cta", "label": "Button", "default": "Continue" },
+    { "type": "text", "id": "smallprint", "label": "Small print", "default": "One use per customer." },
+    { "type": "text", "id": "done", "label": "After signing up", "default": "it's yours." },
+    { "type": "text", "id": "done_sub", "label": "After signing up, line (no code set)", "default": "Check your inbox for your code." },
+    { "type": "text", "id": "code", "label": "Discount code to show (optional)" },
+    { "type": "text", "id": "done_code", "label": "Line under the code", "default": "Use it at checkout. One use per customer." }
+  ]
+}
+{% endschema %}

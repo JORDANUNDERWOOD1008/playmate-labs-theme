@@ -137,7 +137,7 @@
   {%- comment -%} ══ NOINDEX — non-content utility pages ══ {%- endcomment -%}
   {%- comment -%} current_tags = a blog tag page: thin, duplicate listings of posts that are
   already indexed on their own. ~20 of these were in the index earning 1-13 impressions each. {%- endcomment -%}
-  {%- if template == '404' or template == 'cart' or request.path contains '/policies/' or current_tags -%}
+  {%- if template == '404' or template == 'cart' or request.path contains '/policies/' or current_tags or template.suffix == 'wholesale' -%}
     <meta name="robots" content="noindex, follow">
   {%- endif -%}
 
@@ -216,10 +216,8 @@
   </script>
   <script src="{{ 'cinematic.js' | asset_url }}" defer></script>
 
-  {%- comment -%}
-    The "Try your luck" scratch card is not part of this theme yet. It comes back once there is a
-    real offer and discount code behind it (decision 23 Oct 2026).
-  {%- endcomment -%}
+  {%- comment -%} "Try your luck?" scratch card. Switch off in the theme editor: Scratch card → Show the scratch card. {%- endcomment -%}
+  {% section 'pm-scratch' %}
 
   {%- comment -%} Cookie Consent Banner {%- endcomment -%}
   {% render 'shopify-consent-bridge' %}

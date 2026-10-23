@@ -216,6 +216,12 @@
           "bg_color": "#1a0a06",
           "text_color": "#f5efe6"
         }
+      },
+      "pm-scratch": {
+        "type": "pm-scratch",
+        "settings": {
+          "image": "shopify://shop_images/popup-scratch-bg-desktop.png"
+        }
       }
     },
     "content_for_index": [],

@@ -1,0 +1,103 @@
+{%- comment -%}
+  Wholesale shop for approved stockists (/pages/wholesale). Shopify-native:
+  - Visitors sign in with their Shopify customer account (new customer accounts, email code).
+  - Access = the customer has the tag "stockist". Add it in Admin → Customers once approved.
+  - Trade prices come from product metafields, never from theme files (the theme repo is public):
+      custom.trade_unit_gbp / custom.trade_unit_eur  (per unit, in pence/cents, excl. VAT)
+      custom.trade_units_per_case, custom.trade_cases_per_pallet
+    Only products with custom.trade_unit_gbp set are listed, and prices are only rendered for
+    tagged customers, so they never reach anyone else's browser.
+  - "Send order request" goes to the store inbox via the contact form (tagged wholesale-order);
+    the order is then invoiced as a draft order.
+{%- endcomment -%}
+{%- assign s = section.settings -%}
+{%- assign login = routes.account_login_url | append: '?return_url=' | append: request.path | append: '&return_to=' | append: request.path -%}
+<div class="mx-auto max-w-5xl px-5 py-10 md:py-16" data-wholesale>
+  {% render 'pm-note', text: s.note, class: 'text-lg -rotate-2' %}
+  {%- if customer == nil -%}
+    <h1 class="font-heavy mt-4 text-4xl font-black leading-tight text-primary md:text-6xl">{{ s.out_title }}</h1>
+    <div class="mt-8">
+      <p class="max-w-xl text-muted-foreground">{{ s.out_text }}</p>
+      <a href="{{ login }}" class="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-primary px-8 text-[11px] font-bold uppercase tracking-[0.25em] text-primary-foreground">Sign in</a>
+      <a href="/pages/stockists" class="ml-4 mt-6 inline-block underline underline-offset-4">Apply to become a stockist</a>
+    </div>
+  {%- elsif customer.tags contains 'stockist' -%}
+    <h1 class="font-heavy mt-4 text-4xl font-black leading-tight text-primary md:text-6xl">{{ s.in_title }}</h1>
+    <div class="mt-8">
+      {%- if s.video != blank -%}
+        <div class="mb-10 overflow-hidden rounded-md bg-card">{{ s.video | video_tag: controls: true, playsinline: true, class: 'w-full', image_size: '1200x' }}</div>
+      {%- endif -%}
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div><p class="font-bold">{{ customer.default_address.company | default: customer.name }}</p><p class="mt-1 text-sm text-muted-foreground">Per case · excluding VAT · shipping confirmed separately</p></div>
+        <div class="flex gap-1" role="group" aria-label="Currency">
+          <button type="button" data-currency="GBP" aria-pressed="true" class="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm text-primary-foreground">£ GBP</button>
+          <button type="button" data-currency="EUR" aria-pressed="false" class="min-h-11 rounded-md border border-border px-4 text-sm text-primary">€ EUR</button>
+        </div>
+      </div>
+      {%- form 'contact', id: 'wholesale-order', data-wholesale-form: '' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="font-hand mt-10 -rotate-2 text-2xl text-primary">{{ s.sent }}</p>
+          <p class="mt-3 max-w-xl text-muted-foreground">{{ s.sent_text }}</p>
+        {%- else -%}
+          <input type="hidden" name="contact[tags]" value="wholesale-order">
+          <input type="hidden" name="contact[email]" value="{{ customer.email }}">
+          <input type="hidden" name="contact[name]" value="{{ customer.name | escape }}">
+          <input type="hidden" name="contact[Business]" value="{{ customer.default_address.company | escape }}">
+          <input type="hidden" name="contact[Currency]" value="GBP" data-currency-field>
+          <input type="hidden" name="contact[Order]" value="" data-order-field>
+          <div class="mt-8 divide-y divide-border border-y border-border">
+            {%- for p in collections.all.products -%}
+              {%- assign m = p.metafields.custom -%}
+              {%- if m.trade_unit_gbp != blank -%}
+                {%- assign units = m.trade_units_per_case.value | default: 1 -%}
+                {%- assign case_gbp = m.trade_unit_gbp.value | times: units -%}
+                {%- assign case_eur = m.trade_unit_eur.value | default: 0 | times: units -%}
+                <div class="grid grid-cols-[72px_minmax(0,1fr)] items-center gap-4 py-6 md:grid-cols-[100px_minmax(0,1fr)_140px_100px]" data-line data-name="{{ p.title | escape }}" data-gbp="{{ case_gbp }}" data-eur="{{ case_eur }}">
+                  {%- if p.featured_image -%}{{ p.featured_image | image_url: width: 200 | image_tag: alt: p.title, class: 'aspect-square w-full rounded-md object-cover' }}{%- endif -%}
+                  <div>
+                    <h2 class="font-heavy text-lg font-bold text-primary md:text-2xl">{{ p.title }}</h2>
+                    <p class="mt-1 text-sm text-muted-foreground">{{ units }} per case{% if m.trade_cases_per_pallet != blank %} · {{ m.trade_cases_per_pallet.value }} cases per pallet{% endif %}{% unless p.available %} · out of stock{% endunless %}</p>
+                    {%- if m.trade_video != blank -%}<div class="mt-3 max-w-sm overflow-hidden rounded-md">{{ m.trade_video.value | video_tag: controls: true, playsinline: true, class: 'w-full', image_size: '600x' }}</div>{%- endif -%}
+                  </div>
+                  <p class="font-heavy text-2xl font-bold text-primary" data-case-price></p>
+                  <label class="text-xs text-muted-foreground">Cases<input type="number" min="0" max="100000" step="1" value="0" inputmode="numeric" aria-label="Cases of {{ p.title | escape }}" {% unless p.available %}disabled{% endunless %} class="mt-1 min-h-11 w-full rounded-md border border-border bg-card px-3 text-base text-foreground"></label>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <label class="mt-6 block text-sm">Anything else (delivery address, timing, questions)
+            <textarea name="contact[body]" rows="3" class="mt-1 w-full rounded-md border border-border bg-card px-4 py-3 text-base"></textarea>
+          </label>
+          <div class="mt-8 flex flex-wrap items-center justify-between gap-4">
+            <div><p class="text-sm text-muted-foreground">Goods subtotal, excluding VAT</p><p class="font-heavy text-3xl font-black text-primary" data-total></p></div>
+            <button data-submit disabled class="min-h-12 rounded-full bg-primary px-8 text-[11px] font-bold uppercase tracking-[0.25em] text-primary-foreground disabled:opacity-40">Send order request</button>
+          </div>
+          <p class="mt-4 text-sm text-muted-foreground">{{ s.order_note }}</p>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  {%- else -%}
+    <h1 class="font-heavy mt-4 text-4xl font-black leading-tight text-primary md:text-6xl">{{ s.wait_title }}</h1>
+    <div class="mt-8"><p class="max-w-xl text-muted-foreground">{{ s.wait_text }}</p></div>
+  {%- endif -%}
+  <div class="mt-10 flex flex-wrap items-center gap-4 text-sm">
+    {%- if customer -%}<a href="{{ routes.account_url }}" class="underline underline-offset-4">Your account</a><a href="{{ routes.account_logout_url }}" class="text-muted-foreground underline underline-offset-4">Sign out</a>{%- endif -%}
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Wholesale shop",
+  "settings": [
+    { "type": "text", "id": "note", "label": "Note", "default": "just for our partners." },
+    { "type": "text", "id": "out_title", "label": "Signed out: heading", "default": "partners only." },
+    { "type": "textarea", "id": "out_text", "label": "Signed out: line", "default": "Already approved? Sign in below. New partners receive an account invitation after approval." },
+    { "type": "text", "id": "wait_title", "label": "Not approved yet: heading", "default": "not quite yet." },
+    { "type": "textarea", "id": "wait_text", "label": "Not approved yet: line", "default": "Wholesale access is awaiting approval." },
+    { "type": "text", "id": "in_title", "label": "Approved: heading", "default": "stock up." },
+    { "type": "video", "id": "video", "label": "Stockist video (shown to approved stockists only)" },
+    { "type": "textarea", "id": "order_note", "label": "Under the order button", "default": "We confirm stock, VAT and shipping, then send an invoice. Online wholesale payment is not connected yet." },
+    { "type": "text", "id": "sent", "label": "After sending", "default": "order request sent." },
+    { "type": "textarea", "id": "sent_text", "label": "After sending, line", "default": "We'll confirm stock, VAT and shipping and send your invoice within two working days." }
+  ]
+}
+{% endschema %}
