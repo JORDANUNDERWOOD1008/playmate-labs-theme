@@ -6,7 +6,9 @@
   </div>
   <div class="no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:px-0 lg:grid-cols-3">
     {%- for p in c.products limit: section.settings.limit -%}
-      <div class="w-[72%] shrink-0 snap-start md:w-auto">{% render 'pm-product-card', p: p %}</div>
+      {%- assign cover_img = nil -%}{%- assign hover_img = nil -%}
+      {%- for block in section.blocks -%}{%- if block.settings.product.id == p.id -%}{%- assign cover_img = block.settings.cover -%}{%- assign hover_img = block.settings.rollover -%}{%- endif -%}{%- endfor -%}
+      <div class="w-[72%] shrink-0 snap-start md:w-auto">{% render 'pm-product-card', p: p, cover_img: cover_img, hover_img: hover_img %}</div>
     {%- endfor -%}
   </div>
 </section>
@@ -19,6 +21,11 @@
     { "type": "collection", "id": "collection", "label": "Products from" },
     { "type": "range", "id": "limit", "label": "How many", "min": 2, "max": 9, "step": 1, "default": 3 }
   ],
+  "blocks": [{ "type": "card", "name": "Card photos", "settings": [
+    { "type": "product", "id": "product", "label": "Product" },
+    { "type": "image_picker", "id": "cover", "label": "Main photo", "info": "Empty = the default photo." },
+    { "type": "image_picker", "id": "rollover", "label": "Rollover photo", "info": "Shown when someone hovers over the card. Empty = the default." }
+  ]}],
   "presets": [{ "name": "Products row" }]
 }
 {% endschema %}

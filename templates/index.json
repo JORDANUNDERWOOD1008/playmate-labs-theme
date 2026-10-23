@@ -90,7 +90,32 @@
         "link": "View all",
         "collection": "frontpage",
         "limit": 3
-      }
+      },
+      "blocks": {
+        "card1": {
+          "type": "card",
+          "settings": {
+            "product": "nude-stacked"
+          }
+        },
+        "card2": {
+          "type": "card",
+          "settings": {
+            "product": "playmate-chocolate"
+          }
+        },
+        "card3": {
+          "type": "card",
+          "settings": {
+            "product": "aphrodisiac-hot-chocolate-spoons"
+          }
+        }
+      },
+      "block_order": [
+        "card1",
+        "card2",
+        "card3"
+      ]
     },
     "range": {
       "type": "pm-range",

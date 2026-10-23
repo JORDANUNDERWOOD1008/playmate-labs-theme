@@ -3,7 +3,8 @@
   custom namespace overrides each field when it is filled in (card_tag, card_desc, intro, and
   glance / in_box / how_to as one line per item).
   Usage: {% render 'pm-copy', product: product, field: 'tag' %}
-  Fields: tag, desc, intro, glance, in_box, how_to (lists render as <li>), hover, extra_images (asset names), category
+  Fields: tag, desc, intro, glance, in_box, how_to (lists render as <li>), cover, hover, extra_images (asset names), category
+  cover = a theme asset shown as the card's main photo instead of the product's featured image (the featured image then becomes the rollover).
 {%- endcomment -%}
 {%- liquid
   assign h = product.handle
@@ -14,6 +15,7 @@
   assign in_box = ''
   assign how_to = ''
   assign hover = ''
+  assign cover = ''
   assign extra = ''
   case h
     when 'nude-stacked'
@@ -23,7 +25,7 @@
       assign glance = 'Pull a block, match its symbol to a card, choose one of three levels.|A game lasts anything from five minutes to two hours.|House rule: either of you can skip any card, any time.|Companion app with every card in six languages.'
       assign in_box = '54 red wooden blocks — 37 with symbols, 17 "?" wild blocks|54 prompt cards, three levels each (162 prompts)|Soft eye mask|Drawstring travel bag|Gift box, ready to give'
       assign how_to = 'Build the tower together, three blocks a layer.|Take turns pulling a block. One hand, no rushing.|Match the symbol and draw a card. "?" is wild.|Choose your level. Do it, or pass.|Place the block on top and hand over.|When the tower falls, rebuild — or call it a night.'
-      assign hover = 'pm-hot-blocks.webp'
+      assign cover = 'pm-hot-blocks.webp'
       assign extra = 'pm-hot-blocks.webp|pm-hot-blindfold.webp'
     when 'playmate-chocolate'
       assign tag = 'The original'
@@ -74,6 +76,7 @@
   {%- when 'desc' -%}{{ desc }}
   {%- when 'intro' -%}{{ intro }}
   {%- when 'hover' -%}{% if hover != blank %}{{ hover | asset_url }}{% endif %}
+  {%- when 'cover' -%}{% if cover != blank %}{{ cover | asset_url }}{% endif %}
   {%- when 'extra_images' -%}{{ extra }}
   {%- when 'category' -%}{% if product.type == 'Games' or product.tags contains 'game' %}games{% else %}chocolate{% endif %}
   {%- when 'glance', 'in_box', 'how_to' -%}

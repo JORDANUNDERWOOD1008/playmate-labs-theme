@@ -1,21 +1,40 @@
 {%- comment -%}
-  Product card from the cinematic site: hover photo, tag pill, quick add.
+  Product card from the cinematic site: rollover photo, tag pill, quick add.
   Usage: {% render 'pm-product-card', p: product %}
+  Optional: cover_img / hover_img (images picked in a section) replace the card's main and rollover photos.
+  Without them: main = the pm-copy "cover" asset or the product's featured image; rollover = the pm-copy
+  "hover" asset, or the featured image when a cover asset is used.
 {%- endcomment -%}
 {%- capture tag -%}{% render 'pm-copy', product: p, field: 'tag' %}{%- endcapture -%}
 {%- capture desc -%}{% render 'pm-copy', product: p, field: 'desc' %}{%- endcapture -%}
 {%- capture hover -%}{% render 'pm-copy', product: p, field: 'hover' %}{%- endcapture -%}
+{%- capture cover -%}{% render 'pm-copy', product: p, field: 'cover' %}{%- endcapture -%}
 {%- capture category -%}{% render 'pm-copy', product: p, field: 'category' %}{%- endcapture -%}
+{%- assign hover = hover | strip -%}{%- assign cover = cover | strip -%}
 {%- assign sold_out = false -%}{%- unless p.available -%}{%- assign sold_out = true -%}{%- endunless -%}
+{%- comment -%} rollover source: picked image > featured image (when a cover asset leads) > hover asset {%- endcomment -%}
+{%- assign has_hover = false -%}
+{%- if hover_img != blank or hover != blank -%}{%- assign has_hover = true -%}{%- endif -%}
+{%- if cover_img == blank and cover != blank and p.featured_image -%}{%- assign has_hover = true -%}{%- endif -%}
 <article class="group" data-category="{{ category | strip }}">
   <a href="{{ p.url }}" class="relative block aspect-[4/5] overflow-hidden rounded-sm bg-card">
     {%- assign img_class = 'h-full w-full object-cover transition duration-500' -%}
-    {%- if hover != blank -%}{%- assign img_class = 'h-full w-full object-cover transition duration-500 group-hover:opacity-0' -%}{%- endif -%}
-    {%- if p.featured_image -%}
-      {{ p.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: '(min-width: 1024px) 360px, (min-width: 768px) 45vw, 72vw', alt: p.title, class: img_class }}
+    {%- if has_hover -%}{%- assign img_class = 'h-full w-full object-cover transition duration-500 group-hover:opacity-0' -%}{%- endif -%}
+    {%- assign sizes = '(min-width: 1024px) 360px, (min-width: 768px) 45vw, 72vw' -%}
+    {%- if cover_img != blank -%}
+      {{ cover_img | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: sizes, alt: p.title, class: img_class }}
+    {%- elsif cover != blank -%}
+      <img width="900" height="1117" src="{{ cover }}" alt="{{ p.title | escape }}" loading="lazy" class="{{ img_class }}">
+    {%- elsif p.featured_image -%}
+      {{ p.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: sizes, alt: p.title, class: img_class }}
     {%- endif -%}
-    {%- if hover != blank -%}
-      <img width="900" height="1117" src="{{ hover | strip }}" alt="" loading="lazy" class="absolute inset-0 h-full w-full object-cover opacity-0 transition duration-500 group-hover:opacity-100">
+    {%- assign hover_class = 'absolute inset-0 h-full w-full object-cover opacity-0 transition duration-500 group-hover:opacity-100' -%}
+    {%- if hover_img != blank -%}
+      {{ hover_img | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: sizes, alt: '', class: hover_class }}
+    {%- elsif cover_img == blank and cover != blank and p.featured_image -%}
+      {{ p.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: sizes, alt: '', class: hover_class }}
+    {%- elsif hover != blank -%}
+      <img width="900" height="1117" src="{{ hover }}" alt="" loading="lazy" class="{{ hover_class }}">
     {%- endif -%}
     <span class="absolute left-3 top-3 rounded-full bg-background px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{% if sold_out %}Sold out{% else %}{{ tag | strip }}{% endif %}</span>
   </a>
