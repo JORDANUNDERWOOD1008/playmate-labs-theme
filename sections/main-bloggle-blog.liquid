@@ -90,8 +90,7 @@
  {% capture backHome %}{% endcapture %}
  {% capture emptyTitle %}{% endcapture %}
 {% endif %}
-  <script async src="https://d2xvgzwm836rzd.cloudfront.net/lazysizes-bloggle.min.js" defer></script>
-  <link href="https://d2xvgzwm836rzd.cloudfront.net/blog_styles--playmatelabs.min.css?v=1773056041669" type="text/css" rel="stylesheet">
+  <link href="https://d2xvgzwm836rzd.cloudfront.net/blog_styles--playmatelabs.min.css?v=1792784862699" type="text/css" rel="stylesheet">
   <link href="https://d2xvgzwm836rzd.cloudfront.net/blog-layout.min.css" type="text/css" rel="stylesheet">
 
 <div id="bloggle--blog_layout"  class="{%if localization.language.iso_code == "ar" or localization.language.iso_code == "he" %} blggle-rtl{%endif%}">
@@ -153,7 +152,7 @@
         <div class="bloggle--blog-item ai--flex-start-layout" style="border-radius: 0px;" >
           <a class="bloggle--blog-item-link" href="{{ article.url }}">
             {% if article.image %}
-              <img class="bloggle--blog-item-img lazybloggle" data-src="{{ article.image | img_url:'700x' }}" alt="{{ article.image.alt }}">
+              <img loading="lazy" class="bloggle--blog-item-img" src="{{ article.image | img_url:'700x' }}" alt="{{ article.image.alt }}">
             {% endif %}
             <div class="article-text-container responsive-div ai--flex-start-layout">
               <p class="bloggle--blog-item-title ">{{ article.title }}</p>

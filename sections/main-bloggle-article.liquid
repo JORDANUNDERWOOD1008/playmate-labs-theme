@@ -356,7 +356,6 @@
       line-height: inherit;
     }
   </style>
-  <script async src="https://d2xvgzwm836rzd.cloudfront.net/lazysizes-bloggle.min.js"></script>
   <link href="https://d2xvgzwm836rzd.cloudfront.net/article-layout.min.css" type="text/css" rel="stylesheet">
   <div id="bloggle_article-layout" class="sideBar__right{%if localization.language.iso_code == "ar" or localization.language.iso_code == "he" %} blggle-rtl{%endif%}">
   <div id="bloggle_article" >
@@ -369,12 +368,6 @@
        
       <h1 id="bloggle--article-title" class="text--1741868357677">{{article.title }}</h1>
       <div class="info_header">
-        
-        
-         
-          
-           
-        
         
       </div>
     </div>
@@ -475,12 +468,69 @@
         height: 120px;
         transform: translateY(120px);
         transition: all 0.3s ease;
+        background: #ffffff;
+      }
+      #bloggle_sideBar.bggle-sideBar--blocks .bggle_button-link {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+      #bloggle_sideBar.bggle-sideBar--blocks .bggle--compare {
+        display: none;
+      }
+
+      .bloggle_sideBar-V2 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+      .bloggle_sideBar-V2 .bggle--sideBar-block {
+        display: none;
+        padding: 0 !important;
+      }
+      .bloggle_sideBar-V2 .bggle--sideBar-block--product {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 100%;
+      }
+      .bloggle_sideBar-V2 .bggle--sideBar-block--product #bggle--product-related {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+      #bloggle_sideBar.bloggle_sideBar-V2 .bggle_button-link {
+        justify-content: center !important;
+        gap: 15px;
+      }
+      .bloggle_sideBar-V2 .bggle_button-link > div {
+        flex-direction: row !important;
+        align-items: center;
+      }
+      .bloggle_sideBar-V2 .bggle_button-link > div > button.button {
+        margin-top: 0px !important;
+      }
+      .bloggle_sideBar-V2 .bloggle_product--infos {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left !important;
+        margin-left: 10px;
+        margin-right: 10px;
+        margin-bottom: 0 !important;
+      }
+      .bloggle_sideBar-V2 .bloggle_product--img, .bloggle_sideBar-V2 .bggle--product-item-img {
+        margin-bottom: 0 !important;
+      }
+      .bloggle_sideBar-V2 .bggle--product-price {
+        color: #646464;
+        font-size: 0.8em;
+        margin: 0px !important;
       }
       }
-      #bloggle_article {padding-top: 5vh;}
-#bloggy--article {gap:50px;}
-#article-header {margin-bottom: 50px;}
-#bloggle_article-layout #bloggle_article .bloggle_rte {margin-top: 50px !important; margin-bottom: 50px !important;}
 
       @media screen and (min-width: 769px) {
         .bloggle_sideBar-V2 .bggle--info-siderBar-product img {
@@ -503,7 +553,13 @@
       }
 
   </style>
-<script>
+  <style>
+  #bloggle_article {padding-top: 5vh;}
+#bloggy--article {gap:50px;}
+#article-header {margin-bottom: 50px;}
+#bloggle_article-layout #bloggle_article .bloggle_rte {margin-top: 50px !important; margin-bottom: 50px !important;}
+  </style>
+  <script>
   function handleScroll() {
     const sidebar = document.querySelector('#bloggle_sideBar');
     const product = document.querySelector('#bggle--product-related');
