@@ -85,12 +85,6 @@
     },
     "featured": {
       "type": "pm-featured",
-      "settings": {
-        "heading": "made for two.",
-        "link": "View all",
-        "collection": "frontpage",
-        "limit": 3
-      },
       "blocks": {
         "card1": {
           "type": "card",
@@ -115,7 +109,13 @@
         "card1",
         "card2",
         "card3"
-      ]
+      ],
+      "settings": {
+        "heading": "made for two.",
+        "link": "View all",
+        "collection": "frontpage",
+        "limit": 3
+      }
     },
     "range": {
       "type": "pm-range",
