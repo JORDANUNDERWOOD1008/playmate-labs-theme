@@ -22,8 +22,9 @@
 {%- endcapture -%}
 <div data-five-day>
   <div data-mode-picker class="mx-auto flex min-h-[70vh] max-w-3xl flex-col items-center justify-center px-5 py-16 text-center">
+    <h1 class="mb-6 text-[11px] font-bold uppercase tracking-[0.25em] text-primary/70">{{ s.page_heading }}</h1>
     {% render 'pm-note', text: s.pick_note, class: '-rotate-2 text-2xl' %}
-    <h1 class="font-heavy mt-2 text-5xl font-black leading-none tracking-tight text-primary md:text-7xl">{{ s.pick_heading }}</h1>
+    <h2 class="font-heavy mt-2 text-5xl font-black leading-none tracking-tight text-primary md:text-7xl">{{ s.pick_heading }}</h2>
     <div class="mt-10 grid w-full gap-4 sm:grid-cols-3">
       {%- for k in modes -%}{%- liquid
       assign k_label = k | append: '_label'
@@ -127,6 +128,7 @@
 {
   "name": "5 Day Experience",
   "settings": [
+    { "type": "text", "id": "page_heading", "label": "Page heading (H1)", "default": "The 5-day date night experience" },
     { "type": "text", "id": "pick_note", "label": "Picker note", "default": "first things first." },
     { "type": "text", "id": "pick_heading", "label": "Picker heading", "default": "who's it for?" },
     { "type": "image_picker", "id": "image", "label": "Photo" },

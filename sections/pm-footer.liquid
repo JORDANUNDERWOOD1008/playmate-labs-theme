@@ -20,7 +20,12 @@
       {%- endfor -%}
     </div>
   </div>
-  <p class="mx-auto mt-16 max-w-6xl text-[11px] uppercase tracking-[0.25em] opacity-60">{{ section.settings.legal }}</p>
+  <div class="mx-auto mt-16 flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 text-[11px] uppercase tracking-[0.25em] opacity-60">
+    <p>{{ section.settings.legal }}</p>
+    {%- for policy in shop.policies -%}
+      <a href="{{ policy.url }}">{{ policy.title }}</a>
+    {%- endfor -%}
+  </div>
 </footer>
 {% schema %}
 {
@@ -30,7 +35,7 @@
     { "type": "text", "id": "shop_heading", "label": "Products heading", "default": "Shop" },
     { "type": "collection", "id": "shop_collection", "label": "Products to list", "info": "Empty = every product." },
     { "type": "text", "id": "links_heading", "label": "Links heading", "default": "Playmate" },
-    { "type": "textarea", "id": "links", "label": "Links, one per line as Label|/url", "default": "About us|/pages/about\nJournal|/blogs/the-playmate-journal\nContact|/pages/contact\n5 Day Experience|/pages/5-day-experience\nBecome a Playmate|/pages/playmates\nFAQ|/pages/faq\nBecome a stockist|/pages/stockists" },
+    { "type": "textarea", "id": "links", "label": "Links, one per line as Label|/url", "default": "About us|/pages/about\nGames|/collections/games\nCouples chocolate|/collections/couples-chocolate-collection\nJournal|/blogs/the-playmate-journal\nContact|/pages/contact\n5 Day Experience|/pages/5-day-experience\nBecome a Playmate|/pages/playmates\nFAQ|/pages/faq\nBecome a stockist|/pages/stockists" },
     { "type": "text", "id": "legal", "label": "Legal line", "default": "© Playmate Labs · Designed in the UK" }
   ]
 }
