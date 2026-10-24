@@ -52,6 +52,8 @@
       Playmate Labs — Date Night Experiences &amp; Couples Rituals
     {%- elsif template == 'list-collections' -%}
       Shop All Collections | Playmate Labs
+    {%- elsif template == 'collection' and collection.handle == 'all' and current_page == 1 and current_tags == blank -%}
+      Shop Date Night Games &amp; Couples Chocolate | Playmate Labs
     {%- elsif template == 'search' -%}
       Search | Playmate Labs
     {%- elsif template == '404' -%}
@@ -114,10 +116,8 @@
     {% else %}
       <meta name="description" content="{{ article.title | escape }} — read more on The Playmate Journal by Playmate Labs.">
     {% endif %}
-  {% elsif template.name == 'page' and page.handle == 'faq' %}
-    <meta name="description" content="Frequently asked questions about Playmate Labs aphrodisiac chocolates — ingredients, shipping, dietary info and how our products work.">
-  {% elsif template.name == 'page' and page.handle == 'contact' %}
-    <meta name="description" content="Get in touch with Playmate Labs — questions about orders, ingredients, partnerships or wholesale. UK-based team ready to help.">
+  {% elsif template == 'collection' and collection.handle == 'all' %}
+    <meta name="description" content="Shop the full Playmate Labs range: the Nude Stack'd game, Snap'd chocolate hearts and Melt'd hot chocolate spoons. Free UK delivery over £49.">
   {% elsif template.name == 'page' and page.handle == 'sms-opt-in' %}
     <meta name="description" content="Sign up for Playmate Labs texts. Be first to hear about new products and offers.">
   {% elsif page_description %}
