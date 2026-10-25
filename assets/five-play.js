@@ -35,7 +35,23 @@
     } catch (_) {}
     return AC;
   }
+  let CHIME_EL = null;
+  function chimeWav() {
+    const sr = 22050, len = Math.floor(sr * 1.3), b = ac().createBuffer(1, len, sr), d = b.getChannelData(0);
+    [660, 880, 1100].forEach((f, i) => { const s0 = Math.floor(i * 0.2 * sr); for (let k = 0; k < sr * 0.6 && s0 + k < len; k++) { const t = k / sr; d[s0 + k] += 0.3 * Math.sin(2 * Math.PI * f * t) * Math.exp(-t * 6); } });
+    return wav(b);
+  }
+  /* iOS only plays sound started by a tap, so the end-of-timer chime is unlocked on an early tap */
+  function primeChime() {
+    if (CHIME_EL || !ac()) return;
+    try {
+      CHIME_EL = new Audio(URL.createObjectURL(chimeWav())); CHIME_EL.setAttribute('playsinline', ''); CHIME_EL.muted = true;
+      const p = CHIME_EL.play();
+      if (p && p.then) p.then(() => { CHIME_EL.pause(); CHIME_EL.currentTime = 0; CHIME_EL.muted = false; }).catch(() => { CHIME_EL.muted = false; });
+    } catch (_) {}
+  }
   function chime() {
+    if (CHIME_EL) { try { CHIME_EL.muted = false; CHIME_EL.currentTime = 0; const p = CHIME_EL.play(); if (p && p.catch) p.catch(() => {}); return; } catch (_) {} }
     const a = ac(); if (!a) return;
     try {
       [660, 880, 1100].forEach((f, i) => {
@@ -67,12 +83,24 @@
     for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c).slice(); d.reverse(); out.copyToChannel(d, c); }
     return out;
   }
-  let PLAYING = null;
+  /* playback goes through an <audio> element: it starts on the tap that asked for it, ignores the
+     iPhone silent switch, and stops when the screen changes */
+  let AUD = null; const BURL = new WeakMap();
+  function bufURL(buf) { let u = BURL.get(buf); if (!u) { u = URL.createObjectURL(wav(buf)); BURL.set(buf, u); } return u; }
+  function stopAudio() { if (AUD) { try { AUD.pause(); } catch (_) {} AUD = null; } }
   function playBuf(buf) {
-    try { if (PLAYING) PLAYING.stop(); } catch (_) {}
-    const s = ac().createBufferSource(); s.buffer = buf; s.connect(ac().destination); s.start(); PLAYING = s;
-    return new Promise(ok => { s.onended = ok; });
+    stopAudio();
+    const a = new Audio(bufURL(buf)); a.setAttribute('playsinline', ''); AUD = a;
+    return new Promise(ok => { a.onended = ok; const p = a.play(); if (p && p.catch) p.catch(() => { toast('Tap play again, and check the volume.'); ok(); }); });
   }
+  /* smaller WAV for links: 16 kHz mono */
+  function wav16k(buf) {
+    const src = buf.getChannelData(0), ratio = buf.sampleRate / 16000, n = Math.floor(src.length / ratio);
+    const out = ac().createBuffer(1, Math.max(1, n), 16000), d = out.getChannelData(0);
+    for (let i = 0; i < n; i++) { const x = i * ratio, j = Math.floor(x), f = x - j; d[i] = src[j] * (1 - f) + (src[j + 1] || 0) * f; }
+    return wav(out);
+  }
+
   function wav(buf) {
     const d = buf.getChannelData(0), n = d.length, v = new DataView(new ArrayBuffer(44 + n * 2));
     const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
@@ -172,7 +200,7 @@
     duo: [
       {h: 'look. closer.', after: '(longer than is comfortable)', game: 'draw them', how: 'Warm-up: sixty seconds of eye contact. Then spin the randomiser, or swap photos and draw each other\'s, against the clock. One photo of both drawings at the end.', take: 'a photo of two terrible masterpieces', run: sightDraw},
       {h: 'say it. louder.', after: '(the verdict is final)', game: 'the courtroom', how: 'Four small disputes answered in secret, then the verdicts. Then the backwards round: record a sound, we flip it, they guess. Then a three-song playlist.', take: 'a playlist that sounds like you two', run: duoSound},
-      {h: 'feed. me.', after: '(blindfold optional, encouraged)', game: 'blind taste test', how: 'Three bites each. One of you feeds, the other guesses with their eyes closed. Best guesser picks tomorrow\'s card.', take: 'a new "our" food', run: duoTaste},
+      {h: 'feed. me.', after: '(blindfold optional, encouraged)', game: 'blind taste test', how: 'Three bites each. One of you feeds, the other guesses with their eyes closed. Apart? It becomes food charades on a video call. Best guesser picks tomorrow\'s card.', take: 'a new "our" food', run: duoTaste},
       {h: 'hands. only.', after: '(every card is optional. that\'s sort of the point.)', game: 'pick a card', how: 'Last night\'s best guesser picks a number. Pass on anything, no explanation needed.', take: 'the word they traced (keep it)', run: duoTouch},
       {h: 'read my mind.', after: '(then book the table)', game: 'mind reader', how: 'Predict each other\'s perfect date, score the details you nailed, and book the winner. Tonight.', take: 'a date in the diary', run: duoSixth}
     ]
@@ -306,7 +334,7 @@
     d.run();
   }
   function onClick(e) {
-    ac();
+    ac(); primeChime();
     const c = e.target.closest('[data-chip]');
     if (c && G.contains(c)) {
       const g = c.dataset.g, v = c.dataset.chip, max = +c.dataset.max || 1;
@@ -322,7 +350,7 @@
     if (b && G.contains(b) && ACT[b.dataset.act]) ACT[b.dataset.act](b, e);
   }
   function show(html, acts) {
-    stopTimers();
+    stopTimers(); stopAudio(); document.body.classList.remove('p5-dim');
     G.innerHTML = html; ACT = acts || {};
     if (!reduced) G.firstElementChild?.classList.add('p5-in');
     const f = G.querySelector('[data-focus]'); if (f) f.focus({preventScroll: true});
@@ -924,7 +952,7 @@
 
   /* ── links opened from someone else's share ─────────────── */
   let IN_SHARED = false;
-  const SHARED_HEAD = {tot: ['this or that.', '(five tiny debates)'], opts: ['round two?', '(pick one. or don\'t.)'], court: ['the courtroom.', '(the verdict is final)'], mind: ['read my mind.', '(then book the table)']};
+  const SHARED_HEAD = {tot: ['this or that.', '(five tiny debates)'], opts: ['round two?', '(pick one. or don\'t.)'], court: ['the courtroom.', '(the verdict is final)'], back: ['say it. louder.', '(it\'s backwards)'], mind: ['read my mind.', '(then book the table)']};
   function optsPick(o, inApp) {
     show(`<div>${step(0, 0, 'Two options. Tap the one you fancy.')}
       <div class="p5-opts">${o.map((x, i) => `<button type="button" class="p5-opt" data-act="pick" data-i="${i}"><span class="p5-label">option ${i + 1}</span><b>${esc(x.p)}</b><span>${esc(x.d)} · ${esc(x.b)}</span></button>`).join('')}</div>
@@ -978,6 +1006,31 @@
         });
       }}));
       enable('next', false);
+    } else if (s.t === 'back' && s.c) {
+      show(`<div class="p5-center"><p class="p5-muted">getting the sound…</p></div>`);
+      fetch(`${CLIP_API}/clip/${encodeURIComponent(s.c)}`).then(r => { if (!r.ok) throw new Error('gone'); return r.blob(); }).then(decode).then(fwd => {
+        const clip = {prompt: s.p, cat: s.k, fwd, rev: reversed(fwd)}; bufURL(clip.fwd); bufURL(clip.rev);
+        listenScreen(`${them} recorded ${s.k || 'a sound'}. It's backwards. What is it?`, clip, reply);
+      }).catch(() => show(`<div class="p5-center"><p class="p5-lede">This sound has expired or the link is broken. Ask ${esc(them)} to send it again.</p>${sharedFooter()}</div>`));
+      const reply = ok => {
+        show(`<div class="p5-center">${step(0, 0, ok ? 'Nice ears. Now send one back.' : 'No shame. Now get your revenge: send one back.')}
+          <label class="p5-field"><span class="p5-label">your first name</span><input name="nm" autocomplete="off" maxlength="20"></label>
+          <div class="p5-row">${btn('mine', 'record one back')}${btn('tell', 'just tell them', 'p5-ghost')}</div>${sharedFooter()}</div>`, {
+          tell: () => share(ok ? `Got it: ${s.p}. Easy.` : `No idea. It was ${s.p}?! Rematch.`),
+          mine: () => {
+            const nm = G.querySelector('[name=nm]').value.trim() || 'them';
+            recordPrompt('Pick a category and make the sound. We flip it and send it back.', clip2 => {
+              if (!clip2) return;
+              show(`<div class="p5-center">${step(0, 0, 'Have a listen, then send it.')}
+                <button type="button" class="p5-mic play" data-act="me" aria-label="hear it backwards"><span></span></button><p class="p5-muted p5-small">hear it backwards. sound on.</p>
+                <div class="p5-row">${btn('send', 'send them the link')}</div>${sharedFooter()}</div>`, {
+                me: () => playBuf(clip2.rev),
+                send: () => sendClip(clip2, nm, `${ok ? 'Got yours.' : 'No idea what yours was.'} Here's mine, backwards. Guess.`)
+              });
+            });
+          }
+        });
+      };
     } else if (s.t === 'mind' && s.s === 1 && Array.isArray(s.pa)) {
       show(`<div>${step(1, 3, `${them} predicted your perfect date. Tap every detail they nailed.`)}${foldHTML(s.pa)}
         <div class="p5-row">${btn('next', 'scored. my turn.')}</div></div>`, {hit: hitAct, next: () => {
@@ -1030,81 +1083,100 @@
     'a film line': ['"I\'ll be back"', '"May the force be with you"', '"Houston, we have a problem"', '"I\'m the king of the world"', '"Here\'s Johnny"', '"You can\'t handle the truth"', '"To infinity and beyond"', '"Just keep swimming"'],
     'a phrase': ['"Red lorry, yellow lorry"', '"Who left the milk out?"', '"I love you more than pizza"', 'their full name', 'your full name', '"Put the kettle on"', '"Is it Friday yet?"', '"Where are my keys?"']
   };
-  function backwardsRound(apart, next) {
-    const who = names(), score = [0, 0];
+  const CLIP_API = CFG.clipApi || 'https://grid-planner-api.playmatelabs.workers.dev';
+  /* pick a secret prompt, record it, hand back {prompt, cat, fwd, rev} */
+  function recordPrompt(intro, cb) {
+    let prompt = '';
     if (!canRecord()) {
-      show(`<div class="p5-center">${step(0, 0, 'The backwards round needs a microphone, and this browser can\'t record. Open the page in Safari or Chrome to play it.')}<div class="p5-row">${btn('next', 'skip to the playlist')}</div></div>`, {next});
+      show(`<div class="p5-center">${step(0, 0, 'This browser can\'t record sound. Open the page in Safari or Chrome to play the backwards round.')}<div class="p5-row">${btn('skip', 'skip it')}</div></div>`, {skip: () => cb(null)});
       return;
     }
-    const pickPrompt = (p, cb) => {
-      const me = who[p], them = who[1 - p];
-      let prompt = '';
-      show(`<div>${step(2, 3, apart ? 'The backwards round. Pick a category, make the sound, and we\'ll flip it. They have to guess what it was.' : `The backwards round. ${me}, only you look. Pick a category. ${them} has to guess what you recorded, backwards.`)}
-        ${chips('cat', Object.keys(BACK))}
-        <div data-secret hidden class="p5-box p5-center"><p class="p5-label">your sound (shh)</p><p class="p5-prompt" data-p></p><div class="p5-row">${btn('again', 'give me another', 'p5-ghost')}</div></div>
-        <div class="p5-center" data-rec hidden><button type="button" class="p5-mic" data-act="rec" aria-label="record"><span></span></button><p class="p5-muted p5-small" data-rs>tap to record, up to 8 seconds</p></div></div>`, {
-        'chip:cat': s => { if (!s[0]) return; roll(s[0]); },
-        again: () => roll(CH.cat[0]),
-        rec: async b => {
-          if (b.classList.contains('on')) { b._r && b._r.stop(); return; }
-          try {
-            ac(); const r = await startRecording(8000); b._r = r; b.classList.add('on');
-            const st = G.querySelector('[data-rs]'), t0 = Date.now();
-            const iv = setInterval(() => { st.textContent = `recording… ${Math.ceil((Date.now() - t0) / 1000)}s, tap to stop`; }, 250);
-            const blob = await r.done; clearInterval(iv); b.classList.remove('on'); st.textContent = 'flipping it…';
-            const fwd = await decode(blob); cb({prompt, fwd, rev: reversed(fwd)});
-          } catch (e) { b.classList.remove('on'); toast('No microphone access. Allow it, or skip this round.'); }
-        }
-      });
-      function roll(cat) {
-        prompt = pick(BACK[cat].filter(x => x !== prompt));
-        G.querySelector('[data-p]').textContent = prompt;
-        G.querySelector('[data-secret]').hidden = false; G.querySelector('[data-rec]').hidden = false;
+    show(`<div>${step(2, 3, intro)}
+      ${chips('cat', Object.keys(BACK))}
+      <div data-secret hidden class="p5-box p5-center"><p class="p5-label">your sound (shh)</p><p class="p5-prompt" data-p></p><div class="p5-row">${btn('again', 'give me another', 'p5-ghost')}</div></div>
+      <div class="p5-center" data-rec hidden><button type="button" class="p5-mic" data-act="rec" aria-label="record"><span></span></button><p class="p5-muted p5-small" data-rs>tap to record, up to 8 seconds</p></div></div>`, {
+      'chip:cat': s => { if (s[0]) roll(s[0]); },
+      again: () => roll(CH.cat[0]),
+      rec: async b => {
+        if (b.classList.contains('on')) { b._r && b._r.stop(); return; }
+        try {
+          stopAudio(); ac();
+          const r = await startRecording(8000); b._r = r; b.classList.add('on');
+          const st = G.querySelector('[data-rs]'), t0 = Date.now();
+          const iv = setInterval(() => { st.textContent = `recording… ${Math.ceil((Date.now() - t0) / 1000)}s, tap to stop`; }, 250);
+          const blob = await r.done; clearInterval(iv); b.classList.remove('on'); st.textContent = 'flipping it…';
+          const fwd = await decode(blob), rev = reversed(fwd); bufURL(fwd); bufURL(rev);
+          cb({prompt, cat: CH.cat[0], fwd, rev});
+        } catch (e) { b.classList.remove('on'); toast('No microphone access. Allow it in your browser settings, or skip this round.'); }
       }
-    };
-    const listen = (p, clip) => {
-      const them = who[1 - p]; let plays = 0;
-      show(`<div class="p5-center">${step(2, 3, `${them}: listen. It's backwards. What is it?`)}
-        <button type="button" class="p5-mic play" data-act="play" aria-label="play it backwards"><span></span></button>
-        <p class="p5-muted p5-small" data-pl>3 listens</p>
-        <div class="p5-row">${btn('reveal', 'I\'ve guessed. reveal it', 'p5-ghost')}</div><div data-ans></div></div>`, {
-        play: () => { if (plays >= 3) return toast('Three listens. Make a guess.'); plays++; G.querySelector('[data-pl]').textContent = `${3 - plays} listen${3 - plays === 1 ? '' : 's'} left`; playBuf(clip.rev); },
-        reveal: b => {
-          b.remove(); playBuf(clip.fwd);
-          G.querySelector('[data-ans]').innerHTML = `<div class="p5-in"><p class="p5-label">it was</p><p class="p5-prompt">${esc(clip.prompt)}</p>
-            <div class="p5-row">${btn('fwd', 'play it forwards again', 'p5-ghost')}</div>
-            <div class="p5-row">${btn('got', `${esc(them)} got it`)}${btn('miss', 'no idea', 'p5-ghost')}</div></div>`;
-        },
-        fwd: () => playBuf(clip.fwd),
-        got: () => { score[1 - p]++; turnDone(p); }, miss: () => turnDone(p)
-      });
-    };
-    const turnDone = p => {
-      if (p === 0) return pass(who[1], () => pickPrompt(1, clip => pass(who[0], () => listen(1, clip), 'Only listen. Don\'t look at the screen yet.')));
-      show(`<div class="p5-center">${step(2, 3, 'Backwards round, the scores.')}
-        <div class="p5-court"><div><span class="p5-label">${esc(who[0])}</span><b>${score[0]}</b></div><div><span class="p5-label">${esc(who[1])}</span><b>${score[1]}</b></div></div>
-        <div class="p5-stamp" aria-hidden="true">${score[0] === score[1] ? 'even.' : `${esc(who[score[0] > score[1] ? 0 : 1])}'s ears win.`}</div>
-        <div class="p5-row">${btn('next', 'next: the playlist')}</div></div>`, {next});
-    };
-    if (!apart) return pickPrompt(0, clip => pass(who[1], () => listen(0, clip), 'Only listen. Don\'t look at the screen yet.'));
-    pickPrompt(0, clip => {
-      show(`<div class="p5-center">${step(2, 3, 'Got it. Have a listen, then send it backwards. Send the answer once they\'ve guessed.')}
-        <div class="p5-row">${btn('me', '▶ hear it backwards', 'p5-ghost')}</div>
-        <div class="p5-row">${btn('sendrev', 'send it backwards')}${btn('sendans', 'send the answer', 'p5-ghost')}</div>
-        <div class="p5-box"><p class="p5-label">got one from them?</p><p class="p5-muted">Save their clip, add it here and we'll flip it the right way round.</p>
-          <label class="p5-cam"><input type="file" accept="audio/*" name="aud" hidden><span class="p5-btn p5-ghost">flip their clip</span></label></div>
-        <div class="p5-row">${btn('next', 'next: the playlist')}</div></div>`, {
-        me: () => playBuf(clip.rev),
-        sendrev: () => shareFile(wav(clip.rev), 'backwards.wav', 'Guess what this is. It\'s backwards. Then send me one.'),
-        sendans: () => shareFile(wav(clip.fwd), 'the-answer.wav', `It was ${clip.prompt}.`),
-        next
-      });
-      const inp = G.querySelector('[name=aud]');
-      inp.addEventListener('change', async () => {
-        const f = inp.files && inp.files[0]; if (!f) return;
-        try { ac(); const buf = await decode(f); playBuf(reversed(buf)); toast('Flipped. Listen closely.'); } catch (_) { toast('That file won\'t play here. Ask them for the answer instead.'); }
-      });
     });
+    function roll(cat) {
+      prompt = pick(BACK[cat].filter(x => x !== prompt));
+      G.querySelector('[data-p]').textContent = prompt;
+      G.querySelector('[data-secret]').hidden = false; G.querySelector('[data-rec]').hidden = false;
+    }
+  }
+  /* listen backwards (3 tries), reveal, then say whether the guess was right */
+  function listenScreen(title, clip, onResult, extra) {
+    let plays = 0;
+    show(`<div class="p5-center">${step(2, 3, title)}
+      <button type="button" class="p5-mic play" data-act="play" aria-label="play it backwards"><span></span></button>
+      <p class="p5-muted p5-small" data-pl>3 listens. Sound on.</p>
+      <div class="p5-row">${btn('reveal', 'I\'ve guessed. reveal it', 'p5-ghost')}</div><div data-ans></div>${extra || ''}</div>`, {
+      play: () => { if (plays >= 3) return toast('Three listens. Make a guess.'); plays++; G.querySelector('[data-pl]').textContent = `${3 - plays} listen${3 - plays === 1 ? '' : 's'} left`; playBuf(clip.rev); },
+      reveal: b => {
+        b.remove(); playBuf(clip.fwd);
+        G.querySelector('[data-ans]').innerHTML = `<div class="p5-in"><p class="p5-label">it was</p><p class="p5-prompt">${esc(clip.prompt)}</p>
+          <div class="p5-row">${btn('fwd', 'play it forwards again', 'p5-ghost')}</div>
+          <div class="p5-row">${btn('got', 'got it')}${btn('miss', 'no idea', 'p5-ghost')}</div></div>`;
+      },
+      fwd: () => playBuf(clip.fwd),
+      got: () => onResult(true), miss: () => onResult(false)
+    });
+  }
+  /* apart: upload the clip, send a link. Falls back to sending the sound file. */
+  async function sendClip(clip, from, text) {
+    toast('Getting your link ready…');
+    try {
+      const r = await fetch(`${CLIP_API}/clips`, {method: 'POST', headers: {'Content-Type': 'audio/wav'}, body: wav16k(clip.fwd)});
+      const j = await r.json(); if (!j.id) throw new Error(j.error || 'upload');
+      return share(text, `${location.origin}${location.pathname}?m=duo&d=2#s=${b64e({t: 'back', c: j.id, p: clip.prompt, k: clip.cat, n: from})}`);
+    } catch (_) {
+      toast('Couldn\'t make a link, sending the sound instead.');
+      return shareFile(wav(clip.rev), 'backwards.wav', `${text} (It's backwards. Reply with your guess.)`);
+    }
+  }
+  function backwardsRound(apart, next) {
+    const who = names(), score = [0, 0];
+    if (apart) {
+      recordPrompt('The backwards round. Pick a category, make the sound, and we flip it. They get a link to listen, guess, and send one back.', clip => {
+        if (!clip) return next();
+        show(`<div class="p5-center">${step(2, 3, 'Got it. Have a listen, then send it.')}
+          <button type="button" class="p5-mic play" data-act="me" aria-label="hear it backwards"><span></span></button>
+          <p class="p5-muted p5-small">hear it backwards. sound on.</p>
+          <div class="p5-row">${btn('send', 'send them the link')}${btn('redo', 'record it again', 'p5-ghost')}</div>
+          <p class="p5-muted p5-small">They'll hear it backwards, guess, then see the answer and record one back for you. Clips are deleted after 14 days.</p>
+          <div class="p5-row">${btn('next', 'next: the playlist', 'p5-ghost')}</div></div>`, {
+          me: () => playBuf(clip.rev),
+          send: () => sendClip(clip, who[0], `I recorded ${clip.cat}. Backwards. Guess what it is, then send me one.`),
+          redo: () => backwardsRound(true, next),
+          next
+        });
+      });
+      return;
+    }
+    const turn = p => recordPrompt(`The backwards round. ${who[p]}, only you look. Pick a category. ${who[1 - p]} has to guess what you recorded, backwards.`, clip => {
+      if (!clip) return next();
+      pass(who[1 - p], () => listenScreen(`${who[1 - p]}: listen. It's backwards. What is it?`, clip, ok => {
+        if (ok) score[1 - p]++;
+        if (p === 0) return pass(who[1], () => turn(1), `${who[1]}'s turn to record. ${who[0]}, look away.`);
+        show(`<div class="p5-center">${step(2, 3, 'Backwards round, the scores.')}
+          <div class="p5-court"><div><span class="p5-label">${esc(who[0])}</span><b>${score[0]}</b></div><div><span class="p5-label">${esc(who[1])}</span><b>${score[1]}</b></div></div>
+          <div class="p5-stamp" aria-hidden="true">${score[0] === score[1] ? 'even.' : `${esc(who[score[0] > score[1] ? 0 : 1])}'s ears win.`}</div>
+          <div class="p5-row">${btn('next', 'next: the playlist')}</div></div>`, {next});
+      }), 'Only listen. Don\'t look at the screen yet.');
+    });
+    turn(0);
   }
 
   const COURT_QS = ['Who picked who up?', 'Who takes longer to leave the house?', 'Who\'s the better cook?', 'Who\'d last longer on a desert island?'];
@@ -1168,7 +1240,8 @@
   }
 
   function duoTaste() {
-    needNames(() => {
+    needNames(() => howPlay(pl => {
+      if (pl === 'apart') return tasteApart();
       const [A, B] = names();
       const wild = got('duo-wild'), score = [0, 0], bites = [[], []];
       show(`<div>${step(0, 0, 'Before anything: check allergies. Obviously.')}
@@ -1210,8 +1283,44 @@
           fin: () => { put('duo-bite', G.querySelector('[name=sur]').value.trim()); finish(nudge('playmate-chocolate', 'Short on sweet? Snap\'d is milk chocolate hearts made for two.')); }
         });
       }
-    });
+    }, 'Apart? It becomes food charades on a video call.'));
   }
+  /* feed me, long distance: food charades on a video call */
+  function tasteApart() {
+    const [A, B] = names(), score = [0, 0];
+    const WORDS = ['sweet', 'salty', 'sour', 'bitter', 'spicy', 'crunchy', 'chewy', 'creamy', 'fizzy', 'smoky', 'crumbly', 'juicy', 'reminds me of…'];
+    show(`<div>${step(0, 0, 'Food charades, long distance. Get on a video call. Each of you grabs three things to eat or drink from your own kitchen: something sweet, something salty and a wildcard. Packets out of shot.')}
+      <label class="p5-tick"><input type="checkbox" name="al"> allergies checked</label>
+      <p class="p5-muted">You hold this phone and keep score for both of you.</p>
+      <div class="p5-row">${btn('go', 'bites ready')}</div></div>`, {
+      go: () => G.querySelector('[name=al]').checked ? turn(0, 0) : toast('Tick the allergy check first.')
+    });
+    function turn(p, i) {
+      if (i > 2) return p === 0 ? turn(1, 0) : result();
+      const d = names()[p], g = names()[1 - p];
+      show(`<div class="p5-center">${step(i + 1, 3, `${d}: taste your ${['sweet', 'salty', 'wildcard'][i]} bite on camera and describe it in taste words only. No names, no brands. ${g} guesses.`)}
+        <div class="p5-words-bank">${WORDS.map(w => `<span>${esc(w)}</span>`).join('')}</div>
+        ${timerHTML(45, 'describe it', 'sm')}<div class="p5-row">${btn('go', 'start the clock')}</div>
+        <div class="p5-row">${btn('s2', `${esc(g)} nailed it`)}${btn('s1', 'close', 'p5-ghost')}${btn('s0', 'not even close', 'p5-ghost')}</div></div>`, {
+        go: b => { b.disabled = true; runTimer(45, () => toast('Time. Final guess?')); },
+        s2: () => { score[1 - p] += 2; nx(); }, s1: () => { score[1 - p] += 1; nx(); }, s0: nx
+      });
+      function nx() { buzz(20); turn(p, i + 1); }
+    }
+    function result() {
+      const win = score[0] === score[1] ? -1 : score[0] > score[1] ? 0 : 1;
+      put('duo-guesser', win);
+      show(`<div class="p5-center">${step(0, 0, 'The scores.')}
+        <div class="p5-court"><div><span class="p5-label">${esc(A)}</span><b>${score[0]}</b></div><div><span class="p5-label">${esc(B)}</span><b>${score[1]}</b></div></div>
+        <div class="p5-stamp" aria-hidden="true">${win < 0 ? 'a tie.' : `${esc(names()[win])} wins.`}</div>
+        <p class="p5-muted">${win < 0 ? 'Tomorrow you flip a coin for the card.' : `${esc(names()[win])} picks tomorrow's card.`}</p>
+        <label class="p5-field"><span class="p5-label">the bite that surprised you most</span><input name="sur" placeholder="it comes back on day five" autocomplete="off"></label>
+        <div class="p5-row">${btn('fin', 'done')}</div></div>`, {
+        fin: () => { put('duo-bite', G.querySelector('[name=sur]').value.trim()); finish(nudge('playmate-chocolate', 'Next time, taste the same thing: send them a box of Snap\'d and keep one for yourself.')); }
+      });
+    }
+  }
+
 
   function duoTouch() {
     needNames(() => {

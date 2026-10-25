@@ -324,3 +324,5 @@ body.p5-dim .p5-timer-n{color:var(--cream)}
 .p5-mic:active{transform:scale(.95)}
 @keyframes p5rec{50%{box-shadow:0 0 0 14px rgba(184,50,42,.18)}}
 .p5-court-q.sm{font-size:16px;margin:14px 0 0;text-align:center}
+.p5-words-bank{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0 4px}
+.p5-words-bank span{background:var(--panel);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:400;color:var(--bur)}
