@@ -330,3 +330,18 @@ body.p5-dim .p5-timer-n{color:var(--cream)}
 .p5-card-full p:last-child{font-size:18px;font-weight:400}
 .p5-inapp{margin-top:12px;border:1.5px dashed var(--bur);border-radius:6px;padding:10px 14px;font-size:15px}
 .p5-inapp p{margin:0 0 4px}
+
+/* the couples scoreboard and the champion */
+.p5-board{text-align:left}
+.p5-board-h{display:grid;grid-template-columns:1fr auto auto auto 1fr;align-items:center;gap:10px;margin:6px 0 4px}
+.p5-board-h span{font-weight:500;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.p5-board-h span:last-child{text-align:right}
+.p5-board-h b{font:900 40px/1 "Figtree",sans-serif;color:var(--bur);letter-spacing:-.03em}
+.p5-board-h i{font-style:normal;color:var(--muted)}
+.p5-board-r{list-style:none;margin:8px 0 0;padding:0}
+.p5-board-r li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+.p5-board-r li span:last-child{font-weight:500;color:var(--bur);white-space:nowrap}
+.p5-board-r li.is-off span{color:var(--muted);font-weight:300}
+.p5-champ{text-align:center;margin-top:8px}
+.p5-champ .p5-chips{justify-content:center}
+.p5-court .p5-small{display:block;margin:4px 0 0}

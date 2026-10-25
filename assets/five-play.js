@@ -147,6 +147,82 @@
   }
   const names = () => S.names || ['you', 'them'];
 
+  /* the couples scoreboard (With someone): points per day as [first name, second name], kept in
+     S.data so it syncs with the rest of the progress. Day four has nothing to win. */
+  const SC_DAYS = [[1, 'sixty seconds'], [2, 'backwards round'], [3, 'taste test'], [5, 'mind reader']];
+  const scores = () => got('duo-score') || {};
+  function addScore(day, pts) { put('duo-score', Object.assign({}, scores(), {['d' + day]: [+pts[0] || 0, +pts[1] || 0]})); }
+  const totals = () => Object.values(scores()).reduce((t, p) => [t[0] + p[0], t[1] + p[1]], [0, 0]);
+  function boardHTML(title, note) {
+    const s = scores(); if (!Object.keys(s).length) return '';
+    const [A, B] = names(), t = totals();
+    return `<div class="p5-box p5-board"><p class="p5-label">${esc(title || 'the lab scoreboard')}</p>
+      <div class="p5-board-h"><span>${esc(A)}</span><b>${t[0]}</b><i aria-hidden="true">–</i><b>${t[1]}</b><span>${esc(B)}</span></div>
+      <ol class="p5-board-r">${SC_DAYS.map(([d, l]) => `<li${s['d' + d] ? '' : ' class="is-off"'}><span>day ${ORD[d - 1]}: ${l}</span><span>${s['d' + d] ? `${s['d' + d][0]}–${s['d' + d][1]}` : 'to play'}</span></li>`).join('')}</ol>
+      ${note ? `<p class="p5-muted p5-small">${esc(note)}</p>` : ''}</div>`;
+  }
+  /* day five: crown the champion, the loser owes a forfeit, and make a card to post */
+  const FORFEITS = ['books the next date', 'makes breakfast in bed', 'does the washing up for a week', 'gives a ten-minute shoulder rub', 'hands over the remote for a week', 'plans a surprise date under £20', 'sings the champion a song, full volume', 'makes every cup of tea for a week'];
+  function champ() {
+    if (!Object.keys(scores()).length) return {html: '', acts: {}};
+    const t = totals(), N = names(), w = t[0] === t[1] ? -1 : t[0] > t[1] ? 0 : 1;
+    let ff = '', card = null;
+    const setFF = v => { ff = v; const r = G.querySelector('[data-ff] span'); if (r) r.textContent = v; enable('card', true); };
+    const html = `<div class="p5-champ">${boardHTML('the final scores')}
+      <p class="p5-label">the lab champion</p>
+      <div class="p5-stamp" aria-hidden="true">${w < 0 ? 'joint champions.' : `${esc(N[w])}.`}</div>
+      <p class="p5-muted">${w < 0 ? 'A dead heat. You each owe the other a forfeit. Pick one, or spin for it.' : `${esc(N[1 - w])} owes a forfeit. ${esc(N[w])} picks it, or spin for it.`}</p>
+      <div class="p5-slot"><p class="p5-slot-pre">${w < 0 ? 'you both' : esc(N[1 - w])}</p><div class="p5-reel" data-ff><span>?</span></div></div>
+      <div class="p5-row">${btn('ffspin', 'spin for it', 'p5-ghost')}</div>
+      ${chips('ff', FORFEITS)}
+      <div class="p5-row">${btn('card', 'make the champion card')}</div><div data-card></div></div>`;
+    const acts = {
+      'chip:ff': s => { if (s[0]) setFF(s[0]); },
+      ffspin: b => {
+        const r = G.querySelector('[data-ff]'), span = r.querySelector('span'), fin = pick(FORFEITS.filter(x => x !== ff));
+        let n = 0; const total = reduced ? 1 : 18; b.disabled = true; r.classList.add('is-spin');
+        const tick = () => { n++; span.textContent = n >= total ? fin : pick(FORFEITS);
+          if (n >= total) { r.classList.remove('is-spin'); r.classList.add('is-set'); buzz(25); b.disabled = false; b.textContent = 'spin again'; CH.ff = []; G.querySelectorAll('[data-g=ff]').forEach(c => c.setAttribute('aria-pressed', 'false')); setFF(fin); return; }
+          setTimeout(tick, 45 + n * n * 0.9); };
+        tick();
+      },
+      card: async () => {
+        const box = G.querySelector('[data-card]'); box.innerHTML = '<p class="p5-muted">making it…</p>';
+        try { card = await champCard(w, ff); } catch (_) { box.innerHTML = ''; return toast('Couldn\'t make the card. Screenshot this instead.'); }
+        box.innerHTML = `<img class="p5-pic" alt="the Sense Lab champion card" src="${URL.createObjectURL(card)}"><div class="p5-row">${btn('sendcard', 'send it or post it')}</div>`;
+        burst();
+      },
+      sendcard: () => shareFile(card, 'sense-lab-champion.jpg', w < 0 ? 'Joint Sense Lab champions. Forfeits to be paid in full.' : `${N[w]} is the Sense Lab champion. ${N[1 - w]} ${ff}.`)
+    };
+    return {html, acts, after: () => enable('card', false)};
+  }
+  async function champCard(w, ff) {
+    try { await document.fonts.load('900 52px Figtree'); await document.fonts.load('400 26px "Homemade Apple"'); await document.fonts.load('500 22px Jost'); } catch (_) {}
+    const W = 1080, H = 1350, P = 80, c = document.createElement('canvas'); c.width = W; c.height = H;
+    const x = c.getContext('2d'), N = names(), t = totals(), s = scores();
+    const fit = (txt, font, size, maxW) => { let z = size; do { x.font = font.replace('#', z); z -= 4; } while (x.measureText(txt).width > maxW && z > 30); };
+    x.fillStyle = '#F7EFE2'; x.fillRect(0, 0, W, H);
+    x.strokeStyle = '#72101F'; x.lineWidth = 4; x.strokeRect(36, 36, W - 72, H - 72);
+    x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = '#72101F';
+    x.font = '400 34px "Homemade Apple", cursive'; x.fillText('the sense lab.', W / 2, 170);
+    x.font = '500 24px Jost, sans-serif'; x.fillStyle = '#7A6A60'; x.fillText('L A B   C H A M P I O N', W / 2, 250);
+    x.fillStyle = '#72101F'; const big = w < 0 ? 'joint champions.' : `${N[w].toLowerCase()}.`;
+    fit(big, '900 #px Figtree, sans-serif', 150, W - 2 * P); x.fillText(big, W / 2, 400);
+    x.font = '900 64px Figtree, sans-serif'; x.fillText(`${t[0]} – ${t[1]}`, W / 2, 510);
+    x.font = '500 26px Jost, sans-serif'; x.fillStyle = '#7A6A60'; x.fillText(`${N[0]}  ·  ${N[1]}`.toUpperCase(), W / 2, 560);
+    let y = 650; x.font = '400 32px Jost, sans-serif';
+    SC_DAYS.forEach(([d, l]) => { const p = s['d' + d];
+      x.textAlign = 'left'; x.fillStyle = '#281C18'; x.fillText(`day ${ORD[d - 1]}: ${l}`, P + 40, y);
+      x.textAlign = 'right'; x.fillStyle = '#72101F'; x.fillText(p ? `${p[0]} – ${p[1]}` : '–', W - P - 40, y);
+      x.fillStyle = 'rgba(40,28,24,.14)'; x.fillRect(P + 40, y + 22, W - 2 * P - 80, 2); y += 76; });
+    x.fillStyle = '#72101F'; x.fillRect(P, 980, W - 2 * P, 200);
+    x.textAlign = 'center'; x.fillStyle = 'rgba(255,251,245,.75)'; x.font = '500 22px Jost, sans-serif'; x.fillText('T H E   F O R F E I T', W / 2, 1035);
+    x.fillStyle = '#FFFBF5'; const f = ff ? (w < 0 ? `you both ${ff}.` : `${N[1 - w].toLowerCase()} ${ff}.`) : 'to be decided.';
+    fit(f, '900 #px Figtree, sans-serif', 50, W - 2 * P - 60); x.fillText(f, W / 2, 1115);
+    x.font = '500 22px Jost, sans-serif'; x.fillStyle = '#7A6A60'; x.fillText('PLAYMATE LABS', W / 2, H - 80);
+    return new Promise(ok => c.toBlob(b => ok(b), 'image/jpeg', 0.92));
+  }
+
   /* dates for the calendar */
   const DAYS_OUT = [['tonight', 0], ['tomorrow', 1], ['fri', 'F'], ['sat', 'S'], ['sun', 'U'], ['next week', 7]];
   const TIMES = [['lunch', '12:30'], ['after work', '18:30'], ['evening', '20:00']];
@@ -203,10 +279,10 @@
     ],
     duo: [
       {h: 'look. closer.', after: '(longer than is comfortable)', game: 'draw them', how: 'Warm-up: sixty seconds of eye contact. Then spin the randomiser, or swap photos and draw each other\'s, against the clock. One photo of both drawings at the end.', take: 'a photo of two terrible masterpieces', run: sightDraw},
-      {h: 'say it. louder.', after: '(the verdict is final)', game: 'the courtroom', how: 'Four small disputes answered in secret, then the verdicts. Then the backwards round: record a sound, we flip it, they guess. Then a three-song playlist.', take: 'a playlist that sounds like you two', run: duoSound},
+      {h: 'say it. louder.', after: '(the verdict is final)', game: 'the courtroom', how: 'Four small disputes answered in secret, then the verdicts. Then the backwards round: record a sound, we flip it, they guess, then try to copy it backwards for a bonus point. Then a three-song playlist.', take: 'a playlist that sounds like you two', run: duoSound},
       {h: 'feed. me.', after: '(blindfold optional, encouraged)', game: 'blind taste test', how: 'Three bites each. One of you feeds, the other guesses with their eyes closed. Apart? It becomes food charades on a video call. Best guesser picks tomorrow\'s card.', take: 'a new "our" food', run: duoTaste},
       {h: 'hands. only.', after: '(every card is optional. that\'s sort of the point.)', game: 'pick a card', how: 'Last night\'s best guesser picks a number. Pass on anything, no explanation needed. Apart? The cards change for a video call.', take: 'the word they traced (keep it)', run: duoTouch},
-      {h: 'read my mind.', after: '(then book the table)', game: 'mind reader', how: 'Predict each other\'s perfect date, score the details you nailed, and book the winner. Tonight.', take: 'a date in the diary', run: duoSixth}
+      {h: 'read my mind.', after: '(then book the table)', game: 'mind reader', how: 'Predict each other\'s perfect date, score the details you nailed, and book the winner. Then the week\'s lab champion is crowned, and the loser owes a forfeit.', take: 'a date in the diary', run: duoSixth}
     ]
   };
   const ICONS = {
@@ -292,6 +368,7 @@
           <span class="p5-day-b"><span class="p5-day-k">day ${ORD[i]}: ${SENSES[i]}</span><span class="p5-day-t">${st.open ? esc(d.h) : 'not yet.'}</span><span class="p5-day-g">${sub}</span></span>
           <span class="p5-day-s" aria-label="${done ? 'played' : st.open ? 'ready to play' : 'locked'}">${done ? '✓' : st.open ? '→' : ''}</span></button></li>`;
       }).join('')}</ol>
+      ${MODE === 'duo' ? boardHTML() : ''}
       <p class="p5-switch">Wrong version? ${Object.keys(MODES).filter(k => k !== MODE).map(k => `<button type="button" class="p5-link" data-mode="${k}">${MODES[k].label}</button>`).join(' or ')}</p>
     </section>`;
     app.querySelectorAll('[data-day]').forEach(b => b.onclick = () => {
@@ -426,6 +503,7 @@
       <div class="p5-stamp" aria-hidden="true">done.</div>
       <p class="p5-take"><span>you'll leave with:</span> ${esc(d.take)}</p>
       ${extra || ''}
+      ${MODE === 'duo' && DAY < 5 ? boardHTML('the lab scoreboard so far', 'Day five crowns the champion. The loser owes a forfeit.') : ''}
       ${next}
     </div>`, Object.assign({hub: () => go(MODE, 0)}, acts));
     burst();
@@ -493,9 +571,9 @@
     };
     const looked = () => {
       if (MODE !== 'duo') return choose();
-      show(`<div class="p5-center">${step(1, 3, 'Who looked away first?')}
+      show(`<div class="p5-center">${step(1, 3, 'Who looked away first? The other one gets the first point on the lab scoreboard.')}
         <div class="p5-row">${who().map((n, i) => `<button type="button" class="p5-btn p5-ghost" data-act="lost" data-n="${i}">${esc(n)}</button>`).join('')}<button type="button" class="p5-btn p5-ghost" data-act="lost" data-n="-1">nobody. impressive.</button></div></div>`,
-        {lost: b => { const n = +b.dataset.n; put('duo-wild', n); if (n > -1) toast(`${who()[n]} brings the wildcard on day three.`); choose(); }});
+        {lost: b => { const n = +b.dataset.n; put('duo-wild', n); addScore(1, n < 0 ? [1, 1] : n ? [1, 0] : [0, 1]); if (n > -1) toast(`Point to ${who()[1 - n]}. ${who()[n]} brings the wildcard on day three.`); choose(); }});
     };
     /* two ways to play the main event (solo only has the randomiser) */
     const choose = () => {
@@ -1027,19 +1105,20 @@
       show(`<div class="p5-center"><p class="p5-muted">getting the sound…</p></div>`);
       fetch(`${CLIP_API}/clip/${encodeURIComponent(s.c)}`).then(r => { if (!r.ok) throw new Error('gone'); return r.blob(); }).then(decode).then(fwd => {
         const clip = {prompt: s.p, cat: s.k, fwd, rev: reversed(fwd)}; bufURL(clip.fwd); bufURL(clip.rev);
-        listenScreen(`${them} recorded ${s.k || 'a sound'}. It's backwards. What is it?`, clip, s.r === 2 ? final : reply);
+        listenScreen(`${them} recorded ${s.k || 'a sound'}. It's backwards. What is it?`, clip, ok => copyRound('you', 'Be honest', clip, bonus => (s.r === 2 ? final : reply)(ok, bonus)));
       }).catch(() => show(`<div class="p5-center"><p class="p5-lede">This sound has expired or the link is broken. Ask ${esc(them)} to send it again.</p>${sharedFooter()}</div>`));
       /* the second leg: the person who started it guesses, and the round ends here */
-      const final = ok => {
-        const mine = ok ? 1 : 0, theirs = +s.g1 || 0;
-        const res = mine === theirs ? (mine ? 'both of you got it.' : 'neither of you got it.') : mine ? 'you win.' : `${esc(them)} wins.`;
+      const final = (ok, bonus) => {
+        const mine = ok ? 1 : 0, theirs = +s.g1 || 0, pm = mine + (bonus || 0), pt = theirs + (+s.b1 || 0);
+        const res = pm === pt ? 'a draw.' : pm > pt ? 'you win.' : `${esc(them)} wins.`;
         put('duo-back', {mine, theirs, at: Date.now()});
-        show(`<div class="p5-center">${step(0, 0, 'That\'s the round.')}
-          <div class="p5-court"><div><span class="p5-label">you guessed theirs</span><b>${mine ? '✓' : '✗'}</b></div><div><span class="p5-label">${esc(them)} guessed yours</span><b>${theirs ? '✓' : '✗'}</b></div></div>
-          <div class="p5-stamp ${mine >= theirs ? '' : 'red'}" aria-hidden="true">${res}</div>
+        if (S.mode === 'duo' && S.names) addScore(2, [pm, pt]);
+        show(`<div class="p5-center">${step(0, 0, 'That\'s the round. A point per right guess, a bonus point per copy.')}
+          <div class="p5-court"><div><span class="p5-label">you</span><b>${pm}</b><span class="p5-muted p5-small">guess ${mine ? '✓' : '✗'} · copy ${bonus ? '✓' : '✗'}</span></div><div><span class="p5-label">${esc(them)}</span><b>${pt}</b><span class="p5-muted p5-small">guess ${theirs ? '✓' : '✗'} · copy ${+s.b1 ? '✓' : '✗'}</span></div></div>
+          <div class="p5-stamp ${pm >= pt ? '' : 'red'}" aria-hidden="true">${res}</div>
           <div class="p5-row">${btn('tell', 'tell them the score')}${btn('again', 'rematch', 'p5-ghost')}</div>
           ${S.mode ? `<p class="p5-muted p5-small">Two tabs open? Close the other one. Your progress is saved either way.</p><div class="p5-row">${btn('lab', 'back to the five days', 'p5-ghost')}</div>` : sharedFooter()}</div>`, {
-          tell: () => share(`Backwards round: I ${mine ? 'got' : 'didn\'t get'} yours (${s.p}), you ${theirs ? 'got' : 'didn\'t get'} mine. ${mine === theirs ? 'A draw.' : mine ? 'I win.' : 'You win. This time.'}`),
+          tell: () => share(`Backwards round: I ${mine ? 'got' : 'didn\'t get'} yours (${s.p}), you ${theirs ? 'got' : 'didn\'t get'} mine. With the copy bonus it's ${pm}–${pt}. ${pm === pt ? 'A draw.' : pm > pt ? 'I win.' : 'You win. This time.'}`),
           again: () => recordPrompt('Rematch. Pick a category and make the sound.', c3 => {
             if (!c3) return;
             show(`<div class="p5-center">${step(0, 0, 'Have a listen, then send it.')}
@@ -1053,7 +1132,7 @@
         });
         burst();
       };
-      const reply = ok => {
+      const reply = (ok, bonus) => {
         show(`<div class="p5-center">${step(0, 0, ok ? 'Nice ears. Now send one back.' : 'No shame. Now get your revenge: send one back.')}
           <label class="p5-field"><span class="p5-label">your first name</span><input name="nm" autocomplete="off" maxlength="20"></label>
           <div class="p5-row">${btn('mine', 'record one back')}${btn('tell', 'just tell them', 'p5-ghost')}</div>${sharedFooter()}</div>`, {
@@ -1066,7 +1145,7 @@
                 <button type="button" class="p5-mic play" data-act="me" aria-label="hear it backwards"><span></span></button><p class="p5-muted p5-small">hear it backwards. sound on.</p>
                 <div class="p5-row">${btn('send', 'send them the link')}</div>${sharedFooter()}</div>`, {
                 me: () => playBuf(clip2.rev),
-                send: () => sendClip(clip2, nm, `${ok ? 'Got yours.' : 'No idea what yours was.'} Here's mine, backwards. Your guess finishes the round.`, {r: 2, g1: ok ? 1 : 0})
+                send: () => sendClip(clip2, nm, `${ok ? 'Got yours.' : 'No idea what yours was.'} Here's mine, backwards. Your guess finishes the round.`, {r: 2, g1: ok ? 1 : 0, b1: bonus ? 1 : 0})
                   .then(() => show(`<div class="p5-center"><div class="p5-stamp" aria-hidden="true">sent.</div><p class="p5-lede">Your part's done. ${esc(them)} guesses yours and gets the final score. You can close this tab.</p>${sharedFooter()}</div>`))
               });
             });
@@ -1093,16 +1172,18 @@
         <div class="p5-row">${btn('next', 'see who won')}</div></div>`, {hit: hitAct, next: () => {
         const sb = G.querySelectorAll('[aria-pressed=true]').length, sa = +s.sa || 0;
         const w = sa === sb ? -1 : sa > sb ? 0 : 1;
+        if (S.mode === 'duo' && S.names) addScore(5, [sa, sb]);
+        const c = S.mode === 'duo' && S.names ? champ() : {html: '', acts: {}};
         const pickBox = x => bookWinner(x ? s.pb : s.pa, x ? them : me, btn('tell', 'tell them it\'s booked'));
         show(`<div class="p5-center">${step(3, 3, 'The winner\'s date gets booked. Tonight. Not "we should". Booked.')}
           <div class="p5-court"><div><span class="p5-label">${esc(me)}</span><b>${sa}</b></div><div><span class="p5-label">${esc(them)}</span><b>${sb}</b></div></div>
           <div class="p5-stamp" aria-hidden="true">${w < 0 ? 'a tie.' : 'mind reader.'}</div>
-          ${w < 0 ? `<p class="p5-muted">A tie. Flip for it.</p><div class="p5-row">${btn('coin', 'flip a coin')}</div><div data-coin></div>` : pickBox(w)}</div>`, Object.assign({
+          ${w < 0 ? `<p class="p5-muted">A tie. Flip for it.</p><div class="p5-row">${btn('coin', 'flip a coin')}</div><div data-coin></div>` : pickBox(w)}${c.html}</div>`, Object.assign({
           coin: b => { b.disabled = true; const c = G.querySelector('[data-coin]'); c.innerHTML = `<div class="p5-coin${reduced ? '' : ' spin'}">?</div>`;
             setTimeout(() => { c.innerHTML = pickBox(Math.random() < 0.5 ? 0 : 1); enable('cal', false); }, reduced ? 50 : 1300); },
           tell: () => share(`Booked: ${G.querySelector('.p5-ticket-t').textContent}. ${whenOf('bk') ? whenLabel('bk') + '.' : ''} Not "we should". Booked.`)
-        }, bookActs()));
-        enable('cal', false); burst();
+        }, bookActs(), c.acts));
+        enable('cal', false); c.after && c.after(); burst();
       }});
     } else { history.replaceState(null, '', location.pathname + location.search); SHARED_OFF(); }
   }
@@ -1128,7 +1209,7 @@
   const CLIP_API = CFG.clipApi || 'https://grid-planner-api.playmatelabs.workers.dev';
   /* pick a secret prompt, record it, hand back {prompt, cat, fwd, rev} */
   function recordPrompt(intro, cb) {
-    let prompt = '';
+    let prompt = '', cat = '';
     if (!canRecord()) {
       show(`<div class="p5-center">${step(0, 0, 'This browser can\'t record sound. Open the page in Safari or Chrome to play the backwards round.')}<div class="p5-row">${btn('skip', 'skip it')}</div></div>`, {skip: () => cb(null)});
       return;
@@ -1138,25 +1219,57 @@
       <div data-secret hidden class="p5-box p5-center"><p class="p5-label">your sound (shh)</p><p class="p5-prompt" data-p></p><div class="p5-row">${btn('again', 'give me another', 'p5-ghost')}</div></div>
       <div class="p5-center" data-rec hidden><button type="button" class="p5-mic" data-act="rec" aria-label="record"><span></span></button><p class="p5-muted p5-small" data-rs>tap to record, up to 8 seconds</p></div></div>`, {
       'chip:cat': s => { if (s[0]) roll(s[0]); },
-      again: () => roll(CH.cat[0]),
-      rec: async b => {
-        if (b.classList.contains('on')) { b._r && b._r.stop(); return; }
-        try {
-          stopAudio(); ac();
-          const r = await startRecording(8000); b._r = r; b.classList.add('on');
-          const st = G.querySelector('[data-rs]'), t0 = Date.now();
-          const iv = setInterval(() => { st.textContent = `recording… ${Math.ceil((Date.now() - t0) / 1000)}s, tap to stop`; }, 250);
-          const blob = await r.done; clearInterval(iv); b.classList.remove('on'); st.textContent = 'flipping it…';
-          const fwd = await decode(blob), rev = reversed(fwd); bufURL(fwd); bufURL(rev);
-          cb({prompt, cat: CH.cat[0], fwd, rev});
-        } catch (e) { b.classList.remove('on'); toast('No microphone access. Allow it in your browser settings, or skip this round.'); }
-      }
+      again: () => roll(cat),
+      rec: b => micRec(b, (fwd, rev) => cb({prompt, cat, fwd, rev}))
     });
-    function roll(cat) {
+    function roll(c) {
+      cat = c;
       prompt = pick(BACK[cat].filter(x => x !== prompt));
       G.querySelector('[data-p]').textContent = prompt;
       G.querySelector('[data-secret]').hidden = false; G.querySelector('[data-rec]').hidden = false;
     }
+  }
+  /* the mic button: tap to record (up to 8 seconds), tap again to stop; hands back the sound both ways */
+  async function micRec(b, cb) {
+    if (b.classList.contains('on')) { b._r && b._r.stop(); return; }
+    const st = G.querySelector('[data-rs]');
+    try {
+      stopAudio(); ac();
+      const r = await startRecording(8000); b._r = r; b.classList.add('on');
+      const t0 = Date.now();
+      const iv = setInterval(() => { st.textContent = `recording… ${Math.ceil((Date.now() - t0) / 1000)}s, tap to stop`; }, 250);
+      const blob = await r.done; clearInterval(iv); b.classList.remove('on'); st.textContent = 'flipping it…';
+      const fwd = await decode(blob), rev = reversed(fwd); bufURL(fwd); bufURL(rev);
+      cb(fwd, rev);
+    } catch (e) { b.classList.remove('on'); toast('No microphone access. Allow it in your browser settings, or skip this round.'); }
+  }
+  /* the reverse-copy: copy the backwards sound out loud, we flip the copy, and out comes a mangled
+     version of the original. Worth a bonus point if it's recognisable. */
+  function copyRound(who, judge, clip, done) {
+    if (!canRecord()) return done(0);
+    let flipped = null;
+    show(`<div class="p5-center">${step(0, 0, `Bonus round: the reverse-copy. ${who}, copy the backwards sound out loud, as closely as you can. Gibberish is the point. We flip your copy, and it should come out as ${clip.prompt}. Roughly.`)}
+      <div class="p5-row">${btn('hear', 'hear it backwards again', 'p5-ghost')}</div>
+      <button type="button" class="p5-mic" data-act="rec" aria-label="record your copy"><span></span></button>
+      <p class="p5-muted p5-small" data-rs>tap to record your copy, up to 8 seconds</p>
+      <div data-flip></div>
+      <div class="p5-row">${btn('skip', 'skip the bonus', 'p5-ghost')}</div></div>`, {
+      hear: () => playBuf(clip.rev),
+      rec: b => micRec(b, (fwd, rev) => {
+        flipped = rev;
+        G.querySelector('[data-rs]').textContent = 'not happy with it? tap to record again';
+        G.querySelector('[data-flip]').innerHTML = `<div class="p5-in p5-box">
+          <p class="p5-label">your copy, flipped</p>
+          <button type="button" class="p5-mic play" data-act="pf" aria-label="play your flipped copy"><span></span></button>
+          <div class="p5-row">${btn('orig', 'the original', 'p5-ghost')}${btn('save', 'save it', 'p5-ghost')}</div>
+          <p class="p5-label">${esc(judge)}: did it sound like ${esc(clip.prompt)}?</p>
+          <div class="p5-row">${btn('yes', 'yes, somehow. +1')}${btn('no', 'not even slightly', 'p5-ghost')}</div></div>`;
+      }),
+      pf: () => playBuf(flipped),
+      orig: () => playBuf(clip.fwd),
+      save: () => shareFile(wav(flipped), 'reverse-copy.wav', `I tried to copy ${clip.prompt} backwards. This is what came out.`),
+      yes: () => { burst(); done(1); }, no: () => done(0), skip: () => done(0)
+    });
   }
   /* listen backwards (3 tries), reveal, then say whether the guess was right */
   function listenScreen(title, clip, onResult, extra) {
@@ -1209,14 +1322,15 @@
     }
     const turn = p => recordPrompt(`The backwards round. ${who[p]}, only you look. Pick a category. ${who[1 - p]} has to guess what you recorded, backwards.`, clip => {
       if (!clip) return next();
-      pass(who[1 - p], () => listenScreen(`${who[1 - p]}: listen. It's backwards. What is it?`, clip, ok => {
-        if (ok) score[1 - p]++;
+      pass(who[1 - p], () => listenScreen(`${who[1 - p]}: listen. It's backwards. What is it?`, clip, ok => copyRound(who[1 - p], who[p], clip, bonus => {
+        score[1 - p] += (ok ? 1 : 0) + bonus;
         if (p === 0) return pass(who[1], () => turn(1), `${who[1]}'s turn to record. ${who[0]}, look away.`);
-        show(`<div class="p5-center">${step(2, 3, 'Backwards round, the scores.')}
+        addScore(2, score);
+        show(`<div class="p5-center">${step(2, 3, 'Backwards round, the scores. A point per right guess, a bonus point per copy.')}
           <div class="p5-court"><div><span class="p5-label">${esc(who[0])}</span><b>${score[0]}</b></div><div><span class="p5-label">${esc(who[1])}</span><b>${score[1]}</b></div></div>
           <div class="p5-stamp" aria-hidden="true">${score[0] === score[1] ? 'even.' : `${esc(who[score[0] > score[1] ? 0 : 1])}'s ears win.`}</div>
           <div class="p5-row">${btn('next', 'next: the playlist')}</div></div>`, {next});
-      }), 'Only listen. Don\'t look at the screen yet.');
+      })), 'Only listen. Don\'t look at the screen yet.');
     });
     turn(0);
   }
@@ -1315,7 +1429,7 @@
       }
       function result() {
         const win = score[0] === score[1] ? -1 : score[0] > score[1] ? 0 : 1;
-        put('duo-guesser', win);
+        put('duo-guesser', win); addScore(3, score);
         show(`<div class="p5-center">${step(0, 0, 'The scores.')}
           <div class="p5-court"><div><span class="p5-label">${esc(A)}</span><b>${score[0]}</b></div><div><span class="p5-label">${esc(B)}</span><b>${score[1]}</b></div></div>
           <div class="p5-stamp" aria-hidden="true">${win < 0 ? 'a tie.' : `${esc(names()[win])} wins.`}</div>
@@ -1351,7 +1465,7 @@
     }
     function result() {
       const win = score[0] === score[1] ? -1 : score[0] > score[1] ? 0 : 1;
-      put('duo-guesser', win);
+      put('duo-guesser', win); addScore(3, score);
       show(`<div class="p5-center">${step(0, 0, 'The scores.')}
         <div class="p5-court"><div><span class="p5-label">${esc(A)}</span><b>${score[0]}</b></div><div><span class="p5-label">${esc(B)}</span><b>${score[1]}</b></div></div>
         <div class="p5-stamp" aria-hidden="true">${win < 0 ? 'a tie.' : `${esc(names()[win])} wins.`}</div>
@@ -1421,18 +1535,19 @@
     needNames(() => howPlay(pl => {
       const [A, B] = names();
       const reveal = () => {
-        const bite = got('duo-bite');
+        const bite = got('duo-bite'), c = champ();
         finish(`<div class="p5-box"><p class="p5-label">the reveal</p><ol class="p5-list">
           <li>Show them the day-one drawings again.</li>
           <li>Name the day-three bite that surprised you${bite ? `: <b>${esc(bite)}</b>` : ''}.</li>
-          <li>Tell them which night was your favourite, and why.</li></ol></div>`);
+          <li>Tell them which night was your favourite, and why.</li></ol></div>${c.html}`, c.acts);
+        c.after && c.after();
       };
       if (pl === 'apart') {
         show(predictHTML('0', `Predict ${B}'s perfect date. They score it on their phone, then predict yours.`) + `<div class="p5-row">${btn('send', 'fold it and send it')}</div></div>`,
           Object.assign(predictActs('0', 'send'), {send: () => {
             const pa = predOf('0'); put('duo-mind', pa);
             share(`I've predicted your perfect date. Score me, then predict mine.`, shareLink(5, {t: 'mind', s: 1, n: A, pa}))
-              .then(() => finish(`<div class="p5-box"><p class="p5-label">sent</p><p>They'll score your prediction and send theirs back. Open their link to see who wins and book it.</p></div>`));
+              .then(() => finish(`<div class="p5-box"><p class="p5-label">sent</p><p>They'll score your prediction and send theirs back. Open their link to see who wins, book it, and crown the lab champion.</p></div>${boardHTML('the lab scoreboard so far', 'The mind reader points land when their link comes back.')}`));
           }}));
         enable('send', false);
         return;
@@ -1452,6 +1567,7 @@
       };
       const won = () => {
         const w = pts[0] === pts[1] ? -1 : pts[0] > pts[1] ? 0 : 1;
+        addScore(5, pts);
         show(`<div class="p5-center">${step(3, 3, 'The winner\'s date gets booked. Tonight. Not "we should". Booked.')}
           <div class="p5-court"><div><span class="p5-label">${esc(A)}</span><b>${pts[0]}</b></div><div><span class="p5-label">${esc(B)}</span><b>${pts[1]}</b></div></div>
           <div class="p5-stamp" aria-hidden="true">${w < 0 ? 'a tie.' : 'mind reader.'}</div>
