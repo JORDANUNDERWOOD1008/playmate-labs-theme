@@ -1,69 +1,91 @@
-/* Cuff'd (DRAFT) card content. Decks of challenges, complications that bring in the props
-   (cuffs, blindfold), wild cards and forfeits. f: 1 = only in "flirty" games. Cheeky, never explicit.
-   UK English, no em dashes. Every card is optional. */
+/* Cuff'd (DRAFT) deck, v2. Everything is played cuffed together (wrist to wrist) until you earn the keys.
+   Each challenge has its props built in: p = 'cuffs' (just the cuffs) | 'blind' (cuffs + blindfold for the leader)
+   | 'act' | 'talk'. s = seconds. up = the optional "turn it up" line (the flirty layer).
+   Wild cards change the next round. Forfeits are for a failed challenge (the flirty layer again).
+   UK English, no em dashes, cheeky but never explicit. Every card is optional. */
 window.CUFFD_CARDS = {
-  decks: {
-    act: {name: 'act it out', ico: 'mask', time: 60, kind: 'guess', how: 'No words, no pointing at things. Act it, your partner shouts guesses.', cards: [
-      {t: 'a cat stuck in a jumper'}, {t: 'assembling flat-pack furniture without the instructions'}, {t: 'a spy defusing a bomb'},
-      {t: 'proposing on a rollercoaster'}, {t: 'walking a very strong dog'}, {t: 'the first five minutes of a fancy date'},
-      {t: 'a magician whose trick goes wrong'}, {t: 'your partner on a Monday morning'}, {t: 'getting out of a car in a tiny dress'},
-      {t: 'a penguin at a job interview'}, {t: 'carrying all the shopping in one trip'}, {t: 'finding a spider in the bath'},
-      {t: 'a sommelier tasting a terrible wine'}, {t: 'the moment you first saw your partner', f: 1}, {t: 'a very slow, very dramatic striptease of one glove', f: 1},
-      {t: 'trying to look casual when your crush walks in', f: 1}
-    ]},
-    cuffed: {name: 'cuffed together', ico: 'cuffs', time: 90, kind: 'task', how: 'One of your wrists cuffed to one of theirs. Do it together, beat the clock.', cards: [
-      {t: 'make two cups of tea, one each'}, {t: 'peel an orange and share it, segment by segment'}, {t: 'write both your names with one pen held together'},
-      {t: 'build a tower of 8 things from the room'}, {t: 'put a pair of socks on one foot each'}, {t: 'fold a t-shirt properly'},
-      {t: 'take a selfie in a power pose, both in frame'}, {t: 'make a paper plane that flies across the room'}, {t: 'tie one shoelace, one hand each'},
-      {t: 'butter a slice of toast and cut it in half'}, {t: 'slow dance to one whole chorus without stepping on toes', f: 1}, {t: 'feed each other three grapes, no dropping', f: 1}
-    ]},
-    blind: {name: 'blind guide', ico: 'blind', time: 60, kind: 'task', how: 'One of you is blindfolded. The other guides with their voice only.', cards: [
-      {t: 'find a spoon in the kitchen'}, {t: 'guess three objects by touch alone'}, {t: 'pour a glass of water without spilling'},
-      {t: 'find a specific book on the shelf'}, {t: 'walk to the front door and back'}, {t: 'stack five coins into a tower'},
-      {t: 'put a hat (or anything hat-ish) on your partner'}, {t: 'find your partner in the room by sound alone'}, {t: 'guess what your partner just put in your hand', f: 1},
-      {t: 'find their hand, then their nose, then their ear', f: 1}
-    ]},
-    draw: {name: 'draw it blind', ico: 'pencil', time: 45, kind: 'guess', how: 'Blindfold on, pen in hand. Draw it, your partner guesses.', cards: [
-      {t: 'a giraffe on a skateboard'}, {t: 'your house'}, {t: 'a cup of tea'}, {t: 'your partner'}, {t: 'a snowman on holiday'},
-      {t: 'the Eiffel Tower'}, {t: 'a fish riding a bike'}, {t: 'your first date'}, {t: 'a cocktail with an umbrella in it'},
-      {t: 'the best night you ever had together', f: 1}
-    ]},
-    duel: {name: 'duel', ico: 'bolt', time: 30, kind: 'duel', versus: 1, how: 'Head to head. Winner takes the round.', cards: [
-      {t: 'thumb war, cuffed together'}, {t: 'staring contest, first to laugh loses'}, {t: 'say the alphabet backwards, fastest wins'},
-      {t: 'rock paper scissors, best of five, cuffed hands only'}, {t: 'balance a book on your head the longest'}, {t: 'name 10 films with a dog in, fastest wins'},
-      {t: 'hold a plank the longest'}, {t: 'make the other one laugh first, no touching', f: 1}, {t: 'compliment-off: last one to run out wins', f: 1}
-    ]},
-    hot: {name: 'hot seat', ico: 'mic', time: 45, kind: 'task', how: 'Talk, quickly, honestly. Hesitate for 3 seconds and it is over.', cards: [
-      {t: '10 things your partner does that make you smile'}, {t: 'every place you have been on a date together'},
-      {t: 'your partner\'s order at their favourite takeaway, exactly'}, {t: '5 songs that remind you of them'},
-      {t: 'their three biggest pet peeves'}, {t: 'what you noticed first about them', f: 1}, {t: 'your perfect night in, minute by minute', f: 1}
-    ]}
+  types: {
+    cuffs: {name: 'cuffed together', ico: 'cuffs'},
+    blind: {name: 'blindfolded', ico: 'blind'},
+    draw: {name: 'draw it blind', ico: 'pencil'},
+    duel: {name: 'duel', ico: 'bolt'},
+    act: {name: 'act it out', ico: 'mask'},
+    talk: {name: 'hot seat', ico: 'mic'}
   },
-  complications: [
-    {t: 'cuffed together', d: 'One wrist each, cuffed. You move as one.', ico: 'cuffs'},
-    {t: 'blindfold on', d: 'The player doing the card wears the blindfold.', ico: 'blind'},
-    {t: 'blindfold swap', d: 'The guesser or helper wears the blindfold instead.', ico: 'blind'},
-    {t: 'wrong hand', d: 'Non-dominant hand only.', ico: 'hand'},
-    {t: 'not a word', d: 'Total silence. Grunts are allowed. Just.', ico: 'shh'},
-    {t: 'whisper only', d: 'Everything has to be whispered.', ico: 'shh'},
-    {t: 'slow motion', d: 'Every move at half speed. Dramatically.', ico: 'clock'},
-    {t: 'one hand behind your back', d: 'Tucked into your waistband. No cheating.', ico: 'hand'},
-    {t: 'your partner is your hands', d: 'You can talk. Only they can touch anything.', ico: 'cuffs'},
-    {t: 'pirate rules', d: 'Every word in a pirate accent. Arr.', ico: 'mask'},
-    {t: 'half time', d: 'The clock is cut in half.', ico: 'clock'},
-    {t: 'no complication', d: 'Lucky. Play it straight.', ico: 'star'}
+  challenges: [
+    {p: 'cuffs', s: 60, t: 'cut the toast in half', how: 'Butter it and cut it straight down the middle. Cuffed hands stay out of it.', up: 'Feed each other the first bite.'},
+    {p: 'cuffs', s: 90, t: 'make two cups of tea', how: 'Kettle to mug, milk and all. One free hand each.', up: 'Drink them with your arms linked.'},
+    {p: 'cuffs', s: 60, t: 'tie a shoelace', how: 'The shoe stays on your partner\'s foot. One hand each.', up: 'Kiss the knot when it\'s done.'},
+    {p: 'cuffs', s: 90, t: 'put your jacket on them', how: 'Both arms in, zipped or buttoned. The cuffs stay on. Good luck with the sleeve.', up: 'They have to say thank you properly.'},
+    {p: 'cuffs', s: 60, t: 'peel an orange', how: 'One long strip if you can manage it, then share every segment.', up: 'Pass the last segment without using your hands.'},
+    {p: 'cuffs', s: 90, t: 'wrap a present', how: 'Anything in the room, any paper, finished with a bow.', up: 'Whoever tied the bow worse owes the other a kiss.'},
+    {p: 'cuffs', s: 30, t: 'open a jar and close it again', how: 'One hand each on the lid, one on the jar.', up: 'A 10-second kiss to celebrate.'},
+    {p: 'cuffs', s: 60, t: 'write a love note', how: 'One pen, both your free hands on it, one full sentence.', up: 'Read it out in your most dramatic voice.'},
+    {p: 'cuffs', s: 60, t: 'build a tower of 8 things', how: 'Anything in the room. It has to stand for three seconds.', up: 'A kiss before every item goes on.'},
+    {p: 'cuffs', s: 45, t: 'take the perfect couple selfie', how: 'Both in frame, one hand each on the phone. The last shot counts.', up: 'Make it a kissing selfie.'},
+    {p: 'cuffs', s: 60, t: 'make a paper plane and fly it', how: 'Fold it together. It has to cross the room.', up: 'Write a dare on it first. Whoever it lands nearest does it.'},
+    {p: 'cuffs', s: 45, t: 'fold a t-shirt, shop perfect', how: 'Sleeves in, edges straight. One free hand each.', up: 'Then fold it again with your eyes closed.'},
+    {p: 'cuffs', s: 45, t: 'brush your partner\'s hair', how: 'A neat parting. The brusher uses their cuffed hand only.', up: 'Finish with a kiss on the forehead.'},
+    {p: 'cuffs', s: 30, t: 'put lip balm on your partner', how: 'No mirror, no smudges, using your cuffed hand.', up: 'Then test it.'},
+    {p: 'cuffs', s: 60, t: 'send a text to a friend', how: 'One thumb each. It has to make sense. Send it.', up: 'The text says something nice about your partner.'},
+    {p: 'cuffs', s: 60, t: 'make one corner of the bed', how: 'A proper hotel corner, sheet tucked tight.', up: 'Then test the bed for ten seconds.'},
+    {p: 'cuffs', s: 45, t: 'slow dance through a whole chorus', how: 'Pick the song together. Cuffed hands stay up. No stepping on toes.', up: 'Cheek to cheek.'},
+    {p: 'cuffs', s: 90, t: 'lace a shoe, every hole', how: 'From completely unlaced. One hand each.', up: 'The shoe-wearer gets carried to the sofa. Just about.'},
+    {p: 'cuffs', s: 30, t: 'pour two drinks', how: 'Same bottle, one hand each on it, not a drop spilt.', up: 'Toast to something you\'ve never said out loud.'},
+    {p: 'cuffs', s: 45, t: 'do up your partner\'s top button', how: 'Shirt, cardigan or coat. One free hand each.', up: 'Then undo it again.'},
+    {p: 'cuffs', s: 30, t: 'make a heart with your hands', how: 'One hand each, then a photo of it on the phone\'s timer.', up: 'Kiss through the middle of it.'},
+    {p: 'cuffs', s: 45, t: 'dunk a biscuit and share it', how: 'It can\'t break in the mug. Half each.', up: 'Feed each other the halves.'},
+    {p: 'cuffs', s: 60, t: 'find three matching pairs of socks', how: 'From a drawer or the washing pile. Cuffed hands only.', up: 'Loser of the next rock paper scissors puts a pair on the other.'},
+    {p: 'duel', s: 30, t: 'thumb war', how: 'Cuffed hands only. Best of three.', up: 'The winner names the prize.'},
+    {p: 'duel', s: 30, t: 'staring contest', how: 'Nose to nose. First to laugh or look away loses.', up: 'The winner steals a kiss.'},
+    {p: 'duel', s: 30, t: 'rock paper scissors', how: 'Best of five, cuffed hands only.', up: 'Every win earns a kiss, wherever the winner points.'},
+    {p: 'duel', s: 45, t: 'the alphabet backwards', how: 'Take it in turns, one letter each. First to get it wrong loses.', up: 'Each mistake costs a compliment.'},
+    {p: 'duel', s: 45, t: 'make the other one laugh', how: 'No touching. First to crack loses.', up: 'Touching allowed. Ticklish people beware.'},
+    {p: 'duel', s: 45, t: 'compliment-off', how: 'Take turns. First to hesitate or repeat one loses.', up: 'Every compliment has to be about how they look tonight.'},
+    {p: 'duel', s: 30, t: 'book on your head', how: 'Both balance a book. Still cuffed. Last one standing wins.', up: 'Winner gets carried, well, dragged, to the sofa.'},
+    {p: 'duel', s: 45, t: '10 films with a dog in', how: 'Race to name them. Your partner checks.', up: 'Loser does the dog voice for the next card.'},
+    {p: 'blind', s: 45, t: 'pour a glass of water', how: 'The leader is blindfolded. Your partner can only say yes or no.', up: 'They drink it however you choose.'},
+    {p: 'blind', s: 45, t: 'guess three things by touch', how: 'The leader is blindfolded. Your partner picks three things, you name all three.', up: 'The last thing is part of your partner.'},
+    {p: 'blind', s: 30, t: 'catch their hand three times', how: 'Blindfolded. They move their free hand around in the air. Catch it.', up: 'Every catch earns a kiss on the palm.'},
+    {p: 'blind', s: 45, t: 'feed them a grape', how: 'You\'re blindfolded. They guide you by voice only.', up: 'Then they feed you one, no hands.'},
+    {p: 'blind', s: 60, t: 'guess the taste', how: 'Blindfolded. Your partner gives you three things from the kitchen. Name them.', up: 'The last taste is a kiss. Guess the flavour.'},
+    {p: 'blind', s: 60, t: 'walk to the door and back', how: 'Blindfolded and cuffed, guided by voice only. Clear the floor first.', up: 'They choose the reward at the door.'},
+    {p: 'blind', s: 45, t: 'style their hair', how: 'Blindfolded. They show the result to the camera. It counts if they keep it for one round.', up: 'The finished look gets a kiss.'},
+    {p: 'draw', s: 45, t: 'the Eiffel Tower', how: 'Blindfold on, pen in your free hand. Your partner guesses it.', up: 'Wrong guesses cost a kiss each.'},
+    {p: 'draw', s: 45, t: 'a giraffe on a skateboard', how: 'Blindfold on, pen in your free hand. Your partner guesses it.', up: 'Wrong guesses cost a kiss each.'},
+    {p: 'draw', s: 45, t: 'your partner', how: 'Blindfold on, pen in your free hand. They have to recognise themselves.', up: 'Sign it with a kiss.'},
+    {p: 'draw', s: 45, t: 'your first date', how: 'Blindfold on, pen in your free hand. Your partner guesses where it was.', up: 'Tell them your favourite bit of it.'},
+    {p: 'draw', s: 45, t: 'a snowman on holiday', how: 'Blindfold on, pen in your free hand. Your partner guesses it.', up: 'Wrong guesses cost a kiss each.'},
+    {p: 'draw', s: 45, t: 'a cocktail with an umbrella in it', how: 'Blindfold on, pen in your free hand. Your partner guesses it.', up: 'Make the next drink. Together, obviously.'},
+    {p: 'draw', s: 45, t: 'a house, a tree and a dog', how: 'One pen held by both of you, both blindfolded. It has to be recognisable.', up: 'Add the two of you to the picture.'},
+    {p: 'act', s: 60, t: 'act out your first date', how: 'Both of you, no words. The phone timer is your audience.', up: 'Act out how it ended.'},
+    {p: 'act', s: 60, t: 'charades: a famous couple', how: 'The leader acts, cuffed partner and all. Pick one: Romeo and Juliet, Wallace and Gromit, Beyonce and Jay-Z.', up: 'Whoever guesses picks a kiss, any famous one.'},
+    {p: 'act', s: 60, t: 'charades: a film', how: 'The leader acts, the other guesses. Pick one: Titanic, Jaws, Dirty Dancing.', up: 'Recreate the poster.'},
+    {p: 'talk', s: 45, t: '10 things that make you smile', how: 'The leader lists 10 things the other does. No repeats, no long pauses.', up: 'Pick the best one and show them.'},
+    {p: 'talk', s: 45, t: 'us, in three words', how: 'Three words each that describe the two of you. Then explain them.', up: 'Seal the best word with a kiss.'},
+    {p: 'talk', s: 60, t: 'remember when', how: 'Your favourite memory of each other, 30 seconds each.', up: 'Recreate one tiny bit of it right now.'},
+    {p: 'talk', s: 45, t: 'the honest answer', how: 'One thing you\'d love to do more of together. Both answer.', up: 'Put it in the diary before the next card.'}
   ],
   wilds: [
-    {t: 'key found', d: 'Free key for the team, or a free point in versus. No challenge this round.', fx: 'key'},
-    {t: 'swap roles', d: 'Whoever was going to do the card now guesses, and the other way round.', fx: 'swap'},
-    {t: 'lockdown', d: 'This round, both of you wear a complication. Spin twice.', fx: 'double'},
-    {t: 'plot twist', d: 'Your partner picks the complication for this round.', fx: 'pick'},
-    {t: 'escape artist', d: 'Skip any card this game. Save it for a horrible one.', fx: 'pass'}
+    {t: 'reversal', d: 'The other player leads the next card.', fx: 'swap'},
+    {t: 'not a word', d: 'The next card is played in total silence.', fx: 'silent'},
+    {t: 'half time', d: 'The next card gets half the time, and it\'s worth two keys.', fx: 'half'},
+    {t: 'double or nothing', d: 'The next card is worth two keys. Fail it and you lose one.', fx: 'double'},
+    {t: 'your partner\'s pick', d: 'Draw three cards. Your partner chooses which one you play.', fx: 'pick'},
+    {t: 'lucky break', d: 'A free key. No challenge this round.', fx: 'key', team: 1},
+    {t: 'pickpocket', d: 'Steal one key from your partner. No challenge this round.', fx: 'steal', versus: 1},
+    {t: 'breather', d: 'Cuffs off for one round. Stretch, drink some water, cuff back up. No penalty.', fx: 'breather'}
   ],
   forfeits: [
-    {t: 'makes breakfast tomorrow'}, {t: 'gives a 10-minute shoulder rub'}, {t: 'hands over the remote for the week'},
-    {t: 'plans the next date, start to finish'}, {t: 'does the washing up for three days'}, {t: 'sings the winner a song of their choice'},
-    {t: 'recreates the winner\'s favourite photo, pose and all'}, {t: 'slow dances with the winner to one song of their choice', f: 1},
-    {t: 'stays cuffed to the winner for the next 10 minutes', f: 1}, {t: 'gives the winner a kiss anywhere but the lips (hand, cheek, forehead...)', f: 1}
+    {t: 'a 30-second kiss', d: 'The timer is running. No stopping early.'},
+    {t: 'whisper it', d: 'Whisper the thing you\'ve been meaning to say.'},
+    {t: 'you pick the spot', d: 'Your partner picks where you kiss them. Above the shoulders.'},
+    {t: 'slow dance', d: 'To the next song that comes on. Still cuffed.'},
+    {t: 'shoulder rub', d: 'Two minutes, one-handed, still cuffed.'},
+    {t: 'swap one thing', d: 'Swap one item of clothing for the next round.'},
+    {t: 'first impressions', d: 'Tell them what you noticed first about them. In detail.'},
+    {t: 'it\'s compulsory', d: 'The next turn it up line is not optional.'},
+    {t: '10 compliments', d: 'Ten compliments in 30 seconds. No repeats.'},
+    {t: 'recreate your first kiss', d: 'Location, nerves, everything.'}
   ]
 };
