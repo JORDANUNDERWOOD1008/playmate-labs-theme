@@ -41,7 +41,7 @@
         <p class="g-hand g-after">(the 5 day experience)</p>
         <p>Five nights, five senses, one small game a night. For couples, first dates, or just you.</p>
         ${s ? `<p class="g-prog"><span style="--p:${Math.min(5, s.done) / 5}"></span>${s.done >= 5 ? 'all five done' : `${s.done} of 5 done`}, ${esc(LABEL[s.mode] || '')}</p>` : ''}
-        <div class="g-row"><a class="g-btn g-light" href="${esc(CFG.senseLab)}">${senseBtn}</a>${s ? '' : `<a class="g-link g-link-l" href="${esc(CFG.senseSignup)}">get it by email instead</a>`}</div>
+        <div class="g-row"><a class="g-btn" href="${esc(CFG.senseLab)}">${senseBtn}</a>${s ? '' : `<a class="g-link" href="${esc(CFG.senseSignup)}">get it by email instead</a>`}</div>
       </article>
       <article class="g-card g-nude${open ? '' : ' is-locked'}">
         <p class="g-kick"><span>${open ? 'unlocked' : 'in the box'}</span><span>for two</span></p>

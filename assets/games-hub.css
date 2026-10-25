@@ -29,13 +29,12 @@ main{flex:1}
 .g-t{font:900 clamp(36px,10vw,52px)/.95 "Figtree",sans-serif;letter-spacing:-.035em;color:var(--bur);margin:0}
 .g-after{font-size:16px;margin-top:6px!important}
 
-/* the Sense Lab leads, in burgundy */
-.g-feature{background:var(--bur);color:var(--ivory);padding:26px 22px 26px}
-.g-feature .g-t,.g-feature .g-hand,.g-feature .g-kick span{color:var(--ivory)}
-.g-feature .g-kick span{border-color:rgba(255,251,245,.5)}
-.g-prog{display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,251,245,.8)}
-.g-prog span{flex:0 0 96px;height:6px;border-radius:6px;background:rgba(255,251,245,.25);position:relative;overflow:hidden}
-.g-prog span::after{content:"";position:absolute;inset:0;width:calc(var(--p) * 100%);background:var(--ivory);border-radius:6px}
+/* the Sense Lab leads: cream with burgundy (so the three cards are cream, burgundy, green) */
+.g-feature{background:var(--ivory);color:var(--ink);border:1.5px solid var(--bur);padding:26px 22px 26px}
+.g-feature .g-t,.g-feature .g-hand,.g-feature .g-kick span{color:var(--bur)}
+.g-prog{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.g-prog span{flex:0 0 96px;height:6px;border-radius:6px;background:rgba(114,16,31,.15);position:relative;overflow:hidden}
+.g-prog span::after{content:"";position:absolute;inset:0;width:calc(var(--p) * 100%);background:var(--bur);border-radius:6px}
 
 /* Nude Stack'd: burgundy like the Sense Lab, locked until the box code is scanned */
 .g-nude{background:var(--bur);color:var(--ivory)}
