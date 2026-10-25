@@ -31,9 +31,7 @@
       ]
     };
   </script>
-  {%- if settings.klaviyo_public_api_key != blank -%}
-  <script async src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id={{ settings.klaviyo_public_api_key }}"></script>
-  {%- endif -%}
+  {%- comment -%} klaviyo.js comes from the Klaviyo app embed (it reads the email link's _kx so game events land on the right profile). {%- endcomment -%}
 </head>
 <body>
   <header class="p5-bar">
