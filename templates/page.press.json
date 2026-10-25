@@ -1,0 +1,158 @@
+/*
+ * Press & media kit. Edit in the theme editor.
+ */
+{
+  "sections": {
+    "main": {
+      "type": "pm-press-page",
+      "settings": {
+        "founder_url": "/pages/jordan-underwood",
+        "zip": ""
+      },
+      "blocks": {
+        "p1": {
+          "type": "product",
+          "settings": {
+            "product": "nude-stacked",
+            "tag": "Featured product",
+            "title": "Nude Stack'd",
+            "facts": "<ul><li>A date-night stacking game for two adults. Pull a block, match its symbol to a prompt card, then choose a level: Mild, Spicy or Wild.</li><li>Either player can skip any card, any time.</li><li>In the box: 54 red-painted wooden blocks (37 carry one of six category symbols, 17 are \"?\" mystery blocks), 54 prompt cards with three levels each (162 prompts), a blindfold, a drawstring travel bag and a gift box.</li><li>Six card categories: Body &amp; Play, Firsts &amp; Origins, Attraction &amp; Desire, Dating &amp; Intimacy, Dare &amp; Role Play, Tease &amp; Connect.</li><li>The mystery block: its symbol is on the long side, so you only find out the category once it's pulled.</li><li>Knock the tower over and your partner calls the shots.</li><li>Companion app: scan the QR code in the box for the rules and every card in English, German, Dutch, French, Spanish and Italian.</li><li>Playing time: five minutes to two hours. Age 18+. EAN 5070003166565. Designed in the UK.</li></ul>"
+          }
+        },
+        "p2": {
+          "type": "product",
+          "settings": {
+            "product": "playmate-chocolate",
+            "tag": "Also from Playmate Labs",
+            "title": "Snap'd",
+            "facts": "<ul><li>Three UK-made milk chocolate hearts, made to be snapped in half and shared over three evenings.</li><li>Flavours: vanilla, hot honey and black raspberry. 18+.</li></ul>"
+          }
+        },
+        "i1": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Nude-Stackd-box-front-white.jpg",
+            "caption": "Nude Stack'd gift box, front"
+          }
+        },
+        "i2": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Nude-Stackd-box-angle-white.jpg",
+            "caption": "Nude Stack'd gift box, angle"
+          }
+        },
+        "i3": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Nude-Stackd-box-top-white.jpg",
+            "caption": "Nude Stack'd gift box, from above"
+          }
+        },
+        "i4": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Nude-Stackd-contents-flatlay.jpg",
+            "caption": "What's in the box"
+          }
+        },
+        "i5": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Nude-Stackd-contents-flatlay-2.jpg",
+            "caption": "What's in the box, alternative"
+          }
+        },
+        "t1": {
+          "type": "tool",
+          "settings": {
+            "title": "Date night idea generator",
+            "url": "/blogs/the-playmate-journal/date-night-idea-generator",
+            "line": "67 ideas, filtered by budget, mood and home or out."
+          }
+        },
+        "t2": {
+          "type": "tool",
+          "settings": {
+            "title": "Couples Jenga rules and questions",
+            "url": "/blogs/the-playmate-journal/couples-jenga-rules-and-questions",
+            "line": "How to play, with prompts."
+          }
+        },
+        "t3": {
+          "type": "tool",
+          "settings": {
+            "title": "Questions to ask your partner",
+            "url": "/blogs/the-playmate-journal/10-questions-couples-never-think-to-ask",
+            "line": "155 questions for every stage, with a generator."
+          }
+        },
+        "c1": {
+          "type": "coverage",
+          "settings": {
+            "outlet": "HuffPost UK",
+            "headline": "Feature on the Lovehoney x Playmate Easter egg",
+            "url": "https://www.huffingtonpost.co.uk/entry/easter-egg-chocolate-lovehoney-sex-toy_uk_69cbd837e4b01f52788ad3af",
+            "date": "March 2026"
+          }
+        },
+        "c2": {
+          "type": "coverage",
+          "settings": {
+            "outlet": "Metro",
+            "headline": "Hands-on review of the Playmate Love Egg",
+            "url": "https://metro.co.uk/2026/03/20/tried-easter-egg-meant-make-horny-honest-review-27553466/",
+            "date": "March 2026"
+          }
+        },
+        "c3": {
+          "type": "coverage",
+          "settings": {
+            "outlet": "FoodBible",
+            "headline": "Feature on Love Snaps by Lovehoney and Playmate Labs",
+            "url": "https://www.foodbible.com/news/uk-food/aphrodisiac-chocolate-reviews-amazon-405606-20260226",
+            "date": "February 2026"
+          }
+        },
+        "c4": {
+          "type": "coverage",
+          "settings": {
+            "outlet": "LADbible",
+            "headline": "Valentine's Day feature on Love Snaps, the chocolate Playmate Labs created and makes for Lovehoney",
+            "url": "https://www.ladbible.com/lifestyle/food-and-drink/lovehoney-aphrodisiac-chocolates-valentines-day-buy-online-070790-20250206",
+            "date": "February 2025"
+          }
+        },
+        "c5": {
+          "type": "coverage",
+          "settings": {
+            "outlet": "The Dieline",
+            "headline": "\"Unfound Studio Gets Sophisticated and Sexy For Aphrodisiac Chocolate Brand\"",
+            "url": "https://thedieline.com/unfound-studio-gets-sophisticated-and-sexy-for-aphrodisiac-chocolate-brand/",
+            "date": "August 2024"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "i1",
+        "i2",
+        "i3",
+        "i4",
+        "i5",
+        "t1",
+        "t2",
+        "t3",
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5"
+      ]
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

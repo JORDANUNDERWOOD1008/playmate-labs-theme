@@ -464,4 +464,13 @@
     });
     render();
   }
+
+  /* ── Copy buttons (press page) ───────────────────────────── */
+  $$('[data-copy]').forEach(btn => btn.addEventListener('click', async () => {
+    const label = $('[data-copy-label]', btn) || btn;
+    const was = label.textContent;
+    try { await navigator.clipboard.writeText(btn.dataset.copy); label.textContent = 'Copied'; }
+    catch (e) { label.textContent = 'Select and copy'; }
+    setTimeout(() => { label.textContent = was; }, 2000);
+  }));
 })();
