@@ -89,7 +89,7 @@
               </button>
               <div data-day-body {% unless n == 1 %}hidden{% endunless %} class="animate-in fade-in -mt-1 mb-5 ml-14 rounded-md bg-card p-4 text-sm">
                 <p class="italic">{{ b.settings.b }}</p>
-                <a href="/pages/5-day-play?m={{ k }}&d={{ n }}" class="mt-3 inline-block border-b-2 border-primary pb-0.5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">{{ s.play_day_label | default: 'Preview the game' }} ↗</a>
+                {%- if n == 1 -%}<a href="/pages/5-day-play?m={{ k }}&d=1" class="mt-3 inline-block border-b-2 border-primary pb-0.5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">{{ s.play_day_label | default: 'Play day one now' }} ↗</a>{%- endif -%}
               </div>
             </div>
           {%- endif -%}{%- endfor -%}
@@ -140,9 +140,9 @@
     { "type": "image_picker", "id": "image", "label": "Photo" },
     { "type": "text", "id": "image_alt", "label": "Photo description", "default": "Two people laughing together on a sofa" },
     { "type": "text", "id": "image_note", "label": "Note on the photo", "default": "day one starts tomorrow." },
-    { "type": "text", "id": "play_note", "label": "Games line under the five days", "default": "Every night comes with a small game on your phone." },
+    { "type": "text", "id": "play_note", "label": "Games line under the five days", "default": "Every night comes with a small game on your phone. A new one opens each day." },
     { "type": "text", "id": "play_label", "label": "Games link", "default": "Try day one now" },
-    { "type": "text", "id": "play_day_label", "label": "Link under each day", "default": "Preview the game" },
+    { "type": "text", "id": "play_day_label", "label": "Link under day one", "default": "Play day one now" },
     { "type": "header", "content": "For me" },
     { "type": "text", "id": "solo_label", "label": "Label", "default": "For me" },
     { "type": "text", "id": "solo_pick", "label": "Picker line", "default": "single, dating, or happily unavailable." },

@@ -93,21 +93,21 @@
   };
   const DAYS = {
     solo: [
-      {h: 'look. honestly.', after: '(at yourself, for once)', game: 'type check', how: 'Tap three things that catch your eye, then three green flags. The overlap is your real type.', take: 'a type that actually makes sense', run: soloSight},
+      {h: 'look. honestly.', after: '(at yourself, for once)', game: 'draw yourself', how: 'Warm-up: sixty seconds, eyes closed, in silence. Then spin the randomiser and draw yourself against the clock. Photo at the end.', take: 'a self-portrait (no judging)', run: sightDraw},
       {h: 'turn it up.', after: '(dancing in the kitchen counts)', game: 'the soundtrack', how: 'Three songs for three moments, a dramatic name, then ten minutes with the lights low. No skips.', take: 'your own soundtrack', run: soloSound},
       {h: 'treat yourself.', after: '(solo dining is a power move)', game: 'table for one', how: 'Pick a place you keep scrolling past, put it in the diary, then rate a cupboard mystery out of ten.', take: 'a table for one in the diary', run: soloTaste},
       {h: 'reach out.', after: '(every card is optional. that\'s sort of the point.)', game: 'three cards', how: 'Pick a number before you look. Each card is one small move. A friend counts, and so does just you.', take: 'something in the diary', run: soloTouch},
-      {h: 'trust your gut.', after: '(it\'s been right all week)', game: 'the good bit', how: 'Pick your favourite night, check your day-one type, and book the good bit again.', take: 'a clearer idea of what you want', run: soloSixth}
+      {h: 'trust your gut.', after: '(it\'s been right all week)', game: 'the good bit', how: 'Pick your favourite night, finish one sentence, and book the good bit again.', take: 'a clearer idea of what you want', run: soloSixth}
     ],
     met: [
-      {h: 'what did you see?', after: '(be honest, be kind)', game: 'first impressions', how: 'Build two sentences: what you noticed first, and what surprised you after. Count down, then trade them.', take: 'your how-we-met story', run: metSight},
+      {h: 'what did you see?', after: '(be honest, be kind)', game: 'draw them', how: 'Warm-up: sixty seconds of eye contact (a video call counts). Then spin for a verb and a thing, and draw them doing it before the timer runs out.', take: 'a drawing they\'ll never live down', run: sightDraw},
       {h: 'this or that.', after: '(say it with your chest)', game: 'a minor disagreement', how: 'Five tiny debates. Answer, send them the link, and see where you disagree. Nobody\'s keeping score.', take: 'five easy conversation starters', run: metSound},
       {h: 'try this.', after: '(trust me)', game: 'the recommendation', how: 'Recommend one thing to eat or drink, say why it\'s for them, and send it as a ticket.', take: 'something specific to reply to', run: metTaste},
       {h: 'pick a card.', after: '(every card is optional. that\'s sort of the point.)', game: 'three hidden cards', how: 'Tell them your number, then flip. One card comes with a twenty-second timer.', take: 'a new story, or a reason to meet again', run: metTouch},
       {h: 'your gut says…', after: '(listen to it)', game: 'round two', how: 'Check in with yourself. If it\'s a yes, send two date options and let them pick. If not, say it kindly.', take: 'a clear next step, if it\'s mutual', run: metSixth}
     ],
     duo: [
-      {h: 'look. closer.', after: '(longer than is comfortable)', game: 'sixty seconds', how: 'Sixty seconds of eye contact, one thank-you each, then swap a secret on the phone. No peeking.', take: 'a photo they haven\'t seen yet', run: duoSight},
+      {h: 'look. closer.', after: '(longer than is comfortable)', game: 'draw them', how: 'Warm-up: sixty seconds of eye contact. Then spin the randomiser and both draw it against the clock. Hold the drawings up together for a photo.', take: 'a photo of two terrible masterpieces', run: sightDraw},
       {h: 'say it. louder.', after: '(the verdict is final)', game: 'the courtroom', how: 'Answer four small disputes in secret, then hear the verdicts. Then build a three-song playlist.', take: 'a playlist that sounds like you two', run: duoSound},
       {h: 'feed. me.', after: '(blindfold optional, encouraged)', game: 'blind taste test', how: 'Three bites each. One of you feeds, the other guesses with their eyes closed. Best guesser picks tomorrow\'s card.', take: 'a new "our" food', run: duoTaste},
       {h: 'hands. only.', after: '(every card is optional. that\'s sort of the point.)', game: 'pick a card', how: 'Last night\'s best guesser picks a number. Pass on anything, no explanation needed.', take: 'the word they traced (keep it)', run: duoTouch},
@@ -129,6 +129,24 @@
   let DAY = Math.min(5, Math.max(0, parseInt(q.get('d'), 10) || 0));
   let SHARED = location.hash.startsWith('#s=') ? b64d(location.hash.slice(3)) : null;
   if (MODE && q.get('m')) { S.mode = MODE; save(); }
+
+  /* ── one day at a time ───────────────────────────────────────
+     Day 1 is always open. Day N opens 24 hours after day N-1 was finished on this device.
+     The day's own email link also opens it (utm_content ends "-dN-game"): the daily email is
+     the pacing, and people often play on a different device from the one they used yesterday.
+     ?preview=lab unlocks everything on this device (for reviewing). */
+  const UNLOCK_MS = 24 * 3600 * 1000;
+  S.unlocked = S.unlocked || {};
+  if (q.get('preview') === 'lab') { S.preview = true; save(); }
+  if (MODE && DAY && new RegExp(`-d${DAY}-game$`).test(q.get('utm_content') || '')) { S.unlocked[`${MODE}-${DAY}`] = Date.now(); save(); }
+  function dayState(mode, n) {
+    if (n === 1 || S.preview || S.unlocked[`${mode}-${n}`] || S.done[`${mode}-${n}`]) return {open: true};
+    const prev = S.done[`${mode}-${n - 1}`];
+    if (!prev) return {open: false, need: n - 1};
+    const at = prev + UNLOCK_MS;
+    return Date.now() >= at ? {open: true} : {open: false, at};
+  }
+  const untilText = at => { const m = Math.max(1, Math.round((at - Date.now()) / 60000)); return m >= 60 ? `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}m` : `${m} min`; };
 
   function go(mode, day) {
     MODE = mode; DAY = day || 0;
@@ -171,22 +189,41 @@
       <h1 class="p5-h1">five nights. five senses.</h1>
       <p class="p5-lede">${m.intro}</p>
       <ol class="p5-days">${list.map((d, i) => {
-        const done = S.done[`${MODE}-${i + 1}`];
-        return `<li><button type="button" class="p5-day${done ? ' is-done' : ''}" data-day="${i + 1}">
-          <span class="p5-day-n">${icon(SENSES[i])}</span>
-          <span class="p5-day-b"><span class="p5-day-k">day ${ORD[i]}: ${SENSES[i]}</span><span class="p5-day-t">${esc(d.h)}</span><span class="p5-day-g">${esc(d.game)}</span></span>
-          <span class="p5-day-s" aria-label="${done ? 'played' : 'not played yet'}">${done ? '✓' : '→'}</span></button></li>`;
+        const done = S.done[`${MODE}-${i + 1}`], st = dayState(MODE, i + 1);
+        const sub = st.open ? esc(d.game) : st.at ? `opens in ${untilText(st.at)}` : `opens 24 hours after day ${ORD[i - 1]}`;
+        return `<li><button type="button" class="p5-day${done ? ' is-done' : ''}${st.open ? '' : ' is-locked'}" data-day="${i + 1}" ${st.open ? '' : 'aria-disabled="true"'}>
+          <span class="p5-day-n">${st.open ? icon(SENSES[i]) : '<svg class="p5-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'}</span>
+          <span class="p5-day-b"><span class="p5-day-k">day ${ORD[i]}: ${SENSES[i]}</span><span class="p5-day-t">${st.open ? esc(d.h) : 'not yet.'}</span><span class="p5-day-g">${sub}</span></span>
+          <span class="p5-day-s" aria-label="${done ? 'played' : st.open ? 'ready to play' : 'locked'}">${done ? '✓' : st.open ? '→' : ''}</span></button></li>`;
       }).join('')}</ol>
       <p class="p5-switch">Wrong version? ${Object.keys(MODES).filter(k => k !== MODE).map(k => `<button type="button" class="p5-link" data-mode="${k}">${MODES[k].label}</button>`).join(' or ')}</p>
     </section>`;
-    app.querySelectorAll('[data-day]').forEach(b => b.onclick = () => go(MODE, +b.dataset.day));
+    app.querySelectorAll('[data-day]').forEach(b => b.onclick = () => {
+      if (b.classList.contains('is-locked')) return toast('One sense a night. This one isn\'t open yet.');
+      go(MODE, +b.dataset.day);
+    });
     app.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => go(b.dataset.mode, 0));
   }
 
   /* ── the day screen + game stage ─────────────────────────── */
   let G, ACT = {}, CH = {};
   function renderDay() {
-    const d = DAYS[MODE][DAY - 1], key = `${MODE}-${DAY}`;
+    const d = DAYS[MODE][DAY - 1], key = `${MODE}-${DAY}`, st = dayState(MODE, DAY);
+    if (!st.open) {
+      app.innerHTML = `<section class="p5-wrap p5-center p5-lock">
+        <p class="p5-hand p5-tilt">day ${ORD[DAY - 1]}: ${SENSES[DAY - 1]}</p>
+        <h1 class="p5-h1">not yet.</h1>
+        ${(() => {
+          if (st.at) return `<p class="p5-lede">One sense a night. This one opens in <b>${untilText(st.at)}</b>, and the email will tell you when.</p><div class="p5-row"><button type="button" class="p5-btn p5-ghost" data-go="0">the five days</button></div>`;
+          let n = 1; while (n < 5 && S.done[`${MODE}-${n}`]) n++;
+          const ns = dayState(MODE, n);
+          return `<p class="p5-lede">${ns.open ? `You're on day ${ORD[n - 1]}. Each night opens 24 hours after the one before.` : `You're on day ${ORD[n - 1]}, which opens in <b>${untilText(ns.at)}</b>. One sense a night.`}</p>
+            <div class="p5-row">${ns.open ? `<button type="button" class="p5-btn" data-go="${n}">play day ${ORD[n - 1]}</button>` : ''}<button type="button" class="p5-btn p5-ghost" data-go="0">the five days</button></div>`;
+        })()}
+      </section>`;
+      app.querySelectorAll('[data-go]').forEach(b => b.onclick = () => go(MODE, +b.dataset.go));
+      return;
+    }
     app.innerHTML = `<section class="p5-wrap">
       <nav class="p5-crumbs"><button type="button" class="p5-link" data-hub>← the five days</button><span>${DAY} / 5</span></nav>
       <header class="p5-head">
@@ -279,7 +316,7 @@
       identify({five_day_last_day: DAY, five_day_mode: MODE, five_day_completed_count: Object.keys(S.done).filter(k => k.startsWith(MODE)).length});
     }
     const last = DAY === 5;
-    const next = !last ? `<p class="p5-hand p5-tilt">see you tomorrow.</p><p class="p5-muted">Same time, new sense. Tomorrow's email has the next game.</p>
+    const next = !last ? `<p class="p5-hand p5-tilt">see you tomorrow.</p><p class="p5-muted">Day ${ORD[DAY]} opens in 24 hours. Tomorrow's email has the link.</p>
       ${btn('hub', 'back to the five days', 'p5-ghost')}` :
       `<p class="p5-hand p5-tilt">that's the lab closed.</p><p class="p5-muted">Keep the good bits.</p>${products()}${btn('hub', 'back to the five days', 'p5-ghost')}`;
     show(`<div class="p5-done">
@@ -322,28 +359,130 @@
   const whenLabel = g => `${(CH[g + '-d'] || [])[0] || ''}, ${(CH[g + '-t'] || [])[0] || ''}`;
 
   /* ═══════════ FOR ME ═══════════ */
-  const TYPE_POOL = ['great smile', 'tall', 'well dressed', 'nice voice', 'the eyes', 'tattoos', 'funny', 'confident', 'kind', 'a bit mysterious', 'a bit chaotic', 'good listener', 'makes plans', 'curious', 'adventurous', 'great taste in music', 'sporty', 'clever'];
-  function soloSight() {
-    const pool = shuffle(TYPE_POOL);
-    const r1 = () => show(`<div>${step(1, 3, 'What catches your eye? Tap three. Be shallow, it\'s fine.')}${chips('eye', pool, 3)}<div class="p5-row">${btn('next', 'next: green flags')}</div></div>`,
-      {'chip:eye': s => enable('next', s.length === 3), next: () => { put('solo-type-eye', CH.eye.slice()); r2(); }});
-    const r2 = () => show(`<div>${step(2, 3, 'Now three green flags: what makes time with someone genuinely good?')}${chips('green', shuffle(TYPE_POOL), 3)}<div class="p5-row">${btn('next', 'show me my type')}</div></div>`,
-      {'chip:green': s => enable('next', s.length === 3), next: () => { put('solo-type-green', CH.green.slice()); reveal(); }});
-    const reveal = () => {
-      const a = got('solo-type-eye'), b = got('solo-type-green'), both = a.filter(x => b.includes(x));
-      const verdict = both.length === 3 ? 'Your type is your good time. Rare. Keep it.' : both.length ? 'Some overlap. That bit is your real type. The rest is noise.' : 'Your type and your good time have never met. Interesting. Very interesting.';
-      put('solo-type', both);
-      show(`<div>${step(3, 3, 'Your results')}
-        <div class="p5-venn"><div class="p5-venn-c a"><p class="p5-label">catches your eye</p>${a.map(x => `<span class="${both.includes(x) ? 'hit' : ''}">${esc(x)}</span>`).join('')}</div>
-        <div class="p5-venn-c b"><p class="p5-label">green flags</p>${b.map(x => `<span class="${both.includes(x) ? 'hit' : ''}">${esc(x)}</span>`).join('')}</div></div>
-        <p class="p5-verdict">${esc(verdict)}</p>
-        <div class="p5-box"><p class="p5-label">last thing: one thing you're proud of</p><p class="p5-muted">Something you did, not something you look like. Type it, then say it out loud. Nobody's listening. Probably.</p>
-        <textarea name="proud" rows="2" placeholder="I'm proud that I…"></textarea></div>
-        <div class="p5-row">${btn('fin', 'said it out loud')}</div><p class="p5-muted p5-small">Nothing here leaves your phone. Screenshot it: you'll want it on day five.</p></div>`,
-        {'in:proud': v => enable('fin', v.trim().length > 2), fin: () => { put('solo-proud', G.querySelector('[name=proud]').value.trim()); finish(); }});
-      enable('fin', false);
+  /* ═══════════ DAY ONE, ALL VERSIONS: warm-up, then the drawing challenge ═══════════ */
+  const DRAW = {
+    solo: {warm: 'eyes', pre: 'draw yourself', photo: 'Take a photo of your masterpiece. Keep it, or send it to a friend with zero context.',
+      reels: [['as a superhero', 'on your best day', 'as your dating profile picture', 'ten years from now', 'as an animal', 'at a party, honestly', 'in your dream outfit', 'as a famous painting', 'on a first date', 'first thing in the morning', 'as a film poster', 'winning an award']]},
+    met: {warm: 'look', pre: 'draw them', photo: 'Take a photo of your drawing and send it over. Ask for theirs back.',
+      reels: [['riding', 'eating', 'juggling', 'serenading', 'hugging', 'arguing with', 'thrusting', 'surfing on', 'hiding from', 'walking', 'proposing to', 'wrestling'],
+        ['a shark', 'a car', 'a pillow', 'a giant croissant', 'a llama', 'a disco ball', 'a cactus', 'a traffic cone', 'a rubber duck', 'a wheel of cheese', 'a pigeon', 'a sofa']]},
+    duo: {warm: 'look', pre: 'draw', photo: 'Hold both drawings up together and take one photo. Send it to each other.',
+      reels: [['them', 'your favourite part of them', 'their favourite film', 'their favourite food', 'your first date', 'them as a cartoon', 'them first thing in the morning', 'your dream holiday together', 'them as a superhero', 'their happy place']]}
+  };
+  const DRAW_TIMES = [['60 seconds', 60], ['90 seconds', 90], ['2 minutes', 120]];
+  function sightDraw() {
+    const C = DRAW[MODE], who = names();
+    let prompt = '', spins = 3, secs = 90;
+    const warm = () => {
+      if (C.warm === 'eyes') {
+        show(`<div class="p5-center">${step(1, 3, 'Warm-up. Close your eyes for sixty seconds. Silence. No phone, no music. Just notice. We\'ll chime when it\'s done.')}
+          ${timerHTML(60, 'eyes closed', 'lg')}<div class="p5-row">${btn('go', 'start, then close your eyes')}</div></div>`,
+          {go: b => { b.remove(); document.body.classList.add('p5-dim'); runTimer(60, () => { document.body.classList.remove('p5-dim'); toast('Open your eyes.'); setTimeout(main, 1200); }); }});
+      } else {
+        show(`<div class="p5-center">${step(1, 3, MODE === 'met'
+            ? 'Warm-up. Sixty seconds of eye contact. In person, or on a video call. Laughing is allowed.'
+            : 'Warm-up. Sit facing each other. Knees touching if you\'re brave. Sixty seconds, just look. Giggling is allowed and expected.')}
+          <div class="p5-eyes">${timerHTML(60, 'just look', 'lg')}</div><div class="p5-row">${btn('go', 'start the sixty seconds')}${btn('skip', 'skip the warm-up', 'p5-ghost')}</div></div>`,
+          {go: b => { b.remove(); runTimer(60, looked); }, skip: main});
+      }
     };
-    r1(); enable('next', false);
+    const looked = () => {
+      if (MODE !== 'duo') return main();
+      show(`<div class="p5-center">${step(1, 3, 'Who looked away first?')}
+        <div class="p5-row">${who.map((n, i) => `<button type="button" class="p5-btn p5-ghost" data-act="lost" data-n="${i}">${esc(n)}</button>`).join('')}<button type="button" class="p5-btn p5-ghost" data-act="lost" data-n="-1">nobody. impressive.</button></div></div>`,
+        {lost: b => { const n = +b.dataset.n; put('duo-wild', n); if (n > -1) toast(`${who[n]} brings the wildcard on day three.`); main(); }});
+    };
+    const main = () => {
+      show(`<div class="p5-center">${step(2, 3, MODE === 'duo' ? 'The main event. Grab paper and a pen each. Spin, then you both draw it at the same time.' : 'The main event. Grab paper and a pen. Spin the randomiser, then draw it before the timer runs out.')}
+        <div class="p5-slot"><p class="p5-slot-pre">${esc(C.pre)}</p>${C.reels.map((_, i) => `<div class="p5-reel" data-reel="${i}"><span>?</span></div>`).join('')}</div>
+        <div class="p5-row">${btn('spin', 'spin')}</div><p class="p5-muted p5-small" data-spins></p>
+        <div data-ready hidden><p class="p5-label">how long?</p>${chips('secs', DRAW_TIMES.map(x => x[0]), 1, ['90 seconds'])}
+        <div class="p5-row">${btn('draw', 'pens ready. go.')}</div></div></div>`, {
+        spin: b => {
+          if (!spins) return;
+          spins--; b.disabled = true;
+          const reels = [...G.querySelectorAll('[data-reel]')], out = [];
+          reels.forEach((r, i) => {
+            const list = C.reels[i], fin = pick(list); out[i] = fin;
+            const span = r.querySelector('span'); let n = 0, total = reduced ? 1 : 14 + i * 7;
+            r.classList.add('is-spin');
+            const tick = () => {
+              n++; span.textContent = n >= total ? fin : pick(list);
+              if (n >= total) { r.classList.remove('is-spin'); r.classList.add('is-set'); buzz(25); if (i === reels.length - 1) done(); return; }
+              setTimeout(tick, 45 + n * n * 0.9);
+            };
+            tick();
+          });
+          function done() {
+            prompt = `${C.pre} ${out.join(' ')}`;
+            b.disabled = !spins; b.textContent = spins ? 're-spin' : 'no re-spins left';
+            G.querySelector('[data-spins]').textContent = spins ? `${spins} re-spin${spins > 1 ? 's' : ''} left. Or go with it.` : 'That\'s the one. No backing out.';
+            G.querySelector('[data-ready]').hidden = false;
+          }
+        },
+        'chip:secs': s => { secs = (DRAW_TIMES.find(x => x[0] === s[0]) || DRAW_TIMES[1])[1]; },
+        draw: drawing
+      });
+      CH.secs = ['90 seconds'];
+    };
+    const drawing = () => {
+      put(`${MODE}-draw`, prompt);
+      show(`<div class="p5-center">${step(2, 3, 'Draw!')}
+        <p class="p5-prompt">${esc(prompt)}.</p>
+        ${timerHTML(secs, 'pens moving', 'lg')}
+        ${MODE === 'met' ? `<div class="p5-row">${btn('send', 'send them the same prompt', 'p5-ghost')}</div>` : ''}
+        <div class="p5-row">${btn('stop', 'finished early', 'p5-ghost')}</div></div>`, {
+        send: () => share(`Your turn: ${prompt.replace(/^draw them/, 'draw me')}. ${secs < 120 ? secs + ' seconds' : '2 minutes'}. Go.`),
+        stop: photo
+      });
+      runTimer(secs, () => { toast('Pens down!'); setTimeout(photo, 1300); });
+    };
+    let shot = null;
+    const photo = () => {
+      show(`<div class="p5-center">${step(3, 3, C.photo)}
+        <label class="p5-cam"><input type="file" accept="image/*" capture="environment" name="cam" hidden><span class="p5-btn">take the photo</span></label>
+        <div data-pic></div><div class="p5-row" data-after hidden>${btn('send', 'send it')}${btn('fin', 'done')}</div>
+        <div class="p5-row">${btn('nofin', 'no photo tonight', 'p5-ghost')}</div></div>`, {
+        send: () => sendPic(), fin: () => end(), nofin: () => end()
+      });
+      G.querySelector('[name=cam]').addEventListener('change', async e => {
+        const f = e.target.files && e.target.files[0]; if (!f) return;
+        const box = G.querySelector('[data-pic]'); box.innerHTML = '<p class="p5-muted">framing it…</p>';
+        try { shot = await framed(f, prompt); } catch (_) { shot = f; }
+        box.innerHTML = `<img class="p5-pic" alt="your drawing, framed" src="${URL.createObjectURL(shot)}">`;
+        G.querySelector('[data-after]').hidden = false;
+        G.querySelector('.p5-cam .p5-btn').textContent = 'retake';
+        G.querySelector('.p5-cam .p5-btn').classList.add('p5-ghost');
+      });
+    };
+    async function sendPic() {
+      const file = new File([shot], 'sense-lab-day-one.jpg', {type: 'image/jpeg'});
+      const text = MODE === 'met' ? `${prompt.replace(/^draw them/, 'Me, drawing you')}. Your turn.` : `${prompt}. The Sense Lab, day one.`;
+      try { if (navigator.canShare && navigator.canShare({files: [file]})) { await navigator.share({files: [file], text}); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name; document.body.appendChild(a); a.click(); a.remove();
+      toast('Saved. Send it from your photos.');
+    }
+    const end = () => finish(MODE === 'duo' ? `<div class="p5-box"><p class="p5-label">keep the photo</p><p>It comes back on day five.</p></div>` : '');
+    if (MODE === 'duo') needNames(() => { warm(); }); else warm();
+  }
+  /* the photo, framed on brand: cream card, the prompt as a caption */
+  async function framed(file, caption) {
+    const url = URL.createObjectURL(file);
+    const img = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = url; });
+    try { await document.fonts.load('900 52px Figtree'); await document.fonts.load('400 26px "Homemade Apple"'); } catch (_) {}
+    const W = 1080, H = 1350, P = 60, PH = 1000, c = document.createElement('canvas'); c.width = W; c.height = H;
+    const x = c.getContext('2d');
+    x.fillStyle = '#F7EFE2'; x.fillRect(0, 0, W, H);
+    const s = Math.max((W - 2 * P) / img.width, PH / img.height), w = img.width * s, h = img.height * s;
+    x.save(); x.beginPath(); x.rect(P, P, W - 2 * P, PH); x.clip(); x.drawImage(img, P + (W - 2 * P - w) / 2, P + (PH - h) / 2, w, h); x.restore();
+    x.fillStyle = '#72101F'; x.font = '900 52px Figtree, sans-serif'; x.textBaseline = 'top';
+    const words = (caption + '.').toLowerCase().split(' '); let line = '', y = P + PH + 34;
+    for (const wd of words) { const t = line ? line + ' ' + wd : wd; if (x.measureText(t).width > W - 2 * P && line) { x.fillText(line, P, y); y += 60; line = wd; } else line = t; }
+    x.fillText(line, P, y);
+    x.font = '400 26px "Homemade Apple", cursive'; x.fillText('the sense lab, day one.', P, H - 78);
+    x.font = '500 22px Jost, sans-serif'; x.fillStyle = '#7A6A60'; x.textAlign = 'right'; x.fillText('PLAYMATE LABS', W - P, H - 70);
+    URL.revokeObjectURL(url);
+    return new Promise(ok => c.toBlob(b => ok(b || file), 'image/jpeg', 0.9));
   }
 
   const PLAYLIST_NAMES = ['Main Character, Season Two', 'Soft Launch', 'Kitchen Disco (Live)', 'Unbothered (Deluxe)', 'Romanticising Tuesday', 'Lights Low, Standards High', 'Me, Myself and the Aux', 'Plot Twist: I\'m Fine', 'Sunday Best', 'The Comeback Tour'];
@@ -457,7 +596,7 @@
 
   function soloSixth() {
     const nights = [
-      {k: 'sight', l: 'your type', v: (got('solo-type') || []).join(', ') || (got('solo-type-eye') || []).join(', ')},
+      {k: 'sight', l: 'your self-portrait', v: got('solo-draw') || ''},
       {k: 'sound', l: 'your soundtrack', v: got('solo-pname') || ''},
       {k: 'taste', l: 'table for one', v: got('solo-place') || ''},
       {k: 'touch', l: 'your move', v: (got('solo-move') || []).join(' + ')}
@@ -468,10 +607,7 @@
       <div class="p5-row">${btn('next', 'next')}</div></div>`,
       {'chip:fav': () => enable('next', !!(CH.fav || []).length), next: s2});
     const s2 = () => {
-      const eye = got('solo-type-eye') || [], green = got('solo-type-green') || [];
-      const list = [...new Set([...eye, ...green])];
-      show(`<div>${step(2, 3, 'Check your day-one list. Did your type change? Cross things out freely.')}
-        ${list.length ? `<div class="p5-strike">${list.map(x => `<button type="button" class="p5-chip" data-act="x" aria-pressed="false">${esc(x)}</button>`).join('')}</div>` : '<p class="p5-muted">No day-one list on this phone. Write three things that make time with someone good, in your head. That counts.</p>'}
+      show(`<div>${step(2, 3, 'Look at your day-one self-portrait. Then finish one sentence about the week.')}
         <label class="p5-field"><span class="p5-label">finish the sentence</span><input name="more" placeholder="I'd like more of…" value="${esc(CH.why ? `I'd like more of ${CH.why.join(' and ')}.` : '')}"></label>
         <div class="p5-row">${btn('next', 'next: the diary')}</div></div>`,
         {x: b => b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')),
@@ -496,40 +632,6 @@
   }
 
   /* ═══════════ JUST MET ═══════════ */
-  function metSight() {
-    const FIRST = ['great smile', 'really calm', 'a bit too cool for me', 'trouble (the good kind)', 'very well dressed', 'hard to read', 'instantly easy to talk to', 'nervous (cute)'];
-    const TWIST = ['your laugh', 'how much you know about weird stuff', 'your music taste', 'you remembered a tiny detail', 'how you ordered', 'you\'re funnier than you let on', 'how kind you were to the waiter'];
-    const line = () => `First thing I noticed: ${(CH.f || ['…'])[0]}.\nThen you surprised me: ${(CH.t || ['…'])[0]}.`;
-    show(`<div>${step(1, 2, 'Build your two sentences. Tap, then tweak the words.')}
-      <p class="p5-label">first impression</p>${chips('f', FIRST)}
-      <p class="p5-label">the plot twist</p>${chips('t', TWIST)}
-      <div class="p5-note"><textarea name="msg" rows="3" aria-label="your message">${esc(line())}</textarea><span class="p5-hand">from me x</span></div>
-      <div class="p5-row">${btn('next', 'ready to trade')}</div></div>`,
-      {'chip:f': () => sync(), 'chip:t': () => sync(), next: () => { put('met-first', G.querySelector('[name=msg]').value); count(); }});
-    function sync() { G.querySelector('[name=msg]').value = line(); enable('next', !!(CH.f || []).length && !!(CH.t || []).length); }
-    enable('next', false);
-    function count() {
-      show(`<div class="p5-center">${step(2, 2, 'Trade them at the same time. Count down together, even by text.')}<div class="p5-count" data-count>3</div>${btn('go', 'start the countdown')}</div>`, {
-        go: b => {
-          b.remove(); let n = 3; const el = G.querySelector('[data-count]');
-          const t = setInterval(() => { n--; buzz(30); if (n > 0) { el.textContent = n; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); } else { clearInterval(t); el.textContent = 'send!'; el.classList.add('pop'); trade(); } }, 900);
-        }
-      });
-    }
-    function trade() {
-      setTimeout(() => show(`<div>${step(0, 0, 'Send it, then see where the conversation goes.')}
-        <div class="p5-note is-sent"><p>${esc(got('met-first')).replace(/\n/g, '<br>')}</p><span class="p5-hand">from me x</span></div>
-        <div class="p5-row">${btn('send', 'send it')}</div>
-        <div class="p5-box"><p class="p5-label">bonus round: six words each</p><p class="p5-muted">Your how-we-met story in exactly six words. Compare.</p>
-        <input name="six" placeholder="Coffee. Wrong order. Right person, apparently." autocomplete="off"><p class="p5-six" data-six>0 / 6 words</p></div>
-        <div class="p5-row">${btn('fin', 'traded')}</div></div>`, {
-        send: () => share(got('met-first')),
-        'in:six': v => { const n = v.trim() ? v.trim().split(/\s+/).length : 0, el = G.querySelector('[data-six]'); el.textContent = n === 6 ? 'six words. perfect.' : `${n} / 6 words`; el.classList.toggle('ok', n === 6); },
-        fin: () => finish()
-      }), 700);
-    }
-  }
-
   const TOT = [['breakfast', 'dinner'], ['city', 'coast'], ['planned', 'spontaneous'], ['call', 'text'], ['window', 'aisle']];
   function totHTML(g) {
     return `<div class="p5-tot">${TOT.map(([a, b], i) => `<div class="p5-tot-r" role="group" aria-label="${a} or ${b}">
@@ -713,52 +815,6 @@
       <div class="p5-row">${btn('ok', 'let\'s go')}</div></div>`,
       {ok: () => { S.names = [G.querySelector('[name=n1]').value.trim() || 'you', G.querySelector('[name=n2]').value.trim() || 'them']; save(); next(); }});
   }
-  const DUO_SECRETS = ['a job you nearly had', 'a talent nobody\'s seen', 'your worst haircut', 'something you believed until embarrassingly late', 'a tiny thing that makes your day', 'the first gig you went to', 'a fear that makes no sense', 'something you\'ve never told anyone at work'];
-
-  function duoSight() {
-    needNames(() => {
-      const [A, B] = names();
-      show(`<div class="p5-center">${step(1, 3, 'Sit facing each other. Knees touching if you\'re brave. Sixty seconds, just look. Giggling is allowed and expected.')}
-        <div class="p5-eyes" data-eyes>${timerHTML(60, 'just look', 'lg')}</div>
-        <div class="p5-row">${btn('go', 'start the sixty seconds')}</div></div>`, {
-        go: b => { b.remove(); runTimer(60, looked); }
-      });
-      function looked() {
-        show(`<div class="p5-center">${step(1, 3, 'Who looked away first?')}
-          <div class="p5-row">${btn('lost', esc(A), 'p5-ghost').replace('data-act="lost"', 'data-act="lost" data-n="0"')}${btn('lost', esc(B), 'p5-ghost').replace('data-act="lost"', 'data-act="lost" data-n="1"')}${btn('lost', 'nobody. impressive.', 'p5-ghost').replace('data-act="lost"', 'data-act="lost" data-n="-1"')}</div></div>`, {
-          lost: b => { const n = +b.dataset.n; put('duo-wild', n); if (n > -1) toast(`${names()[n]} brings the wildcard on day three.`); thanks(); }
-        });
-      }
-      function thanks() {
-        show(`<div>${step(2, 3, 'One thank-you each. Something they did this week that you noticed and never mentioned.')}
-          <div class="p5-box"><p><b>${esc(A)}</b> goes first. Then <b>${esc(B)}</b>.</p>
-          <label class="p5-tick"><input type="checkbox" name="t1"> ${esc(A)} said it</label><label class="p5-tick"><input type="checkbox" name="t2"> ${esc(B)} said it</label></div>
-          <div class="p5-row">${btn('next', 'next: swap a secret')}</div></div>`, {
-          next: () => secret(0)
-        });
-      }
-      const sec = [];
-      function secret(i) {
-        const who = names()[i], other = names()[1 - i];
-        show(`<div>${step(3, 3, `${who}: one thing ${other} probably doesn't know about you. Nothing dramatic. Unless it is.`)}
-          <label class="p5-field"><textarea name="s" rows="3" placeholder="type it, then hide it" data-focus></textarea></label>
-          <div class="p5-row">${btn('idea', 'need an idea?', 'p5-ghost')}${btn('hide', i ? 'hide it and reveal both' : `hide it. pass to ${esc(other)}`)}</div><p class="p5-muted p5-small" data-idea></p></div>`, {
-          idea: () => { G.querySelector('[data-idea]').textContent = `Try: ${pick(DUO_SECRETS)}.`; },
-          'in:s': v => enable('hide', v.trim().length > 2),
-          hide: () => { sec[i] = G.querySelector('[name=s]').value.trim(); i ? reveal() : pass(other, () => secret(1)); }
-        });
-        enable('hide', false);
-      }
-      function reveal() {
-        show(`<div>${step(0, 0, 'On three. Tap to flip. Questions are allowed.')}
-          <div class="p5-cards two">${sec.map((s, i) => `<button type="button" class="p5-card" data-act="flip"><span class="p5-card-in"><span class="p5-card-f"><span class="p5-hand">${esc(names()[i])}</span></span><span class="p5-card-b"><span class="p5-card-k">${esc(names()[i])}'s secret</span><span class="p5-card-t">${esc(s)}</span></span></span></button>`).join('')}</div>
-          <div class="p5-row">${btn('fin', 'did you know?')}</div></div>`, {
-          flip, fin: () => finish(`<div class="p5-box"><p class="p5-label">bonus round</p><p>Take one unposed photo of them right now (yes, they'll notice). Don't show them until day five.</p></div>`)
-        });
-      }
-    });
-  }
-
   function duoSound() {
     needNames(() => {
       const [A, B] = names();
@@ -932,7 +988,7 @@
       const reveal = () => {
         const bite = got('duo-bite');
         finish(`<div class="p5-box"><p class="p5-label">the reveal</p><ol class="p5-list">
-          <li>Show them the day-one photo.</li>
+          <li>Show them the day-one drawings again.</li>
           <li>Name the day-three bite that surprised you${bite ? `: <b>${esc(bite)}</b>` : ''}.</li>
           <li>Tell them which night was your favourite, and why.</li></ol></div>`);
       };

@@ -283,3 +283,24 @@ input:focus,textarea:focus{border-color:var(--bur);outline:none}
 .p5-toast.on{opacity:1;transform:translate(-50%,0)}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* day one drawing game */
+.p5-slot{margin:18px auto 4px;max-width:420px;background:var(--bur);border-radius:10px;padding:18px 16px 20px;box-shadow:0 10px 26px rgba(114,16,31,.25)}
+.p5-slot-pre{font:400 18px/1.4 "Homemade Apple",cursive;color:var(--ivory);margin:0 0 10px}
+.p5-reel{background:var(--ivory);border-radius:6px;min-height:64px;display:grid;place-items:center;padding:10px;margin-top:8px;overflow:hidden}
+.p5-reel span{font:900 26px/1.1 "Figtree",sans-serif;color:var(--bur);letter-spacing:-.02em}
+.p5-reel.is-spin span{filter:blur(.6px);opacity:.75}
+.p5-reel.is-set{animation:p5pop .4s cubic-bezier(.3,1.6,.5,1)}
+.p5-prompt{font:900 30px/1.1 "Figtree",sans-serif;color:var(--bur);letter-spacing:-.02em;margin:10px 0 0}
+.p5-cam{display:inline-block;margin-top:14px;cursor:pointer}
+.p5-pic{display:block;width:100%;max-width:360px;margin:16px auto 0;border-radius:4px;box-shadow:0 10px 26px rgba(40,28,24,.18);transform:rotate(-1.5deg)}
+body.p5-dim{background:#1b1311;transition:background .8s}
+body.p5-dim .p5-bar,body.p5-dim .p5-foot,body.p5-dim .p5-head,body.p5-dim .p5-crumbs,body.p5-dim .p5-step{opacity:.08;transition:opacity .8s}
+body.p5-dim .p5-timer .tr{stroke:#2a1e1b}
+body.p5-dim .p5-timer-n{color:var(--cream)}
+/* locked days */
+.p5-day.is-locked{cursor:default}
+.p5-day.is-locked .p5-day-t{color:var(--muted)}
+.p5-day.is-locked .p5-day-n{background:transparent;box-shadow:inset 0 0 0 1.5px var(--line);color:var(--muted)}
+.p5-lock{padding-top:60px}
+.p5-lock .p5-lede{margin-inline:auto}
