@@ -201,7 +201,7 @@
       {h: 'look. closer.', after: '(longer than is comfortable)', game: 'draw them', how: 'Warm-up: sixty seconds of eye contact. Then spin the randomiser, or swap photos and draw each other\'s, against the clock. One photo of both drawings at the end.', take: 'a photo of two terrible masterpieces', run: sightDraw},
       {h: 'say it. louder.', after: '(the verdict is final)', game: 'the courtroom', how: 'Four small disputes answered in secret, then the verdicts. Then the backwards round: record a sound, we flip it, they guess. Then a three-song playlist.', take: 'a playlist that sounds like you two', run: duoSound},
       {h: 'feed. me.', after: '(blindfold optional, encouraged)', game: 'blind taste test', how: 'Three bites each. One of you feeds, the other guesses with their eyes closed. Apart? It becomes food charades on a video call. Best guesser picks tomorrow\'s card.', take: 'a new "our" food', run: duoTaste},
-      {h: 'hands. only.', after: '(every card is optional. that\'s sort of the point.)', game: 'pick a card', how: 'Last night\'s best guesser picks a number. Pass on anything, no explanation needed.', take: 'the word they traced (keep it)', run: duoTouch},
+      {h: 'hands. only.', after: '(every card is optional. that\'s sort of the point.)', game: 'pick a card', how: 'Last night\'s best guesser picks a number. Pass on anything, no explanation needed. Apart? The cards change for a video call.', take: 'the word they traced (keep it)', run: duoTouch},
       {h: 'read my mind.', after: '(then book the table)', game: 'mind reader', how: 'Predict each other\'s perfect date, score the details you nailed, and book the winner. Tonight.', take: 'a date in the diary', run: duoSixth}
     ]
   };
@@ -1010,8 +1010,32 @@
       show(`<div class="p5-center"><p class="p5-muted">getting the sound…</p></div>`);
       fetch(`${CLIP_API}/clip/${encodeURIComponent(s.c)}`).then(r => { if (!r.ok) throw new Error('gone'); return r.blob(); }).then(decode).then(fwd => {
         const clip = {prompt: s.p, cat: s.k, fwd, rev: reversed(fwd)}; bufURL(clip.fwd); bufURL(clip.rev);
-        listenScreen(`${them} recorded ${s.k || 'a sound'}. It's backwards. What is it?`, clip, reply);
+        listenScreen(`${them} recorded ${s.k || 'a sound'}. It's backwards. What is it?`, clip, s.r === 2 ? final : reply);
       }).catch(() => show(`<div class="p5-center"><p class="p5-lede">This sound has expired or the link is broken. Ask ${esc(them)} to send it again.</p>${sharedFooter()}</div>`));
+      /* the second leg: the person who started it guesses, and the round ends here */
+      const final = ok => {
+        const mine = ok ? 1 : 0, theirs = +s.g1 || 0;
+        const res = mine === theirs ? (mine ? 'both of you got it.' : 'neither of you got it.') : mine ? 'you win.' : `${esc(them)} wins.`;
+        put('duo-back', {mine, theirs, at: Date.now()});
+        show(`<div class="p5-center">${step(0, 0, 'That\'s the round.')}
+          <div class="p5-court"><div><span class="p5-label">you guessed theirs</span><b>${mine ? '✓' : '✗'}</b></div><div><span class="p5-label">${esc(them)} guessed yours</span><b>${theirs ? '✓' : '✗'}</b></div></div>
+          <div class="p5-stamp ${mine >= theirs ? '' : 'red'}" aria-hidden="true">${res}</div>
+          <div class="p5-row">${btn('tell', 'tell them the score')}${btn('again', 'rematch', 'p5-ghost')}</div>
+          ${S.mode ? `<p class="p5-muted p5-small">Two tabs open? Close the other one. Your progress is saved either way.</p><div class="p5-row">${btn('lab', 'back to the five days', 'p5-ghost')}</div>` : sharedFooter()}</div>`, {
+          tell: () => share(`Backwards round: I ${mine ? 'got' : 'didn\'t get'} yours (${s.p}), you ${theirs ? 'got' : 'didn\'t get'} mine. ${mine === theirs ? 'A draw.' : mine ? 'I win.' : 'You win. This time.'}`),
+          again: () => recordPrompt('Rematch. Pick a category and make the sound.', c3 => {
+            if (!c3) return;
+            show(`<div class="p5-center">${step(0, 0, 'Have a listen, then send it.')}
+              <button type="button" class="p5-mic play" data-act="me" aria-label="hear it backwards"><span></span></button><p class="p5-muted p5-small">hear it backwards. sound on.</p>
+              <div class="p5-row">${btn('send', 'send them the link')}</div></div>`, {
+              me: () => playBuf(c3.rev),
+              send: () => sendClip(c3, (S.names || [''])[0] || 'me', 'Rematch. Backwards again. Guess, then send me one.')
+            });
+          }),
+          lab: () => { location.hash = ''; SHARED = null; IN_SHARED = false; go(S.mode, 0); }
+        });
+        burst();
+      };
       const reply = ok => {
         show(`<div class="p5-center">${step(0, 0, ok ? 'Nice ears. Now send one back.' : 'No shame. Now get your revenge: send one back.')}
           <label class="p5-field"><span class="p5-label">your first name</span><input name="nm" autocomplete="off" maxlength="20"></label>
@@ -1019,13 +1043,14 @@
           tell: () => share(ok ? `Got it: ${s.p}. Easy.` : `No idea. It was ${s.p}?! Rematch.`),
           mine: () => {
             const nm = G.querySelector('[name=nm]').value.trim() || 'them';
-            recordPrompt('Pick a category and make the sound. We flip it and send it back.', clip2 => {
+            recordPrompt(`Your turn. Pick a category and make the sound. ${them} guesses it, and that finishes the round.`, clip2 => {
               if (!clip2) return;
               show(`<div class="p5-center">${step(0, 0, 'Have a listen, then send it.')}
                 <button type="button" class="p5-mic play" data-act="me" aria-label="hear it backwards"><span></span></button><p class="p5-muted p5-small">hear it backwards. sound on.</p>
                 <div class="p5-row">${btn('send', 'send them the link')}</div>${sharedFooter()}</div>`, {
                 me: () => playBuf(clip2.rev),
-                send: () => sendClip(clip2, nm, `${ok ? 'Got yours.' : 'No idea what yours was.'} Here's mine, backwards. Guess.`)
+                send: () => sendClip(clip2, nm, `${ok ? 'Got yours.' : 'No idea what yours was.'} Here's mine, backwards. Your guess finishes the round.`, {r: 2, g1: ok ? 1 : 0})
+                  .then(() => show(`<div class="p5-center"><div class="p5-stamp" aria-hidden="true">sent.</div><p class="p5-lede">Your part's done. ${esc(them)} guesses yours and gets the final score. You can close this tab.</p>${sharedFooter()}</div>`))
               });
             });
           }
@@ -1135,12 +1160,12 @@
     });
   }
   /* apart: upload the clip, send a link. Falls back to sending the sound file. */
-  async function sendClip(clip, from, text) {
+  async function sendClip(clip, from, text, leg) {
     toast('Getting your link ready…');
     try {
       const r = await fetch(`${CLIP_API}/clips`, {method: 'POST', headers: {'Content-Type': 'audio/wav'}, body: wav16k(clip.fwd)});
       const j = await r.json(); if (!j.id) throw new Error(j.error || 'upload');
-      return share(text, `${location.origin}${location.pathname}?m=duo&d=2#s=${b64e({t: 'back', c: j.id, p: clip.prompt, k: clip.cat, n: from})}`);
+      return share(text, `${location.origin}${location.pathname}?m=duo&d=2#s=${b64e(Object.assign({t: 'back', c: j.id, p: clip.prompt, k: clip.cat, n: from, r: 1}, leg || {}))}`);
     } catch (_) {
       toast('Couldn\'t make a link, sending the sound instead.');
       return shareFile(wav(clip.rev), 'backwards.wav', `${text} (It's backwards. Reply with your guess.)`);
@@ -1155,10 +1180,10 @@
           <button type="button" class="p5-mic play" data-act="me" aria-label="hear it backwards"><span></span></button>
           <p class="p5-muted p5-small">hear it backwards. sound on.</p>
           <div class="p5-row">${btn('send', 'send them the link')}${btn('redo', 'record it again', 'p5-ghost')}</div>
-          <p class="p5-muted p5-small">They'll hear it backwards, guess, then see the answer and record one back for you. Clips are deleted after 14 days.</p>
+          <p class="p5-muted p5-small">They hear it backwards, guess, then record one back for you. When theirs arrives, open their link to guess it. That finishes the round. Clips are deleted after 14 days.</p>
           <div class="p5-row">${btn('next', 'next: the playlist', 'p5-ghost')}</div></div>`, {
           me: () => playBuf(clip.rev),
-          send: () => sendClip(clip, who[0], `I recorded ${clip.cat}. Backwards. Guess what it is, then send me one.`),
+          send: () => sendClip(clip, who[0], `I recorded ${clip.cat}. Backwards. Guess what it is, then send me one to guess.`),
           redo: () => backwardsRound(true, next),
           next
         });
@@ -1323,31 +1348,36 @@
 
 
   function duoTouch() {
-    needNames(() => {
+    needNames(() => howPlay(pl => {
+      const apart = pl === 'apart';
       const g = got('duo-guesser'), chooser = g === 0 || g === 1 ? names()[g] : null;
-      const cards = [
+      const cards = apart ? [
+        {k: 'mild', t: 'On camera, trace a word slowly on your own palm. They guess it. Three words, increasing in nerve.'},
+        {k: 'warm', t: 'Two minutes: describe, in detail, the hand massage you\'d give them right now. Then they tell you their first impression of you, honestly.'},
+        {k: 'spicy', t: 'Eyes closed. They guide you to something in your room by voice alone: left, right, warmer, colder. Reward on arrival is theirs to claim next time you meet.'}
+      ] : [
         {k: 'mild', t: 'Trace a word on their back with a fingertip. They guess it. Three words, increasing in nerve.'},
         {k: 'warm', t: 'Two-minute hand massage. Then they tell you their first impression of you, honestly.'},
         {k: 'spicy', t: 'Blindfold on. Clear the floor, then guide them across the room by touch alone. Reward on arrival is your call.'}
       ];
       const WORDS = [['tea', 'sun', 'yes', 'cat', 'hi'], ['dance', 'cheeky', 'later', 'sofa', 'wink'], ['closer', 'tonight', 'yours', 'kiss', 'stay']];
-      show(`<div>${step(0, 0, `${chooser ? `${chooser} picks.` : 'Flip a coin for who picks.'} Pick a number before you look. Either of you can pass on anything, no explanation needed.`)}
+      show(`<div>${step(0, 0, `${apart ? 'Get on a video call. ' : ''}${chooser ? `${chooser} picks.` : 'Flip a coin for who picks.'} Pick a number before you look. Either of you can pass on anything, no explanation needed.`)}
         ${cardsHTML(cards)}<div data-after></div>
         <p class="p5-muted p5-center p5-small">Can't choose? Do all three. We won't tell anyone.</p></div>`, {
         flip: b => {
           flip(b); const c = cards[+b.dataset.i], box = G.querySelector('[data-after]');
           const tool = c.k === 'mild' ? `<div class="p5-box p5-center"><p class="p5-label">your three words</p><div class="p5-words">${WORDS.map((w, i) => `<button type="button" class="p5-word" data-act="word" data-l="${i}"><span>level ${i + 1}</span><b>tap to see</b></button>`).join('')}</div><p class="p5-muted p5-small">Only the tracer looks.</p></div>`
-            : c.k === 'warm' ? `<div class="p5-box p5-center"><p class="p5-label">two minutes</p>${timerHTML(120, 'hand massage', 'sm')}${btn('go', 'start')}</div>`
-            : `<div class="p5-box"><p class="p5-label">before you start</p><p>Clear the floor. Go slowly. Either of you can stop at any point.</p></div>`;
-          box.insertAdjacentHTML('beforeend', `<div class="p5-in">${tool}</div>`);
+            : c.k === 'warm' ? `<div class="p5-box p5-center"><p class="p5-label">two minutes</p>${timerHTML(120, apart ? 'describe it' : 'hand massage', 'sm')}${btn('go', 'start')}</div>`
+            : `<div class="p5-box"><p class="p5-label">before you start</p><p>${apart ? 'Pick something safe to reach, clear the floor, go slowly. Either of you can stop at any point.' : 'Clear the floor. Go slowly. Either of you can stop at any point.'}</p></div>`;
+          box.insertAdjacentHTML('beforeend', `<div class="p5-in"><div class="p5-box p5-card-full"><p class="p5-label">card ${+b.dataset.i + 1} · ${esc(c.k)}</p><p>${esc(c.t)}</p></div>${tool}</div>`);
           if (!G.querySelector('[data-act=fin]')) box.insertAdjacentHTML('afterend', `<div class="p5-row">${btn('pass', 'pass', 'p5-ghost')}${btn('fin', 'done')}</div>`);
         },
         word: b => { b.querySelector('b').textContent = pick(WORDS[+b.dataset.l]); b.classList.add('on'); },
         go: b => { b.disabled = true; runTimer(120, () => toast('Time. Now: first impression, honestly.')); },
         pass: () => G.querySelector('[data-after]').insertAdjacentHTML('afterbegin', `<div class="p5-box p5-forfeit p5-in"><p class="p5-label">forfeit</p><p>A compliment that isn't about looks.</p></div>`),
-        fin: () => finish(`<div class="p5-box"><p class="p5-label">bonus round</p><p>Ten-second hug before you sleep. Count out loud. It's sillier than it sounds.</p></div>${nudge('nude-stacked', 'Liked picking a card? Nude Stack\'d is a whole game of wooden blocks and prompt cards. Every card is optional.')}`)
+        fin: () => finish(`<div class="p5-box"><p class="p5-label">bonus round</p><p>${apart ? 'Send a ten-second goodnight voice note. Count out loud. It\'s sillier than it sounds.' : 'Ten-second hug before you sleep. Count out loud. It\'s sillier than it sounds.'}</p></div>${nudge('nude-stacked', 'Liked picking a card? Nude Stack\'d is a whole game of wooden blocks and prompt cards. Every card is optional.')}`)
       });
-    });
+    }, 'Apart? The cards change for a video call.'));
   }
 
   const MR_T = ['friday night', 'saturday lunch', 'sunday morning', 'a weeknight'];
