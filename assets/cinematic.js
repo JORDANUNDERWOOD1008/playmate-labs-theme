@@ -394,11 +394,31 @@
         total += unit * qty;
         if (qty) order.push(`${l.dataset.name}: ${qty} case${qty > 1 ? 's' : ''} × ${unit ? fmt(cur, unit) : 'price on request'}`);
       });
+      lines.forEach(l => { const c = $(`[data-ws-case="${l.dataset.handle}"]`, ws); if (c) { const u = Number(l.dataset[cur.toLowerCase()] || 0); c.textContent = u ? fmt(cur, u) : 'On request'; } });
       $('[data-total]', ws).textContent = fmt(cur, total);
       const f = $('[data-order-field]', ws); if (f) f.value = order.join('\n') + (order.length ? `\nSubtotal ex VAT: ${fmt(cur, total)}` : '');
       const cf = $('[data-currency-field]', ws); if (cf) cf.value = cur;
-      $('[data-submit]', ws).disabled = !order.length;
+      const note = $('[data-ws-note]', ws);
+      $('[data-submit]', ws).disabled = !order.length && !(note && note.value.trim());
     };
+    // product detail panels: native <dialog>, so focus is trapped and Esc closes
+    let opener = null;
+    const openDialog = (d, from) => { if (!d || d.open) return; opener = from || null; d.showModal(); document.documentElement.style.overflow = 'hidden'; history.replaceState(null, '', '#' + d.id); };
+    $$('dialog', ws).forEach(d => {
+      d.addEventListener('close', () => { document.documentElement.style.overflow = ''; if (location.hash === '#' + d.id) history.replaceState(null, '', location.pathname + location.search); if (opener) opener.focus(); });
+      d.addEventListener('click', e => { if (e.target === d) d.close(); });
+    });
+    $$('[data-dialog-open]', ws).forEach(b => b.addEventListener('click', () => openDialog(document.getElementById(b.dataset.dialogOpen), b)));
+    $$('[data-dialog-close]', ws).forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+    if (location.hash.startsWith('#ws-')) openDialog(document.getElementById(location.hash.slice(1)));
+    // "Request" and "Request a sample" add a line to the order note, so they arrive with the order request
+    $$('[data-ws-request]', ws).forEach(b => b.addEventListener('click', () => {
+      const note = $('[data-ws-note]', ws); if (!note) return;
+      const line = b.dataset.wsRequest;
+      if (!note.value.includes(line)) note.value = (note.value.trim() ? note.value.trim() + '\n' : '') + line;
+      b.textContent = 'Added to your request';
+      recalc();
+    }));
     ws.addEventListener('input', recalc);
     $$('[data-currency]', ws).forEach(b => b.addEventListener('click', () => {
       cur = b.dataset.currency;

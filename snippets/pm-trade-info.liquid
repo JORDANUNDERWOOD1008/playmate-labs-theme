@@ -1,0 +1,47 @@
+{%- comment -%}
+  Trade facts for the wholesale product panel, keyed by product handle. Only for approved stockists
+  (rendered inside pm-wholesale's stockist branch). No prices here: those live in product metafields.
+  Usage: {% render 'pm-trade-info', product: p, part: 'facts' %}  (part: facts | compliance | docs | copy)
+  Rows are separated by ~~ and written Label|Value. A product metafield custom.trade_facts (multi-line, Label|Value) overrides facts.
+{%- endcomment -%}
+{%- liquid
+  assign h = product.handle
+  assign facts = ''
+  assign compliance = ''
+  assign docs = ''
+  assign copy = ''
+  case h
+    when 'nude-stacked'
+      assign facts = "What it is|A date-night stacking game for two adults (18+): pull a block, match its symbol to a prompt card, choose Mild, Spicy or Wild.~~In the box|54 red-painted wooden blocks, 54 prompt cards (162 prompts in six categories), blindfold, drawstring travel bag, gift box, rules leaflet with QR code.~~Block size|75 × 25 × 15 mm, about 20 g each~~Age|Adults only (18+). Sold as an adult game, not a toy.~~Languages|Rules and warnings in English, German and Dutch. Companion app with every card in six languages.~~Country of origin|China. Designed in the UK by Playmate Labs."
+      assign compliance = "Product safety (GPSR)|Risk assessment completed and signed, with safety warnings in the rules.~~Adult game classification|Written statement on why it is an adult product for over-18s and not a toy.~~Materials and chemicals|Signed manufacturer declaration on materials, paints and coatings.~~Printing inks|Card printing inks screened for REACH substances of very high concern (SGS).~~Rules and warnings|Printed rules with activity safety notes; EN, DE and NL versions ready."
+      assign docs = "Product safety risk assessment (GPSR)~~Adult game classification statement~~Manufacturer materials and chemicals declaration~~Card ink REACH SVHC screening (SGS)~~Rules and warnings: English, German, Dutch"
+      assign copy = "Nude Stack'd is a date-night stacking game for two. Pull a block, draw a prompt card and pick your level: Mild, Spicy or Wild. 54 wooden blocks, 162 prompts, a blindfold and a travel bag, gift-boxed. Every card is optional. For adults (18+)."
+    when 'playmate-chocolate'
+      assign facts = "What it is|Three milk chocolate hearts to snap in half and share, one box for three evenings for two. Sold as a food supplement in chocolate form.~~Flavours|Vanilla, hot honey and black raspberry~~Shelf life|18 months from manufacture~~Storage|Cool, dry place out of direct sunlight. We dispatch at 22°C or below.~~Made in|The UK, by an artisan chocolatier~~Age|Adults only (18+). Not for pregnant or breastfeeding women."
+      assign compliance = "Food safety|Made under a HACCP food safety plan, with an Environmental Health inspection on file.~~Testing|Independent microbiological testing on file.~~Labelling|UK label with ingredients, allergens, nutrition and supplement warnings. German and Dutch label text prepared for the EU.~~Packaging|Declaration of conformity for food-contact packaging.~~Traceability|Batch codes and a written product recall procedure."
+      assign docs = "Product specification and nutrition~~Allergen statement~~HACCP summary and process flow~~Microbiological test report~~Packaging declaration of conformity~~EU compliance dossier and DE/NL label text"
+      assign copy = "Snap'd: three milk chocolate hearts made to be snapped in half and shared, one box for three evenings for two. Vanilla, hot honey and black raspberry. Made in the UK. 18+."
+  endcase
+  if product.metafields.custom.trade_facts != blank
+    assign facts = product.metafields.custom.trade_facts.value
+  endif
+-%}
+{%- case part -%}
+  {%- when 'facts', 'compliance' -%}
+    {%- if part == 'facts' -%}{%- assign rows = facts -%}{%- else -%}{%- assign rows = compliance -%}{%- endif -%}
+    {%- assign rows = rows | newline_to_br | replace: '<br />', '~~' | split: '~~' -%}
+    <dl class="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-[10rem_minmax(0,1fr)]">
+      {%- for r in rows -%}{%- assign kv = r | strip | split: '|' -%}{%- if kv[0] != blank -%}
+        <dt class="font-medium text-primary">{{ kv[0] | strip }}</dt><dd class="font-light">{{ kv[1] | strip }}</dd>
+      {%- endif -%}{%- endfor -%}
+    </dl>
+  {%- when 'docs' -%}
+    {%- assign rows = docs | split: '~~' -%}
+    <ul class="divide-y divide-border border-y border-border text-sm">
+      {%- for r in rows -%}{%- assign d = r | strip -%}{%- if d != blank -%}
+        <li class="flex items-center justify-between gap-4 py-3"><span class="font-light">{{ d }}</span>
+          <button type="button" data-ws-request="Please send: {{ d | escape }} ({{ product.title | escape }})" class="shrink-0 rounded-full border border-border px-3 py-1 text-xs">Request</button></li>
+      {%- endif -%}{%- endfor -%}
+    </ul>
+  {%- when 'copy' -%}{{ copy }}
+{%- endcase -%}
