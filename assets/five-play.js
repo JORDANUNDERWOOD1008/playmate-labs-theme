@@ -14,7 +14,11 @@
   let S = {};
   try { S = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (_) { S = {}; }
   S.done = S.done || {}; S.data = S.data || {};
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (_) {} };
+  let LABKEY = null, PUSH_T = 0;
+  const save = () => {
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (_) {}
+    if (LABKEY) { clearTimeout(PUSH_T); PUSH_T = setTimeout(pushLab, 800); }
+  };
   const put = (k, v) => { S.data[k] = v; save(); };
   const got = k => S.data[k];
 
@@ -227,6 +231,7 @@
      the pacing, and people often play on a different device from the one they used yesterday.
      ?preview=lab unlocks everything on this device (for reviewing). */
   const UNLOCK_MS = 24 * 3600 * 1000;
+  const IN_APP = /FBAN|FBAV|Instagram|LinkedInApp|GSA\/|Line\/|Snapchat|TikTok|; wv\)|GmailApp|Outlook/i.test(navigator.userAgent);
   S.unlocked = S.unlocked || {};
   if (q.get('preview') === 'lab') { S.preview = true; save(); }
   if (MODE && DAY && new RegExp(`-d${DAY}-game$`).test(q.get('utm_content') || '')) { S.unlocked[`${MODE}-${DAY}`] = Date.now(); save(); }
@@ -322,10 +327,13 @@
         <h1 class="p5-h1">${esc(d.h)}</h1>
         <p class="p5-after">${esc(d.after)}</p>
         <div class="p5-how"><span class="p5-tag">${icon(SENSES[DAY - 1])} ${esc(d.game)} · 10 min</span><p>${esc(d.how)}</p></div>
+        ${IN_APP && (DAY === 1 || (MODE === 'duo' && DAY === 2)) ? `<div class="p5-inapp"><p>Opened inside another app? The camera and microphone work best in Safari or Chrome.</p><button type="button" class="p5-link" data-copy-link>copy the link</button></div>` : ''}
       </header>
       <div class="p5-stage" id="p5-stage" aria-live="polite"></div>
     </section>`;
     app.querySelector('[data-hub]').onclick = () => go(MODE, 0);
+    const cl = app.querySelector('[data-copy-link]');
+    if (cl) cl.onclick = async () => { try { await navigator.clipboard.writeText(location.href); toast('Copied. Paste it into Safari or Chrome.'); } catch (_) { prompt('Copy this link:', location.href); } };
     G = document.getElementById('p5-stage');
     G.addEventListener('click', onClick);
     G.addEventListener('input', e => { const f = ACT['in:' + e.target.name]; if (f) f(e.target.value, e.target); });
@@ -366,24 +374,27 @@
   }
 
   /* timers: a ring that counts down */
-  let TIMERS = [];
-  function stopTimers() { TIMERS.forEach(t => cancelAnimationFrame(t.raf)); TIMERS = []; }
+  let TIMERS = [], WAKE = null;
+  async function wakeOn() { try { if ('wakeLock' in navigator && !WAKE) { WAKE = await navigator.wakeLock.request('screen'); WAKE.addEventListener('release', () => { WAKE = null; }); } } catch (_) {} }
+  function wakeOff() { try { if (WAKE) WAKE.release(); } catch (_) {} WAKE = null; }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && TIMERS.length) wakeOn(); });
+  function stopTimers() { TIMERS.forEach(t => cancelAnimationFrame(t.raf)); TIMERS = []; wakeOff(); }
   const fmt2 = s => { s = Math.max(0, Math.ceil(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
   function timerHTML(secs, label, cls = '') {
     return `<div class="p5-timer ${cls}" data-timer><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="tr"/><circle cx="60" cy="60" r="52" class="tp" pathLength="100"/></svg>
-      <div class="p5-timer-c"><span class="p5-timer-n">${fmt2(secs)}</span><span class="p5-timer-l">${esc(label || '')}</span></div></div>`;
+      <div class="p5-timer-c"><span class="p5-timer-n">${fmt2(secs)}</span><span class="p5-timer-l">${esc(label || '')}</span></div></div>${secs >= 30 && !('wakeLock' in navigator) ? '<p class="p5-muted p5-small p5-center">Keep the screen on: tap it now and then.</p>' : ''}`;
   }
   function runTimer(secs, onDone, onTick) {
     const box = G.querySelector('[data-timer]'); if (!box) return;
     const n = box.querySelector('.p5-timer-n'), p = box.querySelector('.tp');
     const t = {start: performance.now(), raf: 0};
-    box.classList.add('is-on');
+    box.classList.add('is-on'); wakeOn();
     const tick = () => { const now = performance.now();
       const left = secs - (now - t.start) / 1000;
       n.textContent = fmt2(left);
       p.style.strokeDashoffset = String(100 - Math.max(0, left / secs) * 100);
       if (onTick) onTick(left);
-      if (left <= 0) { box.classList.remove('is-on'); box.classList.add('is-done'); buzz([120, 80, 120]); chime(); onDone && onDone(); return; }
+      if (left <= 0) { box.classList.remove('is-on'); box.classList.add('is-done'); TIMERS = TIMERS.filter(x => x !== t); if (!TIMERS.length) wakeOff(); buzz([120, 80, 120]); chime(); onDone && onDone(); return; }
       t.raf = requestAnimationFrame(tick);
     };
     t.raf = requestAnimationFrame(tick); TIMERS.push(t);
@@ -952,7 +963,7 @@
 
   /* ── links opened from someone else's share ─────────────── */
   let IN_SHARED = false;
-  const SHARED_HEAD = {tot: ['this or that.', '(five tiny debates)'], opts: ['round two?', '(pick one. or don\'t.)'], court: ['the courtroom.', '(the verdict is final)'], back: ['say it. louder.', '(it\'s backwards)'], mind: ['read my mind.', '(then book the table)']};
+  const SHARED_HEAD = {tot: ['this or that.', '(five tiny debates)'], tot2: ['this or that.', '(the verdict)'], opts: ['round two?', '(pick one. or don\'t.)'], court: ['the courtroom.', '(the verdict is final)'], back: ['say it. louder.', '(it\'s backwards)'], mind: ['read my mind.', '(then book the table)']};
   function optsPick(o, inApp) {
     show(`<div>${step(0, 0, 'Two options. Tap the one you fancy.')}
       <div class="p5-opts">${o.map((x, i) => `<button type="button" class="p5-opt" data-act="pick" data-i="${i}"><span class="p5-label">option ${i + 1}</span><b>${esc(x.p)}</b><span>${esc(x.d)} · ${esc(x.b)}</span></button>`).join('')}</div>
@@ -983,10 +994,16 @@
         Object.assign(acts, {next: () => {
           const mine = totVals('b');
           closing(mine, s.a, 'you', 'them');
-          G.querySelector('.p5-row:last-child').insertAdjacentHTML('beforebegin', `<div class="p5-row">${btn('back', 'send your answers back')}</div>`);
-          ACT.back = () => share(`My answers: ${TOT.map((p, i) => p[mine[i]]).join(', ')}. Discuss.`);
+          G.querySelector('.p5-row:last-child').insertAdjacentHTML('beforebegin', `<div class="p5-row">${btn('back', 'send them the verdict')}</div>`);
+          ACT.back = () => share('Answered. Here\'s where we disagree.', `${location.origin}${location.pathname}?m=met&d=2#s=${b64e({t: 'tot2', a: s.a, b: mine})}`);
         }}));
       enable('next', false);
+    } else if (s.t === 'tot2' && Array.isArray(s.a) && Array.isArray(s.b)) {
+      show(`<div>${step(0, 0, 'They answered. Here\'s the verdict. Nobody\'s keeping score.')}${totReveal(s.a, s.b, 'you', 'them')}
+        <div class="p5-box p5-center"><p class="p5-label">defend one answer</p><p class="p5-muted">Thirty seconds. Make it a closing argument, by voice note.</p></div>
+        ${S.mode ? `<div class="p5-row">${btn('lab', 'back to the five days', 'p5-ghost')}</div>` : sharedFooter()}</div>`, {
+        lab: () => { location.hash = ''; SHARED = null; IN_SHARED = false; go(S.mode, 0); }
+      });
     } else if (s.t === 'opts' && Array.isArray(s.o)) {
       optsPick(s.o, false);
     } else if (s.t === 'court' && Array.isArray(s.a)) {
@@ -1450,5 +1467,40 @@
     }));
   }
 
-  render();
+  /* ── progress that follows the person between browsers ──────────
+     The emails add &p=<Klaviyo profile id> to every game link (and Klaviyo's own _kx, when click
+     tracking adds it, works too). The page hashes it (the id itself
+     never leaves the browser) and keeps a copy of the progress on the Sense Lab server, so playing
+     day one in Gmail's browser and day two in Safari still adds up. */
+  const LAB_API = CFG.clipApi || 'https://grid-planner-api.playmatelabs.workers.dev';
+  const SYNC_KEYS = ['done', 'data', 'started', 'unlocked', 'names'];
+  async function labKey() {
+    const raw = [q.get('p'), q.get('_kx')].find(v => v && /^[\w.~=-]{6,160}$/.test(v));
+    if (raw) { S.pid = raw; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (_) {} }
+    if (!S.pid || !(window.crypto && crypto.subtle)) return null;
+    const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('sense-lab:' + S.pid));
+    return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  function pushLab() {
+    const body = {}; SYNC_KEYS.forEach(k => { if (S[k] !== undefined) body[k] = S[k]; });
+    try { fetch(`${LAB_API}/lab/${LABKEY}`, {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body), keepalive: true}).catch(() => {}); } catch (_) {}
+  }
+  function mergeLab(remote) {
+    if (!remote) return;
+    ['done', 'started', 'unlocked'].forEach(k => { const a = S[k] = S[k] || {}, b = remote[k] || {}; for (const x in b) a[x] = Math.max(a[x] || 0, b[x] || 0); });
+    S.data = Object.assign({}, remote.data || {}, S.data || {});
+    if (!S.names && remote.names) S.names = remote.names;
+  }
+  (async () => {
+    try {
+      LABKEY = await labKey();
+      if (LABKEY && !SHARED) {
+        const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 2500);
+        const r = await fetch(`${LAB_API}/lab/${LABKEY}`, {signal: ctl.signal}); clearTimeout(t);
+        const j = await r.json(); mergeLab(j.data); save();
+      }
+    } catch (_) {}
+    render();
+  })();
+  addEventListener('pagehide', () => { if (LABKEY) { clearTimeout(PUSH_T); pushLab(); } });
 })();

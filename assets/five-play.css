@@ -328,3 +328,5 @@ body.p5-dim .p5-timer-n{color:var(--cream)}
 .p5-words-bank span{background:var(--panel);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:400;color:var(--bur)}
 .p5-card-full{background:var(--ivory);box-shadow:inset 0 0 0 1.5px var(--bur)}
 .p5-card-full p:last-child{font-size:18px;font-weight:400}
+.p5-inapp{margin-top:12px;border:1.5px dashed var(--bur);border-radius:6px;padding:10px 14px;font-size:15px}
+.p5-inapp p{margin:0 0 4px}
