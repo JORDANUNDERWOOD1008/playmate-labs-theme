@@ -1,0 +1,72 @@
+/* The games room. Same palette and type as the Sense Lab and the cinematic site. */
+:root{--cream:#F7EFE2;--panel:#EEE5D8;--bur:#72101F;--bur-d:#5a0c18;--ink:#281C18;--muted:#7A6A60;--line:rgba(40,28,24,.14);--ivory:#FFFBF5;--cuffd:#5E5F48}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--cream);color:var(--ink);font:300 17px/1.55 "Jost",system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+button{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--bur);outline-offset:3px}
+
+.g-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--cream);position:sticky;top:0;z-index:5}
+.g-logo{font:900 18px/1 "Figtree",sans-serif;letter-spacing:-.02em;color:var(--bur);text-decoration:none}
+.g-small{font-size:11px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--bur)}
+main{flex:1}
+.g-wrap{max-width:620px;margin:0 auto;padding:30px 16px 56px;width:100%}
+.g-hand{font-family:"Homemade Apple",cursive;color:var(--bur);margin:0;line-height:1.5}
+.g-tilt{display:inline-block;transform:rotate(-2deg);font-size:19px}
+.g-h1{font:900 clamp(44px,13vw,76px)/.92 "Figtree",sans-serif;letter-spacing:-.035em;color:var(--bur);margin:6px 0 0}
+.g-lede{font-size:19px;margin:14px 0 0}
+.g-muted{color:var(--muted);margin:8px 0}
+.g-label{display:block;font-size:11px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--bur);margin:4px 0 12px}
+
+.g-cards{display:grid;gap:14px;margin-top:28px}
+.g-card{position:relative;background:var(--panel);border-radius:8px;padding:20px 20px 22px;overflow:hidden}
+.g-card p{margin:8px 0 0}
+.g-kick{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px!important}
+.g-kick span{font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;border:1px solid currentColor;border-radius:999px;padding:3px 10px;color:var(--bur)}
+.g-t{font:900 clamp(36px,10vw,52px)/.95 "Figtree",sans-serif;letter-spacing:-.035em;color:var(--bur);margin:0}
+.g-after{font-size:16px;margin-top:6px!important}
+
+/* the Sense Lab leads, in burgundy */
+.g-feature{background:var(--bur);color:var(--ivory);padding:26px 22px 26px}
+.g-feature .g-t,.g-feature .g-hand,.g-feature .g-kick span{color:var(--ivory)}
+.g-feature .g-kick span{border-color:rgba(255,251,245,.5)}
+.g-prog{display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,251,245,.8)}
+.g-prog span{flex:0 0 96px;height:6px;border-radius:6px;background:rgba(255,251,245,.25);position:relative;overflow:hidden}
+.g-prog span::after{content:"";position:absolute;inset:0;width:calc(var(--p) * 100%);background:var(--ivory);border-radius:6px}
+
+/* locked: Nude Stack'd until the box code is scanned */
+.g-lock{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:12px 14px;border:1.5px dashed rgba(114,16,31,.35);border-radius:6px}
+.g-lock p{margin:0!important}
+.g-lock .g-ico{flex:0 0 22px;margin-top:3px}
+.g-small-p{font-size:14px;color:var(--muted)}
+
+/* coming soon: Cuff'd, in its own green */
+.g-soon{background:transparent;border:1.5px solid rgba(94,95,72,.45)}
+.g-soon .g-t,.g-soon .g-kick span{color:var(--cuffd)}
+.g-soon p{color:var(--muted)}
+
+.g-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:18px}
+.g-btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:1.5px solid var(--bur);background:var(--bur);color:var(--ivory);font-size:13px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;cursor:pointer}
+.g-btn:hover{background:var(--bur-d)}
+.g-light{background:var(--ivory);color:var(--bur);border-color:var(--ivory)}
+.g-light:hover{background:#fff}
+.g-ghost{background:transparent;color:var(--bur)}
+.g-ghost:hover{background:rgba(114,16,31,.06)}
+.g-link{background:none;border:0;padding:0;color:var(--bur);font-weight:500;border-bottom:1.5px solid currentColor;text-decoration:none}
+.g-link-l{color:var(--ivory)}
+.g-ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.g-btn .g-ico{width:18px;height:18px}
+
+/* the scanner */
+.g-scan{border:0;border-radius:10px;padding:18px 16px 16px;width:min(420px,calc(100vw - 32px));background:var(--cream);color:var(--ink);text-align:center}
+.g-scan::backdrop{background:rgba(40,28,24,.6)}
+.g-cam{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--ink)}
+.g-cam video{width:100%;height:100%;object-fit:cover;display:block}
+.g-frame{position:absolute;inset:18%;border:3px solid var(--ivory);border-radius:10px;box-shadow:0 0 0 999px rgba(40,28,24,.35)}
+.g-scan .g-btn{margin-top:8px}
+
+.g-foot{padding:28px 16px 36px;text-align:center;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.g-foot b{display:block;font:400 22px/1.2 "Homemade Apple",cursive;letter-spacing:0;text-transform:none;color:var(--bur);margin-bottom:10px}
+@media (prefers-reduced-motion:no-preference){.g-card{animation:g-in .5s both}.g-card:nth-child(2){animation-delay:.08s}.g-card:nth-child(3){animation-delay:.16s}}
+@keyframes g-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
