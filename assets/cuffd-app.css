@@ -144,3 +144,18 @@ main{flex:1}
 .cf-pickc{display:flex;gap:12px;align-items:center;text-align:left;background:var(--cream);color:var(--g);border:0;border-radius:12px;padding:14px;cursor:pointer}
 .cf-pickc small{display:block;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase}
 .cf-pickc b{display:block;font:900 19px/1.15 "Figtree",sans-serif;color:var(--ink)}
+
+/* v3: cuff line, suitable complications, the complication card, round tally */
+.cf-cuffline{position:absolute;top:14px;left:0;right:0;text-align:center;font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--g)}
+.cf-card-in{position:relative}
+.cf-fits{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:8px;color:var(--g);opacity:.85}
+.cf-fits .cf-ico{width:18px;height:18px}
+.cf-fits em{font-style:normal;font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+.cf-card.comp{max-width:290px;aspect-ratio:5/6;background:var(--g-d);color:var(--cream);border:1.5px solid var(--line)}
+.cf-card.comp .cf-card-in{border-color:rgba(252,245,236,.4);border-style:dashed;color:var(--cream)}
+.cf-card.comp h3,.cf-card.comp p,.cf-card.comp small{color:var(--cream)}
+.cf-small{font-size:13px}
+.cf-mini{margin-bottom:12px}
+.cf-tally{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;font-size:14px}
+.cf-tally b{font:900 22px "Figtree",sans-serif;margin:0 4px}
+.cf-tally i{font-style:normal;font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.75;text-align:center}
