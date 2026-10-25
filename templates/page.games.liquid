@@ -1,6 +1,6 @@
 {%- layout none -%}
 {%- comment -%}
-  The games room: one menu for every Playmate web game (games-hub.js / games-hub.css).
+  Play by Playmate (the games room): one menu for every Playmate web game (games-hub.js / games-hub.css).
   Hidden page /pages/games. The Sense Lab is open to everyone; Nude Stack'd unlocks by scanning
   the QR code in the box (or arriving from it with ?k=); Cuff'd is coming soon.
   Source: ~/Desktop/Claude/games-hub (edit there, then build.py installs it here).
@@ -12,8 +12,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#F7EFE2">
-  <title>The games room | Playmate Labs</title>
-  <meta name="description" content="Every Playmate game in one place: the Sense Lab, Nude Stack'd and what's coming next.">
+  <title>The play room | Play by Playmate</title>
+  <meta name="description" content="The play room: every Playmate game in one place. The Sense Lab, Nude Stack'd and what's coming next.">
   {%- if settings.favicon != blank -%}<link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">{%- endif -%}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,12 +33,12 @@
 <body>
   <header class="g-bar">
     <a class="g-logo" href="{{ routes.root_url }}">playmate labs</a>
-    <span class="g-small">the games room</span>
+    <span class="g-small">the play room</span>
   </header>
   <main id="g-app" class="g-wrap">
-    <p class="g-hand g-tilt">come closer.</p>
-    <h1 class="g-h1">the games room.</h1>
-    <p class="g-lede">Everything we make to play, in one place. Pick one.</p>
+    <h1 class="g-brand"><img src="{{ 'games-play-logo.png' | asset_url }}" width="900" height="510" alt="play by playmate"></h1>
+    <p class="g-hand g-tilt g-room">the play room.</p>
+    <p class="g-lede">Every Playmate game, in one place. Pick one.</p>
     <div class="g-cards" id="g-cards"></div>
   </main>
   <dialog class="g-scan" id="g-scan" aria-labelledby="g-scan-t">

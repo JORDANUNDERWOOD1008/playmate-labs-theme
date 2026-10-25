@@ -14,6 +14,8 @@ main{flex:1}
 .g-wrap{max-width:620px;margin:0 auto;padding:30px 16px 56px;width:100%}
 .g-hand{font-family:"Homemade Apple",cursive;color:var(--bur);margin:0;line-height:1.5}
 .g-tilt{display:inline-block;transform:rotate(-2deg);font-size:19px}
+.g-brand{margin:6px 0 0;line-height:0}.g-brand img{display:block;width:min(300px,72vw);height:auto}
+.g-room{margin-top:14px}
 .g-h1{font:900 clamp(44px,13vw,76px)/.92 "Figtree",sans-serif;letter-spacing:-.035em;color:var(--bur);margin:6px 0 0}
 .g-lede{font-size:19px;margin:14px 0 0}
 .g-muted{color:var(--muted);margin:8px 0}
