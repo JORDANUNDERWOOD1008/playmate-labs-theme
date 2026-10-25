@@ -5,141 +5,148 @@
   "sections": {
     "main": {
       "type": "pm-five-day",
-      "settings": {},
+      "settings": {
+        "solo_how": "One short email a night.\nOne small game on your phone.\nFor the single, the dating and the happily unavailable.",
+        "met_how": "One short email a night.\nOne small game that works by text.\nYou each sign up yourselves. Sharing the link signs nobody up.",
+        "duo_how": "One short email a night.\nOne small game, one phone, passed between you.\nFor you and someone you like.",
+        "solo_sub": "Five evenings of dating yourself first. One sense a night, ten minutes.",
+        "met_sub": "Five tiny rounds, one sense a night. Only you need to be signed up.",
+        "duo_sub": "Five evenings, one sense a night, ten minutes each. Phones face down, except for the game."
+      },
       "blocks": {
         "b1": {
           "type": "day",
           "settings": {
             "mode": "solo",
-            "s": "you have a type. apparently.",
-            "d": "Three qualities that attract you, three that make time together enjoyable. Compare.",
-            "b": "Pick three qualities that attract you, then three that actually make spending time with someone enjoyable. See where they overlap. Keep the answers private."
+            "s": "look. honestly.",
+            "d": "Sight · type check. 10 min.",
+            "b": "Three things that catch your eye, three green flags. The game shows you the overlap: that's your real type. Then one thing you're proud of, out loud."
           }
         },
         "b2": {
           "type": "day",
           "settings": {
             "mode": "solo",
-            "s": "your taste is showing.",
-            "d": "One song, one flavour, one texture. Ten minutes.",
-            "b": "Choose one song, one flavour and one texture you love. Put them together for ten minutes: music on, something good to eat or drink, somewhere comfortable."
+            "s": "turn it up.",
+            "d": "Sound · the soundtrack. 10 min.",
+            "b": "Three songs: one for Sunday mornings, one for getting ready, one for 1am. Give the playlist a dramatic name, pour something good and play it through. No skips."
           }
         },
         "b3": {
           "type": "day",
           "settings": {
             "mode": "solo",
-            "s": "go somewhere you'd usually scroll past.",
-            "d": "A nearby place you've been curious about. Small budget, including £0.",
-            "b": "Choose a nearby place you've been curious about: a café, exhibition, bookshop or unfamiliar street. Give yourself a small budget, including £0. Go alone or invite someone."
+            "s": "treat yourself.",
+            "d": "Taste · table for one. 10 min.",
+            "b": "Pick the café, bakery or wine bar you keep scrolling past and put it in the diary. Then tonight's taste test: something in the cupboard you never eat, rated out of ten."
           }
         },
         "b4": {
           "type": "day",
           "settings": {
             "mode": "solo",
-            "s": "make the first move.",
-            "d": "An invitation, a better question, or a booking. Dating is optional.",
-            "b": "Choose one: send a specific invitation, ask someone a more interesting question, or book something you've been waiting for company to do. Dating is optional."
+            "s": "reach out.",
+            "d": "Touch · three cards. 10 min.",
+            "b": "Three face-down cards, one small move each. Pick a number before you look. A friend counts, and so does just you."
           }
         },
         "b5": {
           "type": "day",
           "settings": {
             "mode": "solo",
-            "s": "keep the good bit.",
-            "d": "Pick the best bit of the week. Do it again.",
-            "b": "Pick the thing you enjoyed most this week. Make a plan to do it again. Finish one sentence: \"I'd like more of ___.\""
+            "s": "trust your gut.",
+            "d": "Sixth sense · the good bit. 10 min.",
+            "b": "Pick your favourite night, check your day-one type, and book the good bit again. Finish one sentence: \"I'd like more of ___.\""
           }
         },
         "b6": {
           "type": "day",
           "settings": {
             "mode": "met",
-            "s": "first impressions.",
-            "d": "A first impression and one thing that surprised you after. 5 min.",
-            "b": "Each share a first impression and one thing that surprised you afterwards. Keep it to a sentence or two, then see where the conversation goes. Takeaway: a story about how you met."
+            "s": "what did you see?",
+            "d": "Sight · first impressions. 10 min.",
+            "b": "One sentence on what you noticed first, one on what surprised you after. Count down from three and trade them, even by text."
           }
         },
         "b7": {
           "type": "day",
           "settings": {
             "mode": "met",
-            "s": "a minor disagreement.",
-            "d": "Five either-or choices. Compare. No scores. 5 min.",
-            "b": "Answer separately: breakfast or dinner, city or coast, planned or spontaneous, call or text, window or aisle. Compare. Nobody's keeping score. Takeaway: five easy conversation starters."
+            "s": "this or that.",
+            "d": "Sound · a minor disagreement. 10 min.",
+            "b": "Breakfast or dinner, city or coast, planned or spontaneous, call or text, window or aisle. Answer, send them the link, see where you disagree. Then defend one answer in thirty seconds."
           }
         },
         "b8": {
           "type": "day",
           "settings": {
             "mode": "met",
-            "s": "send me something good.",
-            "d": "One recommendation and why it's for them. 5 min.",
-            "b": "Send one recommendation: a song, a film or a place to eat. Add a sentence about why you chose it for this person. Takeaway: something specific to reply to later."
+            "s": "try this.",
+            "d": "Taste · the recommendation. 10 min.",
+            "b": "Recommend one thing to eat or drink and say why you picked it for them. Send it over, ask a question back, and quietly save the best one for later."
           }
         },
         "b9": {
           "type": "day",
           "settings": {
             "mode": "met",
-            "s": "you choose.",
-            "d": "Pick a hidden card: curious, playful or unexpected. 8 min.",
-            "b": "Curious: what's a skill you're unexpectedly good at? Playful: sell me your ideal Sunday in twenty seconds. Unexpected: name a public place you'd like to show me. Takeaway: a new story, or an idea for meeting again."
+            "s": "pick a card.",
+            "d": "Touch · three hidden cards. 10 min.",
+            "b": "Choose one, two or three, and tell them your number before you look. Curious, playful or bold. Pass if you like: there's a forfeit."
           }
         },
         "b10": {
           "type": "day",
           "settings": {
             "mode": "met",
-            "s": "round two.",
-            "d": "Fancy another date? Two options, pick one. Or don't. 5 min.",
-            "b": "If you'd both like another date, offer two specific options with a day, a place and a rough budget. Choose one together. It's also fine to end here. Takeaway: a clear next step, if it's mutual."
+            "s": "your gut says…",
+            "d": "Sixth sense · round two. 10 min.",
+            "b": "Check in with yourself. If it's a yes, offer two date options and let them pick. If it's a no, say thanks kindly. Ending well is a skill too."
           }
         },
         "b11": {
           "type": "day",
           "settings": {
             "mode": "duo",
-            "s": "you probably don't know this.",
-            "d": "Write down one thing they probably don't know about you. Swap.",
-            "b": "Write down one thing your person probably doesn't know about you. Nothing dramatic. Unless it is. Swap. Questions are allowed."
+            "s": "look. closer.",
+            "d": "Sight · sixty seconds. 10 min.",
+            "b": "Sixty seconds of eye contact (giggling expected), one thank-you each for something you noticed and never mentioned, then swap a secret."
           }
         },
         "b12": {
           "type": "day",
           "settings": {
             "mode": "duo",
-            "s": "settle something.",
-            "d": "Five small disputes. Answer separately, then compare.",
-            "b": "Who picked who up? Who takes longer to leave the house? Who'd survive a week without their phone? Who's the better cook? Who started it? Answer separately. Compare. Try to stay together."
+            "s": "say it. louder.",
+            "d": "Sound · the courtroom. 10 min.",
+            "b": "Who picked who up? Who takes longer to leave the house? Answer separately, hear the verdicts, then build a three-song playlist that sounds like you two."
           }
         },
         "b13": {
           "type": "day",
           "settings": {
             "mode": "duo",
-            "s": "make them a recommendation.",
-            "d": "One song, one food, one place. Explain your oddest pick.",
-            "b": "Send them one song, one food and one place you think they'd like. Then explain your least obvious choice. They'll ask anyway."
+            "s": "feed. me.",
+            "d": "Taste · blind taste test. 10 min.",
+            "b": "Three small bites each: sweet, salty and a wildcard. One of you feeds, the other guesses with their eyes closed. Best guesser picks tomorrow's card."
           }
         },
         "b14": {
           "type": "day",
           "settings": {
             "mode": "duo",
-            "s": "pick a card.",
-            "d": "Three hidden prompts. Pick one. No peeking.",
-            "b": "One: tell me your first impression of me. Two: plan a date you think I'd secretly love. Three: give me a compliment that isn't about my appearance. Pick a number before you read them. Too late."
+            "s": "hands. only.",
+            "d": "Touch · pick a card. 10 min.",
+            "b": "Three face-down cards: mild, warm or spicy. Last night's best guesser picks a number. Either of you can pass on anything, no explanation needed."
           }
         },
         "b15": {
           "type": "day",
           "settings": {
             "mode": "duo",
-            "s": "actually make a plan.",
-            "d": "Propose a date with a time, place and budget. Pick one. Book it.",
-            "b": "You each propose a date: a time, a place, a budget. Pick one. Book it. Not 'we should'. Actually book it."
+            "s": "read my mind.",
+            "d": "Sixth sense · mind reader. 10 min.",
+            "b": "Predict each other's perfect date: a time, a place, a budget. Score the details you nailed, then book the winner. Not \"we should\". Booked."
           }
         },
         "b16": {
