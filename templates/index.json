@@ -97,14 +97,16 @@
           "type": "card",
           "settings": {
             "product": "playmate-chocolate",
-            "cover": "shopify://shop_images/f4ecd822-d331-4c1f-a5a2-2f4f2a5b3278.png",
+            "cover": "shopify://shop_images/919da7b8-4f09-4eea-97c2-3570b31a5245.png",
             "rollover": "shopify://shop_images/gp-p-47220efa-55d0-4eb6-8690-7c2746cf9fe5-cae7.jpg"
           }
         },
         "card3": {
           "type": "card",
           "settings": {
-            "product": "aphrodisiac-hot-chocolate-spoons"
+            "product": "aphrodisiac-hot-chocolate-spoons",
+            "cover": "shopify://shop_images/520bdfb7-8950-47f5-967e-5e406eeaf64a.png",
+            "rollover": "shopify://shop_images/df5c387d-378d-4523-906f-7e591e0d5fca_1_0ad0ec41-9c36-4a06-b5d5-d8afaec0aa81.png"
           }
         }
       },
@@ -150,7 +152,6 @@
     },
     "loved": {
       "type": "pm-loved",
-      "disabled": true,
       "blocks": {
         "b1": {
           "type": "quote",
@@ -182,6 +183,7 @@
         "b2",
         "b3"
       ],
+      "disabled": true,
       "settings": {
         "heading": "loved by two.",
         "rating": "★★★★★ 5.0"
