@@ -11,7 +11,7 @@
             {%- if item.image -%}<img width="80" height="96" src="{{ item.image | image_url: width: 200 }}" alt="{{ item.product.title | escape }}" class="h-24 w-20 rounded-sm object-cover" loading="lazy">{%- endif -%}
             <div class="flex-1">
               <a href="{{ item.url }}" class="font-heavy font-bold">{{ item.product.title }}</a>
-              {%- unless item.product.has_only_default_variant -%}<p class="text-xs text-muted-foreground">{{ item.variant.title }}</p>{%- endunless -%}
+              {%- if item.product.gift_card? -%}{%- if item.properties['Recipient email'] != blank -%}<p class="text-xs text-muted-foreground">Emailed to {{ item.properties['Recipient name'] | default: item.properties['Recipient email'] | escape }}</p>{%- else -%}<p class="text-xs text-muted-foreground">Emailed to you</p>{%- endif -%}{%- elsif item.product.has_only_default_variant == false -%}<p class="text-xs text-muted-foreground">{{ item.variant.title }}</p>{%- endif -%}
               {%- if item.selling_plan_allocation -%}<p class="text-xs text-muted-foreground">{{ item.selling_plan_allocation.selling_plan.name }}</p>{%- endif -%}
               <p class="text-sm text-primary">{{ item.final_line_price | money }}</p>
               <label class="mt-2 inline-flex items-center gap-2 text-sm">Qty <input type="number" min="0" name="updates[]" value="{{ item.quantity }}" class="w-16 rounded-full border border-border bg-card px-3 py-1"></label>
