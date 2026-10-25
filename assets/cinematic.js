@@ -340,19 +340,44 @@
       ctx.globalCompositeOperation = 'destination-out';
       ready = true;
     };
-    const reveal = () => { if (done) return; done = true; setTimeout(() => step('claim'), 300); };
-    const scratch = e => {
-      if (!drawing || done) return;
-      const ctx = canvas.getContext('2d'), b = canvas.getBoundingClientRect();
-      ctx.beginPath(); ctx.arc((e.clientX - b.left) * 2, (e.clientY - b.top) * 2, 36, 0, Math.PI * 2); ctx.fill();
-      const px = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      let clear = 0;
-      for (let i = 3; i < px.length; i += 64) if (px[i] === 0) clear++;
-      if (clear / (px.length / 64) > 0.45) reveal();
+    /* Smooth scratching: continuous strokes from the last point, progress checked at most every 120ms
+       (not on every move), and at 50% the rest of the foil fades out in place. The prize stays where it
+       is and the email form slides in underneath, so nothing jumps or blinks. */
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prizeEl = $('[data-scratch-prize]', sc), claim = $('[data-claim]', sc), skip = $('[data-scratch-skip]', sc);
+    let last = null, checkAt = 0;
+    const reveal = () => {
+      if (done) return; done = true; drawing = false;
+      canvas.style.opacity = '0'; canvas.style.pointerEvents = 'none';
+      skip.style.opacity = '0'; setTimeout(() => { skip.hidden = true; }, 300);
+      if (prizeEl && !still && prizeEl.animate) prizeEl.animate([{transform: 'scale(1)'}, {transform: 'scale(1.08)'}, {transform: 'scale(1)'}], {duration: 600, easing: 'cubic-bezier(.3,1.4,.5,1)', delay: 250});
+      try { navigator.vibrate && navigator.vibrate(20); } catch (_) {}
+      setTimeout(() => {
+        claim.hidden = false;
+        if (!still && claim.animate) claim.animate([{opacity: 0, transform: 'translateY(10px)'}, {opacity: 1, transform: 'none'}], {duration: 450, easing: 'ease-out'});
+      }, still ? 0 : 450);
     };
-    canvas.addEventListener('pointerdown', e => { drawing = true; scratch(e); });
+    const coverage = () => {
+      const ctx = canvas.getContext('2d'), px = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      let clear = 0, total = 0;
+      for (let i = 3; i < px.length; i += 4 * 24) { total++; if (px[i] === 0) clear++; }
+      return clear / total;
+    };
+    const pt = e => { const b = canvas.getBoundingClientRect(); return [(e.clientX - b.left) * 2, (e.clientY - b.top) * 2]; };
+    const scratch = e => {
+      if (!drawing || done || !ready) return;
+      const ctx = canvas.getContext('2d'), [x, y] = pt(e);
+      ctx.lineWidth = 64; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.beginPath();
+      if (last) { ctx.moveTo(last[0], last[1]); ctx.lineTo(x, y); ctx.stroke(); }
+      else { ctx.arc(x, y, 32, 0, Math.PI * 2); ctx.fill(); }
+      last = [x, y];
+      const now = performance.now();
+      if (now > checkAt) { checkAt = now + 120; if (coverage() > 0.5) reveal(); }
+    };
+    canvas.addEventListener('pointerdown', e => { drawing = true; last = null; try { canvas.setPointerCapture(e.pointerId); } catch (_) {} scratch(e); });
     canvas.addEventListener('pointermove', scratch);
-    ['pointerup', 'pointerleave'].forEach(t => canvas.addEventListener(t, () => { drawing = false; }));
+    ['pointerup', 'pointercancel'].forEach(t => canvas.addEventListener(t, () => { drawing = false; last = null; if (!done && ready && coverage() > 0.5) reveal(); }));
     const open = () => {
       modal.hidden = false; document.body.style.overflow = 'hidden';
       try { localStorage.setItem(SEEN, '1'); } catch (_) {}
