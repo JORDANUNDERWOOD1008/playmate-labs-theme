@@ -225,7 +225,8 @@
           "smallprint": "When you spend £49 or more. One per order.",
           "done": "it's yours.",
           "done_sub": "Spend £49 or more and add a box of Snap'd. It's free at checkout.",
-          "done_code": "Use it at checkout. One per order."
+          "done_code": "Use it at checkout. One per order.",
+          "delay": 8
         }
       }
     },
