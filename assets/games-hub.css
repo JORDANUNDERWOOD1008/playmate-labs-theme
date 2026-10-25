@@ -37,16 +37,21 @@ main{flex:1}
 .g-prog span{flex:0 0 96px;height:6px;border-radius:6px;background:rgba(255,251,245,.25);position:relative;overflow:hidden}
 .g-prog span::after{content:"";position:absolute;inset:0;width:calc(var(--p) * 100%);background:var(--ivory);border-radius:6px}
 
-/* locked: Nude Stack'd until the box code is scanned */
-.g-lock{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:12px 14px;border:1.5px dashed rgba(114,16,31,.35);border-radius:6px}
+/* Nude Stack'd: burgundy like the Sense Lab, locked until the box code is scanned */
+.g-nude{background:var(--bur);color:var(--ivory)}
+.g-nude .g-t,.g-nude .g-kick span{color:var(--ivory)}
+.g-nude .g-kick span{border-color:rgba(255,251,245,.5)}
+.g-lock{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:12px 14px;border:1.5px dashed rgba(255,251,245,.45);border-radius:6px}
 .g-lock p{margin:0!important}
 .g-lock .g-ico{flex:0 0 22px;margin-top:3px}
-.g-small-p{font-size:14px;color:var(--muted)}
+.g-small-p{font-size:14px;color:rgba(255,251,245,.75)}
+.g-nude .g-link{color:var(--ivory)}
 
-/* coming soon: Cuff'd, in its own green */
-.g-soon{background:transparent;border:1.5px solid rgba(94,95,72,.45)}
-.g-soon .g-t,.g-soon .g-kick span{color:var(--cuffd)}
-.g-soon p{color:var(--muted)}
+/* coming soon: Cuff'd, in its own green with cream text */
+.g-soon{background:var(--cuffd);color:var(--cream)}
+.g-soon .g-t,.g-soon .g-kick span{color:var(--cream)}
+.g-soon .g-kick span{border-color:rgba(247,239,226,.5)}
+.g-soon p{color:rgba(247,239,226,.85)}
 
 .g-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:18px}
 .g-btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:1.5px solid var(--bur);background:var(--bur);color:var(--ivory);font-size:13px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;cursor:pointer}

@@ -369,7 +369,7 @@
           <span class="p5-day-s" aria-label="${done ? 'played' : st.open ? 'ready to play' : 'locked'}">${done ? '✓' : st.open ? '→' : ''}</span></button></li>`;
       }).join('')}</ol>
       ${MODE === 'duo' ? boardHTML() : ''}
-      <p class="p5-switch"><a class="p5-link" href="/pages/games">more games in the play room</a></p>
+      <p class="p5-switch"><a class="p5-link" href="/pages/play-room">more games in the play room</a></p>
       <p class="p5-switch">Wrong version? ${Object.keys(MODES).filter(k => k !== MODE).map(k => `<button type="button" class="p5-link" data-mode="${k}">${MODES[k].label}</button>`).join(' or ')}</p>
     </section>`;
     app.querySelectorAll('[data-day]').forEach(b => b.onclick = () => {

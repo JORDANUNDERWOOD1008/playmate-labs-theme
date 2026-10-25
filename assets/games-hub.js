@@ -43,13 +43,13 @@
         ${s ? `<p class="g-prog"><span style="--p:${Math.min(5, s.done) / 5}"></span>${s.done >= 5 ? 'all five done' : `${s.done} of 5 done`}, ${esc(LABEL[s.mode] || '')}</p>` : ''}
         <div class="g-row"><a class="g-btn g-light" href="${esc(CFG.senseLab)}">${senseBtn}</a>${s ? '' : `<a class="g-link g-link-l" href="${esc(CFG.senseSignup)}">get it by email instead</a>`}</div>
       </article>
-      <article class="g-card${open ? '' : ' is-locked'}">
+      <article class="g-card g-nude${open ? '' : ' is-locked'}">
         <p class="g-kick"><span>${open ? 'unlocked' : 'in the box'}</span><span>for two</span></p>
         <h2 class="g-t">nude stack'd.</h2>
         <p>The digital deck: the rules and every prompt card, Mild to Wild, in six languages.</p>
-        ${open ? `<div class="g-row"><a class="g-btn" href="${esc(CFG.nudePlay)}?k=${esc(G.nude)}">play</a></div>`
+        ${open ? `<div class="g-row"><a class="g-btn g-light" href="${esc(CFG.nudePlay)}?k=${esc(G.nude)}">play</a></div>`
           : `<div class="g-lock">${lock}<p>Scan the QR code inside your box to unlock it on this phone.</p></div>
-             <div class="g-row"><button type="button" class="g-btn" data-scan>${qr} scan the code</button></div>
+             <div class="g-row"><button type="button" class="g-btn g-light" data-scan>${qr} scan the code</button></div>
              <p class="g-small-p">Don't have it yet? <a class="g-link" href="${esc(CFG.nudeShop)}">get nude stack'd</a></p>`}
       </article>
       <article class="g-card g-soon">
