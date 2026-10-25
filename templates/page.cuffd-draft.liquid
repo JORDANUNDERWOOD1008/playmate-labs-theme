@@ -1,0 +1,26 @@
+{%- layout none -%}
+{%- comment -%}
+  Cuff'd (DRAFT): the digital challenge game for Cuff'd. Hidden page /pages/cuffd-draft, noindex, not linked
+  from anywhere. Source: ~/Desktop/Claude/cuffd-app (edit there, then build.py installs it here).
+{%- endcomment -%}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#4D4F33">
+  <title>Cuff'd (draft) | Play by Playmate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Homemade+Apple&family=Figtree:wght@400;900&display=swap">
+  {{ 'cuffd-app.css' | asset_url | stylesheet_tag }}
+</head>
+<body>
+  <header class="cf-bar"><a href="/pages/play-room" aria-label="playmate, back to the play room">playmate?</a></header>
+  <main class="cf-wrap" id="cf-app"><noscript>Cuff'd needs JavaScript switched on.</noscript></main>
+  <footer class="cf-foot">Playmate Labs · designed in the UK · 18+</footer>
+  <script src="{{ 'cuffd-cards.js' | asset_url }}" defer></script>
+  <script src="{{ 'cuffd-app.js' | asset_url }}" defer></script>
+</body>
+</html>

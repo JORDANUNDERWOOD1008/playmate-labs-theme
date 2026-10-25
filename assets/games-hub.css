@@ -1,5 +1,5 @@
 /* The games room. Same palette and type as the Sense Lab and the cinematic site. */
-:root{--cream:#F7EFE2;--panel:#EEE5D8;--bur:#72101F;--bur-d:#5a0c18;--ink:#281C18;--muted:#7A6A60;--line:rgba(40,28,24,.14);--ivory:#FFFBF5;--cuffd:#5E5F48}
+:root{--cream:#F7EFE2;--panel:#EEE5D8;--bur:#72101F;--bur-d:#5a0c18;--ink:#281C18;--muted:#7A6A60;--line:rgba(40,28,24,.14);--ivory:#FFFBF5;--cuffd:#4D4F33}
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--cream);color:var(--ink);font:300 17px/1.55 "Jost",system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
