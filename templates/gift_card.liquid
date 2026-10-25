@@ -1,0 +1,73 @@
+{%- layout none -%}
+{%- comment -%}
+  The page a gift card recipient opens from Shopify's gift card email: the code, the balance and a link to shop.
+{%- endcomment -%}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#72101F">
+  <title>Your Playmate gift card</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;900&family=Jost:wght@300;400;600&family=Homemade+Apple&display=swap">
+  {{ content_for_header }}
+  <style>
+    :root{--bur:#72101F;--cream:#FCF5EC;--ink:#2A0A10}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:var(--cream);color:var(--bur);font:300 16px/1.6 "Jost",sans-serif;display:flex;flex-direction:column;align-items:center;padding:40px 16px}
+    .logo{height:28px;width:auto}
+    .card{margin:32px 0 24px;width:100%;max-width:420px;aspect-ratio:1.6;border-radius:18px;background:var(--bur);color:var(--cream);padding:24px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 18px 40px rgba(114,16,31,.25)}
+    .card small{font-size:11px;letter-spacing:.25em;text-transform:uppercase;opacity:.8}
+    .card .amt{font:900 52px/1 "Figtree",sans-serif}
+    .note{font-family:"Homemade Apple",cursive;font-size:20px;transform:rotate(-3deg);margin:0 0 8px}
+    h1{font:900 34px/1.1 "Figtree",sans-serif;margin:0;text-align:center}
+    p{max-width:30em;text-align:center}
+    .code{margin:8px 0 4px;font:600 22px "Jost",sans-serif;letter-spacing:.12em;padding:14px 20px;border:1.5px dashed var(--bur);border-radius:12px;background:#fff;user-select:all}
+    .row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+    .btn{display:inline-block;border-radius:999px;padding:15px 28px;font:600 11px "Jost",sans-serif;letter-spacing:.25em;text-transform:uppercase;text-decoration:none;border:1.5px solid var(--bur);background:var(--bur);color:var(--cream);cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--bur)}
+    .muted{font-size:13px;opacity:.75}
+    .expired{color:#fff;background:var(--bur);padding:6px 14px;border-radius:999px;font-size:12px;letter-spacing:.15em;text-transform:uppercase}
+    @media print{.row{display:none}}
+  </style>
+</head>
+<body>
+  <a href="{{ routes.root_url }}"><img class="logo" src="{{ 'pm-logo.png' | asset_url }}" alt="Playmate" width="1024" height="190"></a>
+
+  <div class="card">
+    <small>Playmate gift card</small>
+    <div class="amt">{{ gift_card.initial_value | money_without_trailing_zeros }}</div>
+    <small>for {{ gift_card.recipient.name | default: gift_card.customer.first_name | default: 'you two' }}</small>
+  </div>
+
+  {%- if gift_card.expired or gift_card.enabled == false -%}
+    <span class="expired">{% if gift_card.expired %}Expired{% else %}Disabled{% endif %}</span>
+  {%- endif -%}
+
+  {%- if gift_card.message != blank -%}
+    <p class="note">{{ gift_card.message | escape }}</p>
+    {%- if gift_card.customer -%}<p class="muted">from {{ gift_card.customer.first_name | escape }}</p>{%- endif -%}
+  {%- endif -%}
+
+  <h1>Your date night is on us.</h1>
+  <p>Use this code at checkout on playmatelabs.com.{% if gift_card.balance != gift_card.initial_value %} You have {{ gift_card.balance | money }} left.{% endif %}{% if gift_card.expires_on %} Use it by {{ gift_card.expires_on | date: '%-d %B %Y' }}.{% endif %}</p>
+
+  <div class="code" id="code">{{ gift_card.code | format_code }}</div>
+  <div class="row">
+    <button type="button" class="btn ghost" id="copy">Copy code</button>
+    <a class="btn" href="{{ routes.all_products_collection_url }}">Start shopping</a>
+  </div>
+  {%- if gift_card.pass_url -%}
+    <p><a href="{{ gift_card.pass_url }}"><img src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}" width="120" height="40" alt="Add to Apple Wallet"></a></p>
+  {%- endif -%}
+  <script>
+    document.getElementById('copy').addEventListener('click', function () {
+      var c = document.getElementById('code').textContent.trim(), b = this;
+      (navigator.clipboard ? navigator.clipboard.writeText(c) : Promise.reject()).then(function () { b.textContent = 'Copied'; }, function () { b.textContent = 'Select and copy above'; });
+    });
+  </script>
+</body>
+</html>

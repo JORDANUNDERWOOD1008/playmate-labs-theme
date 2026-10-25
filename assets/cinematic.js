@@ -139,11 +139,21 @@
       const item = {id: Number(idInput.value), quantity: qty};
       const plan = form.querySelector('input[name="selling_plan"]:checked')?.value;
       if (plan) item.selling_plan = Number(plan);
+      const gt = form.querySelector('[data-gift-toggle]');
+      if (gt && gt.checked) {
+        const props = {};
+        form.querySelectorAll('[name^="properties["]').forEach(f => { if (f.value.trim()) props[f.name.slice(11, -1)] = f.value.trim(); });
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(props['Recipient email'] || '')) { err.textContent = 'Add their email so we know where to send it.'; err.hidden = false; return; }
+        props.__shopify_send_gift_card_to_recipient = 'on';
+        item.properties = props;
+      }
       addBtn.disabled = sticky.disabled = true;
       try { await addToCart([item]); } catch (e) { err.textContent = e.message; err.hidden = false; }
       render();
     };
     form.addEventListener('submit', e => { e.preventDefault(); submit(); });
+    const gt = form.querySelector('[data-gift-toggle]');
+    if (gt) gt.addEventListener('change', () => { form.querySelector('[data-gift-fields]').hidden = !gt.checked; });
     sticky.addEventListener('click', submit);
     render();
   }
