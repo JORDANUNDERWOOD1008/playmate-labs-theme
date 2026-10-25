@@ -304,3 +304,23 @@ body.p5-dim .p5-timer-n{color:var(--cream)}
 .p5-day.is-locked .p5-day-n{background:transparent;box-shadow:inset 0 0 0 1.5px var(--line);color:var(--muted)}
 .p5-lock{padding-top:60px}
 .p5-lock .p5-lede{margin-inline:auto}
+/* together / apart and challenge pickers */
+.p5-gut.two{grid-template-columns:1fr 1fr}
+.p5-gut-b small{display:block;font:300 13px/1.35 "Jost",sans-serif;color:var(--muted);margin-top:6px}
+.p5-gut-b.is-def{box-shadow:inset 0 0 0 1.5px var(--bur)}
+/* photo swap */
+.p5-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 0}
+.p5-pair figure{margin:0}
+.p5-pair img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;display:block;box-shadow:0 6px 16px rgba(40,28,24,.12)}
+.p5-pair figcaption{font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--bur);margin-top:6px}
+.p5-pair.sm{max-width:300px;margin-inline:auto}
+.p5-pair.one{grid-template-columns:1fr;max-width:200px}
+/* the backwards round */
+.p5-mic{width:96px;height:96px;border-radius:50%;border:0;background:var(--bur);margin:18px auto 6px;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 24px rgba(114,16,31,.3);transition:transform .15s}
+.p5-mic span{width:30px;height:30px;border-radius:50%;background:var(--ivory)}
+.p5-mic.on{animation:p5rec 1s ease-in-out infinite}
+.p5-mic.on span{border-radius:6px;width:26px;height:26px}
+.p5-mic.play span{width:0;height:0;border-radius:0;background:none;border-left:28px solid var(--ivory);border-top:17px solid transparent;border-bottom:17px solid transparent;margin-left:8px}
+.p5-mic:active{transform:scale(.95)}
+@keyframes p5rec{50%{box-shadow:0 0 0 14px rgba(184,50,42,.18)}}
+.p5-court-q.sm{font-size:16px;margin:14px 0 0;text-align:center}
