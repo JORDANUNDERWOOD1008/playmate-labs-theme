@@ -3,7 +3,8 @@
   custom namespace overrides each field when it is filled in (card_tag, card_desc, intro, and
   glance / in_box / how_to as one line per item).
   Usage: {% render 'pm-copy', product: product, field: 'tag' %}
-  Fields: tag, desc, intro, glance, in_box, how_to (lists render as <li>), cover, hover, extra_images (asset names), category
+  Fields: tag, desc, intro, glance, in_box, how_to (lists render as <li>), cover, hover, extra_images (asset names), category,
+  faq (raw 'Question::Answer|Question::Answer', rendered on the product page and as FAQPage schema)
   cover = a theme asset shown as the card's main photo instead of the product's featured image (the featured image then becomes the rollover).
 {%- endcomment -%}
 {%- liquid
@@ -17,6 +18,7 @@
   assign hover = ''
   assign cover = ''
   assign extra = ''
+  assign faq = ''
   case h
     when 'nude-stacked'
       assign tag = 'New in'
@@ -34,6 +36,7 @@
       assign glance = 'Three hearts per box.|Vanilla · Hot honey · Black raspberry.|Made in the UK.|Arrives in discreet packaging.'
       assign hover = ''
       assign extra = ''
+      assign faq = "What is Snap'd?::Three milk chocolate hearts in vanilla, hot honey and black raspberry, made in the UK and designed to be snapped in half and shared. Each heart contains Liboost® Damiana extract, zinc, vitamin B6 and selenium, and Snap'd is classified as a food supplement.|How do you eat them?::Snap one heart in half and share it. Half a heart each is one serving, so one box covers three evenings for two. Do not exceed the stated dose.|What's in them?::Colombian milk chocolate (41% cocoa solids) with Liboost® Damiana extract, zinc, vitamin B6 and selenium. The full ingredients and the amounts per serving are under Ingredients and allergens on this page.|Are they vegan? What about allergens?::They are suitable for vegetarians but not vegans. They contain milk and soya, and may contain traces of nuts.|Who shouldn't eat them?::Not recommended if you are pregnant, trying for a baby or breastfeeding, or for anyone under 18. If you take medication or have a medical condition, check with your GP or pharmacist first.|Do they make a good gift?::Yes. Snap'd comes gift-boxed and ships in plain packaging, so nothing on the outside of the parcel gives it away.|How long does delivery take?::Standard UK delivery takes 2 to 4 working days for orders placed before 6pm, and it's free on orders from £49 (£5.99 below that). Express next day delivery is £7.99 if you order by 2pm."
     when 'aphrodisiac-hot-chocolate-spoons'
       assign tag = '4 pack'
       assign desc = 'Aphrodisiac hot chocolate on a spoon.'
@@ -78,6 +81,7 @@
   {%- when 'hover' -%}{% if hover != blank %}{{ hover | asset_url }}{% endif %}
   {%- when 'cover' -%}{% if cover != blank %}{{ cover | asset_url }}{% endif %}
   {%- when 'extra_images' -%}{{ extra }}
+  {%- when 'faq' -%}{{ faq }}
   {%- when 'category' -%}{% if product.type == 'Games' or product.tags contains 'game' %}games{% else %}chocolate{% endif %}
   {%- when 'glance', 'in_box', 'how_to' -%}
     {%- case field -%}{%- when 'glance' -%}{%- assign list = glance -%}{%- when 'in_box' -%}{%- assign list = in_box -%}{%- else -%}{%- assign list = how_to -%}{%- endcase -%}

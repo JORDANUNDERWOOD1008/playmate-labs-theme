@@ -10,6 +10,7 @@
 {%- capture in_box -%}{% render 'pm-copy', product: product, field: 'in_box' %}{%- endcapture -%}
 {%- capture how_to -%}{% render 'pm-copy', product: product, field: 'how_to' %}{%- endcapture -%}
 {%- capture extra -%}{% render 'pm-copy', product: product, field: 'extra_images' %}{%- endcapture -%}
+{%- capture faq -%}{% render 'pm-copy', product: product, field: 'faq' %}{%- endcapture -%}{%- assign faq = faq | strip -%}
 {%- assign extra = extra | strip | split: '|' -%}
 <div class="mx-auto max-w-6xl px-5 pb-24 pt-4 md:px-6 md:pb-0 md:pt-8" data-product-page>
   <p class="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
@@ -108,6 +109,15 @@
         {%- if glance != blank -%}
           <details open class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-heavy font-bold">At a glance<span class="transition group-open:rotate-45">+</span></summary>
             <ul class="mt-3 list-disc space-y-2 pl-5 text-sm font-light text-muted-foreground">{{ glance }}</ul></details>
+        {%- endif -%}
+        {%- if faq != blank -%}
+          <details class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-heavy font-bold">Questions<span class="transition group-open:rotate-45">+</span></summary>
+            <dl class="mt-3 space-y-4 text-sm">
+              {%- assign qs = faq | split: '|' -%}
+              {%- for qa in qs -%}{%- assign parts = qa | split: '::' -%}
+                <div><dt class="font-bold">{{ parts[0] | strip }}</dt><dd class="mt-1 font-light text-muted-foreground">{{ parts[1] | strip }}</dd></div>
+              {%- endfor -%}
+            </dl></details>
         {%- endif -%}
         {%- if in_box != blank -%}
           <details class="group py-4"><summary class="flex cursor-pointer list-none justify-between font-heavy font-bold">What's in the box<span class="transition group-open:rotate-45">+</span></summary>
