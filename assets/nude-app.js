@@ -74,7 +74,7 @@
   // Signed in on a new device: the same confirmation, then play.
   function viewGate() {
     var chips = LANGS.map(function (l) { return '<button class="chip" data-setlang="' + l[0] + '" aria-pressed="' + (l[0] === state.lang) + '">' + esc(l[1]) + '</button>'; }).join('');
-    var pend = store.get('pending', {});
+    var pend = store.get('pending', null) || {};
     var foot = PREVIEW ? 'Trade preview: no sign-in needed.' : USER ? esc(t('signedInAs', { email: USER })) : esc(t('codeNote'));
     return '<main class="screen screen--red gate">' +
       '<div class="lockup"><span class="lockup__nude">Nude.</span><span class="lockup__stacked">STACKED</span></div>' +
