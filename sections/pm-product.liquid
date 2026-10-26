@@ -150,6 +150,17 @@
     </div>
     <button type="button" data-sticky-add {% unless current.available %}disabled{% endunless %} class="shrink-0 rounded-full bg-primary px-6 py-3.5 text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground disabled:opacity-40">{% if current.available %}Add to cart{% else %}Sold out{% endif %}</button>
   </div>
+  {%- comment -%} Explainer video from the custom.explainer_video metafield (a video in Shopify Files). Click to play; nothing autoplays. {%- endcomment -%}
+  {%- assign explainer = product.metafields.custom.explainer_video.value -%}
+  {%- if explainer != blank -%}
+  <section class="pt-16 md:pt-24" aria-labelledby="explainer-title">
+    <h2 id="explainer-title" class="font-heavy text-3xl font-black text-primary">{{ section.settings.video_heading }}</h2>
+    {% render 'pm-note', text: section.settings.video_note, class: 'mt-1 -rotate-1 text-lg' %}
+    <div class="mt-8 aspect-video overflow-hidden rounded-sm bg-black">
+      {{ explainer | video_tag: controls: true, playsinline: true, preload: 'metadata', image_size: '1600x', class: 'h-full w-full object-contain' }}
+    </div>
+  </section>
+  {%- endif -%}
   <section class="pt-16 md:pt-24">
     <h2 class="font-heavy text-3xl font-black text-primary">{{ section.settings.related_heading }}</h2>
     {% render 'pm-note', text: section.settings.related_note, class: 'mt-1 -rotate-1 text-lg' %}
@@ -169,6 +180,8 @@
     { "type": "text", "id": "note", "label": "Note under the price", "default": "you'll want two." },
     { "type": "textarea", "id": "perks", "label": "Perks, one per line", "default": "Free UK from £49\nSecure checkout\n30-day returns\nEco packaging" },
     { "type": "textarea", "id": "delivery", "label": "Delivery & returns, one per line", "default": "Free UK delivery from £49.\nStandard £5.99 (2–4 working days, order by 6pm) or Express next day £7.99.\n30-day satisfaction guarantee: ask for a return within 30 days of delivery." },
+    { "type": "text", "id": "video_heading", "label": "Video heading (shows when the product has an explainer video)", "default": "see how it plays." },
+    { "type": "text", "id": "video_note", "label": "Video note", "default": "under a minute." },
     { "type": "text", "id": "related_heading", "label": "Related heading", "default": "you might also like." },
     { "type": "text", "id": "related_note", "label": "Related note", "default": "trust us." }
   ]
