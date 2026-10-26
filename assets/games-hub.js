@@ -31,7 +31,25 @@
   const lock = '<svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
   const qr = '<svg class="g-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>';
 
+  /* trade preview (/pages/play-room-preview): both games open, no QR, no sign-in */
+  function renderPreview() {
+    cards.innerHTML = `
+      <article class="g-card g-nude">
+        <p class="g-kick"><span>available now</span><span>for two</span></p>
+        <h2 class="g-t">nude stack'd.</h2>
+        <p>The stacking game for couples. Pull a block, match its symbol to a card category, choose Mild, Spicy or Wild. The digital deck holds the rules and all 162 prompts in six languages.</p>
+        <div class="g-row"><a class="g-btn g-light" href="${esc(CFG.nudePlay)}">play</a></div>
+      </article>
+      <article class="g-card g-soon">
+        <p class="g-kick"><span>prototype</span><span>launching March 2027</span></p>
+        <h2 class="g-t">cuff'd.</h2>
+        <p>Cuffed together until you earn the keys. Challenges, complications and forfeits for two, as a team or head to head. This is the working prototype of the card game.</p>
+        <div class="g-row"><a class="g-btn g-light" href="${esc(CFG.cuffdPlay)}">play the prototype</a></div>
+      </article>`;
+  }
+
   function render() {
+    if (CFG.preview) return renderPreview();
     const s = senseState(), open = !!G.nude;
     const senseBtn = !s ? 'start the five nights' : s.done >= 5 ? 'play it again' : `carry on: day ${s.done + 1}`;
     cards.innerHTML = `

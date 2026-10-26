@@ -1,0 +1,57 @@
+{%- layout none -%}
+{%- comment -%}
+  TRADE PREVIEW for buyers (hidden page /pages/play-room-preview): Nude Stack'd and Cuff'd, both open,
+  no QR and no sign-in. Built from page.games.liquid by games-hub/build.py.
+  Play by Playmate (the games room): one menu for every Playmate web game (games-hub.js / games-hub.css).
+  Hidden page /pages/play-room (and, with template page.games-preview, the trade preview). The Sense Lab is open to everyone; Nude Stack'd unlocks by scanning
+  the QR code in the box (or arriving from it with ?k=); Cuff'd is coming soon.
+  Source: ~/Desktop/Claude/games-hub (edit there, then build.py installs it here).
+{%- endcomment -%}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#F7EFE2">
+  <title>The play room (trade preview) | Play by Playmate</title>
+  <meta name="description" content="The play room: every Playmate game in one place. The Sense Lab, Nude Stack'd and what's coming next.">
+  {%- if settings.favicon != blank -%}<link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">{%- endif -%}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Homemade+Apple&family=Figtree:wght@400;900&display=swap">
+  {{ 'games-hub.css' | asset_url | stylesheet_tag }}
+  {%- assign nude = all_products['nude-stacked'] -%}
+  <script>
+    window.PMG = {
+      senseLab: '/pages/5-day-play',
+      senseSignup: '/pages/5-day-experience',
+      preview: true,
+      nudePlay: '/pages/nude-preview',
+      cuffdPlay: '/pages/cuffd-draft',
+      nudeShop: {{ nude.url | default: '/products/nude-stacked' | json }},
+      qrLib: {{ 'games-hub-jsqr.js' | asset_url | json }}
+    };
+  </script>
+</head>
+<body>
+  <header class="g-bar">
+    <a class="g-logo" href="{{ routes.root_url }}">playmate labs</a>
+    <span class="g-small">the play room</span>
+  </header>
+  <main id="g-app" class="g-wrap">
+    <h1 class="g-brand"><img src="{{ 'games-play-logo.png' | asset_url }}" width="900" height="510" alt="play by playmate"></h1>
+    <p class="g-hand g-tilt g-room">the play room.</p>
+    <p class="g-lede">A preview of our games for two. No sign-in needed, just tap play.</p>
+    <div class="g-cards" id="g-cards"></div>
+  </main>
+  <dialog class="g-scan" id="g-scan" aria-labelledby="g-scan-t">
+    <p class="g-label" id="g-scan-t">scan the code in your box</p>
+    <div class="g-cam"><video id="g-video" playsinline muted></video><span class="g-frame" aria-hidden="true"></span></div>
+    <p class="g-muted" id="g-scan-msg">Point the camera at the QR code in your box.</p>
+    <button type="button" class="g-btn g-ghost" data-close>cancel</button>
+  </dialog>
+  <footer class="g-foot"><b>come closer.</b>Playmate Labs · designed in the UK · 18+</footer>
+  <script src="{{ 'games-hub.js' | asset_url }}" defer></script>
+</body>
+</html>

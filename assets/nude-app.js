@@ -12,7 +12,8 @@
     ['ko', '한국어'], ['zh-CN', '中文'], ['ar', 'العربية'], ['hi', 'हिन्दी']
   ];
   var MODE = CFG.mode || 'game';           // 'game' (sign-in needed) or 'rules' (open, no cards)
-  var USER = window.NUDE_USER || null;     // customer email, only set by Liquid when signed in
+  var PREVIEW = !!CFG.preview;            // trade preview page: no sign-in, no lead capture
+  var USER = window.NUDE_USER || (PREVIEW ? 'preview' : null);     // customer email, only set by Liquid when signed in
   var CARDS = window.NUDE_CARDS || {};     // card text, only rendered by Liquid when signed in
   var app = document.getElementById('app');
   var C = null;                            // loaded content for the current language
@@ -74,14 +75,14 @@
   function viewGate() {
     var chips = LANGS.map(function (l) { return '<button class="chip" data-setlang="' + l[0] + '" aria-pressed="' + (l[0] === state.lang) + '">' + esc(l[1]) + '</button>'; }).join('');
     var pend = store.get('pending', {});
-    var foot = USER ? esc(t('signedInAs', { email: USER })) : esc(t('codeNote'));
+    var foot = PREVIEW ? 'Trade preview: no sign-in needed.' : USER ? esc(t('signedInAs', { email: USER })) : esc(t('codeNote'));
     return '<main class="screen screen--red gate">' +
       '<div class="lockup"><span class="lockup__nude">Nude.</span><span class="lockup__stacked">STACKED</span></div>' +
       '<h1>' + esc(t('gateTitle')) + '</h1><p>' + esc(t('gateBody')) + (USER ? '' : ' ' + esc(t('gateLogin'))) + '</p>' +
       '<div class="gate__langs" role="group" aria-label="' + esc(t('language')) + '">' + chips + '</div>' +
       '<div class="ticks">' +
       '<label class="tick"><input type="checkbox" id="age"' + (pend.adult ? ' checked' : '') + '><span>' + esc(t('gateYes')) + '</span></label>' +
-      '<label class="tick tick--soft"><input type="checkbox" id="optin"' + (pend.optin ? ' checked' : '') + '><span>' + esc(t('optin')) + '</span></label>' +
+      (PREVIEW ? '' : '<label class="tick tick--soft"><input type="checkbox" id="optin"' + (pend.optin ? ' checked' : '') + '><span>' + esc(t('optin')) + '</span></label>') +
       '<p class="gate__err" id="err" role="alert"></p></div>' +
       '<div class="home__actions"><button class="btn btn--white" data-act="' + (USER ? 'confirm' : 'signin') + '">' + esc(t(USER ? 'startPlaying' : 'continueEmail')) + '</button>' +
       '<p class="gate__small">' + foot + ' <a href="' + esc(CFG.privacy) + '">' + esc(t('privacy')) + '</a></p>' +
@@ -96,7 +97,7 @@
 
   // Lead capture in Klaviyo (public client API). Marketing consent is separate and optional.
   function capture(p) {
-    if (!CFG.klaviyo || !USER) return;
+    if (PREVIEW || !CFG.klaviyo || !USER) return;
     var base = 'https://a.klaviyo.com/client/', q = '/?company_id=' + CFG.klaviyo;
     var h = { 'Content-Type': 'application/vnd.api+json', revision: '2025-01-15' };
     var prof = { type: 'profile', attributes: { email: USER } };
@@ -276,7 +277,7 @@
     if (b.hasAttribute('data-cat')) { deal(b.getAttribute('data-cat')); return; }
     if (b.hasAttribute('data-setlang')) {
       var lang = b.getAttribute('data-setlang'), sh = document.querySelector('.sheet-wrap'), ag = document.getElementById('age');
-      if (ag) store.set('pending', { adult: ag.checked, optin: document.getElementById('optin').checked, at: new Date().toISOString() });
+      if (ag) store.set('pending', { adult: ag.checked, optin: !!(document.getElementById('optin') || {}).checked, at: new Date().toISOString() });
       setLang(lang).then(function () { if (sh) sh.remove(); render(); });
       return;
     }
