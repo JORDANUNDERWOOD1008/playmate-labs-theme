@@ -16,7 +16,7 @@
       "type": "pm-press-page",
       "settings": {
         "founder_url": "/pages/jordan-underwood",
-        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit-v6.zip"
+        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit-v7.zip"
       },
       "blocks": {
         "p1": {
@@ -523,7 +523,7 @@
         "r27": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/PlaymateLabs_Snapd_sharing-champagne.jpg",
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_sharing-champagne-v2.jpg",
             "caption": "Sharing Snap'd over champagne",
             "product": "snapd",
             "shot": "inuse"
