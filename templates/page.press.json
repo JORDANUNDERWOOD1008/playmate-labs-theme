@@ -16,7 +16,7 @@
       "type": "pm-press-page",
       "settings": {
         "founder_url": "/pages/jordan-underwood",
-        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit-v4.zip"
+        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit-v5.zip"
       },
       "blocks": {
         "p1": {
@@ -343,7 +343,7 @@
         "r07": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_tower-closeup.jpg",
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_tower-closeup-red.jpg",
             "caption": "Nude Stack'd tower and bag, close up",
             "product": "nude",
             "shot": "inuse"
