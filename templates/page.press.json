@@ -16,7 +16,7 @@
       "type": "pm-press-page",
       "settings": {
         "founder_url": "/pages/jordan-underwood",
-        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/Playmate-Labs-press-images.zip"
+        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-NudeStackd-press-images.zip"
       },
       "blocks": {
         "p1": {
@@ -40,14 +40,14 @@
         "i1": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/Nude-Stackd-box-front-white.jpg",
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_box-front-white.jpg",
             "caption": "Nude Stack'd gift box, front"
           }
         },
         "i2": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/Nude-Stackd-box-angle-white.jpg",
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_box-angle-white.jpg",
             "caption": "Nude Stack'd gift box, angle"
           }
         },
@@ -61,15 +61,43 @@
         "i4": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/Nude-Stackd-contents-flatlay.jpg",
-            "caption": "What's in the box"
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_box-front-white-2.jpg",
+            "caption": "Nude Stack'd gift box, standing"
           }
         },
         "i5": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/Nude-Stackd-contents-flatlay-2.jpg",
-            "caption": "What's in the box, alternative"
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_box-front-cream.jpg",
+            "caption": "Nude Stack'd gift box on cream"
+          }
+        },
+        "i6": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_hands-mid-pull.jpg",
+            "caption": "Pulling a block from the Nude Stack'd tower"
+          }
+        },
+        "i7": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_cutout-box-front.png",
+            "caption": "Cut-out (transparent PNG): Nude Stack'd box, front"
+          }
+        },
+        "i8": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_cutout-box-angle.png",
+            "caption": "Cut-out (transparent PNG): Nude Stack'd box, angle"
+          }
+        },
+        "i9": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_cutout-tower.png",
+            "caption": "Cut-out (transparent PNG): built Nude Stack'd tower"
           }
         },
         "t1": {
@@ -150,6 +178,10 @@
         "i3",
         "i4",
         "i5",
+        "i6",
+        "i7",
+        "i8",
+        "i9",
         "t1",
         "t2",
         "t3",
