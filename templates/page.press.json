@@ -16,7 +16,7 @@
       "type": "pm-press-page",
       "settings": {
         "founder_url": "/pages/jordan-underwood",
-        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-NudeStackd-press-images.zip"
+        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-images.zip"
       },
       "blocks": {
         "p1": {
@@ -168,6 +168,34 @@
             "url": "https://thedieline.com/unfound-studio-gets-sophisticated-and-sexy-for-aphrodisiac-chocolate-brand/",
             "date": "August 2024"
           }
+        },
+        "s1": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_box-front-white.jpg",
+            "caption": "Snap'd gift box, front"
+          }
+        },
+        "s2": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_box-angle-white.jpg",
+            "caption": "Snap'd gift box, angle"
+          }
+        },
+        "s3": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_box-above-cream.jpg",
+            "caption": "Snap'd gift box, from above"
+          }
+        },
+        "s4": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_heart-snapped-hands.jpg",
+            "caption": "Snapping a Snap'd heart in half"
+          }
         }
       },
       "block_order": [
@@ -182,6 +210,10 @@
         "i7",
         "i8",
         "i9",
+        "s1",
+        "s2",
+        "s3",
+        "s4",
         "t1",
         "t2",
         "t3",
