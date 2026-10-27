@@ -16,7 +16,7 @@
       "type": "pm-press-page",
       "settings": {
         "founder_url": "/pages/jordan-underwood",
-        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit-v7.zip"
+        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit-v8.zip"
       },
       "blocks": {
         "p1": {
@@ -546,6 +546,114 @@
             "product": "both",
             "shot": "inuse"
           }
+        },
+        "q00": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_box-front-white-3.jpg",
+            "caption": "Nude Stack'd gift box, front",
+            "product": "nude",
+            "shot": "packshot"
+          }
+        },
+        "q01": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_card-backs.jpg",
+            "caption": "Nude Stack'd card backs, one per symbol",
+            "product": "nude",
+            "shot": "contents"
+          }
+        },
+        "q02": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_lips-block-smile.jpg",
+            "caption": "A lips block, held like a moustache",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "q03": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_gift-basket.jpg",
+            "caption": "Nude Stack'd bag, cards and a block, gift-wrapped",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "q04": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_tower-pull-2.jpg",
+            "caption": "Pulling a block from a tall tower",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "q05": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_tower-pull-blue.jpg",
+            "caption": "Pulling a lips block",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "q06": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_bolt-on-head.jpg",
+            "caption": "A bolt block, balanced on a head",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "q07": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_play-portrait.jpg",
+            "caption": "Playing with a Snap'd heart",
+            "product": "snapd",
+            "shot": "inuse"
+          }
+        },
+        "q08": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Both_dinner-party.jpg",
+            "caption": "Nude Stack'd and Snap'd at a dinner party",
+            "product": "both",
+            "shot": "inuse"
+          }
+        },
+        "q09": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Both_couple-snapping.jpg",
+            "caption": "A couple snapping a Snap'd heart, lips block on the table",
+            "product": "both",
+            "shot": "inuse"
+          }
+        },
+        "q10": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Both_couch.jpg",
+            "caption": "A night in with Nude Stack'd and Snap'd",
+            "product": "both",
+            "shot": "inuse"
+          }
+        },
+        "q11": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Both_domino.jpg",
+            "caption": "Nude Stack'd blocks lined up to a Snap'd heart",
+            "product": "both",
+            "shot": "inuse"
+          }
         }
       },
       "block_order": [
@@ -600,6 +708,18 @@
         "r27",
         "r28",
         "r29",
+        "q00",
+        "q01",
+        "q02",
+        "q03",
+        "q04",
+        "q05",
+        "q06",
+        "q07",
+        "q08",
+        "q09",
+        "q10",
+        "q11",
         "t1",
         "t2",
         "t3",
