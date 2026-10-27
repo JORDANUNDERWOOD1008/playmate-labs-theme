@@ -16,7 +16,7 @@
       "type": "pm-press-page",
       "settings": {
         "founder_url": "/pages/jordan-underwood",
-        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit.zip"
+        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit-v2.zip"
       },
       "blocks": {
         "p1": {
@@ -267,6 +267,15 @@
             "product": "snapd",
             "shot": "inuse"
           }
+        },
+        "s7": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_hearts-floating.jpg",
+            "caption": "Snap'd hearts and box, floating",
+            "product": "snapd",
+            "shot": "inuse"
+          }
         }
       },
       "block_order": [
@@ -290,6 +299,7 @@
         "s4",
         "s5",
         "s6",
+        "s7",
         "t1",
         "t2",
         "t3",
