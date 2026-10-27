@@ -72,7 +72,7 @@
     </div>
     {%- comment -%} Tabs by product, then a collapsible group per kind of shot. Without JS every panel shows. {%- endcomment -%}
     {%- assign tabs = 'nude|Nude Stack&#39;d,snapd|Snap&#39;d,both|Both together' | split: ',' -%}
-    {%- assign kinds = 'packshot|Packshots,cutout|Cut-outs (transparent PNG),contents|What's inside,inuse|In use and lifestyle' | split: ',' -%}
+    {%- assign kinds = 'packshot|Packshots,cutout|Cut-outs (transparent PNG),contents|What&#39;s inside,inuse|In use and lifestyle' | split: ',' -%}
     <div class="pm-pi mt-6" data-pm-pi>
       <div class="pm-pi-tabs" role="tablist" aria-label="Images by product" hidden>
         {%- for t in tabs -%}{%- assign tk = t | split: '|' -%}
