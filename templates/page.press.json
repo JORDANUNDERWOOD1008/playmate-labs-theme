@@ -41,63 +41,81 @@
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_NudeStackd_box-front-white.jpg",
-            "caption": "Nude Stack'd gift box, front"
+            "caption": "Nude Stack'd gift box, front",
+            "product": "nude",
+            "shot": "packshot"
           }
         },
         "i2": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_NudeStackd_box-angle-white.jpg",
-            "caption": "Nude Stack'd gift box, angle"
+            "caption": "Nude Stack'd gift box, angle",
+            "product": "nude",
+            "shot": "packshot"
           }
         },
         "i3": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/Nude-Stackd-box-top-white.jpg",
-            "caption": "Nude Stack'd gift box, from above"
+            "caption": "Nude Stack'd gift box, from above",
+            "product": "nude",
+            "shot": "packshot"
           }
         },
         "i4": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_NudeStackd_box-front-white-2.jpg",
-            "caption": "Nude Stack'd gift box, standing"
+            "caption": "Nude Stack'd gift box, standing",
+            "product": "nude",
+            "shot": "packshot"
           }
         },
         "i5": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_NudeStackd_box-front-cream.jpg",
-            "caption": "Nude Stack'd gift box on cream"
+            "caption": "Nude Stack'd gift box on cream",
+            "product": "nude",
+            "shot": "packshot"
           }
         },
         "i6": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_NudeStackd_hands-mid-pull.jpg",
-            "caption": "Pulling a block from the Nude Stack'd tower"
+            "caption": "Pulling a block from the Nude Stack'd tower",
+            "product": "nude",
+            "shot": "inuse"
           }
         },
         "i7": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_NudeStackd_cutout-box-front.png",
-            "caption": "Cut-out (transparent PNG): Nude Stack'd box, front"
+            "caption": "Cut-out (transparent PNG): Nude Stack'd box, front",
+            "product": "nude",
+            "shot": "cutout"
           }
         },
         "i8": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_NudeStackd_cutout-box-angle.png",
-            "caption": "Cut-out (transparent PNG): Nude Stack'd box, angle"
+            "caption": "Cut-out (transparent PNG): Nude Stack'd box, angle",
+            "product": "nude",
+            "shot": "cutout"
           }
         },
         "i9": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_NudeStackd_cutout-tower.png",
-            "caption": "Cut-out (transparent PNG): built Nude Stack'd tower"
+            "caption": "Cut-out (transparent PNG): built Nude Stack'd tower",
+            "product": "nude",
+            "shot": "cutout"
           }
         },
         "t1": {
@@ -173,49 +191,81 @@
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_Snapd_box-front-white.jpg",
-            "caption": "Snap'd gift box, front"
+            "caption": "Snap'd gift box, front",
+            "product": "snapd",
+            "shot": "packshot"
           }
         },
         "s2": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_Snapd_box-angle-white.jpg",
-            "caption": "Snap'd gift box, angle"
+            "caption": "Snap'd gift box, angle",
+            "product": "snapd",
+            "shot": "packshot"
           }
         },
         "s3": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_Snapd_box-above-cream.jpg",
-            "caption": "Snap'd gift box, from above"
+            "caption": "Snap'd gift box, from above",
+            "product": "snapd",
+            "shot": "packshot"
           }
         },
         "s4": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_Snapd_heart-snapped-hands.jpg",
-            "caption": "Snapping a Snap'd heart in half"
+            "caption": "Snapping a Snap'd heart in half",
+            "product": "snapd",
+            "shot": "inuse"
           }
         },
         "f1": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_NudeStackd_contents-flatlay.jpg",
-            "caption": "What's in the Nude Stack'd box"
+            "caption": "What's in the Nude Stack'd box",
+            "product": "nude",
+            "shot": "contents"
           }
         },
         "f2": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_NudeStackd_contents-flatlay-2.jpg",
-            "caption": "Nude Stack'd contents: box, bag, blindfold, cards and blocks"
+            "caption": "Nude Stack'd contents: box, bag, blindfold, cards and blocks",
+            "product": "nude",
+            "shot": "contents"
           }
         },
         "f3": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/PlaymateLabs_NudeStackd_cards-symbols.jpg",
-            "caption": "Nude Stack'd cards, each matched to a block symbol"
+            "caption": "Nude Stack'd cards, each matched to a block symbol",
+            "product": "nude",
+            "shot": "contents"
+          }
+        },
+        "s5": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_three-hearts-white.jpg",
+            "caption": "The three Snap'd hearts, out of the box",
+            "product": "snapd",
+            "shot": "contents"
+          }
+        },
+        "s6": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_lifestyle-night-in.jpg",
+            "caption": "Snap'd on a night in",
+            "product": "snapd",
+            "shot": "inuse"
           }
         }
       },
@@ -238,6 +288,8 @@
         "s2",
         "s3",
         "s4",
+        "s5",
+        "s6",
         "t1",
         "t2",
         "t3",

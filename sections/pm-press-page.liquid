@@ -70,17 +70,87 @@
       </div>
       {%- if s.zip != blank -%}<a href="{{ s.zip }}" class="inline-flex min-h-11 items-center rounded-full border border-border px-5 text-sm">{{ s.zip_label }}</a>{%- endif -%}
     </div>
-    <ul class="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
-      {%- for b in imgs -%}{%- assign im = b.settings.image -%}{%- if im -%}
-        <li {{ b.shopify_attributes }}>
-          <a href="{{ im | image_url: width: 4000 }}" target="_blank" rel="noopener" class="group block">
-            <img src="{{ im | image_url: width: 700 }}" alt="{{ b.settings.caption | default: im.alt | escape }}" width="700" height="{{ 700 | divided_by: im.aspect_ratio | round }}" loading="lazy" class="aspect-[4/5] w-full rounded-md bg-white object-contain">
-            <span class="mt-2 block text-sm">{{ b.settings.caption }}</span>
-            <span class="block text-xs text-muted-foreground">{{ im.width }} × {{ im.height }}px, opens full size</span>
-          </a>
-        </li>
-      {%- endif -%}{%- endfor -%}
-    </ul>
+    {%- comment -%} Tabs by product, then a collapsible group per kind of shot. Without JS every panel shows. {%- endcomment -%}
+    {%- assign tabs = 'nude|Nude Stack&#39;d,snapd|Snap&#39;d,both|Both together' | split: ',' -%}
+    {%- assign kinds = 'packshot|Packshots,cutout|Cut-outs (transparent PNG),contents|What's inside,inuse|In use and lifestyle' | split: ',' -%}
+    <div class="pm-pi mt-6" data-pm-pi>
+      <div class="pm-pi-tabs" role="tablist" aria-label="Images by product" hidden>
+        {%- for t in tabs -%}{%- assign tk = t | split: '|' -%}
+          {%- assign n = 0 -%}{%- for b in imgs -%}{%- if b.settings.product == tk[0] and b.settings.image -%}{%- assign n = n | plus: 1 -%}{%- endif -%}{%- endfor -%}
+          {%- if n > 0 -%}<button type="button" role="tab" id="pm-pi-tab-{{ tk[0] }}" aria-controls="pm-pi-{{ tk[0] }}" aria-selected="false" class="pm-pi-tab">{{ tk[1] }} <span>{{ n }}</span></button>{%- endif -%}
+        {%- endfor -%}
+      </div>
+      {%- for t in tabs -%}{%- assign tk = t | split: '|' -%}
+        {%- assign tn = 0 -%}{%- for b in imgs -%}{%- if b.settings.product == tk[0] and b.settings.image -%}{%- assign tn = tn | plus: 1 -%}{%- endif -%}{%- endfor -%}
+        {%- if tn > 0 -%}
+        <div class="pm-pi-panel" role="tabpanel" id="pm-pi-{{ tk[0] }}" aria-labelledby="pm-pi-tab-{{ tk[0] }}">
+          <h3 class="pm-pi-h">{{ tk[1] }}</h3>
+          {%- assign first = true -%}
+          {%- for k in kinds -%}{%- assign kk = k | split: '|' -%}
+            {%- assign gn = 0 -%}{%- for b in imgs -%}{%- if b.settings.product == tk[0] and b.settings.shot == kk[0] and b.settings.image -%}{%- assign gn = gn | plus: 1 -%}{%- endif -%}{%- endfor -%}
+            {%- if gn > 0 -%}
+            <details class="pm-pi-group"{% if first %} open{% endif %}>
+              <summary><span>{{ kk[1] }}</span> <span class="pm-pi-count">{{ gn }} {% if gn == 1 %}image{% else %}images{% endif %}</span></summary>
+              <ul class="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
+                {%- for b in imgs -%}{%- assign im = b.settings.image -%}{%- if im and b.settings.product == tk[0] and b.settings.shot == kk[0] -%}
+                  <li {{ b.shopify_attributes }}>
+                    <a href="{{ im | image_url: width: 4000 }}" target="_blank" rel="noopener" class="group block">
+                      <img src="{{ im | image_url: width: 700 }}" alt="{{ b.settings.caption | default: im.alt | escape }}" width="700" height="{{ 700 | divided_by: im.aspect_ratio | round }}" loading="lazy" class="pm-pi-img w-full rounded-md object-contain">
+                      <span class="mt-2 block text-sm">{{ b.settings.caption }}</span>
+                      <span class="block text-xs text-muted-foreground">{{ im.width }} × {{ im.height }}px, opens full size</span>
+                    </a>
+                  </li>
+                {%- endif -%}{%- endfor -%}
+              </ul>
+            </details>
+            {%- assign first = false -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    <style>
+      .pm-pi-tabs:not([hidden]){display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem}
+      .pm-pi-tab{min-height:2.75rem;padding:0 1.1rem;border-radius:999px;border:1px solid var(--border);font-size:.875rem;background:transparent;color:inherit;cursor:pointer}
+      .pm-pi-tab span{opacity:.6;margin-left:.25rem;font-variant-numeric:tabular-nums}
+      .pm-pi-tab[aria-selected="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-foreground)}
+      .pm-pi-tab:focus-visible,.pm-pi-group summary:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+      .pm-pi-h{font-weight:700;font-size:1.125rem;margin:1.5rem 0 .25rem}
+      .pm-pi.is-tabbed .pm-pi-h{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+      .pm-pi.is-tabbed .pm-pi-panel[hidden]{display:none}
+      .pm-pi-group{border-top:1px solid var(--border)}
+      .pm-pi-group:last-child{border-bottom:1px solid var(--border)}
+      .pm-pi-group summary{display:flex;justify-content:space-between;align-items:center;gap:1rem;min-height:3.25rem;cursor:pointer;list-style:none;font-weight:500}
+      .pm-pi-group summary::-webkit-details-marker{display:none}
+      .pm-pi-group summary::after{content:"+";font-size:1.25rem;line-height:1;transition:transform .2s}
+      .pm-pi-group[open] summary::after{transform:rotate(45deg)}
+      .pm-pi-group[open]{padding-bottom:1.25rem}
+      .pm-pi-count{margin-left:auto;font-size:.8125rem;font-weight:300;color:var(--muted-foreground)}
+      .pm-pi-img{aspect-ratio:4/5;background:#fff}
+      @media (prefers-reduced-motion: reduce){.pm-pi-group summary::after{transition:none}}
+    </style>
+    <script>
+      (() => {
+        const root = document.querySelector('[data-pm-pi]'); if (!root) return;
+        const tabs = [...root.querySelectorAll('[role="tab"]')], panels = [...root.querySelectorAll('[role="tabpanel"]')];
+        if (tabs.length < 2) return;
+        root.querySelector('[role="tablist"]').hidden = false; root.classList.add('is-tabbed');
+        const pick = (t, focus) => {
+          tabs.forEach(x => { const on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; });
+          panels.forEach(p => { p.hidden = p.id !== t.getAttribute('aria-controls'); });
+          if (focus) t.focus();
+        };
+        tabs.forEach((t, i) => {
+          t.addEventListener('click', () => pick(t));
+          t.addEventListener('keydown', e => {
+            const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+            if (d) { e.preventDefault(); pick(tabs[(i + d + tabs.length) % tabs.length], true); }
+          });
+        });
+        pick(tabs[0]);
+      })();
+    </script>
     <p class="mt-4 text-sm font-light text-muted-foreground">{{ s.images_more }} <a href="{{ mail }}Image%20request" class="underline underline-offset-4">Ask for images</a>.</p>
   </section>
   {%- endif -%}
@@ -161,7 +231,11 @@
       { "type": "richtext", "id": "facts", "label": "Facts" } ] },
     { "type": "image", "name": "Press image", "settings": [
       { "type": "image_picker", "id": "image", "label": "Image" },
-      { "type": "text", "id": "caption", "label": "Caption" } ] },
+      { "type": "text", "id": "caption", "label": "Caption" },
+      { "type": "select", "id": "product", "label": "Product tab", "default": "nude", "options": [
+        { "value": "nude", "label": "Nude Stack'd" }, { "value": "snapd", "label": "Snap'd" }, { "value": "both", "label": "Both together" } ] },
+      { "type": "select", "id": "shot", "label": "Kind of shot", "default": "packshot", "options": [
+        { "value": "packshot", "label": "Packshot" }, { "value": "cutout", "label": "Cut-out" }, { "value": "contents", "label": "What's inside" }, { "value": "inuse", "label": "In use and lifestyle" } ] } ] },
     { "type": "tool", "name": "Free tool", "settings": [
       { "type": "text", "id": "title", "label": "Title" },
       { "type": "url", "id": "url", "label": "Link" },
