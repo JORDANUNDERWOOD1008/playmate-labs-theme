@@ -16,7 +16,7 @@
       "type": "pm-press-page",
       "settings": {
         "founder_url": "/pages/jordan-underwood",
-        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit-v3.zip"
+        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit-v4.zip"
       },
       "blocks": {
         "p1": {
@@ -196,15 +196,6 @@
             "shot": "packshot"
           }
         },
-        "s2": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/PlaymateLabs_Snapd_box-angle-white.jpg",
-            "caption": "Snap'd gift box, angle",
-            "product": "snapd",
-            "shot": "packshot"
-          }
-        },
         "s3": {
           "type": "image",
           "settings": {
@@ -285,6 +276,276 @@
             "product": "nude",
             "shot": "inuse"
           }
+        },
+        "r00": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_lifestyle-bag-chair.jpg",
+            "caption": "Nude Stack'd travel bag, styled",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r01": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_lifestyle-couple-jumper.jpg",
+            "caption": "A couple sharing one jumper, Nude Stack'd bag at their feet",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r02": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_lifestyle-pink-chair.jpg",
+            "caption": "Nude Stack'd bag on a night in",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r03": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_couple-tower-falls.jpg",
+            "caption": "The Nude Stack'd tower falls",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r04": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_building-tower.jpg",
+            "caption": "Two players building the Nude Stack'd tower",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r05": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_couple-playing.jpg",
+            "caption": "A couple mid-game with Nude Stack'd",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r06": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_pulling-lips-block.jpg",
+            "caption": "Pulling a lips block",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r07": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_tower-closeup.jpg",
+            "caption": "Nude Stack'd tower and bag, close up",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r08": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_blocks-to-go.jpg",
+            "caption": "Nude Stack'd blocks, served to go",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r09": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_bag-pov.jpg",
+            "caption": "Looking out from the Nude Stack'd bag",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r10": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_block-cloche.jpg",
+            "caption": "A bolt block, served under a cloche",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r11": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_card-in-pocket.jpg",
+            "caption": "A Nude Stack'd card in a coat pocket",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r12": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_card-in-sock.jpg",
+            "caption": "A Nude Stack'd card tucked in a sock",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r13": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_night-in-pull.jpg",
+            "caption": "Pulling a block on a candlelit night in",
+            "product": "nude",
+            "shot": "inuse"
+          }
+        },
+        "r14": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_cards-and-block.jpg",
+            "caption": "Nude Stack'd cards and a lips block",
+            "product": "nude",
+            "shot": "contents"
+          }
+        },
+        "r15": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_real-card.jpg",
+            "caption": "A real Nude Stack'd card: three levels, one prompt each",
+            "product": "nude",
+            "shot": "contents"
+          }
+        },
+        "r16": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_blindfold.jpg",
+            "caption": "The Nude Stack'd satin blindfold",
+            "product": "nude",
+            "shot": "contents"
+          }
+        },
+        "r17": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_contents-flatlay-3.jpg",
+            "caption": "Everything in the Nude Stack'd box",
+            "product": "nude",
+            "shot": "contents"
+          }
+        },
+        "r18": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_cutout-box-and-tower.png",
+            "caption": "Cut-out (transparent PNG): Nude Stack'd box and tower",
+            "product": "nude",
+            "shot": "cutout"
+          }
+        },
+        "r19": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_cutout-tower-2.png",
+            "caption": "Cut-out (transparent PNG): tower with loose blocks",
+            "product": "nude",
+            "shot": "cutout"
+          }
+        },
+        "r20": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_box-angle-cream.jpg",
+            "caption": "Snap'd gift box, angle",
+            "product": "snapd",
+            "shot": "packshot"
+          }
+        },
+        "r21": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_box-open.jpg",
+            "caption": "Snap'd, open, three hearts in the tray",
+            "product": "snapd",
+            "shot": "packshot"
+          }
+        },
+        "r22": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_heart-on-plate.jpg",
+            "caption": "A Snap'd heart, two forks",
+            "product": "snapd",
+            "shot": "inuse"
+          }
+        },
+        "r23": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_claw-machine.jpg",
+            "caption": "Snap'd hearts in a claw machine",
+            "product": "snapd",
+            "shot": "inuse"
+          }
+        },
+        "r24": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_noughts-and-crosses.jpg",
+            "caption": "Snap'd hearts playing noughts and crosses",
+            "product": "snapd",
+            "shot": "inuse"
+          }
+        },
+        "r25": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_compact.jpg",
+            "caption": "A Snap'd heart in a compact mirror",
+            "product": "snapd",
+            "shot": "inuse"
+          }
+        },
+        "r26": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_bed-champagne.jpg",
+            "caption": "Snap'd in bed with champagne",
+            "product": "snapd",
+            "shot": "inuse"
+          }
+        },
+        "r27": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Snapd_sharing-champagne.jpg",
+            "caption": "Sharing Snap'd over champagne",
+            "product": "snapd",
+            "shot": "inuse"
+          }
+        },
+        "r28": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Both_heart-parachute.jpg",
+            "caption": "A Snap'd heart parachuting onto a Nude Stack'd block",
+            "product": "both",
+            "shot": "inuse"
+          }
+        },
+        "r29": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/PlaymateLabs_Both_floating.jpg",
+            "caption": "Snap'd hearts and Nude Stack'd blocks, floating",
+            "product": "both",
+            "shot": "inuse"
+          }
         }
       },
       "block_order": [
@@ -304,12 +565,41 @@
         "i8",
         "i9",
         "s1",
-        "s2",
         "s3",
         "s4",
         "s5",
         "s6",
         "s7",
+        "r00",
+        "r01",
+        "r02",
+        "r03",
+        "r04",
+        "r05",
+        "r06",
+        "r07",
+        "r08",
+        "r09",
+        "r10",
+        "r11",
+        "r12",
+        "r13",
+        "r14",
+        "r15",
+        "r16",
+        "r17",
+        "r18",
+        "r19",
+        "r20",
+        "r21",
+        "r22",
+        "r23",
+        "r24",
+        "r25",
+        "r26",
+        "r27",
+        "r28",
+        "r29",
         "t1",
         "t2",
         "t3",
