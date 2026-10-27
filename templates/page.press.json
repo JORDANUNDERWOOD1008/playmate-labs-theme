@@ -16,7 +16,7 @@
       "type": "pm-press-page",
       "settings": {
         "founder_url": "/pages/jordan-underwood",
-        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit-v5.zip"
+        "zip": "https://cdn.shopify.com/s/files/1/0637/2176/7068/files/PlaymateLabs-press-kit-v6.zip"
       },
       "blocks": {
         "p1": {
@@ -325,7 +325,7 @@
         "r05": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_couple-playing.jpg",
+            "image": "shopify://shop_images/PlaymateLabs_NudeStackd_couple-playing-red.jpg",
             "caption": "A couple mid-game with Nude Stack'd",
             "product": "nude",
             "shot": "inuse"
