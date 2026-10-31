@@ -81,13 +81,6 @@
             "line": "Belgian milk chocolate on a spoon. A slow, warm ritual for two."
           }
         },
-        "b10": {
-          "type": "making",
-          "settings": {
-            "name": "Cuff'd. Scenarios",
-            "line": "Coming soon. Hundreds of playful cards for laughing, flirting and trying something new."
-          }
-        },
         "b11": {
           "type": "making",
           "settings": {
@@ -106,7 +99,6 @@
         "b7",
         "b8",
         "b9",
-        "b10",
         "b11"
       ]
     }
