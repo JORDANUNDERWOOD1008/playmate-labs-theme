@@ -1,3 +1,6 @@
+{%- comment -%} On the homepage page_description is the admin Preferences text (old "clinically studied" claim), so use the approved homepage descriptor there. {%- endcomment -%}
+{%- assign social_description = page_description | default: shop.description -%}
+{%- if template == 'index' -%}{%- assign social_description = "Aphrodisiac chocolates and date-night games for couples: Snap'd chocolate hearts, Melt'd hot choc spoons and the Nude Stack'd game. Designed in the UK." -%}{%- endif -%}
 {%- comment -%}
   PLAYMATE LABS — META TAGS SNIPPET
   File: snippets/meta-tags.liquid
@@ -7,7 +10,7 @@
 <meta property="og:url" content="{{ canonical_url }}">
 <meta property="og:title" content="{{ page_title | escape }}">
 <meta property="og:type" content="website">
-<meta property="og:description" content="{{ page_description | default: shop.description | escape }}">
+<meta property="og:description" content="{{ social_description | escape }}">
 
 {%- if settings.share_image -%}
   <meta property="og:image" content="{{ settings.share_image | image_url: width: 1200 }}">
@@ -28,4 +31,4 @@
 {%- endif -%}
 
 <meta name="twitter:title" content="{{ page_title | escape }}">
-<meta name="twitter:description" content="{{ page_description | default: shop.description | escape }}">
+<meta name="twitter:description" content="{{ social_description | escape }}">

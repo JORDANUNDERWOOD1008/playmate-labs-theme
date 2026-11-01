@@ -1,5 +1,7 @@
 <!-- Schema: Organization + WebSite (homepage only) -->
 {%- if request.page_type == 'index' -%}
+{%- comment -%} Fixed descriptor, not shop.description: the admin Preferences text still carries an old "clinically studied" claim (removed 1 Nov 2026). {%- endcomment -%}
+{%- assign brand_description = "Aphrodisiac chocolates and date-night games for couples: Snap'd chocolate hearts, Melt'd hot choc spoons and the Nude Stack'd game. Designed in the UK." -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -15,7 +17,7 @@
         "width": 512,
         "height": 512
       },
-      "description": "{{ shop.description | escape }}",
+      "description": "{{ brand_description | escape }}",
       "foundingDate": "2024",
       "founder": {
         "@type": "Person",
@@ -39,7 +41,7 @@
       "@id": "{{ shop.url }}/#website",
       "url": "{{ shop.url }}",
       "name": "Playmate Labs",
-      "description": "{{ shop.description | escape }}",
+      "description": "{{ brand_description | escape }}",
       "publisher": {
         "@id": "{{ shop.url }}/#organization"
       },
