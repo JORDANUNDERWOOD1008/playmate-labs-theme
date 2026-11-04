@@ -169,6 +169,11 @@
         relationships: {list: {data: {type: 'list', id: listId}}}}})
     });
     if (!res.ok) throw new Error('That didn’t go through. Check your email and try again.');
+    klaviyoIdentify(email);
+  }
+  // Tie this browser to the profile so later product views reach Klaviyo (Browse abandonment flow).
+  function klaviyoIdentify(email) {
+    try { (window.klaviyo = window.klaviyo || []).push(['identify', {email}]); } catch (_) {}
   }
   async function klaviyoProfile(email, properties) {
     if (!PM.klaviyoKey) throw new Error('Saving is not switched on yet.');
@@ -177,6 +182,7 @@
       body: JSON.stringify({data: {type: 'profile', attributes: {email, properties}}})
     });
     if (!res.ok) throw new Error('That didn’t save. Check your email and try again.');
+    klaviyoIdentify(email);
   }
   $$('[data-klaviyo-form]').forEach(form => form.addEventListener('submit', async e => {
     e.preventDefault();

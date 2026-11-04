@@ -221,6 +221,7 @@
 
   {%- comment -%} Cookie Consent Banner {%- endcomment -%}
   {% render 'shopify-consent-bridge' %}
+  {%- if request.page_type == 'product' -%}{% render 'klaviyo-viewed-product', product: product %}{%- endif -%}
 
 </body>
 </html>
