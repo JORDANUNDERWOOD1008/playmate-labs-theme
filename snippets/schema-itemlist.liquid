@@ -1,0 +1,38 @@
+<!-- Schema: ItemList (collection pages) + ProfilePage (founder page). Added 7 Nov 2026 for Ahrefs AI-discoverability notices. -->
+{%- if request.page_type == 'collection' and collection.products_count > 0 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": {{ collection.title | json }},
+  "url": "{{ shop.url }}{{ collection.url }}",
+  "numberOfItems": {{ collection.products | size }},
+  "itemListElement": [
+    {%- for p in collection.products limit: 50 -%}
+    {
+      "@type": "ListItem",
+      "position": {{ forloop.index }},
+      "url": "{{ shop.url }}{{ p.url }}",
+      "name": {{ p.title | json }}
+    }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}
+{%- if request.page_type == 'page' and page.handle == 'jordan-underwood' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "url": "{{ shop.url }}/pages/jordan-underwood",
+  "mainEntity": {
+    "@type": "Person",
+    "name": "Jordan Underwood",
+    "jobTitle": "Founder",
+    "url": "{{ shop.url }}/pages/jordan-underwood",
+    "worksFor": { "@type": "Organization", "@id": "{{ shop.url }}/#organization", "name": "Playmate Labs", "url": "{{ shop.url }}" }
+  }
+}
+</script>
+{%- endif -%}
