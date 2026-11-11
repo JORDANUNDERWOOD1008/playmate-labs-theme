@@ -12,7 +12,7 @@
     "hero": {
       "type": "pm-hero",
       "settings": {
-        "image": "shopify://shop_images/5c63be21-d085-4c76-a52a-33e190b2e76b.png",
+        "image": "shopify://shop_images/fc0f914b-9236-464e-9504-d84487c8a977.png",
         "image_alt": "Two hands sharing a chocolate heart beside the Nude Stack'd game",
         "photo_note": "psst. friday?",
         "note": "come over.",
@@ -90,14 +90,15 @@
           "type": "card",
           "settings": {
             "product": "nude-stacked",
-            "rollover": "shopify://shop_images/adaa7c05-1356-413f-b7f2-6f8109fdd286_e90ce945-dd9b-4358-a315-ffceee96ab63.png"
+            "rollover": "shopify://shop_images/adaa7c05-1356-413f-b7f2-6f8109fdd286_e90ce945-dd9b-4358-a315-ffceee96ab63.png",
+            "cover": "shopify://shop_images/b617deb3-b505-412f-8f67-3e710c9f1c3a.png"
           }
         },
         "card2": {
           "type": "card",
           "settings": {
             "product": "playmate-chocolate",
-            "cover": "shopify://shop_images/919da7b8-4f09-4eea-97c2-3570b31a5245.png",
+            "cover": "shopify://shop_images/5d8358d8-c6e0-4019-b1c5-1886ec182a28.png",
             "rollover": "shopify://shop_images/gp-p-47220efa-55d0-4eb6-8690-7c2746cf9fe5-cae7.jpg"
           }
         },
