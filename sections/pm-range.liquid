@@ -3,7 +3,8 @@
   <div class="mt-6 divide-y divide-border border-y border-border">
     {%- for block in section.blocks -%}
       {%- assign n = 0 -%}
-      {%- for p in collections.all.products -%}
+      {%- assign shop_src = collections.all -%}{%- if collections['shop-all'].products_count > 0 -%}{%- assign shop_src = collections['shop-all'] -%}{%- endif -%}
+      {%- for p in shop_src.products -%}
         {%- capture cat -%}{% render 'pm-copy', product: p, field: 'category' %}{%- endcapture -%}
         {%- assign cat = cat | strip -%}{%- if cat == block.settings.category -%}{%- assign n = n | plus: 1 -%}{%- endif -%}
       {%- endfor -%}

@@ -1,4 +1,5 @@
-{%- assign c = section.settings.collection | default: collections.all -%}
+{%- assign shop_src = collections.all -%}{%- if collections['shop-all'].products_count > 0 -%}{%- assign shop_src = collections['shop-all'] -%}{%- endif -%}
+{%- assign c = section.settings.collection | default: shop_src -%}
 <section class="mx-auto max-w-6xl px-5 pt-16 md:px-6 md:pt-24">
   <div class="mb-10 flex flex-wrap items-end justify-between gap-2">
     <h2 class="font-heavy text-4xl font-black tracking-tight text-primary md:text-5xl">{{ section.settings.heading }}</h2>

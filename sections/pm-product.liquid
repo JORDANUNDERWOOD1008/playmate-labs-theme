@@ -166,7 +166,8 @@
     {% render 'pm-note', text: section.settings.related_note, class: 'mt-1 -rotate-1 text-lg' %}
     <div class="mt-8 grid gap-6 sm:grid-cols-2">
       {%- assign shown = 0 -%}
-      {%- for p in collections.all.products -%}
+      {%- assign shop_src = collections.all -%}{%- if collections['shop-all'].products_count > 0 -%}{%- assign shop_src = collections['shop-all'] -%}{%- endif -%}
+      {%- for p in shop_src.products -%}
         {%- if p.id != product.id and shown < 2 -%}{% render 'pm-product-card', p: p %}{%- assign shown = shown | plus: 1 -%}{%- endif -%}
       {%- endfor -%}
     </div>

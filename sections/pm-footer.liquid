@@ -7,7 +7,8 @@
     </div>
     <div class="space-y-3 text-sm">
       <p class="text-[11px] font-bold uppercase tracking-[0.25em] opacity-70">{{ section.settings.shop_heading }}</p>
-      {%- assign shop_list = section.settings.shop_collection.products | default: collections.all.products -%}
+      {%- assign shop_src = collections.all -%}{%- if collections['shop-all'].products_count > 0 -%}{%- assign shop_src = collections['shop-all'] -%}{%- endif -%}
+      {%- assign shop_list = section.settings.shop_collection.products | default: shop_src.products -%}
       {%- comment -%} Sold-out products (e.g. Melt'd, discontinued) are left out. {%- endcomment -%}
       {%- assign shown = 0 -%}
       {%- for p in shop_list -%}{%- if p.available and shown < 6 -%}{%- assign shown = shown | plus: 1 -%}
